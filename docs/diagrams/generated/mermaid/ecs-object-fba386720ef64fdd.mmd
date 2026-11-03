@@ -1,0 +1,166 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ui::CalculatedClip · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**CalculatedClip**<br/>缓存节点从祖先继承的裁剪结果。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**extract​_​ui​_​texture​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：增量提取<br/>九宫格或平铺 UI 图像切片。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**extract​_​debug​_​overlay**<br/>来自crate:bevy​_​ui​_​render ↗：为变化<br/>的 UI 节点提取调试轮廓。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**extract​_​inline​_​images**<br/>来自crate:bevy​_​ui​_​render ↗：把文字行<br/>内图像提取为 UI 绘制项。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**extract​_​gradients**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 渐变并替换失效渲染项。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**extract​_​uinode​_​background​_​colors**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>节点背景与外侧填充色。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**update​_​clipping​_​system**<br/>从 UI 根递归更新继承裁剪范围。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**ui​_​focus​_​system**<br/>按鼠标和触摸更新旧式 UI 交互状态。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**extract​_​viewport​_​nodes**<br/>来自crate:bevy​_​ui​_​render ↗：把视口节<br/>点所引用相机的输出图像嵌入 UI。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**extract​_​text​_​sections**<br/>来自crate:bevy​_​ui​_​render ↗：按图集提<br/>取 UI 字形并处理选中文字颜色。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**extract​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 阴影并替换失效渲染项。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**extract​_​text​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字及装饰线的偏移阴影。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**extract​_​uinode​_​images**<br/>来自crate:bevy​_​ui​_​render ↗：按节点视<br/>觉盒与图集区域提取普通 UI 图像。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**extract​_​uinode​_​borders**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>各边颜色边框与外轮廓。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**ui​_​picking**<br/>按 UI 堆叠与相机视口计算指针命中。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**extract​_​text​_​cursor**<br/>来自crate:bevy​_​ui​_​render ↗：提取文字<br/>光标和带圆角的选区背景。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**extract​_​text​_​decorations**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字背景、删除线和下划线。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**extract​_​preedit​_​underlines**<br/>来自crate:bevy​_​ui​_​render ↗：把输入法<br/>预编辑下划线提取为 UI 矩形。" }
+  class n18 node_system
+  class n18 external_node
+  n0 e0@-->|"存在性约束"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在性约束"| n2
+  class e1 edge_reference
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@-->|"存在性约束"| n5
+  class e4 edge_reference
+  n0 e5@--> n6
+  class e5 edge_read
+  n7 e6@-->|"赋值"| n0
+  class e6 edge_write
+  n0 e7@--> n8
+  class e7 edge_read
+  n0 e8@--> n2
+  class e8 edge_read
+  n0 e9@--> n9
+  class e9 edge_read
+  n0 e10@--> n10
+  class e10 edge_read
+  n7 e11@-->|"插入"| n0
+  class e11 edge_write
+  n0 e12@--> n11
+  class e12 edge_read
+  n0 e13@--> n12
+  class e13 edge_read
+  n0 e14@--> n13
+  class e14 edge_read
+  n0 e15@-->|"存在性约束"| n11
+  class e15 edge_reference
+  n7 e16@-->|"移除"| n0
+  class e16 edge_write
+  n0 e17@--> n14
+  class e17 edge_read
+  n0 e18@--> n15
+  class e18 edge_read
+  n0 e19@--> n16
+  class e19 edge_read
+  n0 e20@--> n17
+  class e20 edge_read
+  n7 e21@-->|"可变访问"| n0
+  class e21 edge_write
+  n0 e22@--> n5
+  class e22 edge_read
+  n0 e23@--> n18
+  class e23 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }

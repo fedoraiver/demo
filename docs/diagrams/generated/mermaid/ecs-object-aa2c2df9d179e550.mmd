@@ -1,0 +1,104 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: slider::SliderDragState · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**SliderDragState**<br/>记录滑块指针拖动状态。" }
+  class n0 node_component
+  n1@{ shape: hex, label: "**slider​_​on​_​drag**<br/>拖动滑条时发布连续值变化。" }
+  class n1 node_observer
+  n2@{ shape: hex, label: "**slider​_​on​_​drag**<br/>拖动滑条时发布连续值变化。" }
+  class n2 node_observer
+  n3@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
+  class n3 node_observer
+  n4@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
+  class n4 node_observer
+  n5@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
+  class n5 node_observer
+  n6@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>提交滑条拖动结果并释放指针。" }
+  class n6 node_observer
+  n7@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
+  class n7 node_observer
+  n8@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>记录滑条拖动起点并捕获指针。" }
+  class n8 node_observer
+  n9@{ shape: hex, label: "**slider​_​on​_​drag**<br/>拖动滑条时发布连续值变化。" }
+  class n9 node_observer
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"赋值"| n0
+  class e2 edge_write
+  n4 e3@-->|"赋值"| n0
+  class e3 edge_write
+  n5 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n6 e5@-->|"赋值"| n0
+  class e5 edge_write
+  n6 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n7 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n8 e8@-->|"赋值"| n0
+  class e8 edge_write
+  n3 e9@-->|"可变访问"| n0
+  class e9 edge_write
+  n5 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n7 e11@-->|"赋值"| n0
+  class e11 edge_write
+  n8 e12@-->|"可变访问"| n0
+  class e12 edge_write
+  n4 e13@-->|"可变访问"| n0
+  class e13 edge_write
+  n0 e14@--> n9
+  class e14 edge_read
+  e0@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: bumpX }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }

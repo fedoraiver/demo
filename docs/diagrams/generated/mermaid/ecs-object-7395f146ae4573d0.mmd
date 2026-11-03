@@ -1,0 +1,74 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: dynamics::rigid_body::mass_properties::components::collider::ColliderDensity · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ColliderDensity**<br/>以密度参与碰撞体质量计算。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: hex, label: "**build::{closure#35;6}**<br/>恢复非传感器碰撞体的质量属性。" }
+  class n2 node_observer
+  n3@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
+  class n3 node_entity
+  class n3 external_node
+  n4@{ shape: rounded, label: "**update​_​collider​_​mass​_​properties**<br/>按变化的形状和密度重算碰撞体质量。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**init​_​collider​_​constructor​_​**<br/>**hierarchies**<br/>按层级构造配置为后代生成碰撞体。" }
+  class n5 node_system
+  n1 e0@-->|"可能包含"| n0
+  class e0 edge_reference
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"可能包含"| n0
+  class e2 edge_reference
+  n0 e3@-->|"存在性约束"| n4
+  class e3 edge_reference
+  n0 e4@--> n4
+  class e4 edge_read
+  n5 e5@-->|"插入"| n0
+  class e5 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: bumpX }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

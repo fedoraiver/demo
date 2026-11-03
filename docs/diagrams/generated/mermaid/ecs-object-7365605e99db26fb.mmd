@@ -1,0 +1,62 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-7365605e99db26fb-e3{marker-start:url(#object-7365605e99db26fb_flowchart-v2-pointStart)!important}\n#object-7365605e99db26fb_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: UiAntiAlias · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**UiAntiAlias**<br/>控制相机中的 UI 几何抗锯齿。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**queue​_​gradient**<br/>按目标视图与堆叠顺序排队 UI 渐变。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**queue​_​uinodes**<br/>按目标相机和堆叠顺序排队 UI 节点。" }
+  class n3 node_system
+  n1 e0@-->|"移除"| n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n1 e3@--- n0
+  class e3 edge_read
+  n1 e4@-->|"插入"| n0
+  class e4 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }

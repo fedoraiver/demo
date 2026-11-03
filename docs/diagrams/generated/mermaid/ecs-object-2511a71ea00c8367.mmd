@@ -1,0 +1,107 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ecs::change_detection::CheckChangeTicks · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
+  classDef node_system_group fill:#F2F5F7,stroke:#607C96,stroke-width:1.6px,color:#1F3340
+  classDef edge_emit stroke:#B66B2D,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**CheckChangeTicks**<br/>请求维护变化检测 tick 范围。" }
+  class n0 node_event
+  n1@{ shape: rounded, label: "**run​_​main**<br/>来自crate:bevy​_​app ↗：按主调度顺序驱<br/>动应用更新。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**run​_​physics​_​schedule**<br/>来自crate:avian3d ↗：使用物理时钟推<br/>进 PhysicsSchedule 并恢复原时钟。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**transition#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：从当前消息批<br/>次取得最后一次状态转换。；执行特定旧状态<br/>到新状态的转换调度。" }
+  class n3 node_system_group
+  class n3 external_node
+  n4@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**exit#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：执行旧状态的<br/>退出调度。；从当前消息批次取得最后一次状<br/>态转换。" }
+  class n4 node_system_group
+  class n4 external_node
+  n5@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**enter#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：从当前消息批<br/>次取得最后一次状态转换。；执行新状态的进<br/>入调度。" }
+  class n5 node_system_group
+  class n5 external_node
+  n6@{ shape: rounded, label: "**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**run​_​fixed​_​main​_​schedule**<br/>来自crate:bevy​_​time ↗：按累计时间推进<br/>固定主调度。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**run​_​fixed​_​main**<br/>来自crate:bevy​_​app ↗：运行一个固定时<br/>间步的调度阶段。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**render​_​system**<br/>来自crate:bevy​_​render ↗：运行渲染图调<br/>度并完成回读和窗口呈现。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**run​_​render​_​schedule**<br/>来自crate:bevy​_​render ↗：按<br/>RenderScheduleOrder 中维护的阶段标签<br/>顺序，依次尝试运行渲染子应用的各个调度。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**run​_​substep​_​schedule**<br/>来自crate:avian3d ↗：按子步数划分物理<br/>时间并运行子步调度。" }
+  class n11 node_system
+  class n11 external_node
+  n1 e0@-->|"触发事件"| n0
+  class e0 edge_emit
+  n2 e1@-->|"触发事件"| n0
+  class e1 edge_emit
+  n3 e2@-->|"触发事件"| n0
+  class e2 edge_emit
+  n4 e3@-->|"触发事件"| n0
+  class e3 edge_emit
+  n5 e4@-->|"触发事件"| n0
+  class e4 edge_emit
+  n6 e5@-->|"触发事件"| n0
+  class e5 edge_emit
+  n7 e6@-->|"触发事件"| n0
+  class e6 edge_emit
+  n8 e7@-->|"触发事件"| n0
+  class e7 edge_emit
+  n9 e8@-->|"触发事件"| n0
+  class e8 edge_emit
+  n10 e9@-->|"触发事件"| n0
+  class e9 edge_emit
+  n11 e10@-->|"触发事件"| n0
+  class e10 edge_emit
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

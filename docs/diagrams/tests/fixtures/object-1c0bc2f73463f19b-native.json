@@ -1,0 +1,767 @@
+{
+  "view": {
+    "id": "object-1c0bc2f73463f19b",
+    "feature": "crate:bevy_ui_render",
+    "aspect": "object",
+    "label": "box_shadow::BoxShadowMeta · 对象关系",
+    "summary": "当前对象及全部直接关联对象。",
+    "objectId": "type-02ee09673f25d648797ed121",
+    "centerNodeId": "type-02ee09673f25d648797ed121",
+    "engine": "mermaid",
+    "diagramType": "flowchart",
+    "width": 664.2919921875,
+    "height": 226.40000915527344,
+    "filename": "ecs-object-1c0bc2f73463f19b.svg",
+    "mermaidFilename": "ecs-object-1c0bc2f73463f19b.mmd",
+    "nodes": [
+      {
+        "id": "type-02ee09673f25d648797ed121",
+        "role": "internal",
+        "group": "当前对象",
+        "instance": "object-1c0bc2f73463f19b--n0",
+        "mermaidId": "n0",
+        "visualType": "resource",
+        "shape": "cyl",
+        "displayLabel": "box_shadow::BoxShadowMeta\n保存 UI 阴影的 GPU 几何与视图绑定。",
+        "nameLabel": "box_shadow::BoxShadowMeta",
+        "contextLabel": [
+          "保存 UI 阴影的 GPU 几何与视图绑定。"
+        ],
+        "position": {
+          "x": 401.5107421875,
+          "y": 33.64262877873684,
+          "width": 254.78125,
+          "height": 100.71473862799999
+        }
+      },
+      {
+        "id": "registration-1ede2921e3f8d2d4b612aea6",
+        "role": "internal",
+        "group": "直接关联对象",
+        "instance": "object-1c0bc2f73463f19b--n1",
+        "mermaidId": "n1",
+        "visualType": "system",
+        "shape": "rounded",
+        "displayLabel": "bevy_ui_render::box_shadow::prepare_shadows\n生成并上传 UI 阴影的裁剪几何。",
+        "nameLabel": "bevy_ui_render::box_shadow::prepare_shadows",
+        "contextLabel": [
+          "生成并上传 UI 阴影的裁剪几何。"
+        ],
+        "position": {
+          "x": 7.999999999749974,
+          "y": 7.999998092181642,
+          "width": 285.510742188,
+          "height": 81.799999238
+        }
+      },
+      {
+        "id": "registration-5a33d708e3c7874abc7ac1f2",
+        "role": "external",
+        "group": "直接关联对象",
+        "instance": "object-1c0bc2f73463f19b--n2",
+        "mermaidId": "n2",
+        "visualType": "system",
+        "shape": "rounded",
+        "displayLabel": "bevy_render::init_gpu_resource<bevy_ui_render::box_shadow::BoxShadowMeta>\n来自crate:bevy_render ↗：构造并插入渲染所需资源。",
+        "nameLabel": "bevy_render::init_gpu_resource<bevy_ui_render::box_shadow::BoxShadowMeta>",
+        "contextLabel": [
+          "来自crate:bevy_render ↗：构造并插入渲染所需资源。"
+        ],
+        "position": {
+          "x": 8.560546874750003,
+          "y": 105.79999542212107,
+          "width": 284.389648438,
+          "height": 112.60000610400004
+        }
+      }
+    ],
+    "links": [
+      {
+        "evidence": "parameter",
+        "from": "registration-1ede2921e3f8d2d4b612aea6",
+        "id": "relation-51343f997957ac6ce41d4a5d",
+        "kind": "write",
+        "label": "可变访问",
+        "parameter": "ui_meta",
+        "scope": "current",
+        "sourceEntries": [
+          {
+            "column": 5,
+            "dependency": {
+              "name": "bevy_ui_render",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_ui_render-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [],
+            "label": "参数位置",
+            "line": 471,
+            "path": "src/box_shadow.rs",
+            "role": "parameter",
+            "sha256": "2ccaa144f54a62257dd3eeb88d957d3ea8d8b80197af02f2cc21df13f5e74fd3"
+          }
+        ],
+        "sourceGaps": [],
+        "to": "type-02ee09673f25d648797ed121",
+        "factKind": "mutable_access",
+        "operation": "mutable_access",
+        "mermaidId": "e0",
+        "edgeSemantic": "write",
+        "displayLabel": "可变访问"
+      },
+      {
+        "bodyOperations": [
+          {
+            "callChain": [],
+            "callChainScope": "representative-static-path",
+            "callableId": "callable-7059a1ac6fa22282e7ebf657fbeaada81133fb9063d182e1680292e3de0d9830",
+            "conditions": [
+              {
+                "column": 8,
+                "dependency": {
+                  "name": "bevy_ui_render",
+                  "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_ui_render-0.20.0",
+                  "version": "0.20.0"
+                },
+                "expansions": [],
+                "expression": "let Some(view_binding) = view_uniforms.uniforms.binding()",
+                "guardKind": "condition",
+                "label": "操作位置",
+                "line": 478,
+                "path": "src/box_shadow.rs",
+                "role": "operation",
+                "sha256": "2ccaa144f54a62257dd3eeb88d957d3ea8d8b80197af02f2cc21df13f5e74fd3"
+              }
+            ],
+            "deferred": false,
+            "operationId": "operation-96e867d3b2c1483fc9a2ff0b0ab565d2dd3b411614193770e56e21fde5cbbd53",
+            "registeredOwner": "registration-1ede2921e3f8d2d4b612aea6",
+            "scope": "typed-value"
+          }
+        ],
+        "evidence": "body",
+        "from": "registration-1ede2921e3f8d2d4b612aea6",
+        "id": "relation-d530f07341e2907c52555552",
+        "kind": "write",
+        "label": "赋值",
+        "sourceEntries": [
+          {
+            "column": 9,
+            "dependency": {
+              "name": "bevy_ui_render",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_ui_render-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [],
+            "label": "操作位置",
+            "line": 483,
+            "path": "src/box_shadow.rs",
+            "role": "operation",
+            "sha256": "2ccaa144f54a62257dd3eeb88d957d3ea8d8b80197af02f2cc21df13f5e74fd3"
+          },
+          {
+            "column": 8,
+            "dependency": {
+              "name": "bevy_ui_render",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_ui_render-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [],
+            "expression": "let Some(view_binding) = view_uniforms.uniforms.binding()",
+            "guardKind": "condition",
+            "label": "操作位置",
+            "line": 478,
+            "path": "src/box_shadow.rs",
+            "role": "operation",
+            "sha256": "2ccaa144f54a62257dd3eeb88d957d3ea8d8b80197af02f2cc21df13f5e74fd3"
+          }
+        ],
+        "sourceGaps": [],
+        "to": "type-02ee09673f25d648797ed121",
+        "factKind": "modify",
+        "operation": "modify",
+        "mermaidId": "e1",
+        "edgeSemantic": "write",
+        "displayLabel": "赋值"
+      },
+      {
+        "bodyOperations": [
+          {
+            "callChain": [],
+            "callChainScope": "representative-static-path",
+            "callableId": "callable-125c6a552d5d6f06ab09395a84cca25f7ccab583f1718d95c244408acafd757b",
+            "conditions": [],
+            "deferred": false,
+            "operationId": "operation-d15ba73263146dc7a5ae0645cdc5b3112acba421689143a4e161f8c03f759bb7",
+            "registeredOwner": "registration-5a33d708e3c7874abc7ac1f2",
+            "scope": "current"
+          }
+        ],
+        "evidence": "body",
+        "from": "registration-5a33d708e3c7874abc7ac1f2",
+        "id": "relation-e847e6ae12e17457cd8ef395",
+        "kind": "write",
+        "label": "插入",
+        "sourceEntries": [
+          {
+            "column": 5,
+            "dependency": {
+              "name": "bevy_render",
+              "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_render-0.20.0",
+              "version": "0.20.0"
+            },
+            "expansions": [],
+            "label": "操作位置",
+            "line": 251,
+            "path": "src/lib.rs",
+            "role": "operation",
+            "sha256": "9ec265c9880cd93cdb5ade10689b815970640ead5971d399b3338ad825d080ee"
+          }
+        ],
+        "sourceGaps": [],
+        "to": "type-02ee09673f25d648797ed121",
+        "factKind": "insert",
+        "operation": "insert",
+        "mermaidId": "e2",
+        "edgeSemantic": "write",
+        "displayLabel": "插入"
+      }
+    ],
+    "scheduleLinks": [],
+    "layoutLinks": [],
+    "scheduleGroups": [],
+    "observerBranches": [],
+    "entityGroups": [],
+    "sections": [
+      {
+        "label": "当前对象",
+        "x": 401.5107421875,
+        "y": 33.64262877873684
+      },
+      {
+        "label": "直接关联对象",
+        "x": 7.999999999749974,
+        "y": 7.999998092181642
+      }
+    ],
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 664.2919921875,
+      "height": 226.40000915527344
+    },
+    "routing": {
+      "rule": "axis-or-curve"
+    },
+    "mermaid": "---\n{\n  \"config\": {\n    \"theme\": \"base\",\n    \"look\": \"classic\",\n    \"layout\": \"dagre\",\n    \"maxTextSize\": 200000,\n    \"htmlLabels\": false,\n    \"fontFamily\": \"Segoe UI, Microsoft YaHei, sans-serif\",\n    \"themeVariables\": {\n      \"primaryTextColor\": \"#1F3340\",\n      \"lineColor\": \"#64748B\",\n      \"clusterBkg\": \"#F8FAFC\",\n      \"clusterBorder\": \"#DDE4ED\",\n      \"edgeLabelBackground\": \"#FFFFFF\",\n      \"fontSize\": \"14px\"\n    },\n    \"flowchart\": {\n      \"htmlLabels\": false,\n      \"nodeSpacing\": 16,\n      \"rankSpacing\": 48,\n      \"padding\": 16,\n      \"wrappingWidth\": 280,\n      \"minNodeWidth\": 180,\n      \"useMaxWidth\": false,\n      \"curve\": \"linear\"\n    }\n  }\n}\n---\nflowchart LR\n  accTitle: box_shadow::BoxShadowMeta · 对象关系\n  accDescr: 当前对象及全部直接关联对象。\n  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。\n  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340\n  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340\n  classDef edge_write stroke:#2F7161,stroke-width:1.8px\n  classDef external_node stroke-dasharray:6 4\n  n0@{ shape: cyl, label: \"**box​_​shadow::BoxShadowMeta**<br/>保存 UI 阴影的 GPU 几何与视图绑定。\" }\n  class n0 node_resource\n  n1@{ shape: rounded, label: \"**bevy​_​ui​_​render::box​_​shadow::prepare​_​**<br/>**shadows**<br/>生成并上传 UI 阴影的裁剪几何。\" }\n  class n1 node_system\n  n2@{ shape: rounded, label: \"**bevy​_​render::init​_​gpu​_​resource#lt;bevy​_​**<br/>**ui​_​render::box​_​shadow::**<br/>**BoxShadowMeta#gt;**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。\" }\n  class n2 node_system\n  class n2 external_node\n  n1 e0@-->|\"可变访问\"| n0\n  class e0 edge_write\n  n1 e1@-->|\"赋值\"| n0\n  class e1 edge_write\n  n2 e2@-->|\"插入\"| n0\n  class e2 edge_write\n  e0@{ curve: basis }\n  e1@{ curve: basis }\n  e2@{ curve: basis }\n"
+  },
+  "registry": {
+    "type-02ee09673f25d648797ed121": {
+      "declarationId": "decl-d02fb36e74f4bbc36a32efaa04f6d62ecfd5febe1e745ca5e257f582cf18b2a0",
+      "description": "维护阴影顶点、索引缓冲和可选视图绑定组，阴影准备阶段写入裁剪后的四边形及参数供 GPU 绘制。",
+      "display_summary": "保存 UI 阴影的 GPU 几何与视图绑定。",
+      "feature": "crate:bevy_ui_render",
+      "fullName": "box_shadow::BoxShadowMeta",
+      "id": "type-02ee09673f25d648797ed121",
+      "kind": "Resource",
+      "name": "box_shadow::BoxShadowMeta",
+      "rust_type": "box_shadow::BoxShadowMeta",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_ui_render",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_ui_render-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 92,
+          "path": "src/box_shadow.rs",
+          "role": "definition",
+          "sha256": "2ccaa144f54a62257dd3eeb88d957d3ea8d8b80197af02f2cc21df13f5e74fd3"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_ui_render",
+        "declarationId": "decl-d02fb36e74f4bbc36a32efaa04f6d62ecfd5febe1e745ca5e257f582cf18b2a0",
+        "defPath": "bevy_ui_render::box_shadow::BoxShadowMeta",
+        "local": true,
+        "package": {
+          "name": "bevy_ui_render",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "Bundle",
+          "Component",
+          "Resource"
+        ]
+      },
+      "typeInstanceId": "type-c8c310e71c6b5604d61cd556b44f36b4452ec3631e1cd0f0a95441ea8477677d"
+    },
+    "registration-1ede2921e3f8d2d4b612aea6": {
+      "callableIds": [
+        "callable-7059a1ac6fa22282e7ebf657fbeaada81133fb9063d182e1680292e3de0d9830"
+      ],
+      "description": "为已排队的 UI 阴影生成经过裁剪的四边形顶点、索引和阴影参数，为每项记录对应相机及绘制区间，建立绑定组并上传本帧阴影几何。",
+      "display_summary": "生成并上传 UI 阴影的裁剪几何。",
+      "feature": "crate:bevy_ui_render",
+      "id": "registration-1ede2921e3f8d2d4b612aea6",
+      "kind": "System",
+      "name": "bevy_ui_render::box_shadow::prepare_shadows",
+      "registrations": [
+        {
+          "application": "RenderApp",
+          "schedule": "Render",
+          "scope": "runtime"
+        }
+      ],
+      "runConditions": [],
+      "runtimeTypeId": "TypeId(0x09a2f45189fa4722f529f0ebde529daf)",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_ui_render",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_ui_render-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 466,
+          "path": "src/box_shadow.rs",
+          "role": "definition",
+          "sha256": "2ccaa144f54a62257dd3eeb88d957d3ea8d8b80197af02f2cc21df13f5e74fd3"
+        },
+        {
+          "column": 13,
+          "dependency": {
+            "name": "bevy_ui_render",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_ui_render-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "注册位置",
+          "line": 51,
+          "path": "src/box_shadow.rs",
+          "role": "registration",
+          "sha256": "2ccaa144f54a62257dd3eeb88d957d3ea8d8b80197af02f2cc21df13f5e74fd3"
+        }
+      ],
+      "sourceGaps": [
+        "参数 commands.0.0 的 bevy_ecs::system::system_param::Deferred 需要其 SystemParam/WorldQuery 实现证据，未从存储字段猜测访问。",
+        "该赋值证明了组件或资源类型的值被写入，但尚未证明该值来自 ECS World 存储。"
+      ],
+      "worldAccessScope": "finite"
+    },
+    "registration-5a33d708e3c7874abc7ac1f2": {
+      "callableIds": [
+        "callable-125c6a552d5d6f06ab09395a84cca25f7ccab583f1718d95c244408acafd757b"
+      ],
+      "description": "根据当前世界状态构造并插入指定渲染资源，供渲染启动或 GPU 资源重建阶段使用。",
+      "display_summary": "构造并插入渲染所需资源。",
+      "feature": "crate:bevy_render",
+      "id": "registration-5a33d708e3c7874abc7ac1f2",
+      "kind": "System",
+      "name": "bevy_render::init_gpu_resource<bevy_ui_render::box_shadow::BoxShadowMeta>",
+      "registrations": [
+        {
+          "application": "RenderApp",
+          "schedule": "RenderStartup",
+          "scope": "runtime"
+        }
+      ],
+      "runConditions": [],
+      "runtimeTypeId": "TypeId(0x29899bc7b126c6f9eec32d9e23c0f293)",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_render",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_render-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 249,
+          "path": "src/lib.rs",
+          "role": "definition",
+          "sha256": "9ec265c9880cd93cdb5ade10689b815970640ead5971d399b3338ad825d080ee"
+        }
+      ],
+      "sourceGaps": [
+        "该系统可以访问当前 World 的任意数据；有限访问列表不构成完整边界。",
+        "rustc 将调用解析为 Virtual：真实实现由运行时虚表选择，没有可查询的实例 MIR。",
+        "动态调用的目标未能唯一解析，未推断其副作用。"
+      ],
+      "worldAccessScope": "exclusive"
+    }
+  },
+  "features": [
+    {
+      "id": "application",
+      "label": "应用",
+      "overviewNode": "app-main",
+      "plugin": "App"
+    },
+    {
+      "id": "audio",
+      "label": "audio",
+      "overviewNode": "type-fe229a335a2015d415bcde34",
+      "plugin": "GameAudioPlugin"
+    },
+    {
+      "id": "bounds_recovery",
+      "label": "bounds_recovery",
+      "overviewNode": "type-e220f6d8bbdc8e0b1d7ae14a",
+      "plugin": "BoundsRecoveryPlugin"
+    },
+    {
+      "id": "character",
+      "label": "character",
+      "overviewNode": "type-9f5e74b8983d1d371785d7d4",
+      "plugin": "CharacterPlugin"
+    },
+    {
+      "id": "character_animation",
+      "label": "character_animation",
+      "overviewNode": "type-e43174d6ec174b267c2337bf",
+      "plugin": "CharacterAnimationPlugin"
+    },
+    {
+      "id": "crate:avian3d",
+      "label": "crate:avian3d",
+      "overviewNode": "type-e1f78f7742625bcf6867b1f9",
+      "plugin": "ColliderMarker>"
+    },
+    {
+      "id": "crate:bevy_a11y",
+      "label": "crate:bevy_a11y",
+      "overviewNode": "type-22ee1e99c1ee816d24eb559a",
+      "plugin": "AccessibilityPlugin"
+    },
+    {
+      "id": "crate:bevy_animation",
+      "label": "crate:bevy_animation",
+      "overviewNode": "type-b2001902f869411ec71bb886",
+      "plugin": "AnimationPlugin"
+    },
+    {
+      "id": "crate:bevy_anti_alias",
+      "label": "crate:bevy_anti_alias",
+      "overviewNode": "type-f0db80cec426910a806c6453",
+      "plugin": "SmaaPlugin"
+    },
+    {
+      "id": "crate:bevy_app",
+      "label": "crate:bevy_app",
+      "overviewNode": "type-3c832dc62a28243b1b249584",
+      "plugin": "ComputedUiTargetCamera>"
+    },
+    {
+      "id": "crate:bevy_asset",
+      "label": "crate:bevy_asset",
+      "overviewNode": "type-e6f0dc60b6bc4a56a44b9159",
+      "plugin": "AssetPlugin"
+    },
+    {
+      "id": "crate:bevy_audio",
+      "label": "crate:bevy_audio",
+      "overviewNode": "type-8bdf1e09991c3ce42cf0fb0c",
+      "plugin": "AudioPlugin"
+    },
+    {
+      "id": "crate:bevy_camera",
+      "label": "crate:bevy_camera",
+      "overviewNode": "type-90bcc0c83535ea3d4c560608",
+      "plugin": "VisibilityRangePlugin"
+    },
+    {
+      "id": "crate:bevy_clipboard",
+      "label": "crate:bevy_clipboard",
+      "overviewNode": "type-e05fa32f80a2267a475d9bc4",
+      "plugin": "ClipboardPlugin"
+    },
+    {
+      "id": "crate:bevy_core_pipeline",
+      "label": "crate:bevy_core_pipeline",
+      "overviewNode": "type-9d8e3b8159fb4343abe80616",
+      "plugin": "BackgroundMotionVectorsPlugin"
+    },
+    {
+      "id": "crate:bevy_diagnostic",
+      "label": "crate:bevy_diagnostic",
+      "overviewNode": "type-e162c73e9cad776da185cda6",
+      "plugin": "FrameTimeDiagnosticsPlugin"
+    },
+    {
+      "id": "crate:bevy_ecs",
+      "label": "crate:bevy_ecs",
+      "plugin": "crate:bevy_ecs"
+    },
+    {
+      "id": "crate:bevy_egui",
+      "label": "crate:bevy_egui",
+      "overviewNode": "type-ab928111e76a303dd17c8389",
+      "plugin": "EguiPlugin"
+    },
+    {
+      "id": "crate:bevy_enhanced_input",
+      "label": "crate:bevy_enhanced_input",
+      "overviewNode": "type-62e22a92ceec500a5a4d2a72",
+      "plugin": "EnhancedInputPlugin"
+    },
+    {
+      "id": "crate:bevy_extract",
+      "label": "crate:bevy_extract",
+      "overviewNode": "type-e8ed9c4f64eb29b2745793df",
+      "plugin": "RenderApp>"
+    },
+    {
+      "id": "crate:bevy_gilrs",
+      "label": "crate:bevy_gilrs",
+      "overviewNode": "type-b687ccddb78f4a878d4cc87b",
+      "plugin": "GilrsPlugin"
+    },
+    {
+      "id": "crate:bevy_gizmos",
+      "label": "crate:bevy_gizmos",
+      "overviewNode": "type-3fe51096c146b1003d83a5b5",
+      "plugin": "GizmoPlugin"
+    },
+    {
+      "id": "crate:bevy_gizmos_render",
+      "label": "crate:bevy_gizmos_render",
+      "overviewNode": "type-8a75a7b64a54e8b89b045f34",
+      "plugin": "GizmoRenderPlugin"
+    },
+    {
+      "id": "crate:bevy_gltf",
+      "label": "crate:bevy_gltf",
+      "overviewNode": "type-94db0d79bb45ec2d3f6c0809",
+      "plugin": "GltfPlugin"
+    },
+    {
+      "id": "crate:bevy_image",
+      "label": "crate:bevy_image",
+      "overviewNode": "type-b75aba73cc0b95f64e544ab0",
+      "plugin": "ImagePlugin"
+    },
+    {
+      "id": "crate:bevy_input",
+      "label": "crate:bevy_input",
+      "overviewNode": "type-0f3cbe3071e81cb4b7fc88ac",
+      "plugin": "InputPlugin"
+    },
+    {
+      "id": "crate:bevy_input_focus",
+      "label": "crate:bevy_input_focus",
+      "overviewNode": "type-b07d192a12345efaa81d9f96",
+      "plugin": "InputDispatchPlugin"
+    },
+    {
+      "id": "crate:bevy_inspector_egui",
+      "label": "crate:bevy_inspector_egui",
+      "overviewNode": "type-5a62384792aace058b6ced15",
+      "plugin": "WorldInspectorPlugin"
+    },
+    {
+      "id": "crate:bevy_internal",
+      "label": "crate:bevy_internal",
+      "overviewNode": "type-837805a25d3cbae280841076",
+      "plugin": "DefaultPlugins"
+    },
+    {
+      "id": "crate:bevy_kira_audio",
+      "label": "crate:bevy_kira_audio",
+      "overviewNode": "type-3c62dedb30f4bdad4a66352d",
+      "plugin": "AudioPlugin"
+    },
+    {
+      "id": "crate:bevy_light",
+      "label": "crate:bevy_light",
+      "overviewNode": "type-41cefcf3937caa6117604f94",
+      "plugin": "LightPlugin"
+    },
+    {
+      "id": "crate:bevy_log",
+      "label": "crate:bevy_log",
+      "overviewNode": "type-4ff7bfbe87b12d4aa389d9fa",
+      "plugin": "LogPlugin"
+    },
+    {
+      "id": "crate:bevy_mesh",
+      "label": "crate:bevy_mesh",
+      "overviewNode": "type-8e1e18c2f6d00a474d464092",
+      "plugin": "MeshPlugin"
+    },
+    {
+      "id": "crate:bevy_pbr",
+      "label": "crate:bevy_pbr",
+      "overviewNode": "type-959b53082c7bc9a301fe4157",
+      "plugin": "StandardMaterial>"
+    },
+    {
+      "id": "crate:bevy_picking",
+      "label": "crate:bevy_picking",
+      "overviewNode": "type-2a3b2071f64752680be25438",
+      "plugin": "PointerInputPlugin"
+    },
+    {
+      "id": "crate:bevy_post_process",
+      "label": "crate:bevy_post_process",
+      "overviewNode": "type-68c453138f551e5cc16ef724",
+      "plugin": "BloomPlugin"
+    },
+    {
+      "id": "crate:bevy_render",
+      "label": "crate:bevy_render",
+      "overviewNode": "type-e81d73accac27d34c20515d5",
+      "plugin": "MeshPipeline>"
+    },
+    {
+      "id": "crate:bevy_scene",
+      "label": "crate:bevy_scene",
+      "overviewNode": "type-ab99562873650edff4f7a7ad",
+      "plugin": "ScenePlugin"
+    },
+    {
+      "id": "crate:bevy_sprite",
+      "label": "crate:bevy_sprite",
+      "overviewNode": "type-c6073d0b69d4c0131195f4ed",
+      "plugin": "SpritePickingPlugin"
+    },
+    {
+      "id": "crate:bevy_sprite_render",
+      "label": "crate:bevy_sprite_render",
+      "overviewNode": "type-817fca1c4fec38573a232b60",
+      "plugin": "TilemapChunkMaterial>"
+    },
+    {
+      "id": "crate:bevy_state",
+      "label": "crate:bevy_state",
+      "overviewNode": "type-c9143a45ad14f59f1668d79f",
+      "plugin": "StatesPlugin"
+    },
+    {
+      "id": "crate:bevy_text",
+      "label": "crate:bevy_text",
+      "overviewNode": "type-ee55c938b1ae5ae3e26f619b",
+      "plugin": "TextPlugin"
+    },
+    {
+      "id": "crate:bevy_time",
+      "label": "crate:bevy_time",
+      "overviewNode": "type-7ab246f00fc33293be63c1c6",
+      "plugin": "TimePlugin"
+    },
+    {
+      "id": "crate:bevy_transform",
+      "label": "crate:bevy_transform",
+      "overviewNode": "type-c79ba41df6e9f442672a3a82",
+      "plugin": "TransformPlugin"
+    },
+    {
+      "id": "crate:bevy_transform_interpolation",
+      "label": "crate:bevy_transform_interpolation",
+      "overviewNode": "type-ce443f3ee5a407a84023eecf",
+      "plugin": "AngVelSource>"
+    },
+    {
+      "id": "crate:bevy_ui",
+      "label": "crate:bevy_ui",
+      "overviewNode": "type-56b2dd3a1ec8e60d9354baf5",
+      "plugin": "UiPlugin"
+    },
+    {
+      "id": "crate:bevy_ui_render",
+      "label": "crate:bevy_ui_render",
+      "overviewNode": "type-b2f783f6f9e01edfa952fcb6",
+      "plugin": "BoxShadowPlugin"
+    },
+    {
+      "id": "crate:bevy_ui_widgets",
+      "label": "crate:bevy_ui_widgets",
+      "overviewNode": "type-1be226c39330b0b448161bc4",
+      "plugin": "SliderPlugin"
+    },
+    {
+      "id": "crate:bevy_window",
+      "label": "crate:bevy_window",
+      "overviewNode": "type-a12d9b629f9c1b38f75be7b3",
+      "plugin": "WindowPlugin"
+    },
+    {
+      "id": "crate:bevy_winit",
+      "label": "crate:bevy_winit",
+      "overviewNode": "type-e65f084be10a29e4bc0df422",
+      "plugin": "WinitCursorPlugin"
+    },
+    {
+      "id": "crate:bevy_world_serialization",
+      "label": "crate:bevy_world_serialization",
+      "overviewNode": "type-082d0046f2578e94b72ff4ba",
+      "plugin": "WorldSerializationPlugin"
+    },
+    {
+      "id": "first_person",
+      "label": "first_person",
+      "overviewNode": "type-964734928575643b82287fc0",
+      "plugin": "FirstPersonPlugin"
+    },
+    {
+      "id": "game_flow",
+      "label": "game_flow",
+      "overviewNode": "type-23e5447be5bafd77df069a32",
+      "plugin": "GameFlowPlugin"
+    },
+    {
+      "id": "inspector",
+      "label": "inspector",
+      "overviewNode": "type-10d9c47e7bc755be7d9f37ce",
+      "plugin": "InspectorPlugin"
+    },
+    {
+      "id": "item_interaction",
+      "label": "item_interaction",
+      "overviewNode": "type-10c230d9d29f3fcd30e1055e",
+      "plugin": "ItemInteractionPlugin"
+    },
+    {
+      "id": "physics",
+      "label": "physics",
+      "overviewNode": "type-dd8b0aace3f0f286a144a5b4",
+      "plugin": "GamePhysicsPlugin"
+    },
+    {
+      "id": "scene_assembly",
+      "label": "scene_assembly",
+      "overviewNode": "type-7091fb1f981c5f2146521243",
+      "plugin": "SceneAssemblyPlugin"
+    },
+    {
+      "id": "session_log",
+      "label": "session_log",
+      "overviewNode": "type-4cdfbe7d190589dd4fd10225",
+      "plugin": "SessionLogPlugin"
+    },
+    {
+      "id": "settings",
+      "label": "settings",
+      "overviewNode": "type-4c0d11e778a577e7c8b74571",
+      "plugin": "SettingsPlugin"
+    },
+    {
+      "id": "ui",
+      "label": "ui",
+      "overviewNode": "type-9fc51c6cece34beca8c15afe",
+      "plugin": "GameUiPlugin"
+    },
+    {
+      "id": "window_policy",
+      "label": "window_policy",
+      "overviewNode": "type-cb22dafa5d6af09497c5dd40",
+      "plugin": "WindowPolicyPlugin"
+    }
+  ]
+}

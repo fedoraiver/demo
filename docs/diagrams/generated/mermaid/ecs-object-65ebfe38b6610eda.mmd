@@ -1,0 +1,97 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: directional_light::DirectionalLight · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**DirectionalLight**<br/>配置平行方向光的颜色、照度和阴影。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>计算方向光各相机级联可见的投影网格。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**update​_​directional​_​light​_​frusta**<br/>从方向光级联投影更新阴影视锥。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**extract​_​lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**draw​_​all​_​lights**<br/>按配置颜色模式绘制全部灯光调试图形。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>计算点光与聚光灯阴影可见的网格。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：照亮主菜单海岛展示舞台。" }
+  class n6 node_entity
+  class n6 external_node
+  n7@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：为玩法海岛提供<br/>随会话清理的日光照明。" }
+  class n7 node_entity
+  class n7 external_node
+  n8@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**draw​_​lights**<br/>为显式标记的各类光源绘制调试轮廓。" }
+  class n9 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@-->|"存在性约束"| n1
+  class e1 edge_reference
+  n0 e2@--> n2
+  class e2 edge_read
+  n0 e3@-->|"存在性约束"| n3
+  class e3 edge_reference
+  n0 e4@--> n4
+  class e4 edge_read
+  n0 e5@--> n3
+  class e5 edge_read
+  n0 e6@-->|"存在性约束"| n5
+  class e6 edge_reference
+  n6 e7@-->|"可能包含"| n0
+  class e7 edge_reference
+  n7 e8@-->|"可能包含"| n0
+  class e8 edge_reference
+  n0 e9@--> n8
+  class e9 edge_read
+  n0 e10@--> n9
+  class e10 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

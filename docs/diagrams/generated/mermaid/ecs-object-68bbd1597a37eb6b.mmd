@@ -1,0 +1,233 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: dynamics::solver::solver_body::SolverBodies · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**writeback​_​solver​_​bodies**<br/>将求解后的位姿和速度回写 ECS。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**warm​_​start**<br/>用历史接触冲量初始化本轮约束求解。" }
+  class n2 node_system
+  n3@{ shape: hex, label: "**build::{closure#35;3}**<br/>清除已移除刚体的求解缓存。" }
+  class n3 node_observer
+  n4@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
+  class n4 node_system
+  n5@{ shape: hex, label: "**build::{closure#35;3}**<br/>清除已移除刚体的求解缓存。" }
+  class n5 node_observer
+  n6@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
+  class n6 node_system
+  n7@{ shape: hex, label: "**build::{closure#35;4}**<br/>清除禁用或休眠刚体的求解缓存。" }
+  class n7 node_observer
+  n8@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  class n8 node_observer
+  n9@{ shape: rounded, label: "**integrate​_​positions**<br/>按子步速度积分刚体位姿增量。" }
+  class n9 node_system
+  n10@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  class n10 node_observer
+  n11@{ shape: rounded, label: "**solve​_​contacts**<br/>迭代接触冲量以处理穿透与相对速度。" }
+  class n11 node_system
+  n12@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  class n12 node_observer
+  n13@{ shape: rounded, label: "**solve​_​contacts**<br/>迭代接触冲量以处理穿透与相对速度。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**solve​_​restitution**<br/>对接触刚体施加碰撞恢复冲量。" }
+  class n14 node_system
+  n15@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  class n15 node_observer
+  n16@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
+  class n16 node_system
+  n17@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
+  class n17 node_system
+  n18@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  class n18 node_observer
+  n19@{ shape: rounded, label: "**clamp​_​velocities**<br/>按线速度和角速度上限约束求解器刚体。" }
+  class n19 node_system
+  n20@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  class n20 node_observer
+  n21@{ shape: rounded, label: "**update​_​solver​_​body​_​angular​_​inertia**<br/>按当前朝向刷新求解器的有效逆惯量。" }
+  class n21 node_system
+  n22@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  class n22 node_observer
+  n23@{ shape: rounded, label: "**prepare​_​solver​_​bodies**<br/>把 ECS 刚体状态准备成子步求解数据。" }
+  class n23 node_system
+  n24@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
+  class n24 node_system
+  n25@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  class n25 node_observer
+  n26@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
+  class n27 node_system
+  n28@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  class n28 node_observer
+  n29@{ shape: rounded, label: "**apply​_​constant​_​torques**<br/>按求解器有效惯量换算世界恒定扭矩。" }
+  class n29 node_system
+  n30@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  class n30 node_observer
+  n31@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  class n31 node_observer
+  n32@{ shape: hex, label: "**build::{closure#35;4}**<br/>清除禁用或休眠刚体的求解缓存。" }
+  class n32 node_observer
+  n33@{ shape: hex, label: "**build::{closure#35;3}**<br/>清除已移除刚体的求解缓存。" }
+  class n33 node_observer
+  n34@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
+  class n34 node_system
+  n35@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  class n35 node_observer
+  n36@{ shape: rounded, label: "**apply​_​local​_​acceleration**<br/>在子步中把局部加速度作用到世界速度。" }
+  class n36 node_system
+  n37@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
+  class n37 node_system
+  n38@{ shape: hex, label: "**build::{closure#35;4}**<br/>清除禁用或休眠刚体的求解缓存。" }
+  class n38 node_observer
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  n5 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  n6 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n7 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n8 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n9 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  n10 e9@-->|"可变访问"| n0
+  class e9 edge_write
+  n11 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n12 e11@-->|"可变访问"| n0
+  class e11 edge_write
+  n13 e12@-->|"可变访问"| n0
+  class e12 edge_write
+  n14 e13@-->|"可变访问"| n0
+  class e13 edge_write
+  n15 e14@-->|"可变访问"| n0
+  class e14 edge_write
+  n16 e15@-->|"可变访问"| n0
+  class e15 edge_write
+  n17 e16@-->|"可变访问"| n0
+  class e16 edge_write
+  n18 e17@-->|"可变访问"| n0
+  class e17 edge_write
+  n19 e18@-->|"可变访问"| n0
+  class e18 edge_write
+  n20 e19@-->|"可变访问"| n0
+  class e19 edge_write
+  n21 e20@-->|"可变访问"| n0
+  class e20 edge_write
+  n22 e21@-->|"可变访问"| n0
+  class e21 edge_write
+  n23 e22@-->|"可变访问"| n0
+  class e22 edge_write
+  n24 e23@-->|"可变访问"| n0
+  class e23 edge_write
+  n25 e24@-->|"可变访问"| n0
+  class e24 edge_write
+  n0 e25@--> n26
+  class e25 edge_read
+  n27 e26@-->|"可变访问"| n0
+  class e26 edge_write
+  n28 e27@-->|"可变访问"| n0
+  class e27 edge_write
+  n0 e28@--> n29
+  class e28 edge_read
+  n30 e29@-->|"可变访问"| n0
+  class e29 edge_write
+  n31 e30@-->|"可变访问"| n0
+  class e30 edge_write
+  n32 e31@-->|"可变访问"| n0
+  class e31 edge_write
+  n33 e32@-->|"可变访问"| n0
+  class e32 edge_write
+  n34 e33@-->|"可变访问"| n0
+  class e33 edge_write
+  n35 e34@-->|"可变访问"| n0
+  class e34 edge_write
+  n36 e35@-->|"可变访问"| n0
+  class e35 edge_write
+  n37 e36@-->|"可变访问"| n0
+  class e36 edge_write
+  n38 e37@-->|"可变访问"| n0
+  class e37 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }

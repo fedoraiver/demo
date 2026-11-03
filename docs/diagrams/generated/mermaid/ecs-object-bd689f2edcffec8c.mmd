@@ -1,0 +1,64 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ecs::message::Messages#lt;touch::TouchInput#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**Messages#lt;TouchInput#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：把窗口触摸转换<br/>为 Egui 指针和触摸事件。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**deactivate​_​touch​_​pointers**<br/>来自crate:bevy​_​picking ↗：销毁已经结<br/>束或取消的触摸指针。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**touch​_​screen​_​input​_​system**<br/>来自crate:bevy​_​input ↗：维护持续触点<br/>与本帧触摸边沿。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**write​_​non​_​window​_​touch​_​messages​_​**<br/>**system**<br/>来自crate:bevy​_​egui ↗：向聚焦的非窗<br/>口 Egui 界面传递触摸。" }
+  class n4 node_system
+  class n4 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }

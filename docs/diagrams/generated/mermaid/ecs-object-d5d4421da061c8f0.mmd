@@ -1,0 +1,146 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-d5d4421da061c8f0-e2{marker-start:url(#object-d5d4421da061c8f0_flowchart-v2-pointStart)!important}\n#object-d5d4421da061c8f0-e5{marker-start:url(#object-d5d4421da061c8f0_flowchart-v2-pointStart)!important}\n#object-d5d4421da061c8f0-e15{marker-start:url(#object-d5d4421da061c8f0_flowchart-v2-pointStart)!important}\n#object-d5d4421da061c8f0-e20{marker-start:url(#object-d5d4421da061c8f0_flowchart-v2-pointStart)!important}\n#object-d5d4421da061c8f0_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_render::view::window::extract_windows · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**extract​_​windows**<br/>向渲染世界同步窗口配置与原生句柄。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: lean-r, label: "**WindowClosing**<br/>来自crate:bevy​_​window ↗：通知窗口正在<br/>关闭。" }
+  class n2 node_message
+  class n2 external_node
+  n3@{ shape: rounded, label: "**RawHandleWrapper**<br/>来自crate:bevy​_​window ↗：持有原始窗口<br/>及显示服务器句柄" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  class n4 node_system
+  n5@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: notch-rect, label: "**Local · removed.0.0.0.0.0**<br/>保存 RawHandleWrapper 移除参数的组件<br/>ID。" }
+  class n7 node_local
+  n8@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
+  class n8 node_component
+  n9@{ shape: notch-rect, label: "**Local · removed​_​primary.0.0.0.0.0**<br/>保存 PrimaryWindow 移除参数的组件 ID。" }
+  class n9 node_local
+  n10@{ shape: notch-rect, label: "**Local · removed​_​primary.0.0.1**<br/>跟踪 PrimaryWindow 移除记录的读取进<br/>度。" }
+  class n10 node_local
+  n11@{ shape: rounded, label: "**ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
+  class n11 node_component
+  n12@{ shape: fr-rect, label: "**WindowRenderPlugin**<br/>同步窗口并准备渲染表面。" }
+  class n12 node_plugin
+  n13@{ shape: notch-rect, label: "**Local · removed.0.0.1**<br/>跟踪 RawHandleWrapper 移除记录的读取进<br/>度。" }
+  class n13 node_local
+  n14@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  class n14 node_component
+  class n14 external_node
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@--> n0
+  class e1 edge_consume
+  n3 e2@---|"移除"| n0
+  class e2 edge_write
+  n0 e3@-->|"先于"| n4
+  class e3 edge_order
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@---|"移除"| n0
+  class e5 edge_write
+  n0 e6@-->|"可变访问"| n7
+  class e6 edge_write
+  n0 e7@-->|"移除"| n8
+  class e7 edge_write
+  n0 e8@-->|"可变访问"| n9
+  class e8 edge_write
+  n0 e9@-->|"可变访问"| n10
+  class e9 edge_write
+  n0 e10@-->|"可变访问"| n11
+  class e10 edge_write
+  n12 e11@-->|"调用"| n0
+  class e11 edge_registration
+  n0 e12@-->|"可变访问"| n13
+  class e12 edge_write
+  n0 e13@-->|"赋值"| n11
+  class e13 edge_write
+  n3 e14@--> n0
+  class e14 edge_read
+  n6 e15@---|"插入"| n0
+  class e15 edge_write
+  n0 e16@-->|"移除"| n11
+  class e16 edge_write
+  n0 e17@-->|"插入"| n11
+  class e17 edge_write
+  n14 e18@--> n0
+  class e18 edge_read
+  n6 e19@-->|"存在性约束"| n0
+  class e19 edge_reference
+  n3 e20@---|"插入"| n0
+  class e20 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: bumpY }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }

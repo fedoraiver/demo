@@ -1,0 +1,406 @@
+{
+  "sourceModelSha256": "4456d3f5b8def6357d2c3bd302e5e32dc5cebbdcd335691e2736e8ce6d920752",
+  "view": {
+    "id": "object-6d20e6ec0456e46c",
+    "feature": "crate:bevy_render",
+    "aspect": "object",
+    "objectId": "registration-21ad8241ea6d81a35d59d9cb",
+    "centerNodeId": "registration-21ad8241ea6d81a35d59d9cb",
+    "label": "bevy_render::batching::gpu_preprocessing::batch_and_prepare_binned_render_phase<bevy_core_pipeline::deferred::AlphaMask3dDeferred, bevy_pbr::render::mesh::MeshPipeline> · 对象关系",
+    "summary": "当前对象及全部直接关联对象。"
+  },
+  "graph": {
+    "centerNodeId": "registration-21ad8241ea6d81a35d59d9cb",
+    "empty": false,
+    "nodes": [
+      {
+        "id": "registration-21ad8241ea6d81a35d59d9cb",
+        "role": "internal",
+        "group": "当前对象"
+      },
+      {
+        "id": "type-4a25e4c9129d110e9292137f",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "type-78f593700bbfc9765faba620",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "condition-6bf54be88f5f34533a33a744",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "type-f1146df16a7b94a963ec3188",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "type-d502c3d68e7d0c223855c7bc",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "set-05162126f7d80587b0fb3b6e",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "type-667295160918e9b3495229c4",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "type-70bda6849152fb2c08e2abbe",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "type-b87e84af9b8c28f76d776e08",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "type-60844789337a39b4987352b6",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "type-c5d9f21029dc9050aa4380ae",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "type-9a612a9c0a2e360eaca7dad6",
+        "role": "external",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "type-929633cbde6ded4a7e957229",
+        "role": "internal",
+        "group": "直接关联对象"
+      }
+    ],
+    "links": [
+      {
+        "evidence": "parameter",
+        "from": "type-4a25e4c9129d110e9292137f",
+        "id": "relation-0bb10e17b1334492de348b71",
+        "kind": "reference",
+        "label": "存在性约束",
+        "parameter": "arg0.filter",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "registration-21ad8241ea6d81a35d59d9cb",
+        "factKind": "filter",
+        "operation": "filter"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-78f593700bbfc9765faba620",
+        "id": "relation-0c26b2bed7c3cf9771d1427a",
+        "kind": "read",
+        "label": "读取",
+        "parameter": "arg4.0.1",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "registration-21ad8241ea6d81a35d59d9cb"
+      },
+      {
+        "evidence": "runtime",
+        "from": "condition-6bf54be88f5f34533a33a744",
+        "id": "relation-1b96ddfb53c3b88be3d5f2ad",
+        "kind": "reference",
+        "label": "运行条件",
+        "scope": "runtime-system-condition",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "registration-21ad8241ea6d81a35d59d9cb",
+        "factKind": "condition",
+        "operation": "condition"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-f1146df16a7b94a963ec3188",
+        "id": "relation-242c59d13b93e9e3055f5935",
+        "kind": "reference",
+        "label": "存在性约束",
+        "parameter": "arg0.data.1",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "registration-21ad8241ea6d81a35d59d9cb",
+        "factKind": "filter",
+        "operation": "filter"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-d502c3d68e7d0c223855c7bc",
+        "id": "relation-256b520ab32d1a4bc8b62400",
+        "kind": "reference",
+        "label": "存在性约束",
+        "parameter": "arg0.data.2",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "registration-21ad8241ea6d81a35d59d9cb",
+        "factKind": "filter",
+        "operation": "filter"
+      },
+      {
+        "evidence": "runtime",
+        "from": "set-05162126f7d80587b0fb3b6e",
+        "id": "relation-33d432617db1b26ab3b3386e",
+        "kind": "registration",
+        "label": "集合成员",
+        "nativeFrom": "Set(SystemSetKey(17v1))",
+        "nativeTo": "System(SystemKey(128v1))",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "registration-21ad8241ea6d81a35d59d9cb",
+        "factKind": "membership",
+        "operation": "membership"
+      },
+      {
+        "evidence": "parameter",
+        "from": "registration-21ad8241ea6d81a35d59d9cb",
+        "id": "relation-362ff2079d25d2822fcb6930",
+        "kind": "write",
+        "label": "可变访问",
+        "parameter": "arg0",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "type-667295160918e9b3495229c4",
+        "factKind": "mutable_access",
+        "operation": "mutable_access"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-4a25e4c9129d110e9292137f",
+        "id": "relation-928e69a7d46c809b72c2d677",
+        "kind": "read",
+        "label": "读取",
+        "parameter": "arg0.data.0",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "registration-21ad8241ea6d81a35d59d9cb"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-70bda6849152fb2c08e2abbe",
+        "id": "relation-978e75020c1680e3b52b29a8",
+        "kind": "read",
+        "label": "读取",
+        "parameter": "arg4.0.4",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "registration-21ad8241ea6d81a35d59d9cb"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-b87e84af9b8c28f76d776e08",
+        "id": "relation-9e4dc7986b82627c76ee8616",
+        "kind": "read",
+        "label": "读取",
+        "parameter": "arg4.0.2",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "registration-21ad8241ea6d81a35d59d9cb"
+      },
+      {
+        "evidence": "parameter",
+        "from": "registration-21ad8241ea6d81a35d59d9cb",
+        "id": "relation-c21fb7aaa58930b597d6f0e2",
+        "kind": "write",
+        "label": "可变访问",
+        "parameter": "arg2",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "type-60844789337a39b4987352b6",
+        "factKind": "mutable_access",
+        "operation": "mutable_access"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-c5d9f21029dc9050aa4380ae",
+        "id": "relation-c99caa64a3ee3fb0364c04b9",
+        "kind": "read",
+        "label": "读取",
+        "parameter": "arg4.0.3",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "registration-21ad8241ea6d81a35d59d9cb"
+      },
+      {
+        "evidence": "parameter",
+        "from": "type-9a612a9c0a2e360eaca7dad6",
+        "id": "relation-df503e6056025cbb6320cac7",
+        "kind": "read",
+        "label": "读取",
+        "parameter": "arg4.0.0",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "registration-21ad8241ea6d81a35d59d9cb"
+      },
+      {
+        "evidence": "parameter",
+        "from": "registration-21ad8241ea6d81a35d59d9cb",
+        "id": "relation-f44c0c6769592b703d6585f3",
+        "kind": "write",
+        "label": "可变访问",
+        "parameter": "arg1",
+        "scope": "current",
+        "sourceEntries": [],
+        "sourceGaps": [],
+        "to": "type-929633cbde6ded4a7e957229",
+        "factKind": "mutable_access",
+        "operation": "mutable_access"
+      }
+    ]
+  },
+  "registry": {
+    "registration-21ad8241ea6d81a35d59d9cb": {
+      "id": "registration-21ad8241ea6d81a35d59d9cb",
+      "name": "bevy_render::batching::gpu_preprocessing::batch_and_prepare_binned_render_phase<bevy_core_pipeline::deferred::AlphaMask3dDeferred, bevy_pbr::render::mesh::MeshPipeline>",
+      "kind": "System",
+      "feature": "crate:bevy_render",
+      "description": "先为不可批与普通批实例分配输出槽、预处理任务及可选间接绘制参数，再为多重间接绘制的分桶生成批集合和参数范围；保留 CPU 初始化任务在 GPU 解包任务之前的顺序，并为遮挡剔除预留晚期任务空间。",
+      "display_summary": "为分桶渲染阶段建立 GPU 预处理批次。"
+    },
+    "type-4a25e4c9129d110e9292137f": {
+      "id": "type-4a25e4c9129d110e9292137f",
+      "name": "bevy_render::view::ExtractedView",
+      "kind": "Component",
+      "feature": "crate:bevy_render",
+      "description": "在渲染世界表示相机或光源等产生的视图，保存主世界身份和子视图索引，以及投影、世界变换、视口等视图数据；一个主实体可以对应多个视图。",
+      "display_summary": "描述渲染视图的身份、投影与空间状态。"
+    },
+    "type-78f593700bbfc9765faba620": {
+      "id": "type-78f593700bbfc9765faba620",
+      "name": "lightmap::RenderLightmaps",
+      "kind": "Resource",
+      "feature": "crate:bevy_pbr",
+      "description": "保存主世界实体到光照贴图信息的映射、纹理绑定分块、空闲槽位和待就绪贴图，供每帧提取与 GPU 网格准备使用。",
+      "display_summary": "管理渲染侧光照贴图的槽位和纹理。"
+    },
+    "condition-6bf54be88f5f34533a33a744": {
+      "id": "condition-6bf54be88f5f34533a33a744",
+      "name": "bevy_ecs::schedule::condition::common_conditions::resource_exists<bevy_render::batching::gpu_preprocessing::BatchedInstanceBuffers<bevy_pbr::render::mesh::MeshUniform, bevy_pbr::render::mesh::MeshInputUniform>>",
+      "kind": "System",
+      "feature": "crate:bevy_ecs",
+      "description": "检查世界是否已存在指定资源，供依赖该资源的系统决定是否运行。",
+      "display_summary": "判断指定资源是否存在。"
+    },
+    "type-f1146df16a7b94a963ec3188": {
+      "id": "type-f1146df16a7b94a963ec3188",
+      "name": "bevy_render::view::NoIndirectDrawing",
+      "kind": "Component",
+      "feature": "crate:bevy_render",
+      "description": "标记需要直接绘制控制的相机，使其不采用默认的 GPU 变换与裁剪间接路径；该设置应在创建相机时确定。",
+      "display_summary": "关闭相机的间接绘制模式。"
+    },
+    "type-d502c3d68e7d0c223855c7bc": {
+      "id": "type-d502c3d68e7d0c223855c7bc",
+      "name": "bevy_render::occlusion_culling::OcclusionCulling",
+      "kind": "Component",
+      "feature": "crate:bevy_render",
+      "description": "通过分层深度数据剔除被不透明或 alpha 测试物体完全遮挡的对象，以避免其顶点处理；本实现依赖深度预通道，并采用前后两阶段裁剪。",
+      "display_summary": "启用视图的 GPU 遮挡裁剪。"
+    },
+    "set-05162126f7d80587b0fb3b6e": {
+      "id": "set-05162126f7d80587b0fb3b6e",
+      "name": "PrepareResourcesBatchPhases",
+      "kind": "SystemSet",
+      "feature": "crate:bevy_render",
+      "description": "划分提取命令应用、资产准备、视图创建、管线专化、绘制排队、排序与资源准备等渲染更新阶段。",
+      "display_summary": "组织渲染数据准备与绘制排队。"
+    },
+    "type-667295160918e9b3495229c4": {
+      "id": "type-667295160918e9b3495229c4",
+      "name": "bevy_render::batching::gpu_preprocessing::PhaseBatchedInstanceBuffers<bevy_core_pipeline::deferred::AlphaMask3dDeferred, render::mesh::MeshUniform>",
+      "kind": "Resource",
+      "feature": "crate:bevy_render",
+      "description": "将实例缓冲按阶段类型拆分为独立资源，使不同阶段的批处理能够在调度器中并行访问各自的数据。",
+      "display_summary": "为单个绘制阶段保存 GPU 批次实例缓冲。"
+    },
+    "type-70bda6849152fb2c08e2abbe": {
+      "id": "type-70bda6849152fb2c08e2abbe",
+      "name": "render::morph::MorphIndices",
+      "kind": "Resource",
+      "feature": "crate:bevy_pbr",
+      "description": "将网格映射到形变权重缓冲偏移，或保存存储缓冲描述符索引；保留前后帧映射以支持运动矢量计算。",
+      "display_summary": "关联形变网格与当前及上一帧权重位置。"
+    },
+    "type-b87e84af9b8c28f76d776e08": {
+      "id": "type-b87e84af9b8c28f76d776e08",
+      "name": "mesh::allocator::MeshAllocator",
+      "kind": "Resource",
+      "feature": "crate:bevy_render",
+      "description": "将多个网格的数据尽可能打包到共享缓冲，管理缓冲及偏移分配，以减少连续绘制时的资源重新绑定。",
+      "display_summary": "分配并管理网格顶点和索引 GPU 缓冲。"
+    },
+    "type-60844789337a39b4987352b6": {
+      "id": "type-60844789337a39b4987352b6",
+      "name": "bevy_render::render_phase::ViewBinnedRenderPhases<deferred::AlphaMask3dDeferred>",
+      "kind": "Resource",
+      "feature": "crate:bevy_render",
+      "description": "为一个使用分桶的绘制阶段保存全部视图的渲染指令；内容每帧清理，容器分配继续复用。",
+      "display_summary": "汇集各视图按分桶组织的绘制指令。"
+    },
+    "type-c5d9f21029dc9050aa4380ae": {
+      "id": "type-c5d9f21029dc9050aa4380ae",
+      "name": "render::skin::SkinUniforms",
+      "kind": "Resource",
+      "feature": "crate:bevy_pbr",
+      "description": "维护当前帧关节矩阵暂存区、当前及上一帧 GPU 缓冲，以及各蒙皮的分配信息，供蒙皮变形和运动矢量计算。",
+      "display_summary": "以双缓冲保存蒙皮前后帧关节矩阵。"
+    },
+    "type-9a612a9c0a2e360eaca7dad6": {
+      "id": "type-9a612a9c0a2e360eaca7dad6",
+      "name": "render::mesh::RenderMeshInstances",
+      "kind": "Resource",
+      "feature": "crate:bevy_pbr",
+      "description": "在渲染世界维护网格实体实例信息，按 MeshUniform 采用 CPU 还是 GPU 构建选择不同的数据表示。",
+      "display_summary": "保存 CPU 或 GPU 构建所需的网格实例。"
+    },
+    "type-929633cbde6ded4a7e957229": {
+      "id": "type-929633cbde6ded4a7e957229",
+      "name": "bevy_render::batching::gpu_preprocessing::PhaseIndirectParametersBuffers<bevy_core_pipeline::deferred::AlphaMask3dDeferred>",
+      "kind": "Resource",
+      "feature": "crate:bevy_render",
+      "description": "以阶段类型区分间接绘制缓冲，让不同绘制阶段能够并行准备自己的命令和计数数据。",
+      "display_summary": "为单个绘制阶段保存间接绘制参数。"
+    }
+  },
+  "features": [
+    {
+      "id": "crate:bevy_ecs",
+      "label": "crate:bevy_ecs",
+      "plugin": "crate:bevy_ecs"
+    },
+    {
+      "id": "crate:bevy_pbr",
+      "label": "crate:bevy_pbr",
+      "overviewNode": "type-959b53082c7bc9a301fe4157",
+      "plugin": "StandardMaterial>"
+    },
+    {
+      "id": "crate:bevy_render",
+      "label": "crate:bevy_render",
+      "overviewNode": "type-e81d73accac27d34c20515d5",
+      "plugin": "MeshPipeline>"
+    }
+  ]
+}

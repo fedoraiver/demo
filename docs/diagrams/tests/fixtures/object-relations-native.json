@@ -1,0 +1,313 @@
+{
+  "provenance": {
+    "buildId": "34bdb994ba9317be97b2f811aeca043fbb0bb53e1930ecec5d85e2d968ca0330",
+    "note": "从同次真实编译器和 runtime 产物捕获的单条关系投影；保留原端点、关系和源码证据，不保存旧编译SVG。"
+  },
+  "registry": {
+    "type-f13a4e21f6603a8f4ae6aa53": {
+      "declarationId": "decl-80c8fe061ce9b5ae7fe9e85905ac9497cbc14c5353056d856169f276fec14e13",
+      "description": "保存供调试和界面展示的实体名称及缓存哈希。多个实体可拥有相同名称，名称不能替代 Entity 身份。",
+      "display_summary": "保存供调试和界面展示的实体名称及缓存哈希",
+      "feature": "crate:bevy_ecs",
+      "fullName": "bevy_ecs::name::Name",
+      "id": "type-f13a4e21f6603a8f4ae6aa53",
+      "kind": "Component",
+      "name": "bevy_ecs::name::Name",
+      "rust_type": "bevy_ecs::name::Name",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_ecs",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_ecs-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 50,
+          "path": "src/name.rs",
+          "role": "definition",
+          "sha256": "58c721dc74325b1f84853c079a40fa9ace05f6906976197dc278a646af81f8e0"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_ecs",
+        "declarationId": "decl-80c8fe061ce9b5ae7fe9e85905ac9497cbc14c5353056d856169f276fec14e13",
+        "defPath": "bevy_ecs::name::Name",
+        "local": true,
+        "package": {
+          "name": "bevy_ecs",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "Bundle",
+          "Component",
+          "Template"
+        ]
+      },
+      "typeInstanceId": "type-5f702182075b0859af4dae02519967d70487a77c7f5a990ea509ef31a91253fb"
+    },
+    "entity-679cb0c34a8a8c0245a84584": {
+      "alternativeContext": [
+        "alternative-5ddccd0a6bf8e158f13eeae1d2e816fbb17440a6247292836e7039a286255b3a"
+      ],
+      "alternativeGroup": null,
+      "alternativeGroups": [],
+      "alternativeSelection": null,
+      "description": "在控制设置页候选结构中，提供 Audio 分类按钮，保存 SelectTab(Audio) 动作与导航序号 1，用于切换音频设置内容。",
+      "display_summary": "提供音频设置分类入口。",
+      "feature": "ui",
+      "id": "entity-679cb0c34a8a8c0245a84584",
+      "kind": "Entity",
+      "name": "rebuild_page · 创建模板",
+      "possible": true,
+      "sourceEntries": [
+        {
+          "column": 5,
+          "expansions": [
+            {
+              "column": 5,
+              "line": 287,
+              "name": "bsn!",
+              "path": "src/ui/pages.rs"
+            }
+          ],
+          "label": "创建位置",
+          "line": 287,
+          "path": "src/ui/pages.rs",
+          "role": "create",
+          "sha256": "868bda4203e128c605de058e5c1dba85e1f16fc706c5c977cad69ad2dc335f68"
+        }
+      ],
+      "sourceGaps": [
+        "此模板位于可能结构上下文；其组件及子实体不表示各候选在同次创建中同时存在。"
+      ],
+      "templateId": "entity-baf29892d3cd174d4f98dded20eb87cf80886c50cbefbcfc19cc0dd3bb67f080"
+    },
+    "observer-02ff37304f9d0ae902b96a46": {
+      "callableIds": [
+        "callable-71102ed75d0770aa988374878838bcd63c77e1376bce5e9c03ddfc14340b0adc"
+      ],
+      "description": "在大气环境光标记插入时，设置大气环境贴图和生成环境光贴图所需的关联组件。",
+      "display_summary": "为大气环境光补齐贴图生成组件。",
+      "feature": "crate:bevy_pbr",
+      "id": "observer-02ff37304f9d0ae902b96a46",
+      "kind": "Observer",
+      "name": "bevy_pbr::atmosphere::environment::on_insert_atmosphere_environment_map_light",
+      "registrationScope": "static-callsite",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_pbr",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 207,
+          "path": "src/atmosphere/environment.rs",
+          "role": "definition",
+          "sha256": "39bfb877d8883e944455a79951fc4e191400f0cc0497627374e19dbdc600e08f"
+        },
+        {
+          "column": 9,
+          "dependency": {
+            "name": "bevy_pbr",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "注册位置",
+          "line": 113,
+          "path": "src/atmosphere/mod.rs",
+          "role": "registration",
+          "sha256": "26ac3bafe2fd372b5db5ccd16eb9a34ad9e426a72e790f658b96981e3709cdec"
+        }
+      ],
+      "sourceGaps": [
+        "参数 commands.0.0 的 bevy_ecs::system::system_param::Deferred 需要其 SystemParam/WorldQuery 实现证据，未从存储字段猜测访问。"
+      ]
+    },
+    "type-bddb08e97716c13e63e047f2": {
+      "declarationId": "decl-2f27545b3bdcdafa7e0cfc795c477eb75d08d6582fd5fd1d96691bedcc21f071",
+      "description": "记录大气环境贴图的图像句柄及尺寸，供计算着色器更新立方体各面，并供探针纹理准备阶段取得结果。",
+      "display_summary": "保存由大气渲染更新的环境贴图。",
+      "feature": "crate:bevy_pbr",
+      "fullName": "atmosphere::environment::AtmosphereEnvironmentMap",
+      "id": "type-bddb08e97716c13e63e047f2",
+      "kind": "Component",
+      "name": "atmosphere::environment::AtmosphereEnvironmentMap",
+      "rust_type": "atmosphere::environment::AtmosphereEnvironmentMap",
+      "sourceEntries": [
+        {
+          "column": 1,
+          "dependency": {
+            "name": "bevy_pbr",
+            "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+            "version": "0.20.0"
+          },
+          "expansions": [],
+          "label": "定义位置",
+          "line": 41,
+          "path": "src/atmosphere/environment.rs",
+          "role": "definition",
+          "sha256": "39bfb877d8883e944455a79951fc4e191400f0cc0497627374e19dbdc600e08f"
+        }
+      ],
+      "sourceGaps": [],
+      "typeIdentity": {
+        "crateName": "bevy_pbr",
+        "declarationId": "decl-2f27545b3bdcdafa7e0cfc795c477eb75d08d6582fd5fd1d96691bedcc21f071",
+        "defPath": "bevy_pbr::atmosphere::environment::AtmosphereEnvironmentMap",
+        "local": true,
+        "package": {
+          "name": "bevy_pbr",
+          "version": "0.20.0"
+        },
+        "roles": [
+          "Bundle",
+          "Component"
+        ]
+      },
+      "typeInstanceId": "type-102100876411e3b9a43783f21ba76e5709a744647cdf2aee516f6d402c3c097c"
+    }
+  },
+  "cases": [
+    {
+      "key": "name",
+      "view": {
+        "id": "object-d308bbffc5138343",
+        "aspect": "object",
+        "objectId": "type-f13a4e21f6603a8f4ae6aa53",
+        "centerNodeId": "type-f13a4e21f6603a8f4ae6aa53",
+        "label": "bevy_ecs::name::Name · 对象关系",
+        "summary": "当前对象及全部直接关联对象。",
+        "nodes": [
+          {
+            "id": "type-f13a4e21f6603a8f4ae6aa53",
+            "role": "internal",
+            "group": "当前对象"
+          },
+          {
+            "id": "entity-679cb0c34a8a8c0245a84584",
+            "role": "external",
+            "group": "直接关联对象"
+          }
+        ],
+        "links": [
+          {
+            "alternativeContext": [
+              "alternative-5ddccd0a6bf8e158f13eeae1d2e816fbb17440a6247292836e7039a286255b3a"
+            ],
+            "alternativeGroup": null,
+            "evidence": "assembly",
+            "explicit": true,
+            "from": "entity-679cb0c34a8a8c0245a84584",
+            "id": "relation-0008c4bd4b9f195d1c21bdb7",
+            "kind": "reference",
+            "label": "可能包含",
+            "possible": true,
+            "required": false,
+            "sourceEntries": [
+              {
+                "column": 5,
+                "expansions": [
+                  {
+                    "column": 5,
+                    "line": 287,
+                    "name": "bsn!",
+                    "path": "src/ui/pages.rs"
+                  }
+                ],
+                "label": "创建位置",
+                "line": 287,
+                "path": "src/ui/pages.rs",
+                "role": "create",
+                "sha256": "868bda4203e128c605de058e5c1dba85e1f16fc706c5c977cad69ad2dc335f68"
+              }
+            ],
+            "sourceGaps": [],
+            "to": "type-f13a4e21f6603a8f4ae6aa53",
+            "factKind": "contains",
+            "operation": "contains",
+            "mermaidId": "e0",
+            "edgeSemantic": "reference",
+            "displayLabel": "可能包含"
+          }
+        ]
+      },
+      "relationId": "relation-0008c4bd4b9f195d1c21bdb7"
+    },
+    {
+      "key": "reverse",
+      "view": {
+        "id": "object-6f963f2cd752d9dd",
+        "aspect": "object",
+        "objectId": "observer-02ff37304f9d0ae902b96a46",
+        "centerNodeId": "observer-02ff37304f9d0ae902b96a46",
+        "label": "bevy_pbr::atmosphere::environment::on_insert_atmosphere_environment_map_light · 对象关系",
+        "summary": "当前对象及全部直接关联对象。",
+        "nodes": [
+          {
+            "id": "observer-02ff37304f9d0ae902b96a46",
+            "role": "internal",
+            "group": "当前对象"
+          },
+          {
+            "id": "type-bddb08e97716c13e63e047f2",
+            "role": "internal",
+            "group": "直接关联对象"
+          }
+        ],
+        "links": [
+          {
+            "bodyOperations": [
+              {
+                "callChain": [],
+                "callChainScope": "representative-static-path",
+                "callableId": "callable-71102ed75d0770aa988374878838bcd63c77e1376bce5e9c03ddfc14340b0adc",
+                "conditions": [],
+                "deferred": true,
+                "operationId": "operation-b8435d1d5f7f711c6dbcdfa7dc53386f5f681d371ae71402de7a1ad42881c05a",
+                "registeredOwner": "observer-02ff37304f9d0ae902b96a46",
+                "scope": "current"
+              }
+            ],
+            "evidence": "body",
+            "from": "observer-02ff37304f9d0ae902b96a46",
+            "id": "relation-79c6c7a4d736f8da7eeba53a",
+            "kind": "write",
+            "label": "插入",
+            "sourceEntries": [
+              {
+                "column": 5,
+                "dependency": {
+                  "name": "bevy_pbr",
+                  "root": "//?/C:/Users/cck17/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_pbr-0.20.0",
+                  "version": "0.20.0"
+                },
+                "expansions": [],
+                "label": "操作位置",
+                "line": 254,
+                "path": "src/atmosphere/environment.rs",
+                "role": "operation",
+                "sha256": "39bfb877d8883e944455a79951fc4e191400f0cc0497627374e19dbdc600e08f"
+              }
+            ],
+            "sourceGaps": [],
+            "to": "type-bddb08e97716c13e63e047f2",
+            "factKind": "insert",
+            "operation": "insert",
+            "nativeReverse": true,
+            "mermaidId": "e0",
+            "edgeSemantic": "write",
+            "displayLabel": "插入"
+          }
+        ]
+      },
+      "relationId": "relation-79c6c7a4d736f8da7eeba53a"
+    }
+  ]
+}

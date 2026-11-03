@@ -1,0 +1,135 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: demo::item_interaction::audio_events::warn_hold_strain · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**warn​_​hold​_​strain**<br/>持续偏离实际握点时提示一次，误差恢复后允<br/>许下一次告警。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: lean-r, label: "**SoundRequest**<br/>来自audio ↗：业务实体只用于日志和节<br/>流，不持有其组件引用，实体销毁后消息仍可<br/>被消费。" }
+  class n3 node_message
+  class n3 external_node
+  n4@{ shape: rounded, label: "**Parcel**<br/>可搬运快递身份；纸箱与木箱的美术种类由场<br/>景组件表达。" }
+  class n4 node_component
+  n5@{ shape: cyl, label: "**PrototypeConfig**<br/>来自settings ↗：原型的运动、平地和持箱<br/>参数。" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: rounded, label: "**HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
+  class n6 node_component
+  n7@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: lin-rect, label: "**Target**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
+  class n8 node_system_set
+  class n8 external_node
+  n9@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: rounded, label: "**CarryGrip**<br/>模型对应的手前偏移；未指定时继续使用原型<br/>配置，纸箱对齐持箱动作的双手。" }
+  class n10 node_component
+  n11@{ shape: notch-rect, label: "**Local · strain**<br/>跟踪各持物的持续偏离与告警锁存。" }
+  class n11 node_local
+  n12@{ shape: rounded, label: "**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  class n13 node_plugin
+  n14@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  class n14 node_resource
+  class n14 external_node
+  n1 e0@-->|"运行条件"| n0
+  class e0 edge_reference
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n0 e2@-->|"消息"| n3
+  class e2 edge_publish
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n0 e6@-->|"赋值"| n7
+  class e6 edge_write
+  n8 e7@-->|"先于"| n0
+  class e7 edge_order
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@--> n0
+  class e9 edge_read
+  n0 e10@-->|"可变访问"| n11
+  class e10 edge_write
+  n0 e11@-->|"可变访问"| n7
+  class e11 edge_write
+  n12 e12@--> n0
+  class e12 edge_read
+  n13 e13@-->|"调用"| n0
+  class e13 edge_registration
+  n0 e14@-->|"可变访问"| n3
+  class e14 edge_publish
+  n14 e15@--> n0
+  class e15 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }

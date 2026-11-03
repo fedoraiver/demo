@@ -1,0 +1,154 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_winit::system::despawn_windows · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**despawn​_​windows**<br/>处理原生窗口关闭并延后一轮释放包装器。" }
+  class n0 node_system
+  n1@{ shape: lean-r, label: "**AppExit**<br/>来自crate:bevy​_​app ↗：请求应用结束并<br/>携带退出结果。" }
+  class n1 node_message
+  class n1 external_node
+  n2@{ shape: cyl, label: "**Messages#lt;WindowClosed#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: notch-rect, label: "**Local · closed.0.1**<br/>跟踪 Window 移除记录的读取进度。" }
+  class n3 node_local
+  n4@{ shape: lean-r, label: "**WindowClosed**<br/>来自crate:bevy​_​window ↗：通知窗口已经<br/>关闭。" }
+  class n4 node_message
+  class n4 external_node
+  n5@{ shape: notch-rect, label: "**Local · windows​_​to​_​drop**<br/>把原生窗口包装器保留到下次主线程调用释<br/>放。" }
+  class n5 node_local
+  n6@{ shape: lin-rect, label: "**OnAppExitSystems**<br/>来自crate:bevy​_​app ↗：在退出消息发出<br/>后执行应用收尾。" }
+  class n6 node_system_set
+  class n6 external_node
+  n7@{ shape: cyl, label: "**Messages#lt;WindowClosing#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: lin-rect, label: "**ExitSystems**<br/>来自crate:bevy​_​window ↗：按窗口关闭策<br/>略请求应用退出。" }
+  class n8 node_system_set
+  class n8 external_node
+  n9@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: rounded, label: "**check​_​keyboard​_​focus​_​lost**<br/>处理跨窗口键盘焦点丢失并补发释放。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**changed​_​cursor​_​options**<br/>把光标配置变化同步到原生窗口。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**ClosingWindow**<br/>来自crate:bevy​_​window ↗：标记窗口已收<br/>到关闭请求并正在关闭" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: notch-rect, label: "**Local · closed.0.0.0.0**<br/>保存 Window 移除参数的组件 ID。" }
+  class n13 node_local
+  n14@{ shape: lean-r, label: "**WindowClosing**<br/>来自crate:bevy​_​window ↗：通知窗口正在<br/>关闭。" }
+  class n14 node_message
+  class n14 external_node
+  n15@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n15 node_resource
+  class n15 external_node
+  n16@{ shape: fr-rect, label: "**WinitPlugin**<br/>接入原生窗口、输入事件与事件循环。" }
+  class n16 node_plugin
+  n1 e0@--> n0
+  class e0 edge_consume
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_publish
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n6 e5@-->|"先于"| n0
+  class e5 edge_order
+  n0 e6@-->|"赋值"| n2
+  class e6 edge_write
+  n0 e7@-->|"赋值"| n7
+  class e7 edge_write
+  n8 e8@-->|"先于"| n0
+  class e8 edge_order
+  n0 e9@-->|"消息"| n4
+  class e9 edge_publish
+  n9 e10@-->|"存在性约束"| n0
+  class e10 edge_reference
+  n0 e11@-->|"先于"| n10
+  class e11 edge_order
+  n11 e12@-->|"先于"| n0
+  class e12 edge_order
+  n12 e13@-->|"存在性约束"| n0
+  class e13 edge_reference
+  n0 e14@-->|"可变访问"| n13
+  class e14 edge_write
+  n0 e15@-->|"可变访问"| n14
+  class e15 edge_publish
+  n0 e16@-->|"消息"| n14
+  class e16 edge_publish
+  n15 e17@--> n0
+  class e17 edge_read
+  n16 e18@-->|"调用"| n0
+  class e18 edge_registration
+  n0 e19@-->|"可变访问"| n7
+  class e19 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }

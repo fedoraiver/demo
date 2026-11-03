@@ -1,0 +1,262 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-d9c4649f44cf0240-e6{marker-start:url(#object-d9c4649f44cf0240_flowchart-v2-pointStart)!important}\n#object-d9c4649f44cf0240-e11{marker-start:url(#object-d9c4649f44cf0240_flowchart-v2-pointStart)!important}\n#object-d9c4649f44cf0240-e12{marker-start:url(#object-d9c4649f44cf0240_flowchart-v2-pointStart)!important}\n#object-d9c4649f44cf0240-e13{marker-start:url(#object-d9c4649f44cf0240_flowchart-v2-pointStart)!important}\n#object-d9c4649f44cf0240-e24{marker-start:url(#object-d9c4649f44cf0240_flowchart-v2-pointStart)!important}\n#object-d9c4649f44cf0240-e28{marker-start:url(#object-d9c4649f44cf0240_flowchart-v2-pointStart)!important}\n#object-d9c4649f44cf0240_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: demo::item_interaction::attachment::finish_attachments · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
+  n0@{ shape: rounded, label: "**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
+  class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
+  class n1 node_system_set
+  class n1 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  class n2 node_plugin
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**CollisionEventsEnabled**<br/>来自crate:avian3d ↗：为此碰撞体开启接<br/>触开始与结束事件。" }
+  class n3 node_component
+  class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**CollisionLayers**<br/>来自crate:avian3d ↗：声明碰撞体所属层<br/>和可交互层。" }
+  class n4 node_component
+  class n4 external_node
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: lin-rect, label: "**Attachment**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
+  class n5 node_system_set
+  class n5 external_node
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**Collider**<br/>来自crate:avian3d ↗：保存 Parry 碰撞<br/>后端的几何形状。" }
+  class n6 node_component
+  class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**Friction**<br/>来自crate:avian3d ↗：配置碰撞对象的静<br/>摩擦和动摩擦。" }
+  class n7 node_component
+  class n7 external_node
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**align​_​attachments**<br/>有限的小步对齐不会积分箱体力；受阻保留安<br/>全姿态，持续受阻则解除持握。" }
+  class n8 node_system
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**Restitution**<br/>来自crate:avian3d ↗：配置碰撞后的弹跳<br/>恢复程度。" }
+  class n9 node_component
+  class n9 external_node
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>箱实体被销毁时关系钩子会清空反向索引，人<br/>物仍存活则归还其原质量。" }
+  class n10 node_system
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**HeldCollider**<br/>无视觉碰撞代理对应的快递身份；代理随组合<br/>体清理，业务箱根始终独立。" }
+  class n11 node_component
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**CarryBaseMass**<br/>独立箱根不属于人物的 Children，显式保存<br/>原质量供挂接和解除时恢复。" }
+  class n12 node_component
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**Mass**<br/>来自crate:avian3d ↗：指定实体自身的质<br/>量输入。" }
+  class n13 node_component
+  class n13 external_node
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**ColliderTransform**<br/>来自crate:avian3d ↗：缓存碰撞体相对于<br/>刚体的变换。" }
+  class n14 node_component
+  class n14 external_node
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
+  class n15 node_component
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: rounded, label: "**HeldAttachment**<br/>实际碰撞形状相对组合刚体的姿态；箱实体不<br/>成为人物的 ChildOf，避免异常销毁时连带<br/>消失。" }
+  class n16 node_component
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: rounded, label: "**Pickable**<br/>允许被拾取的能力标签。" }
+  class n17 node_component
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: rounded, label: "**ColliderOf**<br/>来自crate:avian3d ↗：指定碰撞体附着的<br/>刚体。" }
+  class n18 node_component
+  class n18 external_node
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
+  n19@{ shape: rounded, label: "**ColliderDisabled**<br/>来自crate:avian3d ↗：暂停碰撞体检测和<br/>空间查询。" }
+  class n19 node_component
+  class n19 external_node
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: rounded, label: "**RigidBody**<br/>来自crate:avian3d ↗：选择动态、静态或<br/>运动学刚体行为。" }
+  class n20 node_component
+  class n20 external_node
+  end
+  style layout_card_n20 fill:none,stroke:none
+  subgraph layout_card_n21[" "]
+  n21@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  class n21 node_component
+  class n21 external_node
+  end
+  style layout_card_n21 fill:none,stroke:none
+  subgraph layout_card_n22[" "]
+  n22@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  class n22 node_component
+  class n22 external_node
+  end
+  style layout_card_n22 fill:none,stroke:none
+  n1 e0@-->|"集合成员"| n0
+  class e0 edge_set_membership
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n0 e2@-->|"插入"| n3
+  class e2 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@---|"插入"| n0
+  class e6 edge_write
+  n0 e7@-->|"先于"| n8
+  class e7 edge_order
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@-->|"先于"| n0
+  class e9 edge_order
+  n0 e10@-->|"插入"| n11
+  class e10 edge_write
+  n4 e11@---|"插入"| n0
+  class e11 edge_write
+  n12 e12@---|"插入"| n0
+  class e12 edge_write
+  n13 e13@---|"插入"| n0
+  class e13 edge_write
+  n13 e14@--> n0
+  class e14 edge_read
+  n12 e15@--> n0
+  class e15 edge_read
+  n0 e16@-->|"插入"| n14
+  class e16 edge_write
+  n15 e17@--> n0
+  class e17 edge_read
+  n7 e18@--> n0
+  class e18 edge_read
+  n0 e19@-->|"可变访问"| n16
+  class e19 edge_write
+  n17 e20@-->|"存在性约束"| n0
+  class e20 edge_reference
+  n0 e21@-->|"插入"| n18
+  class e21 edge_write
+  n0 e22@-->|"插入"| n19
+  class e22 edge_write
+  n0 e23@-->|"赋值"| n16
+  class e23 edge_write
+  n9 e24@---|"插入"| n0
+  class e24 edge_write
+  n20 e25@-->|"存在性约束"| n0
+  class e25 edge_reference
+  n21 e26@-->|"存在性约束"| n0
+  class e26 edge_reference
+  n0 e27@-->|"插入"| n22
+  class e27 edge_write
+  n6 e28@---|"插入"| n0
+  class e28 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }

@@ -193,18 +193,35 @@ mod test_support {
         page_layout_app_with_state(size, &MenuState { page, ..default() })
     }
 
+    /// 只检查项目页面的显式子树，不扫描输入插件、Observer 或导入资产内部实体。
+    pub(super) fn assert_named_page(world: &World, root: Entity) {
+        let mut pending = vec![root];
+        while let Some(entity) = pending.pop() {
+            let name = world.get::<Name>(entity).unwrap_or_else(|| {
+                panic!("Project menu entity {entity:?} is missing its descriptive Name")
+            });
+            assert!(!name.as_str().is_empty());
+            if let Some(children) = world.get::<Children>(entity) {
+                pending.extend(children.iter());
+            }
+        }
+    }
+
     pub(super) fn page_layout_app_with_state(size: UVec2, state: &MenuState) -> App {
         let mut app = crate::ui::tests::test_support::layout_app(size);
         let theme = layout_theme(&mut app);
         app.init_resource::<MenuFocus>();
-        app.world_mut()
+        let root = app
+            .world_mut()
             .spawn_scene(page_scene(
                 &theme,
                 state,
                 &SettingsDraft::default(),
                 size.as_vec2(),
             ))
-            .unwrap();
+            .unwrap()
+            .id();
+        assert_named_page(app.world(), root);
         // 字体集合、测量与最终几何均经过实际 UI 调度，不能只检查声明组件。
         for _ in 0..3 {
             app.update();
@@ -1529,7 +1546,8 @@ mod page_structure_tests {
         app.finish();
         app.cleanup();
         let world = app.world_mut();
-        world.spawn_scene(scene).unwrap();
+        let root = world.spawn_scene(scene).unwrap().id();
+        super::test_support::assert_named_page(world, root);
         let mut buttons: Vec<_> = world
             .query::<&MenuButton>()
             .iter(world)
@@ -2305,6 +2323,7 @@ mod requests_tests {
     use crate::{audio::SoundCue, settings::GameSettings};
     use bevy::ui::Pressed;
     use bevy::window::PrimaryWindow;
+    use bevy_enhanced_input::prelude::{Actions, Bindings};
     use std::path::PathBuf;
     #[test]
     fn volume_drag_coalesces_final_value_and_confirms_only_changed_release() {
@@ -2635,6 +2654,41 @@ mod requests_tests {
     #[test]
     fn enhanced_input_emits_one_hover_or_confirm_per_press() {
         let mut app = test_app();
+        let controller = app
+            .world_mut()
+            .query_filtered::<Entity, With<MenuContext>>()
+            .single(app.world())
+            .unwrap();
+        let actions = app
+            .world()
+            .get::<Actions<MenuContext>>(controller)
+            .unwrap()
+            .iter()
+            .collect::<Vec<_>>();
+        let bindings = actions
+            .iter()
+            .flat_map(|action| app.world().get::<Bindings>(*action).unwrap().iter())
+            .collect::<Vec<_>>();
+        assert_eq!(actions.len(), 6);
+        assert_eq!(bindings.len(), 13);
+        let names = bindings
+            .iter()
+            .map(|entity| {
+                let name = app.world().get::<Name>(*entity).unwrap().as_str();
+                assert!(!name.is_empty());
+                name
+            })
+            .collect::<std::collections::HashSet<_>>();
+        assert_eq!(names.len(), bindings.len());
+        for entity in &actions {
+            assert!(
+                !app.world()
+                    .get::<Name>(*entity)
+                    .unwrap()
+                    .as_str()
+                    .is_empty()
+            );
+        }
         app.world_mut()
             .resource_mut::<ButtonInput<KeyCode>>()
             .press(KeyCode::ArrowDown);
@@ -2667,6 +2721,10 @@ mod requests_tests {
             .press(KeyCode::ArrowDown);
         app.update();
         assert!(drain_sounds(&mut app).is_empty());
+        app.world_mut().despawn(controller);
+        for entity in actions.into_iter().chain(bindings) {
+            assert!(app.world().get_entity(entity).is_err());
+        }
     }
 
     #[test]

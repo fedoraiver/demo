@@ -289,7 +289,7 @@ export function inspectViewRoutes(view, options = {}) {
   const tolerance = options.tolerance ?? ROUTING_GEOMETRY.tolerance;
   const elements = svgElements(view.svg), obstacles = routingObstacles(view, { tolerance }), edges = [];
   for (const [kind, links, attribute] of [['business', view.links || [], 'data-link-id'], ['schedule', view.scheduleLinks || [], 'data-schedule-link-id']]) for (const link of links) {
-    const element = elements.find(element => element.attrs[attribute] === link.id);
+    const element = elements.find(element => element.tag === 'path' && element.attrs[attribute] === link.id);
     if (!element) throw new Error(`Missing native routing path: ${view.id}/${link.id}`);
     const path = flattenShape(element, { tolerance }), endpoints = displayEndpoints(link), arrow = arrowGeometry(element, elements, { tolerance, nativeReverse: link.nativeReverse === true });
     const collisions = obstacles.filter(obstacle => {

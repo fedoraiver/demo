@@ -1,0 +1,63 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: Update · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**Update**<br/>组织动作求值、值应用与事件触发。" }
+  class n0 node_system_set
+  n1@{ shape: lin-rect, label: "**Apply**<br/>组织动作求值、值应用与事件触发。" }
+  class n1 node_system_set
+  n2@{ shape: lin-rect, label: "**InputSystems**<br/>来自crate:bevy​_​input ↗：把原始设备消<br/>息汇总为本帧输入状态。" }
+  class n2 node_system_set
+  class n2 external_node
+  n3@{ shape: lin-rect, label: "**Prepare**<br/>组织动作求值、值应用与事件触发。" }
+  class n3 node_system_set
+  n4@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>求值上下文输入并更新动作状态。" }
+  class n4 node_system
+  n0 e0@-->|"先于"| n1
+  class e0 edge_order
+  n2 e1@-->|"先于"| n0
+  class e1 edge_order
+  n3 e2@-->|"先于"| n0
+  class e2 edge_order
+  n0 e3@-->|"集合成员"| n4
+  class e3 edge_set_membership
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }

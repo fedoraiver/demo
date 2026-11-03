@@ -1,0 +1,104 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-b8bcc495aee68705-e5{marker-start:url(#object-b8bcc495aee68705_flowchart-v2-pointStart)!important}\n#object-b8bcc495aee68705_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_core_pipeline::upscaling::prepare_view_upscaling_pipelines · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**prepare​_​view​_​upscaling​_​pipelines**<br/>按相机合成方式准备输出缩放管线。" }
+  class n0 node_system
+  n1@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n1 node_system_set
+  class n1 external_node
+  n2@{ shape: fr-rect, label: "**UpscalingPlugin**<br/>准备视图输出放大与合成管线。" }
+  class n2 node_plugin
+  n3@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: rounded, label: "**ResolvedCompositingSpace**<br/>来自crate:bevy​_​render ↗：记录本帧相机<br/>堆栈实际采用的合成空间。" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;BlitPipel**<br/>**ine#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: rounded, label: "**ViewUpscalingPipeline**<br/>记录视图颜色输出所用的缩放管线。" }
+  class n6 node_component
+  n7@{ shape: cyl, label: "**BlitPipeline**<br/>提供全屏纹理复制与缩放管线。" }
+  class n7 node_resource
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  class n8 node_resource
+  class n8 external_node
+  n9@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  class n9 node_component
+  class n9 external_node
+  n1 e0@-->|"集合成员"| n0
+  class e0 edge_set_membership
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n6 e5@---|"插入"| n0
+  class e5 edge_write
+  n7 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n0 e8@-->|"赋值"| n8
+  class e8 edge_write
+  n6 e9@--> n0
+  class e9 edge_read
+  n9 e10@--> n0
+  class e10 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

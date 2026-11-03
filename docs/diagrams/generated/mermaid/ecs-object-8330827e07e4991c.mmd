@@ -1,0 +1,131 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_egui::input::write_pinch_gesture_messages_system · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_message fill:#EDF4F6,stroke:#247B91,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_group fill:#F2F5F7,stroke:#607C96,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_publish stroke:#247B91,stroke-width:1.8px,stroke-dasharray:10 4 2 4
+  classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**write​_​pinch​_​gesture​_​messages​_​system**<br/>把捏合手势转换为 Egui 缩放。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**Messages#lt;EguiInputEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: lean-r, label: "**EguiInputEvent**<br/>传递供 Egui 消费的输入事件。" }
+  class n2 node_message
+  n3@{ shape: cyl, label: "**WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
+  class n3 node_resource
+  n4@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  class n5 node_system
+  n6@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>判断是否转换 Egui 捏合缩放输入。；按<br/>Egui 全局配置判断输入处理是否启用。" }
+  class n6 node_system_group
+  n7@{ shape: lean-r, label: "**PinchGesture**<br/>来自crate:bevy​_​input ↗：传递双指捏合<br/>缩放变化。" }
+  class n7 node_message
+  class n7 external_node
+  n8@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  class n8 node_system
+  n9@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
+  class n9 node_plugin
+  n10@{ shape: cyl, label: "**HoveredNonWindowEguiContext**<br/>保存指针当前悬停的非窗口 Egui 上下文实<br/>体" }
+  class n10 node_resource
+  n11@{ shape: cyl, label: "**Messages#lt;PinchGesture#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n11 node_resource
+  class n11 external_node
+  n12@{ shape: lin-rect, label: "**ReadBevyMessages**<br/>组织 Egui 输入读取与事件写入。" }
+  class n12 node_system_set
+  n13@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
+  class n13 node_system_set
+  n14@{ shape: rounded, label: "**absorb​_​bevy​_​input​_​system**<br/>在 Egui 使用输入时吸收对应 Bevy 输入。" }
+  class n14 node_system
+  n0 e0@-->|"赋值"| n1
+  class e0 edge_write
+  n0 e1@-->|"消息"| n2
+  class e1 edge_publish
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
+  n5 e4@-->|"先于"| n0
+  class e4 edge_order
+  n6 e5@-->|"运行条件"| n0
+  class e5 edge_reference
+  n7 e6@--> n0
+  class e6 edge_consume
+  n0 e7@-->|"先于"| n8
+  class e7 edge_order
+  n9 e8@-->|"调用"| n0
+  class e8 edge_registration
+  n0 e9@-->|"可变访问"| n2
+  class e9 edge_publish
+  n10 e10@--> n0
+  class e10 edge_read
+  n11 e11@--> n0
+  class e11 edge_read
+  n12 e12@-->|"集合成员"| n0
+  class e12 edge_set_membership
+  n13 e13@-->|"集合成员"| n0
+  class e13 edge_set_membership
+  n0 e14@-->|"先于"| n14
+  class e14 edge_order
+  n0 e15@-->|"可变访问"| n1
+  class e15 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: bumpX }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }

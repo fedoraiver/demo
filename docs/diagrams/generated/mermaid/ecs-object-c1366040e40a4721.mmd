@@ -1,0 +1,91 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: demo::ui::style::update_description · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**update​_​description**<br/>更新当前聚焦设置的说明标题与正文。" }
+  class n0 node_system
+  n1@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  class n1 node_plugin
+  n2@{ shape: lin-rect, label: "**Style**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**SettingDescription**<br/>说明文本属于按钮实体，焦点变化时只更新右<br/>侧说明，不重建页面。" }
+  class n3 node_component
+  n4@{ shape: cyl, label: "**MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
+  class n4 node_resource
+  n5@{ shape: rounded, label: "**Text**<br/>来自crate:bevy​_​ui ↗：保存 UI 文本根的<br/>第一段内容。" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: rounded, label: "**MenuButton**<br/>菜单实体保存动作与导航序号，系统不依赖显<br/>示文字或实体名称。" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**DescriptionBody**<br/>标识设置项说明正文。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**DescriptionTitle**<br/>标识设置项说明标题。" }
+  class n8 node_component
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n0 e4@-->|"赋值"| n5
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_read
+  n0 e6@-->|"可变访问"| n5
+  class e6 edge_write
+  n7 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
+  n8 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }

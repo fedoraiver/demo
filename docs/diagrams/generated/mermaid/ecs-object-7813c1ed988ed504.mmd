@@ -1,0 +1,99 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: Reset · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: lin-rect, label: "**Reset**<br/>组织变换缓动端点与帧间应用。" }
+  class n0 node_system_set
+  n1@{ shape: rounded, label: "**reset​_​rotation​_​easing**<br/>清除旧旋转平滑的起点和终点。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**reset​_​rotation​_​extrapolation**<br/>在固定步开始前还原真实旋转。" }
+  class n2 node_system
+  n3@{ shape: lin-rect, label: "**UpdateStart**<br/>组织变换缓动端点与帧间应用。" }
+  class n3 node_system_set
+  n4@{ shape: rounded, label: "**reset​_​translation​_​easing**<br/>清除旧位置平滑的起点和终点。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**complete​_​scale​_​easing**<br/>在新一轮插值前完成上一段缩放。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**reset​_​scale​_​easing**<br/>清除旧缩放平滑的起点和终点。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**resume​_​interpolation**<br/>来自bounds​_​recovery ↗：下一固定步从恢<br/>复后的位置重新采样插值，只移除本模块临时<br/>添加的暂停项。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**resume​_​carry​_​easing**<br/>来自item​_​interaction ↗：下一固定步在<br/>旧端点清除后恢复自由箱插值，保留原本由其<br/>他模块设置的暂停项。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**reset​_​translation​_​extrapolation**<br/>在固定步开始前还原真实位置。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**complete​_​translation​_​easing**<br/>在新一轮插值前完成上一段平移。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**complete​_​rotation​_​easing**<br/>在新一轮插值前完成上一段旋转。" }
+  class n11 node_system
+  n0 e0@-->|"集合成员"| n1
+  class e0 edge_set_membership
+  n2 e1@-->|"先于"| n0
+  class e1 edge_order
+  n0 e2@-->|"先于"| n3
+  class e2 edge_order
+  n0 e3@-->|"集合成员"| n4
+  class e3 edge_set_membership
+  n5 e4@-->|"先于"| n0
+  class e4 edge_order
+  n0 e5@-->|"集合成员"| n6
+  class e5 edge_set_membership
+  n0 e6@-->|"先于"| n7
+  class e6 edge_order
+  n0 e7@-->|"先于"| n8
+  class e7 edge_order
+  n9 e8@-->|"先于"| n0
+  class e8 edge_order
+  n10 e9@-->|"先于"| n0
+  class e9 edge_order
+  n11 e10@-->|"先于"| n0
+  class e10 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

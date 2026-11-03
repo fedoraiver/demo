@@ -1,0 +1,88 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_pbr::ssr::init_screen_space_reflections_pipeline · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**init​_​screen​_​space​_​reflections​_​**<br/>**pipeline**<br/>初始化屏幕空间反射的全屏渲染管线资源。" }
+  class n0 node_system
+  n1@{ shape: cyl, label: "**MeshPipelineViewLayouts**<br/>按网格管线配置提供视图绑定布局。" }
+  class n1 node_resource
+  n2@{ shape: fr-rect, label: "**ScreenSpaceReflectionsPlugin**<br/>提供延迟相机的屏幕空间反射。" }
+  class n2 node_plugin
+  n3@{ shape: lin-rect, label: "**MeshPipelineSystems**<br/>先初始化网格视图布局，再初始化三维网格管<br/>线。" }
+  class n3 node_system_set
+  n4@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: cyl, label: "**FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: cyl, label: "**RenderAdapter**<br/>来自crate:bevy​_​render ↗：标识渲染使用<br/>的物理 GPU 适配器。" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: cyl, label: "**ScreenSpaceReflectionsPipeline**<br/>描述屏幕空间反射绘制的着色接口。" }
+  class n8 node_resource
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@-->|"先于"| n0
+  class e2 edge_order
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"插入"| n8
+  class e7 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

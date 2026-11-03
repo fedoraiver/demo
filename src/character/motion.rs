@@ -9,6 +9,12 @@ use crate::{
     settings::PrototypeConfig,
 };
 
+const GROUND_PROBE_RADIUS_RATIO: f32 = 0.8;
+const GROUND_PROBE_DISTANCE_M: f32 = 0.12;
+const GROUND_PROBE_MAX_RISING_SPEED_MPS: f32 = 0.5;
+const GROUND_SUPPORT_MIN_NORMAL_Y: f32 = 0.65;
+const VELOCITY_LOG_SAMPLE_INTERVAL_SECONDS: f64 = 0.5;
+
 /// 脚底附近的小球向下探测支撑面；墙面法线和上升中的角色不能算接地。
 pub(super) fn update_grounded(
     config: Res<PrototypeConfig>,
@@ -30,12 +36,12 @@ pub(super) fn update_grounded(
         With<Character>,
     >,
 ) {
-    let probe = Collider::sphere(config.character_radius * 0.8);
+    let probe = Collider::sphere(config.character_radius * GROUND_PROBE_RADIUS_RATIO);
     for (entity, position, velocity, layers, mut motion) in &mut characters {
         let filter = SpatialQueryFilter::from_excluded_entities([entity]);
         let character_layers = layers.copied().unwrap_or_default();
         let mut grounded = false;
-        if velocity.y <= 0.5 {
+        if velocity.y <= GROUND_PROBE_MAX_RISING_SPEED_MPS {
             // 空间查询只按目标所属层过滤；支撑还必须满足双方碰撞掩码并排除持握物和传感器。
             // 遍历所有命中，避免最近的侧墙挡住稍远的有效地面。
             spatial_query.shape_hits_callback(
@@ -43,7 +49,7 @@ pub(super) fn update_grounded(
                 position.0 + Vec3::Y * config.character_radius,
                 Quat::IDENTITY,
                 Dir3::NEG_Y,
-                &ShapeCastConfig::from_max_distance(0.12),
+                &ShapeCastConfig::from_max_distance(GROUND_PROBE_DISTANCE_M),
                 &filter,
                 |hit| {
                     if let Ok((layers, held, held_proxy, sensor)) = colliders.get(hit.entity) {
@@ -52,7 +58,7 @@ pub(super) fn update_grounded(
                             && !held_proxy
                             && !sensor
                             && character_layers.interacts_with(layers.copied().unwrap_or_default())
-                            && hit.normal1.y >= 0.65;
+                            && hit.normal1.y >= GROUND_SUPPORT_MIN_NORMAL_Y;
                     }
                     !grounded
                 },
@@ -156,7 +162,7 @@ pub(super) fn log_character_velocity(
     if time.elapsed_secs_f64() < *next_log_time {
         return;
     }
-    *next_log_time = time.elapsed_secs_f64() + 0.5;
+    *next_log_time = time.elapsed_secs_f64() + VELOCITY_LOG_SAMPLE_INTERVAL_SECONDS;
     for (entity, velocity, motion) in &characters {
         debug!(target: "demo::gameplay", ?entity, velocity = ?velocity.0, grounded = motion.grounded,
             reason = "physics_sample", "Character velocity sampled");

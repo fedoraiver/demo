@@ -1,0 +1,71 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: schedule::LastPhysicsTick · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**LastPhysicsTick**<br/>记录上一轮物理调度结束的变化刻度。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**wake​_​changed​_​bodies**<br/>来自physics ↗：Avian 的自动唤醒在求解<br/>之后；外部冲量和施力应在本步准备求解器之<br/>前生效。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**transform​_​to​_​position**<br/>把用户改变的世界变换同步到物理位姿。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**update​_​last​_​physics​_​tick**<br/>记录本次物理阶段结束的 ECS 变化刻度。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  class n5 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n0 e4@--> n5
+  class e4 edge_read
+  n4 e5@-->|"赋值"| n0
+  class e5 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

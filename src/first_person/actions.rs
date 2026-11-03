@@ -37,12 +37,11 @@ pub fn spawn_keyboard_controller(
 ) -> Entity {
     let id = player_id.id;
     let controller = commands
-        .spawn_scene(keyboard_context())
-        .insert((
-            Name::new(format!("Keyboard controller {id}")),
-            player_id,
-            ControlsCharacter { character },
-        ))
+        .spawn_scene(bsn! {
+            Name({format!("Keyboard controller {id}")})
+            @keyboard_context()
+        })
+        .insert((player_id, ControlsCharacter { character }))
         .id();
     info!(
         target: "demo::input",
@@ -62,21 +61,26 @@ pub(super) fn keyboard_context() -> impl Scene {
         Actions<GameplayContext> [
             Action::<LookAction>::new()
             ActionSettings { consume_input: true }
-            Bindings [ Binding::mouse_motion() ]
+            Bindings [ Name("Mouse look binding") Binding::mouse_motion() ]
             --
             Action::<MoveAction>::new()
             ActionSettings { consume_input: true }
-            Bindings [ {preset::cardinal::wasd_keys()} ]
+            Bindings [ {preset::cardinal::new(
+                (KeyCode::KeyW, Name::new("Move forward binding")),
+                (KeyCode::KeyD, Name::new("Move right binding")),
+                (KeyCode::KeyS, Name::new("Move backward binding")),
+                (KeyCode::KeyA, Name::new("Move left binding")),
+            )} ]
             --
             Action::<JumpAction>::new()
             ActionSettings { consume_input: true, require_reset: true }
             Press
-            Bindings [ Binding(KeyCode::Space) ]
+            Bindings [ Name("Jump binding") Binding(KeyCode::Space) ]
             --
             Action::<InteractAction>::new()
             ActionSettings { consume_input: true, require_reset: true }
             Press
-            Bindings [ Binding(KeyCode::KeyE) ]
+            Bindings [ Name("Interact binding") Binding(KeyCode::KeyE) ]
         ]
     }
 }

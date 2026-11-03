@@ -1,0 +1,247 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-7809ea5a0a9d6fa2-e31{marker-start:url(#object-7809ea5a0a9d6fa2_flowchart-v2-pointStart)!important}\n#object-7809ea5a0a9d6fa2_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_window::Window · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Window**<br/>保存窗口的呈现模式、位置、分辨率、标题、<br/>全屏及平台行为配置" }
+  class n0 node_component
+  n1@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  class n1 node_observer
+  class n1 external_node
+  n2@{ shape: rounded, label: "**extract​_​windows**<br/>来自crate:bevy​_​render ↗：向渲染世界同<br/>步窗口配置与原生句柄。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**update​_​ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**ui​_​focus​_​system**<br/>来自crate:bevy​_​ui ↗：按鼠标和触摸更新<br/>旧式 UI 交互状态。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>来自crate:bevy​_​input​_​focus ↗：让带导<br/>航索引的实体获得输入焦点。" }
+  class n5 node_observer
+  class n5 external_node
+  n6@{ shape: rounded, label: "**clear​_​cancelled​_​primary​_​presses**<br/>来自ui ↗：Bevy 先从 HoverMap 排除取消<br/>的指针，随后可能无法为它发出<br/>PointerCancel。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**listen​_​for​_​ime​_​input​_​when​_​text​_​**<br/>**input​_​focused**<br/>来自crate:bevy​_​ui​_​widgets ↗：按可编<br/>辑焦点控制主窗口输入法。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**changed​_​cursor​_​options**<br/>来自crate:bevy​_​winit ↗：把光标配置变<br/>化同步到原生窗口。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**update​_​cursors**<br/>来自crate:bevy​_​winit ↗：准备原生或自<br/>定义光标并保留资产重试。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  class n11 node_observer
+  class n11 external_node
+  n12@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>来自crate:bevy​_​input​_​focus ↗：在请求<br/>未命中焦点目标时清除焦点。" }
+  class n12 node_observer
+  class n12 external_node
+  n13@{ shape: rounded, label: "**rebuild​_​page**<br/>来自ui ↗：只在页面结构或视口变化时重<br/>建；数值、提示与焦点变化保留现有滚动控<br/>件。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**sync​_​mouse​_​capture**<br/>来自first​_​person ↗：在输入转发前确定<br/>归属；切换前约定其他按键已松开，检查器没<br/>有进行中的交互。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>来自crate:bevy​_​input​_​focus ↗：在请求<br/>未命中焦点目标时清除焦点。" }
+  class n15 node_observer
+  class n15 external_node
+  n16@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**exit​_​on​_​all​_​closed**<br/>窗口查询为空时写入 AppExit::Success，<br/>通知应用正常退出；仍有窗口时不发送退出消<br/>息。" }
+  class n17 node_system
+  n18@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  class n18 node_observer
+  class n18 external_node
+  n19@{ shape: rounded, label: "**despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
+  class n19 node_system
+  class n19 external_node
+  n20@{ shape: rounded, label: "**sync​_​context**<br/>来自ui ↗：按主窗口焦点启停菜单输入上下<br/>文。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>来自crate:bevy​_​input​_​focus ↗：在请求<br/>未命中焦点目标时清除焦点。" }
+  class n21 node_observer
+  class n21 external_node
+  n22@{ shape: rounded, label: "**install​_​native​_​policy**<br/>来自window​_​policy ↗：安装并维护原生窗<br/>口比例与尺寸策略。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>来自ui ↗：Enhanced Input 负责菜单语义<br/>动作，但无法表示 UI 命中后的局部绝对横<br/>坐标。" }
+  class n25 node_system
+  class n25 external_node
+  n26@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>来自crate:bevy​_​input​_​focus ↗：让带导<br/>航索引的实体获得输入焦点。" }
+  class n26 node_observer
+  class n26 external_node
+  n27@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>来自crate:bevy​_​input​_​focus ↗：让带导<br/>航索引的实体获得输入焦点。" }
+  class n27 node_observer
+  class n27 external_node
+  n28@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>来自crate:bevy​_​input​_​focus ↗：让带导<br/>航索引的实体获得输入焦点。" }
+  class n28 node_observer
+  class n28 external_node
+  n29@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>来自crate:bevy​_​input​_​focus ↗：让带导<br/>航索引的实体获得输入焦点。" }
+  class n29 node_observer
+  class n29 external_node
+  n30@{ shape: rounded, label: "**changed​_​windows**<br/>来自crate:bevy​_​winit ↗：把窗口组件变<br/>化同步到 winit 后端。" }
+  class n30 node_system
+  class n30 external_node
+  n31@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
+  class n31 node_system
+  class n31 external_node
+  n32@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：把界面输入和文<br/>件拖放写入 Egui 输入批次。" }
+  class n32 node_system
+  class n32 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@-->|"存在性约束"| n5
+  class e4 edge_reference
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n8 e7@-->|"赋值"| n0
+  class e7 edge_write
+  n0 e8@--> n9
+  class e8 edge_read
+  n3 e9@-->|"赋值"| n0
+  class e9 edge_write
+  n0 e10@-->|"存在性约束"| n10
+  class e10 edge_reference
+  n0 e11@--> n11
+  class e11 edge_read
+  n0 e12@-->|"存在性约束"| n12
+  class e12 edge_reference
+  n0 e13@--> n13
+  class e13 edge_read
+  n0 e14@--> n14
+  class e14 edge_read
+  n0 e15@-->|"存在性约束"| n15
+  class e15 edge_reference
+  n0 e16@--> n16
+  class e16 edge_read
+  n0 e17@-->|"存在性约束"| n17
+  class e17 edge_reference
+  n0 e18@--> n18
+  class e18 edge_read
+  n0 e19@-->|"存在性约束"| n19
+  class e19 edge_reference
+  n0 e20@--> n20
+  class e20 edge_read
+  n0 e21@-->|"存在性约束"| n21
+  class e21 edge_reference
+  n22 e22@-->|"可变访问"| n0
+  class e22 edge_write
+  n0 e23@--> n23
+  class e23 edge_read
+  n0 e24@--> n24
+  class e24 edge_read
+  n0 e25@--> n25
+  class e25 edge_read
+  n0 e26@-->|"存在性约束"| n26
+  class e26 edge_reference
+  n22 e27@-->|"赋值"| n0
+  class e27 edge_write
+  n0 e28@-->|"存在性约束"| n27
+  class e28 edge_reference
+  n0 e29@-->|"存在性约束"| n28
+  class e29 edge_reference
+  n0 e30@-->|"存在性约束"| n29
+  class e30 edge_reference
+  n30 e31@---|"存在性约束"| n0
+  class e31 edge_reference
+  n30 e32@-->|"可变访问"| n0
+  class e32 edge_write
+  n8 e33@-->|"可变访问"| n0
+  class e33 edge_write
+  n0 e34@--> n31
+  class e34 edge_read
+  n0 e35@--> n32
+  class e35 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: bumpX }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }

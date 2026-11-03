@@ -1,0 +1,81 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-86f8671d52ce200f-e1{marker-start:url(#object-86f8671d52ce200f_flowchart-v2-pointStart)!important}\n#object-86f8671d52ce200f_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_winit::system::changed_cursor_options · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**changed​_​cursor​_​options**<br/>把光标配置变化同步到原生窗口。" }
+  class n0 node_system
+  n1@{ shape: fr-rect, label: "**WinitPlugin**<br/>接入原生窗口、输入事件与事件循环。" }
+  class n1 node_plugin
+  n2@{ shape: rounded, label: "**CursorOptions**<br/>来自crate:bevy​_​window ↗：保存窗口光标<br/>的可见、捕获和命中测试等选项" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: rounded, label: "**CachedCursorOptions**<br/>缓存上次同步到原生窗口的光标选项" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**despawn​_​windows**<br/>处理原生窗口关闭并延后一轮释放包装器。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**changed​_​windows**<br/>把窗口组件变化同步到 winit 后端。" }
+  class n6 node_system
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n2 e1@---|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n2 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
+  n0 e5@-->|"先于"| n5
+  class e5 edge_order
+  n6 e6@-->|"先于"| n0
+  class e6 edge_order
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

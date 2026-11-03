@@ -4,6 +4,12 @@
 use super::{MenuButton, SettingKey, UiAction, theme::*};
 use bevy::{prelude::*, text::FontSourceTemplate};
 
+// 控件尺寸以缩放前的逻辑像素计。
+pub(super) const SETTING_CONTROL_MIN_HEIGHT_PX: f32 = 43.0;
+pub(super) const SETTING_ARROW_MIN_WIDTH_PX: f32 = 34.0;
+const SETTING_TITLE_MIN_WIDTH_PX: f32 = 130.0;
+const SETTING_VALUE_WIDTH_PX: f32 = 130.0;
+
 /// 说明文本属于按钮实体，焦点变化时只更新右侧说明，不重建页面。
 #[derive(Component, Default, Clone, Copy)]
 pub(super) struct SettingDescription {
@@ -44,10 +50,11 @@ pub(super) fn label<Value: Into<String>>(
 ) -> impl Scene + use<Value> {
     let value = value.into();
     bsn! {
+        Name("Menu label")
         Text(value)
         TextFont {
             font: {FontSourceTemplate::Handle(theme.body.clone().into())},
-            font_size: px(theme.size(size).max(14.0)),
+            font_size: px(theme.size(size).max(MIN_FONT_SIZE_PX)),
         }
         TextColor(color)
         // 文字保留自然测量宽度，横排短标签与纵排正文共用同一布局规则。
@@ -63,10 +70,11 @@ pub(super) fn heading<Value: Into<String>>(
 ) -> impl Scene + use<Value> {
     let value = value.into();
     bsn! {
+        Name("Menu heading")
         Text(value)
         TextFont {
             font: {FontSourceTemplate::Handle(theme.heading.clone().into())},
-            font_size: px(theme.size(size).max(14.0)),
+            font_size: px(theme.size(size).max(MIN_FONT_SIZE_PX)),
         }
         TextColor(color)
         Node { flex_shrink: 1.0 }
@@ -76,6 +84,7 @@ pub(super) fn heading<Value: Into<String>>(
 pub(super) fn paper_panel(theme: &UiTheme) -> impl Scene + use<> {
     let scale = theme.scale;
     bsn! {
+        Name("Menu paper panel")
         Node {
             padding: px(theme.size(24.0)),
             border: px(2),
@@ -122,6 +131,7 @@ fn menu_button_with_size(
 ) -> impl Scene + use<> {
     let scale = theme.scale;
     bsn! {
+        Name({format!("Menu button: {title}")})
         MenuButton { action, index }
         Node {
             width: percent(100),
@@ -140,6 +150,7 @@ fn menu_button_with_size(
         BorderColor::all(CREAM)
         paper_shadow(scale)
         Children [
+            Name("Menu button icon container")
             Node {
                 width: px(theme.size(if fixed_menu { 30.0 } else { 36.0 })),
                 justify_content: JustifyContent::Center,
@@ -165,6 +176,7 @@ pub(super) fn small_button(
 ) -> impl Scene + use<> {
     let scale = theme.scale;
     bsn! {
+        Name({format!("Menu small button: {title}")})
         MenuButton { action, index }
         Node {
             min_height: px(theme.size(49.0)),
@@ -191,6 +203,7 @@ pub(super) fn placeholder_row(
     menu: bool,
 ) -> impl Scene + use<> {
     bsn! {
+        Name({format!("Menu placeholder: {title}")})
         Node {
             width: percent(100),
             min_height: px(theme.size(if menu { 52.0 } else { 56.0 })),
@@ -209,6 +222,7 @@ pub(super) fn placeholder_row(
             @label(theme, title, if menu { 22.0 } else { 20.0 }, MUTED)
             Node { flex_grow: 1.0 }
             --
+            Name("Menu coming soon badge")
             Node {
                 padding: UiRect::axes(px(theme.size(8.0)), px(theme.size(4.0))),
                 border_radius: BorderRadius::all(px(4)),
@@ -235,6 +249,7 @@ pub(super) fn setting_row(
         body: description,
     };
     bsn! {
+        Name({format!("Setting row: {title}")})
         Node {
             width: percent(100),
             min_height: px(theme.size(60.0)),
@@ -248,17 +263,19 @@ pub(super) fn setting_row(
         BackgroundColor(SUBTLE)
         Children [
             @label(theme, title, 21.0, INK)
-            Node { flex_grow: 1.0, min_width: px(theme.size(130.0)) }
+            Node { flex_grow: 1.0, min_width: px(theme.size(SETTING_TITLE_MIN_WIDTH_PX)) }
             --
+            Name("Setting value controls")
             Node { align_items: AlignItems::Center, column_gap: px(theme.size(8.0)) }
             Children [
                 @small_button(theme, "<", UiAction::Adjust(key, -1), index)
                 details
-                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)) }
+                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(SETTING_ARROW_MIN_WIDTH_PX)) }
                 --
+                Name("Setting value display")
                 Node {
-                    width: px(theme.size(130.0)),
-                    min_height: px(theme.size(43.0)),
+                    width: px(theme.size(SETTING_VALUE_WIDTH_PX)),
+                    min_height: px(theme.size(SETTING_CONTROL_MIN_HEIGHT_PX)),
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
                     padding: px(theme.size(5.0)),
@@ -269,12 +286,13 @@ pub(super) fn setting_row(
                 BorderColor::all(Color::srgba(0.2, 0.25, 0.32, 0.15))
                 Children [
                     @label(theme, value, 20.0, INK)
+                    Name("Setting value label")
                     SettingValue { key }
                 ]
                 --
                 @small_button(theme, ">", UiAction::Adjust(key, 1), index + 1)
                 details
-                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(34.0)) }
+                Node { padding: px(theme.size(7.0)), min_width: px(theme.size(SETTING_ARROW_MIN_WIDTH_PX)) }
             ]
         ]
     }
@@ -283,6 +301,7 @@ pub(super) fn setting_row(
 pub(super) fn keycap(theme: &UiTheme, key: &'static str, light: bool) -> impl Scene + use<> {
     let color = if light { CREAM } else { INK };
     bsn! {
+        Name({format!("Menu keycap: {key}")})
         Node {
             min_width: px(theme.size(29.0)),
             min_height: px(theme.size(29.0)),
@@ -302,6 +321,7 @@ pub(super) fn keycap(theme: &UiTheme, key: &'static str, light: bool) -> impl Sc
 /// 纸箱标志由普通 UI 节点组合，避免把品牌和按钮文字烘焙进图片。
 pub(super) fn parcel_stamp(theme: &UiTheme) -> impl Scene + use<> {
     bsn! {
+        Name("Menu parcel stamp")
         Node {
             width: px(theme.size(50.0)),
             height: px(theme.size(45.0)),
@@ -313,6 +333,7 @@ pub(super) fn parcel_stamp(theme: &UiTheme) -> impl Scene + use<> {
         BackgroundColor(Color::srgb(0.75, 0.51, 0.27))
         BorderColor::all(INK)
         Children [
+            Name("Menu parcel stamp tape")
             Node {
                 position_type: PositionType::Absolute,
                 top: px(0),
@@ -321,6 +342,7 @@ pub(super) fn parcel_stamp(theme: &UiTheme) -> impl Scene + use<> {
             }
             BackgroundColor(Color::srgb(0.91, 0.71, 0.42))
             --
+            Name("Menu parcel stamp marking")
             Node {
                 width: percent(40),
                 height: px(theme.size(6.0)),
@@ -337,8 +359,10 @@ pub(super) fn logo(theme: &UiTheme, compact: bool) -> impl Scene + use<> {
     // 固定菜单标题留出六行按钮的高度；设置与帮助的小标志保持原样。
     let title_size = if compact { 50.0 } else { 56.0 };
     bsn! {
+        Name("Menu logo")
         column(3.0 * scale)
         Children [
+            Name("Menu logo company row")
             Node { align_items: AlignItems::Center, column_gap: px(theme.size(12.0)) }
             Children [
                 @parcel_stamp(theme)

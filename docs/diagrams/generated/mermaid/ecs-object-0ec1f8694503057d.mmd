@@ -1,0 +1,100 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-0ec1f8694503057d-e1{marker-start:url(#object-0ec1f8694503057d_flowchart-v2-pointStart)!important}\n#object-0ec1f8694503057d-e5{marker-start:url(#object-0ec1f8694503057d_flowchart-v2-pointStart)!important}\n#object-0ec1f8694503057d_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_app::propagate::update_source#lt;bevy_ui::ui_node::ComputedUiRenderTargetInfo, (), bevy_ecs::hierarchy::ChildOf#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
+  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**update​_​source**<br/>同步传播源并恢复移除来源后的继承状态。" }
+  class n0 node_system
+  n1@{ shape: rounded, label: "**update​_​removed​_​limit**<br/>在传播限制移除后重新标记继承链。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**Inherited#lt;ComputedUiRenderTargetInfo**<br/>**#gt;**<br/>保存层级传播算法继承到当前节点的中间组件<br/>值" }
+  class n2 node_component
+  n3@{ shape: rounded, label: "**Propagate#lt;ComputedUiRenderTargetInfo**<br/>**#gt;**<br/>从当前实体向直接及间接关系目标传播内部组<br/>件值" }
+  class n3 node_component
+  n4@{ shape: notch-rect, label: "**Local · arg2.0.0.0.0**<br/>保存 Propagate#lt;C#gt; 移除参数的组件 ID。" }
+  class n4 node_local
+  n5@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: notch-rect, label: "**Local · arg2.0.1**<br/>跟踪 Propagate#lt;C#gt; 移除记录的读取进度。" }
+  class n6 node_local
+  n7@{ shape: rounded, label: "**PropagateStop#lt;ComputedUiRenderTarget**<br/>**Info#gt;**<br/>在当前实体截断该组件的层级传播" }
+  class n7 node_component
+  n8@{ shape: lin-rect, label: "**PropagateSet { ​_​p: PhantomData#lt;fn()**<br/>**-#gt; ComputedUiRenderTargetInfo#gt; }**<br/>沿关系层级传播指定组件值。" }
+  class n8 node_system_set
+  n0 e0@-->|"先于"| n1
+  class e0 edge_order
+  n2 e1@---|"移除"| n0
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
+  n2 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n0 e4@-->|"可变访问"| n4
+  class e4 edge_write
+  n2 e5@---|"插入"| n0
+  class e5 edge_write
+  n5 e6@--> n0
+  class e6 edge_read
+  n3 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
+  n0 e8@-->|"可变访问"| n6
+  class e8 edge_write
+  n7 e9@-->|"存在性约束"| n0
+  class e9 edge_reference
+  n8 e10@-->|"集合成员"| n0
+  class e10 edge_set_membership
+  n2 e11@--> n0
+  class e11 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }

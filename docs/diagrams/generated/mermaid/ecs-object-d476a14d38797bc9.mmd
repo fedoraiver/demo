@@ -1,0 +1,76 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: EguiFullOutput · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**EguiFullOutput**<br/>暂存 Egui pass 结束时产生的完整输出" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**process​_​output​_​system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**end​_​pass​_​system**<br/>结束 Egui 界面帧并保存完整输出。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
+  class n3 node_entity
+  class n3 external_node
+  n4@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  class n4 node_entity
+  class n4 external_node
+  n5@{ shape: rounded, label: "**run​_​egui​_​context​_​pass​_​loop​_​system**<br/>运行每个自动 Egui 上下文的专属调度。" }
+  class n5 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"可能包含"| n0
+  class e2 edge_reference
+  n4 e3@-->|"可能包含"| n0
+  class e3 edge_reference
+  n2 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n5 e5@-->|"赋值"| n0
+  class e5 edge_write
+  n5 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

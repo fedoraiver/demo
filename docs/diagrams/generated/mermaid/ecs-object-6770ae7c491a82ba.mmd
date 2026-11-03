@@ -1,0 +1,89 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_camera::visibility::VisibleEntities · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**VisibleEntities**<br/>按类别保存当前视图可见的实体。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
+  class n7 node_entity
+  class n7 external_node
+  n8@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  class n8 node_system
+  class n8 external_node
+  n1 e0@-->|"可能包含"| n0
+  class e0 edge_reference
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n7 e6@-->|"可能包含"| n0
+  class e6 edge_reference
+  n0 e7@--> n8
+  class e7 edge_read
+  e0@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

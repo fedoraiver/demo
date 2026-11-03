@@ -1,0 +1,24 @@
+//! driver 的编译器 ABI 必须与运行时编译器完全一致。
+use std::{env, fs, process::Command};
+
+fn main() {
+    println!("cargo:rerun-if-changed=../../rust-toolchain.toml");
+    let toolchain = fs::read_to_string("../../rust-toolchain.toml").unwrap();
+    let channel = toolchain
+        .lines()
+        .find(|line| line.starts_with("channel ="))
+        .and_then(|line| line.split('"').nth(1))
+        .unwrap();
+    println!("cargo:rustc-env=ENTITY_CHECK_CHANNEL={channel}");
+    let output = Command::new(env::var_os("RUSTC").unwrap())
+        .arg("-vV")
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    let version = String::from_utf8(output.stdout).unwrap();
+    let commit = version
+        .lines()
+        .find_map(|line| line.strip_prefix("commit-hash: "))
+        .unwrap();
+    println!("cargo:rustc-env=ENTITY_CHECK_COMPILER={commit}");
+}
