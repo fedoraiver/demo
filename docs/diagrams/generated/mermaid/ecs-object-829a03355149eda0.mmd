@@ -61,12 +61,9 @@ flowchart LR
   class n6 external_node
   n7@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n7 node_system
-  subgraph layout_card_n8[" "]
   n8@{ shape: rounded, label: "**calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
   class n8 node_system
   class n8 external_node
-  end
-  style layout_card_n8 fill:none,stroke:none
   n9@{ shape: rounded, label: "**update​_​egui​_​textures​_​system**<br/>来自crate:bevy​_​egui ↗：应用 Egui 托<br/>管纹理的图像增量。" }
   class n9 node_system
   class n9 external_node
@@ -156,6 +153,14 @@ flowchart LR
   class e21 edge_write
   n23 e22@-->|"可变访问"| n0
   class e22 edge_write
+  n1 layout_output_0@~~~ n2
+  n2 layout_output_1@~~~ n3
+  n3 layout_output_2@~~~ n6
+  n6 layout_output_3@~~~ n8
+  n8 layout_output_4@~~~ n10
+  n10 layout_output_5@~~~ n14
+  n14 layout_output_6@~~~ n16
+  n16 layout_output_7@~~~ n21
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

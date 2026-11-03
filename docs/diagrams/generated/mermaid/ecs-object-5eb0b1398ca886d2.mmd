@@ -44,11 +44,8 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**mark​_​images​_​as​_​changed​_​if​_​their​_​**<br/>**assets​_​changed**<br/>使图像或图集资产变化触发 UI 图像更新。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: lin-rect, label: "**Content**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
   class n1 node_system_set
   class n1 external_node
@@ -95,6 +92,8 @@ flowchart LR
   class e8 edge_order
   n0 e9@-->|"可变访问"| n10
   class e9 edge_write
+  n4 layout_output_0@~~~ n9
+  n9 layout_output_1@~~~ n10
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

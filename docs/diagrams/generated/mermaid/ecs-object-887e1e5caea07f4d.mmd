@@ -58,49 +58,49 @@ flowchart LR
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
-  class n3 node_system
+  n3@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
+  class n3 node_entity
+  class n3 external_node
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
-  class n4 node_observer
+  n4@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
+  class n4 node_system
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  n5@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n5 node_observer
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**update​_​body​_​size​_​metrics**<br/>重算刚体的 CCD 厚度和最大扫掠半径。" }
-  class n6 node_system
+  n6@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  class n6 node_observer
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
-  class n7 node_observer
+  n7@{ shape: rounded, label: "**update​_​body​_​size​_​metrics**<br/>重算刚体的 CCD 厚度和最大扫掠半径。" }
+  class n7 node_system
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**queue​_​mass​_​recomputation​_​on​_​mass​_​**<br/>**change**<br/>在刚体质量输入变化时请求重算。" }
-  class n8 node_system
+  n8@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  class n8 node_observer
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
-  class n9 node_observer
+  n9@{ shape: rounded, label: "**queue​_​mass​_​recomputation​_​on​_​mass​_​**<br/>**change**<br/>在刚体质量输入变化时请求重算。" }
+  class n9 node_system
   end
   style layout_card_n9 fill:none,stroke:none
   subgraph layout_card_n10[" "]
-  n10@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  n10@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n10 node_observer
   end
   style layout_card_n10 fill:none,stroke:none
   subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
-  class n11 node_system
-  class n11 external_node
+  n11@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  class n11 node_observer
   end
   style layout_card_n11 fill:none,stroke:none
   subgraph layout_card_n12[" "]
@@ -110,101 +110,101 @@ flowchart LR
   end
   style layout_card_n12 fill:none,stroke:none
   subgraph layout_card_n13[" "]
-  n13@{ shape: rounded, label: "**update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
+  n13@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
   class n13 node_system
+  class n13 external_node
   end
   style layout_card_n13 fill:none,stroke:none
   subgraph layout_card_n14[" "]
-  n14@{ shape: rounded, label: "**writeback​_​solver​_​bodies**<br/>将求解后的位姿和速度回写 ECS。" }
+  n14@{ shape: rounded, label: "**update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
   class n14 node_system
   end
   style layout_card_n14 fill:none,stroke:none
   subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
-  class n15 node_system
+  n15@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
+  class n15 node_entity
   class n15 external_node
   end
   style layout_card_n15 fill:none,stroke:none
   subgraph layout_card_n16[" "]
-  n16@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
+  n16@{ shape: rounded, label: "**writeback​_​solver​_​bodies**<br/>将求解后的位姿和速度回写 ECS。" }
   class n16 node_system
-  class n16 external_node
   end
   style layout_card_n16 fill:none,stroke:none
   subgraph layout_card_n17[" "]
-  n17@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为海岛导入几何<br/>创建静态碰撞子体。" }
-  class n17 node_entity
+  n17@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  class n17 node_system
   class n17 external_node
   end
   style layout_card_n17 fill:none,stroke:none
   subgraph layout_card_n18[" "]
-  n18@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
+  n18@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
   class n18 node_system
+  class n18 external_node
   end
   style layout_card_n18 fill:none,stroke:none
   subgraph layout_card_n19[" "]
-  n19@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  n19@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n19 node_system
   end
   style layout_card_n19 fill:none,stroke:none
   subgraph layout_card_n20[" "]
-  n20@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为地图展示<br/>NPC 添加静态碰撞子体。" }
-  class n20 node_entity
-  class n20 external_node
+  n20@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  class n20 node_system
   end
   style layout_card_n20 fill:none,stroke:none
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"可变访问"| n0
   class e1 edge_write
-  n0 e2@--> n3
-  class e2 edge_read
-  n4 e3@-->|"可变访问"| n0
-  class e3 edge_write
+  n3 e2@-->|"可能包含"| n0
+  class e2 edge_reference
+  n0 e3@--> n4
+  class e3 edge_read
   n5 e4@-->|"可变访问"| n0
   class e4 edge_write
-  n0 e5@-->|"存在性约束"| n6
-  class e5 edge_reference
-  n7 e6@-->|"赋值"| n0
-  class e6 edge_write
-  n0 e7@-->|"存在性约束"| n8
-  class e7 edge_reference
-  n9 e8@-->|"可变访问"| n0
-  class e8 edge_write
+  n6 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n0 e6@-->|"存在性约束"| n7
+  class e6 edge_reference
+  n8 e7@-->|"赋值"| n0
+  class e7 edge_write
+  n0 e8@-->|"存在性约束"| n9
+  class e8 edge_reference
   n10 e9@-->|"可变访问"| n0
   class e9 edge_write
-  n0 e10@--> n11
-  class e10 edge_read
+  n11 e10@-->|"可变访问"| n0
+  class e10 edge_write
   n0 e11@--> n12
   class e11 edge_read
-  n13 e12@-->|"可变访问"| n0
-  class e12 edge_write
-  n5 e13@-->|"赋值"| n0
+  n0 e12@--> n13
+  class e12 edge_read
+  n14 e13@-->|"可变访问"| n0
   class e13 edge_write
-  n13 e14@-->|"赋值"| n0
+  n6 e14@-->|"赋值"| n0
   class e14 edge_write
-  n0 e15@--> n14
-  class e15 edge_read
-  n0 e16@--> n6
-  class e16 edge_read
-  n0 e17@--> n15
+  n14 e15@-->|"赋值"| n0
+  class e15 edge_write
+  n15 e16@-->|"可能包含"| n0
+  class e16 edge_reference
+  n0 e17@--> n16
   class e17 edge_read
-  n7 e18@-->|"可变访问"| n0
-  class e18 edge_write
-  n0 e19@--> n16
+  n0 e18@--> n7
+  class e18 edge_read
+  n0 e19@--> n17
   class e19 edge_read
-  n17 e20@-->|"可能包含"| n0
-  class e20 edge_reference
+  n8 e20@-->|"可变访问"| n0
+  class e20 edge_write
   n0 e21@--> n18
   class e21 edge_read
-  n2 e22@-->|"赋值"| n0
-  class e22 edge_write
-  n0 e23@--> n19
-  class e23 edge_read
-  n9 e24@-->|"赋值"| n0
-  class e24 edge_write
-  n20 e25@-->|"可能包含"| n0
-  class e25 edge_reference
+  n0 e22@--> n19
+  class e22 edge_read
+  n2 e23@-->|"赋值"| n0
+  class e23 edge_write
+  n0 e24@--> n20
+  class e24 edge_read
+  n10 e25@-->|"赋值"| n0
+  class e25 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

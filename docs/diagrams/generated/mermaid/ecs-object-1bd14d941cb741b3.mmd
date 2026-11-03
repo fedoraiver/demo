@@ -41,11 +41,8 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**early​_​downsample​_​depth**<br/>生成供本帧晚期遮挡测试使用的深度金字塔。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**late​_​gpu​_​preprocess**<br/>来自crate:bevy​_​pbr ↗：对后期遮挡工作<br/>项执行间接网格预处理。" }
   class n1 node_system
   class n1 external_node
@@ -125,6 +122,8 @@ flowchart LR
   class e15 edge_order
   n17 e16@-->|"调用"| n0
   class e16 edge_registration
+  n1 layout_output_0@~~~ n7
+  n7 layout_output_1@~~~ n16
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

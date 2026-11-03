@@ -50,62 +50,62 @@ flowchart LR
   n1@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**CharacterAnimationPlugin**<br/>注册场景就绪后的动画绑定，以及固定模拟和<br/>同帧呈现朝向同步后的动作混合。" }
-  class n2 node_plugin
-  n3@{ shape: rounded, label: "**HoldingItems**<br/>来自item​_​interaction ↗：Bevy 根据<br/>HeldBy 自动维护的反向索引，业务代码只读<br/>取。" }
+  n2@{ shape: rounded, label: "**AnimationPlayer**<br/>来自crate:bevy​_​animation ↗：保存当前<br/>激活动画及其播放控制状态" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: rounded, label: "**CourierAnimation**<br/>只保存视觉混合与步相位；速度、朝向、接地<br/>及持有状态仍由业务组件提供。" }
   class n3 node_component
-  class n3 external_node
-  n4@{ shape: rounded, label: "**AnimationPlayer**<br/>来自crate:bevy​_​animation ↗：保存当前<br/>激活动画及其播放控制状态" }
+  n4@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**CharacterMotion**<br/>来自character ↗：接地状态由物理查询派<br/>生；实际速度直接读取 Avian 的<br/>LinearVelocity。" }
-  class n5 node_component
-  class n5 external_node
-  n6@{ shape: rounded, label: "**CourierAnimation**<br/>只保存视觉混合与步相位；速度、朝向、接地<br/>及持有状态仍由业务组件提供。" }
+  n5@{ shape: fr-rect, label: "**CharacterAnimationPlugin**<br/>注册场景就绪后的动画绑定，以及固定模拟和<br/>同帧呈现朝向同步后的动作混合。" }
+  class n5 node_plugin
+  n6@{ shape: rounded, label: "**AnimationGraphHandle**<br/>来自crate:bevy​_​animation ↗：选择播放<br/>器使用的动画图资产。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**AnimationGraphHandle**<br/>来自crate:bevy​_​animation ↗：选择播放<br/>器使用的动画图资产。" }
+  class n6 external_node
+  n7@{ shape: rounded, label: "**HoldingItems**<br/>来自item​_​interaction ↗：Bevy 根据<br/>HeldBy 自动维护的反向索引，业务代码只读<br/>取。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  n8@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
-  class n9 node_component
-  class n9 external_node
-  n10@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>场景就绪后只遍历该视觉根的子树，避免把<br/>NPC 或其他模型的播放器接到主角上。" }
-  class n10 node_system
-  n11@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
-  class n11 node_system_set
+  n9@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>场景就绪后只遍历该视觉根的子树，避免把<br/>NPC 或其他模型的播放器接到主角上。" }
+  class n9 node_system
+  n10@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
+  class n10 node_system_set
+  class n10 external_node
+  n11@{ shape: rounded, label: "**CharacterMotion**<br/>来自character ↗：接地状态由物理查询派<br/>生；实际速度直接读取 Avian 的<br/>LinearVelocity。" }
+  class n11 node_component
   class n11 external_node
   n12@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
   class n12 node_component
   class n12 external_node
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n3 e2@--> n0
-  class e2 edge_read
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n5 e4@--> n0
-  class e4 edge_read
-  n0 e5@-->|"可变访问"| n6
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n0 e2@-->|"赋值"| n3
+  class e2 edge_write
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n0 e5@-->|"移除"| n6
   class e5 edge_write
-  n0 e6@-->|"移除"| n7
+  n0 e6@-->|"移除"| n3
   class e6 edge_write
-  n0 e7@-->|"移除"| n6
-  class e7 edge_write
-  n8 e8@-->|"存在性约束"| n0
-  class e8 edge_reference
-  n9 e9@--> n0
-  class e9 edge_read
-  n0 e10@-->|"赋值"| n6
-  class e10 edge_write
-  n10 e11@-->|"先于"| n0
-  class e11 edge_order
-  n11 e12@-->|"集合成员"| n0
-  class e12 edge_set_membership
+  n7 e7@--> n0
+  class e7 edge_read
+  n8 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"可变访问"| n3
+  class e9 edge_write
+  n9 e10@-->|"先于"| n0
+  class e10 edge_order
+  n10 e11@-->|"集合成员"| n0
+  class e11 edge_set_membership
+  n11 e12@--> n0
+  class e12 edge_read
   n12 e13@--> n0
   class e13 edge_read
   e0@{ curve: basis }
@@ -114,7 +114,7 @@ flowchart LR
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: basis }
+  e7@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }

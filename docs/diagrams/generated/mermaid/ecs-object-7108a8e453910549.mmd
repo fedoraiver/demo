@@ -44,92 +44,164 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>在固定模拟前及逐帧持握目标同步前设置水平<br/>朝向，站立、横移和后退时也跟随视角。" }
   class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
   n1@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n1 node_component
   class n1 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
   n2@{ shape: rounded, label: "**Collider**<br/>来自crate:avian3d ↗：保存 Parry 碰撞<br/>后端的几何形状。" }
   class n2 node_component
   class n2 external_node
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
   n3@{ shape: rounded, label: "**ColliderDisabled**<br/>来自crate:avian3d ↗：暂停碰撞体检测和<br/>空间查询。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**ControlsCamera**<br/>控制者当前关联的第一人称相机。" }
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
+  class n4 external_node
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**ControlsCamera**<br/>控制者当前关联的第一人称相机。" }
   class n5 node_component
-  class n5 external_node
-  n6@{ shape: rounded, label: "**Sensor**<br/>来自crate:avian3d ↗：将碰撞体设为不阻<br/>挡运动的触发器。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
-  class n7 node_plugin
-  n8@{ shape: rounded, label: "**HeldAttachment**<br/>来自item​_​interaction ↗：实际碰撞形状<br/>相对组合刚体的姿态；箱实体不成为人物的<br/>ChildOf，避免异常销毁时连带消失。" }
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**Sensor**<br/>来自crate:avian3d ↗：将碰撞体设为不阻<br/>挡运动的触发器。" }
+  class n7 node_component
+  class n7 external_node
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**FirstPersonCamera**<br/>观察角度的唯一来源；有向转角保留到下一次<br/>安全朝向同步。" }
   class n8 node_component
-  class n8 external_node
-  n9@{ shape: rounded, label: "**GameplayContext**<br/>控制者的步行输入上下文；角色实体不直接持<br/>有设备绑定。" }
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
-  class n10 node_component
-  class n10 external_node
+  class n9 external_node
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>注册第一人称动作、捕获、朝向与镜头，不安<br/>装输入基础设施或物理插件。" }
+  class n10 node_plugin
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
   n11@{ shape: rounded, label: "**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
   class n11 node_component
   class n11 external_node
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
   n12@{ shape: rounded, label: "**ColliderAabb**<br/>来自crate:avian3d ↗：保存碰撞体的世界<br/>轴对齐包围盒。" }
   class n12 node_component
   class n12 external_node
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
   n13@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**HoldingItems**<br/>来自item​_​interaction ↗：Bevy 根据<br/>HeldBy 自动维护的反向索引，业务代码只读<br/>取。" }
-  class n14 node_component
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: cyl, label: "**ColliderTrees**<br/>来自crate:avian3d ↗：按运动类别组织碰<br/>撞体加速树。" }
+  class n14 node_resource
   class n14 external_node
-  n15@{ shape: cyl, label: "**ColliderTrees**<br/>来自crate:avian3d ↗：按运动类别组织碰<br/>撞体加速树。" }
-  class n15 node_resource
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**HeldAttachment**<br/>来自item​_​interaction ↗：实际碰撞形状<br/>相对组合刚体的姿态；箱实体不成为人物的<br/>ChildOf，避免异常销毁时连带消失。" }
+  class n15 node_component
   class n15 external_node
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
   n16@{ shape: lin-rect, label: "**Facing**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
   class n16 node_system_set
   class n16 external_node
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
   n17@{ shape: rounded, label: "**CollisionLayers**<br/>来自crate:avian3d ↗：声明碰撞体所属层<br/>和可交互层。" }
   class n17 node_component
   class n17 external_node
-  n18@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: rounded, label: "**ControlsCharacter**<br/>控制者当前关联的角色，设备和角色状态分别<br/>保存。" }
   class n18 node_component
-  class n18 external_node
-  n19@{ shape: rounded, label: "**ColliderOf**<br/>来自crate:avian3d ↗：指定碰撞体附着的<br/>刚体。" }
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
+  n19@{ shape: rounded, label: "**HoldingItems**<br/>来自item​_​interaction ↗：Bevy 根据<br/>HeldBy 自动维护的反向索引，业务代码只读<br/>取。" }
   class n19 node_component
   class n19 external_node
-  n20@{ shape: rounded, label: "**FirstPersonCamera**<br/>观察角度的唯一来源；有向转角保留到下一次<br/>安全朝向同步。" }
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: rounded, label: "**ColliderOf**<br/>来自crate:avian3d ↗：指定碰撞体附着的<br/>刚体。" }
   class n20 node_component
-  n21@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
+  class n20 external_node
+  end
+  style layout_card_n20 fill:none,stroke:none
+  subgraph layout_card_n21[" "]
+  n21@{ shape: rounded, label: "**GameplayContext**<br/>控制者的步行输入上下文；角色实体不直接持<br/>有设备绑定。" }
   class n21 node_component
-  class n21 external_node
-  n22@{ shape: rounded, label: "**ControlsCharacter**<br/>控制者当前关联的角色，设备和角色状态分别<br/>保存。" }
+  end
+  style layout_card_n21 fill:none,stroke:none
+  subgraph layout_card_n22[" "]
+  n22@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
   class n22 node_component
+  class n22 external_node
+  end
+  style layout_card_n22 fill:none,stroke:none
+  subgraph layout_card_n23[" "]
   n23@{ shape: rounded, label: "**Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
   class n23 node_component
   class n23 external_node
+  end
+  style layout_card_n23 fill:none,stroke:none
   n0 e0@-->|"赋值"| n1
   class e0 edge_write
   n2 e1@--> n0
   class e1 edge_read
   n3 e2@-->|"存在性约束"| n0
   class e2 edge_reference
-  n4 e3@--> n0
-  class e3 edge_read
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
   n5 e4@--> n0
   class e4 edge_read
-  n6 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
-  n7 e6@-->|"调用"| n0
-  class e6 edge_registration
-  n8 e7@--> n0
-  class e7 edge_read
-  n9 e8@-->|"存在性约束"| n0
-  class e8 edge_reference
-  n10 e9@--> n0
-  class e9 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@-->|"调用"| n0
+  class e9 edge_registration
   n11 e10@---|"插入"| n0
   class e10 edge_write
   n12 e11@--> n0
@@ -146,16 +218,16 @@ flowchart LR
   class e16 edge_write
   n17 e17@--> n0
   class e17 edge_read
-  n11 e18@--> n0
+  n18 e18@--> n0
   class e18 edge_read
-  n18 e19@-->|"存在性约束"| n0
-  class e19 edge_reference
+  n11 e19@--> n0
+  class e19 edge_read
   n19 e20@--> n0
   class e20 edge_read
-  n0 e21@-->|"可变访问"| n20
-  class e21 edge_write
-  n21 e22@--> n0
-  class e22 edge_read
+  n20 e21@--> n0
+  class e21 edge_read
+  n21 e22@-->|"存在性约束"| n0
+  class e22 edge_reference
   n22 e23@--> n0
   class e23 edge_read
   n23 e24@--> n0
@@ -176,7 +248,7 @@ flowchart LR
   e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }
-  e16@{ curve: bumpX }
+  e16@{ curve: basis }
   e17@{ curve: basis }
   e18@{ curve: basis }
   e19@{ curve: basis }

@@ -46,11 +46,8 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**AnimationGraphHandle**<br/>选择播放器使用的动画图资产。" }
   class n1 node_component
   n2@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自crate:bevy​_​app ↗：更新动画图、播<br/>放时间和目标姿态。" }
@@ -117,6 +114,8 @@ flowchart LR
   class e13 edge_order
   n15 e14@-->|"调用"| n0
   class e14 edge_registration
+  n5 layout_output_0@~~~ n11
+  n11 layout_output_1@~~~ n13
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

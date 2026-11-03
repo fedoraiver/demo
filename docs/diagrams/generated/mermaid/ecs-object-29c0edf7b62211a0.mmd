@@ -42,11 +42,8 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: cyl, label: "**RenderLightmaps**<br/>来自crate:bevy​_​pbr ↗：管理渲染侧光照<br/>贴图的槽位和纹理。" }
   class n1 node_resource
   class n1 external_node
@@ -106,6 +103,8 @@ flowchart LR
   class e12 edge_reference
   n13 e13@-->|"存在性约束"| n0
   class e13 edge_reference
+  n2 layout_output_0@~~~ n3
+  n3 layout_output_1@~~~ n8
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

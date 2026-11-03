@@ -50,11 +50,8 @@ flowchart LR
   class n0 node_system
   n1@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
   class n1 node_system
-  subgraph layout_card_n2[" "]
   n2@{ shape: cyl, label: "**VisibleEntityRanges**<br/>记录各实体是否处于视图距离范围。" }
   class n2 node_resource
-  end
-  style layout_card_n2 fill:none,stroke:none
   n3@{ shape: rounded, label: "**VisibilityRange**<br/>按相机距离控制网格的细节层级。" }
   class n3 node_component
   n4@{ shape: rounded, label: "**Aabb**<br/>以局部轴对齐包围盒支持可见性裁剪。" }
@@ -96,6 +93,8 @@ flowchart LR
   class e9 edge_reference
   n11 e10@-->|"存在性约束"| n0
   class e10 edge_reference
+  n1 layout_output_0@~~~ n2
+  n2 layout_output_1@~~~ n7
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

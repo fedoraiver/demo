@@ -42,11 +42,8 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**late​_​sweep​_​material​_​instances**<br/>清扫失效网格材质实例并推进本帧刻度。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: cyl, label: "**RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
   class n1 node_resource
   n2@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
@@ -76,9 +73,11 @@ flowchart LR
   class e5 edge_order
   n7 e6@--> n0
   class e6 edge_read
+  n1 layout_output_0@~~~ n3
+  n3 layout_output_1@~~~ n4
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: bumpX }
+  e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }

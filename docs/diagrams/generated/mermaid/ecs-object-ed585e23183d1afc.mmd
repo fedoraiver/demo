@@ -68,7 +68,7 @@ flowchart LR
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**exit#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：从当前消息批<br/>次取得最后一次状态转换。；执行旧状态的退<br/>出调度。" }
+  n5@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**exit#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：执行旧状态的<br/>退出调度。；从当前消息批次取得最后一次状<br/>态转换。" }
   class n5 node_system_group
   class n5 external_node
   end
@@ -86,7 +86,7 @@ flowchart LR
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**transition#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：执行特定旧状<br/>态到新状态的转换调度。；从当前消息批次取<br/>得最后一次状态转换。" }
+  n8@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**transition#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：从当前消息批<br/>次取得最后一次状态转换。；执行特定旧状态<br/>到新状态的转换调度。" }
   class n8 node_system_group
   class n8 external_node
   end

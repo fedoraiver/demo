@@ -39,11 +39,8 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: cyl, label: "**ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
   class n0 node_resource
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**store​_​contact​_​impulses**<br/>保存已求得的接触冲量供下一轮热启动。" }
   class n1 node_system
   n2@{ shape: hex, label: "**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
@@ -117,6 +114,10 @@ flowchart LR
   class e16 edge_read
   n18 e17@-->|"可变访问"| n0
   class e17 edge_write
+  n8 layout_output_0@~~~ n10
+  n10 layout_output_1@~~~ n13
+  n13 layout_output_2@~~~ n15
+  n15 layout_output_3@~~~ n17
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

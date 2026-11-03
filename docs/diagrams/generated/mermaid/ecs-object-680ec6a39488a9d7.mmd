@@ -47,7 +47,7 @@ flowchart LR
   n2@{ shape: rounded, label: "**image​_​changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
+  n3@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步设置滚动条的有效范围和交<br/>互状态。" }
   class n3 node_system
   class n3 external_node
   n4@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
@@ -110,7 +110,7 @@ flowchart LR
   n23@{ shape: rounded, label: "**button​_​changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
   class n23 node_system
   class n23 external_node
-  n24@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>来自ui ↗：将设置滚动条绑定到对应内容视<br/>口。" }
+  n24@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>来自ui ↗：把设置滚动轨道绑定到实际内容<br/>视口。" }
   class n24 node_system
   class n24 external_node
   n25@{ shape: rounded, label: "**propagate​_​collider​_​transforms**<br/>来自crate:avian3d ↗：沿实体层级计算碰<br/>撞体相对刚体的变换。" }

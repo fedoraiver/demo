@@ -38,11 +38,8 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3d#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
   class n0 node_resource
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**extract​_​core​_​3d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动三维相机准备主渲染阶段。" }
   class n1 node_system
   class n1 external_node
@@ -80,7 +77,7 @@ flowchart LR
   class e4 edge_read
   n6 e5@-->|"可变访问"| n0
   class e5 edge_write
-  n0 e6@---> n7
+  n0 e6@--> n7
   class e6 edge_read
   n8 e7@-->|"可变访问"| n0
   class e7 edge_write
@@ -88,6 +85,8 @@ flowchart LR
   class e8 edge_read
   n10 e9@-->|"可变访问"| n0
   class e9 edge_write
+  n5 layout_output_0@~~~ n7
+  n7 layout_output_1@~~~ n9
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -95,5 +94,5 @@ flowchart LR
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: bumpX }
+  e8@{ curve: basis }
   e9@{ curve: basis }

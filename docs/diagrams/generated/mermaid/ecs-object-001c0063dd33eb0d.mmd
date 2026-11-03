@@ -45,52 +45,25 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**setup​_​primary​_​egui​_​context​_​system**<br/>为首个合适相机建立主 Egui 上下文。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
   n1@{ shape: notch-rect, label: "**Local · egui​_​context​_​exists**<br/>记住主 Egui 上下文是否已找到或创建。" }
   class n1 node_local
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
   n2@{ shape: rounded, label: "**PrimaryEguiContext**<br/>标记运行主Egui调度的上下文。" }
   class n2 node_component
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
   n3@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n3 node_component
   class n3 external_node
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
   n4@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
   class n4 node_component
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
   n5@{ shape: rounded, label: "**build::{{closure}}**<br/>判断更新时是否自动创建主 Egui 上下文。" }
   class n5 node_system
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
   n6@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
   class n6 node_plugin
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
   n7@{ shape: lin-rect, label: "**InitContexts**<br/>组织 Egui 上下文与输入准备。" }
   class n7 node_system_set
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
   n8@{ shape: rounded, label: "**on​_​egui​_​context​_​added​_​system**<br/>登记新建 Egui 上下文的窗口映射。" }
   class n8 node_system
-  end
-  style layout_card_n8 fill:none,stroke:none
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
   n0 e1@-->|"插入"| n2
@@ -111,7 +84,10 @@ flowchart LR
   class e8 edge_set_membership
   n0 e9@-->|"先于"| n8
   class e9 edge_order
+  n1 layout_output_0@~~~ n2
+  n2 layout_output_1@~~~ n8
   e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

@@ -41,16 +41,13 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**ColliderAabb**<br/>保存碰撞体的世界轴对齐包围盒。" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
-  n1@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
-  class n1 node_system
-  n2@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为海岛导入几何<br/>创建静态碰撞子体。" }
-  class n2 node_entity
-  class n2 external_node
+  n1@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
+  class n2 node_system
   n3@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n3 node_system
   class n3 external_node
@@ -72,18 +69,18 @@ flowchart LR
   class n9 node_system
   n10@{ shape: rounded, label: "**raycast**<br/>执行已启用的射线查询并更新命中列表。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为地图展示<br/>NPC 添加静态碰撞子体。" }
-  class n11 node_entity
-  class n11 external_node
-  n12@{ shape: rounded, label: "**shapecast**<br/>执行已启用的形状扫掠并更新命中列表。" }
-  class n12 node_system
+  n11@{ shape: rounded, label: "**shapecast**<br/>执行已启用的形状扫掠并更新命中列表。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
+  class n12 node_entity
+  class n12 external_node
   n13@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
   class n13 node_system
   class n13 external_node
-  n1 e0@-->|"可变访问"| n0
-  class e0 edge_write
-  n2 e1@-->|"可能包含"| n0
-  class e1 edge_reference
+  n1 e0@-->|"可能包含"| n0
+  class e0 edge_reference
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
   n0 e2@--> n3
   class e2 edge_read
   n4 e3@-->|"可变访问"| n0
@@ -100,16 +97,15 @@ flowchart LR
   class e8 edge_write
   n0 e9@--> n10
   class e9 edge_read
-  n11 e10@-->|"可能包含"| n0
-  class e10 edge_reference
-  n0 e11@--> n12
-  class e11 edge_read
+  n0 e10@--> n11
+  class e10 edge_read
+  n12 e11@-->|"可能包含"| n0
+  class e11 edge_reference
   n0 e12@--> n13
   class e12 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

@@ -61,23 +61,23 @@ flowchart LR
   class n8 node_system
   n9@{ shape: hex, label: "**build::{closure#35;3}**<br/>同步碰撞代理的传感器启用标志。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
-  class n10 node_observer
-  class n10 external_node
-  n11@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
-  class n11 node_system
-  n12@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
+  n10@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
+  class n10 node_system
+  n11@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
+  class n11 node_observer
+  class n11 external_node
+  n12@{ shape: hex, label: "**build::{closure#35;6}**<br/>同步碰撞代理的自定义过滤标志。" }
   class n12 node_observer
-  class n12 external_node
-  n13@{ shape: hex, label: "**build::{closure#35;6}**<br/>同步碰撞代理的自定义过滤标志。" }
+  n13@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
   class n13 node_observer
-  n14@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
-  class n14 node_system
-  n15@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
-  class n15 node_observer
-  n16@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
+  class n13 external_node
+  n14@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
+  class n14 node_observer
+  class n14 external_node
+  n15@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
+  class n15 node_system
+  n16@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
   class n16 node_observer
-  class n16 external_node
   n17@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
   class n17 node_system
   class n17 external_node
@@ -114,20 +114,20 @@ flowchart LR
   class e8 edge_reference
   n2 e9@---|"存在性约束"| n0
   class e9 edge_reference
-  n10 e10@-->|"插入"| n0
-  class e10 edge_write
-  n0 e11@-->|"存在性约束"| n11
-  class e11 edge_reference
-  n12 e12@-->|"插入"| n0
-  class e12 edge_write
-  n0 e13@-->|"存在性约束"| n13
-  class e13 edge_reference
-  n0 e14@-->|"存在性约束"| n14
-  class e14 edge_reference
+  n0 e10@-->|"存在性约束"| n10
+  class e10 edge_reference
+  n11 e11@-->|"插入"| n0
+  class e11 edge_write
+  n0 e12@-->|"存在性约束"| n12
+  class e12 edge_reference
+  n13 e13@-->|"插入"| n0
+  class e13 edge_write
+  n14 e14@-->|"插入"| n0
+  class e14 edge_write
   n0 e15@-->|"存在性约束"| n15
   class e15 edge_reference
-  n16 e16@-->|"插入"| n0
-  class e16 edge_write
+  n0 e16@-->|"存在性约束"| n16
+  class e16 edge_reference
   n17 e17@-->|"插入"| n0
   class e17 edge_write
   n0 e18@-->|"存在性约束"| n18

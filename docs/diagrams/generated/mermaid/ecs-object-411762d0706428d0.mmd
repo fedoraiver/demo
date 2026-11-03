@@ -52,12 +52,12 @@ flowchart LR
   class n4 node_observer
   n5@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>记录滚动条拖动的起始位置。" }
   class n5 node_observer
-  n6@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>来自ui ↗：将设置滚动条绑定到对应内容视<br/>口。" }
+  n6@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>来自ui ↗：把设置滚动轨道绑定到实际内容<br/>视口。" }
   class n6 node_system
   class n6 external_node
   n7@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>随滑块拖动更新目标滚动位置。" }
   class n7 node_observer
-  n8@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步滚动条显隐、拾取范围与高<br/>亮。" }
+  n8@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步设置滚动条的有效范围和交<br/>互状态。" }
   class n8 node_system
   class n8 external_node
   n9@{ shape: rounded, label: "**update​_​scrollbar​_​thumb**<br/>按内容比例与滚动位置更新滚动条滑块。" }

@@ -44,17 +44,17 @@ flowchart LR
   n1@{ shape: rounded, label: "**extract​_​ambient​_​light**<br/>来自crate:bevy​_​pbr ↗：批量复制主世界<br/>实体的环境光设置。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
-  class n2 node_system
+  n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  class n2 node_entity
   class n2 external_node
-  n3@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
-  class n3 node_entity
+  n3@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
+  class n3 node_system
   class n3 external_node
   n0 e0@--> n1
   class e0 edge_read
-  n0 e1@--> n2
-  class e1 edge_read
-  n3 e2@-->|"可能包含"| n0
-  class e2 edge_reference
+  n2 e1@-->|"可能包含"| n0
+  class e1 edge_reference
+  n0 e2@--> n3
+  class e2 edge_read
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e2@{ curve: basis }

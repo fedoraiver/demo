@@ -41,43 +41,43 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: stadium, label: "**WorldInstanceReady**<br/>通知世界实例已经可用。" }
   class n0 node_event
-  n1@{ shape: hex, label: "**mark​_​island​_​ready**<br/>来自scene​_​assembly ↗：标记地图实例以<br/>进入碰撞准备。" }
+  n1@{ shape: hex, label: "**mark​_​courier​_​animation​_​ready**<br/>来自character​_​animation ↗：标记已就<br/>绪的主角视觉根，等待动画绑定。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: hex, label: "**mark​_​island​_​ready**<br/>来自scene​_​assembly ↗：标记地图实例以<br/>进入碰撞准备。" }
+  n2@{ shape: hex, label: "**mark​_​courier​_​animation​_​ready**<br/>来自character​_​animation ↗：标记已就<br/>绪的主角视觉根，等待动画绑定。" }
   class n2 node_observer
   class n2 external_node
-  n3@{ shape: hex, label: "**mark​_​courier​_​animation​_​ready**<br/>来自character​_​animation ↗：标记主角<br/>视觉根以进入动画绑定。" }
+  n3@{ shape: hex, label: "**mark​_​island​_​ready**<br/>来自scene​_​assembly ↗：标记地图实例以<br/>进入碰撞准备。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: hex, label: "**mark​_​courier​_​animation​_​ready**<br/>来自character​_​animation ↗：标记主角<br/>视觉根以进入动画绑定。" }
-  class n4 node_observer
-  class n4 external_node
+  n4@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>推进世界资产实例的生成、销毁及更新。" }
+  class n4 node_system
   n5@{ shape: hex, label: "**mark​_​island​_​ready**<br/>来自scene​_​assembly ↗：标记地图实例以<br/>进入碰撞准备。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**mark​_​courier​_​animation​_​ready**<br/>来自character​_​animation ↗：标记主角<br/>视觉根以进入动画绑定。" }
+  n6@{ shape: hex, label: "**mark​_​island​_​ready**<br/>来自scene​_​assembly ↗：标记地图实例以<br/>进入碰撞准备。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>推进世界资产实例的生成、销毁及更新。" }
-  class n7 node_system
+  n7@{ shape: hex, label: "**mark​_​courier​_​animation​_​ready**<br/>来自character​_​animation ↗：标记已就<br/>绪的主角视觉根，等待动画绑定。" }
+  class n7 node_observer
+  class n7 external_node
   n0 e0@-->|"接收事件"| n1
   class e0 edge_observe
   n0 e1@-->|"接收事件"| n2
   class e1 edge_observe
   n0 e2@-->|"接收事件"| n3
   class e2 edge_observe
-  n0 e3@-->|"接收事件"| n4
-  class e3 edge_observe
+  n4 e3@-->|"触发事件"| n0
+  class e3 edge_emit
   n0 e4@-->|"接收事件"| n5
   class e4 edge_observe
   n0 e5@-->|"接收事件"| n6
   class e5 edge_observe
-  n7 e6@-->|"触发事件"| n0
-  class e6 edge_emit
+  n0 e6@-->|"接收事件"| n7
+  class e6 edge_observe
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
+  e6@{ curve: basis }

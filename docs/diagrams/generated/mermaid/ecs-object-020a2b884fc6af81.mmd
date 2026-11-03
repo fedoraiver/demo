@@ -47,7 +47,7 @@ flowchart LR
   end
   style layout_card_n0 fill:none,stroke:none
   subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“返回、暂停或恢复”菜单<br/>动作。" }
+  n1@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把空格按下转换为<br/>角色跳跃请求。" }
   class n1 node_entity
   class n1 external_node
   end
@@ -58,7 +58,7 @@ flowchart LR
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“确认当前菜单项”菜单动<br/>作。" }
+  n3@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：通过键盘或手柄移到上一个菜单<br/>按钮。" }
   class n3 node_entity
   class n3 external_node
   end
@@ -69,24 +69,25 @@ flowchart LR
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**(Commands#lt;'​_​, '​_​#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityRef#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>根据求值结果触发输入动作通知。" }
-  class n5 node_system
+  n5@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：汇总 WASD 输入并<br/>驱动对应角色的移动意图。" }
+  class n5 node_entity
+  class n5 external_node
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
-  class n6 node_observer
+  n6@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：把向右导航输入转成聚焦设置项<br/>的增加请求。" }
+  class n6 node_entity
+  class n6 external_node
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
-  class n7 node_observer
+  n7@{ shape: rounded, label: "**(Commands#lt;'​_​, '​_​#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityRef#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>根据求值结果触发输入动作通知。" }
+  class n7 node_system
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“上一个菜单项”菜单动<br/>作。" }
-  class n8 node_entity
-  class n8 external_node
+  n8@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  class n8 node_observer
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
@@ -95,48 +96,47 @@ flowchart LR
   end
   style layout_card_n9 fill:none,stroke:none
   subgraph layout_card_n10[" "]
-  n10@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
-  class n10 node_observer
+  n10@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：将键盘与手柄返回输入统一为菜<br/>单返回请求。" }
+  class n10 node_entity
+  class n10 external_node
   end
   style layout_card_n10 fill:none,stroke:none
   subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载第一人称鼠标<br/>转向动作。" }
-  class n11 node_entity
-  class n11 external_node
+  n11@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  class n11 node_observer
   end
   style layout_card_n11 fill:none,stroke:none
   subgraph layout_card_n12[" "]
-  n12@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“下一个菜单项”菜单动<br/>作。" }
+  n12@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：把向左导航输入转成聚焦设置项<br/>的减少请求。" }
   class n12 node_entity
   class n12 external_node
   end
   style layout_card_n12 fill:none,stroke:none
   subgraph layout_card_n13[" "]
-  n13@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“减小当前设置值”菜单动<br/>作。" }
+  n13@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：用向下导航输入切换到下一个菜<br/>单按钮。" }
   class n13 node_entity
   class n13 external_node
   end
   style layout_card_n13 fill:none,stroke:none
   subgraph layout_card_n14[" "]
-  n14@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“增大当前设置值”菜单动<br/>作。" }
+  n14@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：将 E 键按下转换为<br/>所控角色的一次交互请求。" }
   class n14 node_entity
   class n14 external_node
   end
   style layout_card_n14 fill:none,stroke:none
   subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：合成角色二维移动<br/>动作。" }
+  n15@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：汇总鼠标位移，驱<br/>动所属玩家的相机观察。" }
   class n15 node_entity
   class n15 external_node
   end
   style layout_card_n15 fill:none,stroke:none
   subgraph layout_card_n16[" "]
-  n16@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载单次拿取或放<br/>下的交互动作。" }
-  class n16 node_entity
-  class n16 external_node
+  n16@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  class n16 node_observer
   end
   style layout_card_n16 fill:none,stroke:none
   subgraph layout_card_n17[" "]
-  n17@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把一次有效按下转<br/>换为跳跃动作。" }
+  n17@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：将键盘或手柄确认输入交给当前<br/>菜单按钮。" }
   class n17 node_entity
   class n17 external_node
   end
@@ -147,53 +147,53 @@ flowchart LR
   class e1 edge_read
   n3 e2@-->|"可能包含"| n0
   class e2 edge_reference
-  n4 e3@-->|"赋值"| n0
+  n4 e3@-->|"可变访问"| n0
   class e3 edge_write
-  n2 e4@-->|"可变访问"| n0
-  class e4 edge_write
-  n0 e5@--> n5
-  class e5 edge_read
-  n6 e6@-->|"赋值"| n0
+  n5 e4@-->|"可能包含"| n0
+  class e4 edge_reference
+  n6 e5@-->|"可能包含"| n0
+  class e5 edge_reference
+  n2 e6@-->|"可变访问"| n0
   class e6 edge_write
-  n7 e7@-->|"赋值"| n0
-  class e7 edge_write
-  n8 e8@-->|"可能包含"| n0
-  class e8 edge_reference
-  n4 e9@-->|"可变访问"| n0
+  n0 e7@--> n7
+  class e7 edge_read
+  n8 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  n9 e9@-->|"赋值"| n0
   class e9 edge_write
   n2 e10@-->|"赋值"| n0
   class e10 edge_write
-  n9 e11@-->|"可变访问"| n0
-  class e11 edge_write
-  n10 e12@-->|"可变访问"| n0
+  n10 e11@-->|"可能包含"| n0
+  class e11 edge_reference
+  n11 e12@-->|"可变访问"| n0
   class e12 edge_write
-  n11 e13@-->|"可能包含"| n0
-  class e13 edge_reference
+  n9 e13@-->|"可变访问"| n0
+  class e13 edge_write
   n12 e14@-->|"可能包含"| n0
   class e14 edge_reference
-  n6 e15@-->|"可变访问"| n0
-  class e15 edge_write
-  n13 e16@-->|"可能包含"| n0
+  n13 e15@-->|"可能包含"| n0
+  class e15 edge_reference
+  n14 e16@-->|"可能包含"| n0
   class e16 edge_reference
-  n14 e17@-->|"可能包含"| n0
+  n15 e17@-->|"可能包含"| n0
   class e17 edge_reference
-  n7 e18@-->|"可变访问"| n0
+  n16 e18@-->|"赋值"| n0
   class e18 edge_write
-  n15 e19@-->|"可能包含"| n0
-  class e19 edge_reference
-  n16 e20@-->|"可能包含"| n0
-  class e20 edge_reference
+  n16 e19@-->|"可变访问"| n0
+  class e19 edge_write
+  n4 e20@-->|"赋值"| n0
+  class e20 edge_write
   n17 e21@-->|"可能包含"| n0
   class e21 edge_reference
-  n10 e22@-->|"赋值"| n0
+  n8 e22@-->|"赋值"| n0
   class e22 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

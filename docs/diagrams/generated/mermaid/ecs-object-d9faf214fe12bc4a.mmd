@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-d9faf214fe12bc4a-e13{marker-start:url(#object-d9faf214fe12bc4a_flowchart-v2-pointStart)!important}\n#object-d9faf214fe12bc4a-e30{marker-start:url(#object-d9faf214fe12bc4a_flowchart-v2-pointStart)!important}\n#object-d9faf214fe12bc4a-e31{marker-start:url(#object-d9faf214fe12bc4a_flowchart-v2-pointStart)!important}\n#object-d9faf214fe12bc4a_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-d9faf214fe12bc4a-e14{marker-start:url(#object-d9faf214fe12bc4a_flowchart-v2-pointStart)!important}\n#object-d9faf214fe12bc4a-e30{marker-start:url(#object-d9faf214fe12bc4a_flowchart-v2-pointStart)!important}\n#object-d9faf214fe12bc4a-e31{marker-start:url(#object-d9faf214fe12bc4a_flowchart-v2-pointStart)!important}\n#object-d9faf214fe12bc4a_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -75,20 +75,20 @@ flowchart LR
   n11@{ shape: rounded, label: "**prepare​_​taa​_​jitter**<br/>来自crate:bevy​_​anti​_​alias ↗：为 TAA<br/>相机逐帧设置 Halton 投影抖动。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**update​_​previous​_​view​_​data**<br/>来自crate:bevy​_​pbr ↗：记录三维及阴影<br/>视图未抖动的变换矩阵。" }
-  class n12 node_system
+  n12@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
+  class n12 node_entity
   class n12 external_node
-  n13@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>来自crate:bevy​_​pbr ↗：允许大气相机的<br/>深度纹理被着色器采样。" }
+  n13@{ shape: rounded, label: "**update​_​previous​_​view​_​data**<br/>来自crate:bevy​_​pbr ↗：记录三维及阴影<br/>视图未抖动的变换矩阵。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n14@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>来自crate:bevy​_​pbr ↗：允许大气相机的<br/>深度纹理被着色器采样。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  n15@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：创建可复用为玩<br/>家镜头的加载相机。" }
-  class n16 node_entity
+  n16@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  class n16 node_system
   class n16 external_node
   n17@{ shape: rounded, label: "**prepare​_​core​_​3d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按共<br/>享目标准备三维深度纹理与清除方式。" }
   class n17 node_system
@@ -108,7 +108,7 @@ flowchart LR
   n22@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>来自crate:bevy​_​ui​_​render ↗：为活动二<br/>维或三维相机维护独立 UI 视图。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
+  n23@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
   class n23 node_entity
   class n23 external_node
   n24@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为大气查找表计<br/>算和天空绘制绑定视图资源。" }
@@ -142,21 +142,21 @@ flowchart LR
   class e9 edge_reference
   n0 e10@-->|"存在性约束"| n11
   class e10 edge_reference
-  n0 e11@-->|"存在性约束"| n12
+  n12 e11@-->|"可能包含"| n0
   class e11 edge_reference
-  n13 e12@-->|"赋值"| n0
-  class e12 edge_write
-  n14 e13@--- n0
-  class e13 edge_read
-  n0 e14@-->|"存在性约束"| n15
-  class e14 edge_reference
-  n16 e15@-->|"可能包含"| n0
+  n0 e12@-->|"存在性约束"| n13
+  class e12 edge_reference
+  n14 e13@-->|"赋值"| n0
+  class e13 edge_write
+  n15 e14@--- n0
+  class e14 edge_read
+  n0 e15@-->|"存在性约束"| n16
   class e15 edge_reference
   n0 e16@--> n17
   class e16 edge_read
   n0 e17@-->|"存在性约束"| n18
   class e17 edge_reference
-  n13 e18@-->|"可变访问"| n0
+  n14 e18@-->|"可变访问"| n0
   class e18 edge_write
   n0 e19@-->|"存在性约束"| n19
   class e19 edge_reference
@@ -168,11 +168,11 @@ flowchart LR
   class e22 edge_write
   n0 e23@-->|"存在性约束"| n22
   class e23 edge_reference
-  n6 e24@-->|"可变访问"| n0
-  class e24 edge_write
-  n23 e25@-->|"可能包含"| n0
-  class e25 edge_reference
-  n14 e26@-->|"移除"| n0
+  n23 e24@-->|"可能包含"| n0
+  class e24 edge_reference
+  n6 e25@-->|"可变访问"| n0
+  class e25 edge_write
+  n15 e26@-->|"移除"| n0
   class e26 edge_write
   n0 e27@-->|"存在性约束"| n24
   class e27 edge_reference
@@ -180,7 +180,7 @@ flowchart LR
   class e28 edge_reference
   n4 e29@-->|"可变访问"| n0
   class e29 edge_write
-  n13 e30@---|"存在性约束"| n0
+  n14 e30@---|"存在性约束"| n0
   class e30 edge_reference
   n2 e31@---|"存在性约束"| n0
   class e31 edge_reference

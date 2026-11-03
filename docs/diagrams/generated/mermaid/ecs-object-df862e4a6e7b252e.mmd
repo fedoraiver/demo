@@ -48,27 +48,27 @@ flowchart LR
   n2@{ shape: rounded, label: "**resolve​_​composition​_​spaces**<br/>来自crate:bevy​_​render ↗：协调共享纹理<br/>相机的合成色彩空间。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：创建可复用为玩<br/>家镜头的加载相机。" }
-  class n3 node_entity
+  n3@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>来自crate:bevy​_​render ↗：为视图维护主<br/>颜色双缓冲及可选多采样目标。" }
+  class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
+  n4@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
   class n4 node_entity
   class n4 external_node
-  n5@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>来自crate:bevy​_​render ↗：为视图维护主<br/>颜色双缓冲及可选多采样目标。" }
-  class n5 node_system
+  n5@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  class n5 node_entity
   class n5 external_node
   n1 e0@--- n0
   class e0 edge_read
   n0 e1@--> n2
   class e1 edge_read
-  n3 e2@-->|"可能包含"| n0
-  class e2 edge_reference
-  n4 e3@-->|"可能包含"| n0
-  class e3 edge_reference
-  n0 e4@--> n5
-  class e4 edge_read
-  n1 e5@-->|"移除"| n0
-  class e5 edge_write
+  n0 e2@--> n3
+  class e2 edge_read
+  n1 e3@-->|"移除"| n0
+  class e3 edge_write
+  n4 e4@-->|"可能包含"| n0
+  class e4 edge_reference
+  n5 e5@-->|"可能包含"| n0
+  class e5 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

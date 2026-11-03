@@ -66,11 +66,8 @@ flowchart LR
   n8@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n8 node_component
   class n8 external_node
-  subgraph layout_card_n9[" "]
   n9@{ shape: stadium, label: "**ReselectListRow**<br/>通知再次确认当前已选列表行。" }
   class n9 node_event
-  end
-  style layout_card_n9 fill:none,stroke:none
   n10@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n10 node_component
   class n10 external_node
@@ -98,12 +95,14 @@ flowchart LR
   class e9 edge_read
   n0 e10@-->|"触发事件"| n11
   class e10 edge_emit
+  n6 layout_output_0@~~~ n9
+  n9 layout_output_1@~~~ n11
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: bumpX }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

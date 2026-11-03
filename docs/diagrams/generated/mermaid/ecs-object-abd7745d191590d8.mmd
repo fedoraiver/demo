@@ -44,26 +44,26 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**style​_​buttons**<br/>按当前输入来源更新按钮背景与焦点边框。" }
+  n0@{ shape: rounded, label: "**style​_​buttons**<br/>按输入来源、焦点和主键按压更新按钮样式。" }
   class n0 node_system
   n1@{ shape: rounded, label: "**Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
   class n1 node_component
   class n1 external_node
   n2@{ shape: lin-rect, label: "**Style**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**BorderColor**<br/>来自crate:bevy​_​ui ↗：分别设置 UI 四边<br/>的边框颜色。" }
+  n3@{ shape: rounded, label: "**MenuButton**<br/>菜单实体保存动作与导航序号，系统不依赖显<br/>示文字或实体名称。" }
   class n3 node_component
-  class n3 external_node
-  n4@{ shape: cyl, label: "**MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
-  class n4 node_resource
+  n4@{ shape: rounded, label: "**BorderColor**<br/>来自crate:bevy​_​ui ↗：分别设置 UI 四边<br/>的边框颜色。" }
+  class n4 node_component
+  class n4 external_node
   n5@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**MenuButton**<br/>菜单实体保存动作与导航序号，系统不依赖显<br/>示文字或实体名称。" }
-  class n6 node_component
+  n6@{ shape: cyl, label: "**MenuInputSource**<br/>输入来源单独决定焦点是否可见；鼠标离开后<br/>仍保留序号供后续导航使用。" }
+  class n6 node_resource
   n7@{ shape: rounded, label: "**Hovered**<br/>来自crate:bevy​_​picking ↗：记录实体当<br/>前是否被任一指针悬停。" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: cyl, label: "**MenuInputSource**<br/>输入来源单独决定焦点是否可见；鼠标离开后<br/>仍保留序号供后续导航使用。" }
+  n8@{ shape: cyl, label: "**MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
   class n8 node_resource
   n9@{ shape: rounded, label: "**PrimaryPress**<br/>原生 Button 对任意指针键维护 Pressed；<br/>菜单单独保留主键来源以筛选动作和样式。" }
   class n9 node_component
@@ -74,16 +74,16 @@ flowchart LR
   class e0 edge_reference
   n2 e1@-->|"集合成员"| n0
   class e1 edge_set_membership
-  n0 e2@-->|"赋值"| n3
-  class e2 edge_write
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
-  n6 e5@--> n0
-  class e5 edge_read
-  n0 e6@-->|"可变访问"| n3
-  class e6 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
+  n0 e3@-->|"赋值"| n4
+  class e3 edge_write
+  n0 e4@-->|"可变访问"| n4
+  class e4 edge_write
+  n5 e5@-->|"调用"| n0
+  class e5 edge_registration
+  n6 e6@--> n0
+  class e6 edge_read
   n7 e7@--> n0
   class e7 edge_read
   n8 e8@--> n0
@@ -98,9 +98,9 @@ flowchart LR
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }
+  e4@{ curve: bumpX }
   e5@{ curve: basis }
-  e6@{ curve: bumpX }
+  e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

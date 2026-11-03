@@ -55,7 +55,7 @@ flowchart LR
   n5@{ shape: rounded, label: "**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**transition#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：执行特定旧状<br/>态到新状态的转换调度。；从当前消息批次取<br/>得最后一次状态转换。" }
+  n6@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**transition#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：从当前消息批<br/>次取得最后一次状态转换。；执行特定旧状态<br/>到新状态的转换调度。" }
   class n6 node_system_group
   class n6 external_node
   n7@{ shape: rounded, label: "**run​_​fixed​_​main​_​schedule**<br/>来自crate:bevy​_​time ↗：按累计时间推进<br/>固定主调度。" }
@@ -70,7 +70,7 @@ flowchart LR
   n10@{ shape: rounded, label: "**render​_​system**<br/>来自crate:bevy​_​render ↗：运行渲染图调<br/>度并完成回读和窗口呈现。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**exit#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：从当前消息批<br/>次取得最后一次状态转换。；执行旧状态的退<br/>出调度。" }
+  n11@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**exit#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：执行旧状态的<br/>退出调度。；从当前消息批次取得最后一次状<br/>态转换。" }
   class n11 node_system_group
   class n11 external_node
   n12@{ shape: rounded, label: "**apply​_​extract​_​commands**<br/>来自crate:bevy​_​extract ↗：应用提取阶<br/>段累计的子世界命令。" }

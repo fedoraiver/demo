@@ -41,7 +41,7 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: lin-rect, label: "**ExitSchedules**<br/>组织状态转换及进入退出调度。" }
   class n1 node_system_set
-  n2@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**exit#lt;AppState#gt;)**<br/>从当前消息批次取得最后一次状态转换。；执<br/>行旧状态的退出调度。" }
+  n2@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**exit#lt;AppState#gt;)**<br/>执行旧状态的退出调度。；从当前消息批次取<br/>得最后一次状态转换。" }
   class n2 node_system_group
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership

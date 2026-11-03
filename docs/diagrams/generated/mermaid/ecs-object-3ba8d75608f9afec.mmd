@@ -44,9 +44,9 @@ flowchart LR
   class n0 node_system
   n1@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载当前场景资源并装配地图、碰撞与业务实<br/>体。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>创建可复用为玩家镜头的加载相机。" }
+  n2@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>加载海岛并复用为角色第一人称视角的相机。" }
   class n2 node_entity
-  n3@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>为玩法海岛创建会话日光。" }
+  n3@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>为玩法海岛提供随会话清理的日光照明。" }
   class n3 node_entity
   n4@{ shape: rounded, label: "**resource​_​exists**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
   class n4 node_system

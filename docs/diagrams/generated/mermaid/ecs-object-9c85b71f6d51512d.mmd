@@ -39,11 +39,8 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**Pressed**<br/>标记按钮或控件当前处于按住状态。" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除单选按钮按压。" }
   class n1 node_observer
   class n1 external_node
@@ -56,7 +53,7 @@ flowchart LR
   n4@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消单<br/>选按钮的指针按压状态。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: rounded, label: "**style​_​buttons**<br/>来自ui ↗：按当前输入来源更新按钮背景与<br/>焦点边框。" }
+  n5@{ shape: rounded, label: "**style​_​buttons**<br/>来自ui ↗：按输入来源、焦点和主键按压更<br/>新按钮样式。" }
   class n5 node_system
   class n5 external_node
   n6@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除复选框按压。" }
@@ -492,6 +489,12 @@ flowchart LR
   class e120 edge_reference
   n66 e121@---|"存在性约束"| n0
   class e121 edge_reference
+  n5 layout_output_0@~~~ n14
+  n14 layout_output_1@~~~ n25
+  n25 layout_output_2@~~~ n54
+  n54 layout_output_3@~~~ n57
+  n57 layout_output_4@~~~ n65
+  n65 layout_output_5@~~~ n68
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

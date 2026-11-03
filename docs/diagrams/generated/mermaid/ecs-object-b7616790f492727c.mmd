@@ -40,11 +40,8 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n1 node_resource
   n2@{ shape: cyl, label: "**MaterialBindGroupAllocators**<br/>为材质分配绑定组并追踪引用资源。" }
@@ -114,6 +111,10 @@ flowchart LR
   class e15 edge_write
   n0 e16@-->|"可变访问"| n17
   class e16 edge_write
+  n2 layout_output_0@~~~ n10
+  n10 layout_output_1@~~~ n12
+  n12 layout_output_2@~~~ n16
+  n16 layout_output_3@~~~ n17
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -125,7 +126,7 @@ flowchart LR
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e11@{ curve: bumpX }
+  e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }

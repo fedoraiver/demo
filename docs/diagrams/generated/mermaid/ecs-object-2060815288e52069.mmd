@@ -42,88 +42,88 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**ActionFns**<br/>保存动作类型对应的函数指针" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：合成角色二维移动<br/>动作。" }
+  n1@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：将键盘或手柄确认输入交给当前<br/>菜单按钮。" }
   class n1 node_entity
   class n1 external_node
-  n2@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载第一人称鼠标<br/>转向动作。" }
-  class n2 node_entity
-  class n2 external_node
-  n3@{ shape: rounded, label: "**(Commands#lt;'​_​, '​_​#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityRef#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>根据求值结果触发输入动作通知。" }
-  class n3 node_system
-  n4@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
-  class n4 node_observer
-  n5@{ shape: rounded, label: "**(Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityMut#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>把求值结果写入类型化输入动作。" }
-  class n5 node_system
-  n6@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载单次拿取或放<br/>下的交互动作。" }
-  class n6 node_entity
-  class n6 external_node
-  n7@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“上一个菜单项”菜单动<br/>作。" }
+  n2@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  class n2 node_observer
+  n3@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把空格按下转换为<br/>角色跳跃请求。" }
+  class n3 node_entity
+  class n3 external_node
+  n4@{ shape: rounded, label: "**(Commands#lt;'​_​, '​_​#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityRef#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>根据求值结果触发输入动作通知。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：将键盘与手柄返回输入统一为菜<br/>单返回请求。" }
+  class n5 node_entity
+  class n5 external_node
+  n6@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  class n6 node_observer
+  n7@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：用向下导航输入切换到下一个菜<br/>单按钮。" }
   class n7 node_entity
   class n7 external_node
-  n8@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“减小当前设置值”菜单动<br/>作。" }
-  class n8 node_entity
-  class n8 external_node
-  n9@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“确认当前菜单项”菜单动<br/>作。" }
+  n8@{ shape: rounded, label: "**(Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityMut#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>把求值结果写入类型化输入动作。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：将 E 键按下转换为<br/>所控角色的一次交互请求。" }
   class n9 node_entity
   class n9 external_node
-  n10@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“增大当前设置值”菜单动<br/>作。" }
-  class n10 node_entity
-  class n10 external_node
-  n11@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“返回、暂停或恢复”菜单<br/>动作。" }
+  n10@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  class n10 node_observer
+  n11@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：汇总 WASD 输入并<br/>驱动对应角色的移动意图。" }
   class n11 node_entity
   class n11 external_node
-  n12@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
-  class n12 node_observer
-  n13@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把一次有效按下转<br/>换为跳跃动作。" }
+  n12@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：把向左导航输入转成聚焦设置项<br/>的减少请求。" }
+  class n12 node_entity
+  class n12 external_node
+  n13@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：汇总鼠标位移，驱<br/>动所属玩家的相机观察。" }
   class n13 node_entity
   class n13 external_node
-  n14@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：承载“下一个菜单项”菜单动<br/>作。" }
-  class n14 node_entity
-  class n14 external_node
-  n15@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
-  class n15 node_observer
+  n14@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  class n14 node_observer
+  n15@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：把向右导航输入转成聚焦设置项<br/>的增加请求。" }
+  class n15 node_entity
+  class n15 external_node
   n16@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n16 node_observer
-  n17@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
-  class n17 node_observer
+  n17@{ shape: rounded, label: "**spawn​_​menu​_​controller · 创建模板**<br/>来自ui ↗：通过键盘或手柄移到上一个菜单<br/>按钮。" }
+  class n17 node_entity
+  class n17 external_node
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
-  n2 e1@-->|"可能包含"| n0
-  class e1 edge_reference
-  n0 e2@--> n3
-  class e2 edge_read
-  n0 e3@-->|"存在性约束"| n3
-  class e3 edge_reference
-  n0 e4@--> n4
-  class e4 edge_read
-  n0 e5@--> n5
-  class e5 edge_read
-  n6 e6@-->|"可能包含"| n0
-  class e6 edge_reference
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"可能包含"| n0
+  class e2 edge_reference
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@-->|"存在性约束"| n4
+  class e4 edge_reference
+  n5 e5@-->|"可能包含"| n0
+  class e5 edge_reference
+  n0 e6@--> n6
+  class e6 edge_read
   n7 e7@-->|"可能包含"| n0
   class e7 edge_reference
-  n8 e8@-->|"可能包含"| n0
-  class e8 edge_reference
+  n0 e8@--> n8
+  class e8 edge_read
   n9 e9@-->|"可能包含"| n0
   class e9 edge_reference
-  n10 e10@-->|"可能包含"| n0
-  class e10 edge_reference
+  n0 e10@--> n10
+  class e10 edge_read
   n11 e11@-->|"可能包含"| n0
   class e11 edge_reference
-  n0 e12@-->|"存在性约束"| n5
+  n12 e12@-->|"可能包含"| n0
   class e12 edge_reference
-  n0 e13@--> n12
-  class e13 edge_read
+  n0 e13@-->|"存在性约束"| n8
+  class e13 edge_reference
   n13 e14@-->|"可能包含"| n0
   class e14 edge_reference
-  n14 e15@-->|"可能包含"| n0
-  class e15 edge_reference
-  n0 e16@--> n15
-  class e16 edge_read
+  n0 e15@--> n14
+  class e15 edge_read
+  n15 e16@-->|"可能包含"| n0
+  class e16 edge_reference
   n0 e17@--> n16
   class e17 edge_read
-  n0 e18@--> n17
-  class e18 edge_read
+  n17 e18@-->|"可能包含"| n0
+  class e18 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -136,7 +136,7 @@ flowchart LR
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
-  e12@{ curve: bumpX }
+  e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }

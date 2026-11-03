@@ -46,12 +46,9 @@ flowchart LR
   n2@{ shape: rounded, label: "**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为需要多步透射<br/>的视图准备场景颜色拷贝纹理。" }
   class n2 node_system
   class n2 external_node
-  subgraph layout_card_n3[" "]
   n3@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
   class n3 node_system
   class n3 external_node
-  end
-  style layout_card_n3 fill:none,stroke:none
   n4@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n4 node_system
   n5@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>按绘制顺序在 CPU 路径上合并兼容批次。" }
@@ -84,8 +81,10 @@ flowchart LR
   class e7 edge_write
   n9 e8@-->|"插入"| n0
   class e8 edge_write
+  n2 layout_output_0@~~~ n3
+  n3 layout_output_1@~~~ n7
   e0@{ curve: basis }
-  e1@{ curve: bumpX }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

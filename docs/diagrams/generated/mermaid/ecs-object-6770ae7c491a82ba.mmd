@@ -42,7 +42,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**VisibleEntities**<br/>按类别保存当前视图可见的实体。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：创建可复用为玩<br/>家镜头的加载相机。" }
+  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
   class n1 node_entity
   class n1 external_node
   n2@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
@@ -56,11 +56,11 @@ flowchart LR
   n5@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
-  class n6 node_entity
+  n6@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
-  class n7 node_system
+  n7@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
+  class n7 node_entity
   class n7 external_node
   n8@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
   class n8 node_system
@@ -75,10 +75,10 @@ flowchart LR
   class e3 edge_read
   n0 e4@--> n5
   class e4 edge_read
-  n6 e5@-->|"可能包含"| n0
-  class e5 edge_reference
-  n0 e6@--> n7
-  class e6 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n7 e6@-->|"可能包含"| n0
+  class e6 edge_reference
   n0 e7@--> n8
   class e7 edge_read
   e0@{ curve: basis }

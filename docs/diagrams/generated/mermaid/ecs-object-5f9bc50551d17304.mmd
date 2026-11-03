@@ -52,12 +52,9 @@ flowchart LR
   n4@{ shape: rounded, label: "**OrderIndependentTransparencySettings**<br/>**Offset**<br/>来自crate:bevy​_​core​_​pipeline ↗：定位<br/>视图的顺序无关透明参数。" }
   class n4 node_component
   class n4 external_node
-  subgraph layout_card_n5[" "]
   n5@{ shape: rounded, label: "**OitResolvePipelineId**<br/>来自crate:bevy​_​core​_​pipeline ↗：记录<br/>视图的透明解析管线标识。" }
   class n5 node_component
   class n5 external_node
-  end
-  style layout_card_n5 fill:none,stroke:none
   n6@{ shape: notch-rect, label: "**Local · arg1**<br/>按上次组件提取数量预留输出容量。" }
   class n6 node_local
   n1 e0@--> n0
@@ -74,9 +71,12 @@ flowchart LR
   class e5 edge_write
   n0 e6@-->|"可变访问"| n6
   class e6 edge_write
+  n4 layout_output_0@~~~ n5
+  n5 layout_output_1@~~~ n6
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
+  e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

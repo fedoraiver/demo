@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-c740c8b6460663a3-e1{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e4{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e12{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e13{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e19{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e20{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e21{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e22{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-c740c8b6460663a3-e2{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e4{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e13{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e14{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e18{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e19{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e20{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3-e22{marker-start:url(#object-c740c8b6460663a3_flowchart-v2-pointStart)!important}\n#object-c740c8b6460663a3_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -49,94 +49,94 @@ flowchart LR
   n1@{ shape: rounded, label: "**ColliderTransform**<br/>来自crate:avian3d ↗：缓存碰撞体相对于<br/>刚体的变换。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
-  class n2 node_component
-  class n2 external_node
-  n3@{ shape: rounded, label: "**HeldAttachment**<br/>实际碰撞形状相对组合刚体的姿态；箱实体不<br/>成为人物的 ChildOf，避免异常销毁时连带<br/>消失。" }
+  n2@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  class n2 node_plugin
+  n3@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
   class n3 node_component
+  class n3 external_node
   n4@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n4 node_system_set
   class n4 external_node
   n5@{ shape: rounded, label: "**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
+  n6@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  class n6 external_node
+  n7@{ shape: rounded, label: "**Pickable**<br/>允许被拾取的能力标签。" }
   class n7 node_component
-  class n7 external_node
-  n8@{ shape: rounded, label: "**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
+  n8@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**HeldCollider**<br/>无视觉碰撞代理对应的快递身份；代理随组合<br/>体清理，业务箱根始终独立。" }
+  n9@{ shape: rounded, label: "**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>来自crate:avian3d ↗：保存汇总后的刚体<br/>局部质心。" }
+  class n9 external_node
+  n10@{ shape: rounded, label: "**HeldCollider**<br/>无视觉碰撞代理对应的快递身份；代理随组合<br/>体清理，业务箱根始终独立。" }
   class n10 node_component
-  class n10 external_node
-  n11@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
+  n11@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>来自crate:avian3d ↗：保存汇总后的刚体<br/>局部质心。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**align​_​attachments**<br/>有限的小步对齐不会积分箱体力；受阻保留安<br/>全姿态，持续受阻则解除持握。" }
-  class n12 node_system
-  n13@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
-  class n13 node_plugin
-  n14@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  n12@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: rounded, label: "**align​_​attachments**<br/>有限的小步对齐不会积分箱体力；受阻保留安<br/>全姿态，持续受阻则解除持握。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**HeldAttachment**<br/>实际碰撞形状相对组合刚体的姿态；箱实体不<br/>成为人物的 ChildOf，避免异常销毁时连带<br/>消失。" }
   class n14 node_component
-  class n14 external_node
-  n15@{ shape: rounded, label: "**Pickable**<br/>允许被拾取的能力标签。" }
+  n15@{ shape: rounded, label: "**HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
   class n15 node_component
   n16@{ shape: lin-rect, label: "**Attachment**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
   class n16 node_system_set
   class n16 external_node
   n0 e0@-->|"赋值"| n1
   class e0 edge_write
-  n2 e1@---|"可变访问"| n0
-  class e1 edge_write
-  n3 e2@--> n0
-  class e2 edge_read
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@---|"可变访问"| n0
+  class e2 edge_write
   n4 e3@-->|"集合成员"| n0
   class e3 edge_set_membership
   n5 e4@---|"赋值"| n0
   class e4 edge_write
-  n6 e5@--> n0
-  class e5 edge_read
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
-  n8 e7@--> n0
-  class e7 edge_read
-  n0 e8@-->|"可变访问"| n1
-  class e8 edge_write
-  n9 e9@-->|"存在性约束"| n0
+  n6 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
+  n7 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@-->|"存在性约束"| n0
   class e9 edge_reference
-  n10 e10@--> n0
-  class e10 edge_read
+  n0 e10@-->|"可变访问"| n1
+  class e10 edge_write
   n11 e11@--> n0
   class e11 edge_read
-  n2 e12@---|"赋值"| n0
-  class e12 edge_write
-  n8 e13@---|"可变访问"| n0
+  n12 e12@--> n0
+  class e12 edge_read
+  n3 e13@---|"赋值"| n0
   class e13 edge_write
-  n12 e14@-->|"先于"| n0
-  class e14 edge_order
-  n13 e15@-->|"调用"| n0
-  class e15 edge_registration
-  n14 e16@-->|"存在性约束"| n0
-  class e16 edge_reference
-  n2 e17@--> n0
+  n9 e14@---|"可变访问"| n0
+  class e14 edge_write
+  n13 e15@-->|"先于"| n0
+  class e15 edge_order
+  n14 e16@--> n0
+  class e16 edge_read
+  n3 e17@--> n0
   class e17 edge_read
-  n15 e18@-->|"存在性约束"| n0
-  class e18 edge_reference
-  n5 e19@---|"可变访问"| n0
+  n5 e18@---|"可变访问"| n0
+  class e18 edge_write
+  n12 e19@---|"赋值"| n0
   class e19 edge_write
-  n11 e20@---|"赋值"| n0
+  n12 e20@---|"可变访问"| n0
   class e20 edge_write
-  n11 e21@---|"可变访问"| n0
-  class e21 edge_write
-  n8 e22@---|"赋值"| n0
+  n15 e21@--> n0
+  class e21 edge_read
+  n9 e22@---|"赋值"| n0
   class e22 edge_write
   n5 e23@--> n0
   class e23 edge_read
-  n0 e24@-->|"赋值"| n7
+  n0 e24@-->|"赋值"| n8
   class e24 edge_write
   n16 e25@-->|"集合成员"| n0
   class e25 edge_set_membership

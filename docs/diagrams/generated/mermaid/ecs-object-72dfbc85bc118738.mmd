@@ -50,12 +50,9 @@ flowchart LR
   class n3 external_node
   n4@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n4 node_system
-  subgraph layout_card_n5[" "]
   n5@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
   class n5 node_system
   class n5 external_node
-  end
-  style layout_card_n5 fill:none,stroke:none
   n6@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>在 CPU 路径上准备分桶阶段的绘制批次。" }
   class n6 node_system
   n7@{ shape: rounded, label: "**prepare​_​core​_​3d​_​transmission​_​**<br/>**textures**<br/>来自crate:bevy​_​pbr ↗：为需要多步透射<br/>的视图准备场景颜色拷贝纹理。" }
@@ -88,9 +85,11 @@ flowchart LR
   class e8 edge_write
   n10 e9@-->|"可变访问"| n0
   class e9 edge_write
+  n3 layout_output_0@~~~ n5
+  n5 layout_output_1@~~~ n7
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: bumpX }
+  e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e6@{ curve: basis }

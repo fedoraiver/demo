@@ -46,36 +46,36 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**stop​_​on​_​exit**<br/>停止音频通道并记录退出。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**play​_​requests**<br/>按有效音量与播放策略处理短音请求。" }
+  n1@{ shape: rounded, label: "**play​_​requests**<br/>按有效混音和播放限额处理声音请求。" }
   class n1 node_system
   n2@{ shape: lean-r, label: "**AppExit**<br/>来自crate:bevy​_​app ↗：请求应用结束并<br/>携带退出结果。" }
   class n2 node_message
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**GameAudioPlugin**<br/>安装 Kira 输出与音频生命周期；无设备测<br/>试直接使用内部纯数据夹具。" }
-  class n3 node_plugin
-  n4@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: cyl, label: "**AudioChannel#lt;UiTrack#gt;**<br/>来自crate:bevy​_​kira​_​audio ↗：保存特<br/>定通道类型的音频命令队列及实例播放状态" }
   class n4 node_resource
   class n4 external_node
   n5@{ shape: lin-rect, label: "**Playback**<br/>跨功能只约束混音与播放阶段，具体资源和实<br/>例处理顺序留在音频内部。" }
   class n5 node_system_set
-  n6@{ shape: cyl, label: "**AudioChannel#lt;SfxTrack#gt;**<br/>来自crate:bevy​_​kira​_​audio ↗：保存特<br/>定通道类型的音频命令队列及实例播放状态" }
-  class n6 node_resource
-  class n6 external_node
-  n7@{ shape: cyl, label: "**AudioChannel#lt;UiTrack#gt;**<br/>来自crate:bevy​_​kira​_​audio ↗：保存特<br/>定通道类型的音频命令队列及实例播放状态" }
+  n6@{ shape: fr-rect, label: "**GameAudioPlugin**<br/>安装 Kira 输出与音频生命周期；无设备测<br/>试直接使用内部纯数据夹具。" }
+  class n6 node_plugin
+  n7@{ shape: cyl, label: "**AudioChannel#lt;SfxTrack#gt;**<br/>来自crate:bevy​_​kira​_​audio ↗：保存特<br/>定通道类型的音频命令队列及实例播放状态" }
   class n7 node_resource
   class n7 external_node
   n1 e0@-->|"先于"| n0
   class e0 edge_order
   n2 e1@--> n0
   class e1 edge_consume
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n3 e2@--> n0
+  class e2 edge_read
   n4 e3@--> n0
   class e3 edge_read
   n5 e4@-->|"集合成员"| n0
   class e4 edge_set_membership
-  n6 e5@--> n0
-  class e5 edge_read
+  n6 e5@-->|"调用"| n0
+  class e5 edge_registration
   n7 e6@--> n0
   class e6 edge_read
   e0@{ curve: basis }

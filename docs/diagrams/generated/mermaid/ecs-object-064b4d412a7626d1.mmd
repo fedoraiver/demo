@@ -43,11 +43,8 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**prepare​_​morph​_​descriptors**<br/>稳定分配形变描述符索引并回收失效项。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: cyl, label: "**MorphUniforms**<br/>以双缓冲保存网格前后帧形变权重。" }
   class n1 node_resource
   n2@{ shape: lin-rect, label: "**PrepareMeshes**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
@@ -83,8 +80,11 @@ flowchart LR
   class e6 edge_read
   n8 e7@-->|"调用"| n0
   class e7 edge_registration
+  n1 layout_output_0@~~~ n3
+  n3 layout_output_1@~~~ n6
   e0@{ curve: basis }
   e1@{ curve: basis }
+  e2@{ curve: basis }
   e3@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

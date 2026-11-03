@@ -218,7 +218,7 @@ flowchart LR
   end
   style layout_card_n29 fill:none,stroke:none
   subgraph layout_card_n30[" "]
-  n30@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
+  n30@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
   class n30 node_entity
   class n30 external_node
   end
@@ -296,14 +296,14 @@ flowchart LR
   end
   style layout_card_n42 fill:none,stroke:none
   subgraph layout_card_n43[" "]
-  n43@{ shape: rounded, label: "**extract​_​core​_​3d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动三维相机准备主渲染阶段。" }
-  class n43 node_system
+  n43@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  class n43 node_entity
   class n43 external_node
   end
   style layout_card_n43 fill:none,stroke:none
   subgraph layout_card_n44[" "]
-  n44@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：创建可复用为玩<br/>家镜头的加载相机。" }
-  class n44 node_entity
+  n44@{ shape: rounded, label: "**extract​_​core​_​3d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动三维相机准备主渲染阶段。" }
+  class n44 node_system
   class n44 external_node
   end
   style layout_card_n44 fill:none,stroke:none
@@ -465,10 +465,10 @@ flowchart LR
   class e47 edge_reference
   n0 e48@-->|"存在性约束"| n14
   class e48 edge_reference
-  n0 e49@--> n43
-  class e49 edge_read
-  n44 e50@-->|"可能包含"| n0
-  class e50 edge_reference
+  n43 e49@-->|"可能包含"| n0
+  class e49 edge_reference
+  n0 e50@--> n44
+  class e50 edge_read
   n0 e51@--> n45
   class e51 edge_read
   n0 e52@-->|"存在性约束"| n46

@@ -45,11 +45,8 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**prepare​_​view​_​depth​_​pyramids**<br/>为遮挡剔除视图维护深度金字塔。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**ViewDepthPyramid**<br/>保存视图用于遮挡剔除的层次深度。" }
   class n1 node_component
   n2@{ shape: rounded, label: "**NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
@@ -113,6 +110,8 @@ flowchart LR
   class e13 edge_write
   n0 e14@-->|"移除"| n13
   class e14 edge_write
+  n5 layout_output_0@~~~ n8
+  n8 layout_output_1@~~~ n13
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

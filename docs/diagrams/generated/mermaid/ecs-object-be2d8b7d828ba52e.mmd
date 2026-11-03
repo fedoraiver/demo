@@ -82,191 +82,191 @@ flowchart LR
   n13@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>来自ui ↗：Enhanced Input 负责菜单语义<br/>动作，但无法表示 UI 命中后的局部绝对横<br/>坐标。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为地图展示<br/>NPC 添加静态碰撞子体。" }
-  class n14 node_entity
+  n14@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
+  class n14 node_observer
   class n14 external_node
-  n15@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
-  class n15 node_observer
+  n15@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
-  class n16 node_system
+  n16@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  class n16 node_observer
   class n16 external_node
-  n17@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
-  class n17 node_observer
+  n17@{ shape: rounded, label: "**update​_​clipping​_​system**<br/>来自crate:bevy​_​ui ↗：从 UI 根递归更新<br/>继承裁剪范围。" }
+  class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**update​_​clipping​_​system**<br/>来自crate:bevy​_​ui ↗：从 UI 根递归更新<br/>继承裁剪范围。" }
+  n18@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
   class n18 node_system
   class n18 external_node
-  n19@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
-  class n19 node_system
+  n19@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  class n19 node_observer
   class n19 external_node
-  n20@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  n20@{ shape: hex, label: "**tablist​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
   class n20 node_observer
   class n20 external_node
-  n21@{ shape: hex, label: "**tablist​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
-  class n21 node_observer
+  n21@{ shape: rounded, label: "**update​_​shape​_​caster​_​positions**<br/>来自crate:avian3d ↗：把形状扫掠的原<br/>点、方向和形状朝向换到世界空间。" }
+  class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**update​_​shape​_​caster​_​positions**<br/>来自crate:avian3d ↗：把形状扫掠的原<br/>点、方向和形状朝向换到世界空间。" }
+  n22@{ shape: rounded, label: "**ui​_​stack​_​system**<br/>来自crate:bevy​_​ui ↗：重建稳定的 UI 绘<br/>制和命中顺序。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: rounded, label: "**ui​_​stack​_​system**<br/>来自crate:bevy​_​ui ↗：重建稳定的 UI 绘<br/>制和命中顺序。" }
-  class n23 node_system
+  n23@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  class n23 node_observer
   class n23 external_node
-  n24@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  n24@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：清理不再需要的祖<br/>先标记。" }
   class n24 node_observer
   class n24 external_node
-  n25@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：清理不再需要的祖<br/>先标记。" }
-  class n25 node_observer
+  n25@{ shape: rounded, label: "**update​_​is​_​hovered**<br/>来自crate:bevy​_​picking ↗：把鼠标悬停<br/>传播到实体祖先。" }
+  class n25 node_system
   class n25 external_node
-  n26@{ shape: rounded, label: "**update​_​is​_​hovered**<br/>来自crate:bevy​_​picking ↗：把鼠标悬停<br/>传播到实体祖先。" }
-  class n26 node_system
+  n26@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
+  class n26 node_observer
   class n26 external_node
-  n27@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
+  n27@{ shape: hex, label: "**tablist​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
   class n27 node_observer
   class n27 external_node
-  n28@{ shape: hex, label: "**tablist​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
-  class n28 node_observer
+  n28@{ shape: rounded, label: "**pointer​_​events**<br/>来自crate:bevy​_​picking ↗：根据悬停与<br/>按钮状态派发指针交互事件。" }
+  class n28 node_system
   class n28 external_node
-  n29@{ shape: rounded, label: "**pointer​_​events**<br/>来自crate:bevy​_​picking ↗：根据悬停与<br/>按钮状态派发指针交互事件。" }
+  n29@{ shape: rounded, label: "**propagate​_​collider​_​transforms**<br/>来自crate:avian3d ↗：沿实体层级计算碰<br/>撞体相对刚体的变换。" }
   class n29 node_system
   class n29 external_node
-  n30@{ shape: rounded, label: "**propagate​_​collider​_​transforms**<br/>来自crate:avian3d ↗：沿实体层级计算碰<br/>撞体相对刚体的变换。" }
-  class n30 node_system
+  n30@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>来自crate:avian3d ↗：随层级变化更新碰<br/>撞体刚体归属。" }
+  class n30 node_observer
   class n30 external_node
-  n31@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>来自crate:avian3d ↗：随层级变化更新碰<br/>撞体刚体归属。" }
-  class n31 node_observer
+  n31@{ shape: rounded, label: "**button​_​changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
+  class n31 node_system
   class n31 external_node
-  n32@{ shape: rounded, label: "**button​_​changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
-  class n32 node_system
+  n32@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
+  class n32 node_observer
   class n32 external_node
-  n33@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
-  class n33 node_observer
+  n33@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
+  class n33 node_system
   class n33 external_node
-  n34@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为海岛导入几何<br/>创建静态碰撞子体。" }
-  class n34 node_entity
+  n34@{ shape: hex, label: "**bring​_​to​_​front**<br/>来自crate:bevy​_​ui​_​widgets ↗：将被操<br/>作的浮动对话框提到前方。" }
+  class n34 node_observer
   class n34 external_node
-  n35@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>来自crate:bevy​_​transform ↗：沿祖先链<br/>标记需要重算变换的子树。" }
+  n35@{ shape: rounded, label: "**position​_​popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
   class n35 node_system
   class n35 external_node
-  n36@{ shape: hex, label: "**bring​_​to​_​front**<br/>来自crate:bevy​_​ui​_​widgets ↗：将被操<br/>作的浮动对话框提到前方。" }
-  class n36 node_observer
+  n36@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
+  class n36 node_system
   class n36 external_node
-  n37@{ shape: rounded, label: "**position​_​popover**<br/>来自crate:bevy​_​ui​_​widgets ↗：定位弹<br/>出层并同步后代的 UI 变换。" }
+  n37@{ shape: rounded, label: "**position​_​to​_​transform**<br/>来自crate:avian3d ↗：把物理世界位姿转<br/>换为显示用局部变换。" }
   class n37 node_system
   class n37 external_node
-  n38@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
+  n38@{ shape: rounded, label: "**sync​_​character​_​visibility**<br/>来自first​_​person ↗：第一人称只隐藏自<br/>身视觉子树，保留业务根与独立木箱。" }
   class n38 node_system
   class n38 external_node
-  n39@{ shape: rounded, label: "**position​_​to​_​transform**<br/>来自crate:avian3d ↗：把物理世界位姿转<br/>换为显示用局部变换。" }
+  n39@{ shape: rounded, label: "**sync​_​bounds​_​and​_​transforms**<br/>来自crate:bevy​_​ui ↗：把 UI 几何同步到<br/>无障碍树。" }
   class n39 node_system
   class n39 external_node
-  n40@{ shape: rounded, label: "**sync​_​character​_​visibility**<br/>来自first​_​person ↗：第一人称只隐藏自<br/>身视觉子树，保留业务根与独立木箱。" }
-  class n40 node_system
+  n40@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  class n40 node_observer
   class n40 external_node
-  n41@{ shape: rounded, label: "**sync​_​bounds​_​and​_​transforms**<br/>来自crate:bevy​_​ui ↗：把 UI 几何同步到<br/>无障碍树。" }
+  n41@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
   class n41 node_system
   class n41 external_node
-  n42@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
-  class n42 node_observer
+  n42@{ shape: rounded, label: "**detect​_​text​_​needs​_​rerender**<br/>来自crate:bevy​_​text ↗：把文字段和层级<br/>变化标为需要重绘。" }
+  class n42 node_system
   class n42 external_node
-  n43@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
-  class n43 node_system
+  n43@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
+  class n43 node_observer
   class n43 external_node
-  n44@{ shape: rounded, label: "**detect​_​text​_​needs​_​rerender**<br/>来自crate:bevy​_​text ↗：把文字段和层级<br/>变化标为需要重绘。" }
+  n44@{ shape: rounded, label: "**visibility​_​propagate​_​system**<br/>来自crate:bevy​_​camera ↗：沿父子层级传<br/>播可见意图的变化。" }
   class n44 node_system
   class n44 external_node
-  n45@{ shape: hex, label: "**scrollbar​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条拖动的起始位置。" }
+  n45@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n45 node_observer
   class n45 external_node
-  n46@{ shape: rounded, label: "**visibility​_​propagate​_​system**<br/>来自crate:bevy​_​camera ↗：沿父子层级传<br/>播可见意图的变化。" }
-  class n46 node_system
+  n46@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
+  class n46 node_observer
   class n46 external_node
-  n47@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  n47@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
   class n47 node_observer
   class n47 external_node
-  n48@{ shape: hex, label: "**on​_​scroll​_​into​_​view**<br/>来自crate:bevy​_​ui​_​widgets ↗：调整滚<br/>动区域以显示指定节点。" }
+  n48@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
   class n48 node_observer
   class n48 external_node
-  n49@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
+  n49@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n49 node_observer
   class n49 external_node
-  n50@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为新增碰撞体建立<br/>刚体归属。" }
+  n50@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>来自crate:avian3d ↗：随层级变化更新碰<br/>撞体刚体归属。" }
   class n50 node_observer
   class n50 external_node
-  n51@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  n51@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
   class n51 node_observer
   class n51 external_node
-  n52@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>来自crate:avian3d ↗：随层级变化更新碰<br/>撞体刚体归属。" }
+  n52@{ shape: hex, label: "**bring​_​to​_​front**<br/>来自crate:bevy​_​ui​_​widgets ↗：将被操<br/>作的浮动对话框提到前方。" }
   class n52 node_observer
   class n52 external_node
-  n53@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
+  n53@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
   class n53 node_observer
   class n53 external_node
-  n54@{ shape: hex, label: "**bring​_​to​_​front**<br/>来自crate:bevy​_​ui​_​widgets ↗：将被操<br/>作的浮动对话框提到前方。" }
-  class n54 node_observer
+  n54@{ shape: rounded, label: "**update​_​collider​_​scale**<br/>来自crate:avian3d ↗：把根节点和附属碰<br/>撞体的缩放传给形状。" }
+  class n54 node_system
   class n54 external_node
-  n55@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
-  class n55 node_observer
+  n55@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>来自crate:bevy​_​ui ↗：求解 UI 布局并回<br/>写节点尺寸和二维变换。" }
+  class n55 node_system
   class n55 external_node
-  n56@{ shape: rounded, label: "**update​_​collider​_​scale**<br/>来自crate:avian3d ↗：把根节点和附属碰<br/>撞体的缩放传给形状。" }
-  class n56 node_system
+  n56@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
+  class n56 node_observer
   class n56 external_node
-  n57@{ shape: rounded, label: "**ui​_​layout​_​system**<br/>来自crate:bevy​_​ui ↗：求解 UI 布局并回<br/>写节点尺寸和二维变换。" }
-  class n57 node_system
+  n57@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为目标组件的祖先<br/>补充标记。" }
+  class n57 node_observer
   class n57 external_node
   n58@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
   class n58 node_observer
   class n58 external_node
-  n59@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为目标组件的祖先<br/>补充标记。" }
-  class n59 node_observer
+  n59@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
+  class n59 node_system
   class n59 external_node
-  n60@{ shape: hex, label: "**scrollbar​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：随滑块<br/>拖动更新目标滚动位置。" }
-  class n60 node_observer
+  n60@{ shape: rounded, label: "**propagate​_​ui​_​target​_​cameras**<br/>来自crate:bevy​_​ui ↗：为 UI 根配置目标<br/>相机和视口信息传播源。" }
+  class n60 node_system
   class n60 external_node
-  n61@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
-  class n61 node_system
+  n61@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
+  class n61 node_observer
   class n61 external_node
-  n62@{ shape: rounded, label: "**propagate​_​ui​_​target​_​cameras**<br/>来自crate:bevy​_​ui ↗：为 UI 根配置目标<br/>相机和视口信息传播源。" }
-  class n62 node_system
+  n62@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
+  class n62 node_entity
   class n62 external_node
-  n63@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
-  class n63 node_observer
+  n63@{ shape: rounded, label: "**menu​_​acquire​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：在菜单<br/>打开时为菜单项取得焦点。" }
+  class n63 node_system
   class n63 external_node
-  n64@{ shape: rounded, label: "**menu​_​acquire​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：在菜单<br/>打开时为菜单项取得焦点。" }
+  n64@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
   class n64 node_system
   class n64 external_node
-  n65@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>来自crate:bevy​_​transform ↗：沿父子层<br/>级并行合成世界变换。" }
-  class n65 node_system
+  n65@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
+  class n65 node_observer
   class n65 external_node
-  n66@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录对<br/>话框拖动开始位置。" }
-  class n66 node_observer
+  n66@{ shape: rounded, label: "**image​_​changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
+  class n66 node_system
   class n66 external_node
-  n67@{ shape: rounded, label: "**image​_​changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
+  n67@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>来自ui ↗：把设置滚动轨道绑定到实际内容<br/>视口。" }
   class n67 node_system
   class n67 external_node
-  n68@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>来自ui ↗：将设置滚动条绑定到对应内容视<br/>口。" }
-  class n68 node_system
+  n68@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
+  class n68 node_observer
   class n68 external_node
-  n69@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
+  n69@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
   class n69 node_observer
   class n69 external_node
-  n70@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
-  class n70 node_observer
+  n70@{ shape: rounded, label: "**scroll​_​focused​_​button**<br/>来自ui ↗：短窗口中键盘仍能访问所有按<br/>钮；新页面先等布局完成，再滚到焦点所在区<br/>域。" }
+  class n70 node_system
   class n70 external_node
-  n71@{ shape: rounded, label: "**scroll​_​focused​_​button**<br/>来自ui ↗：短窗口中键盘仍能访问所有按<br/>钮；新页面先等布局完成，再滚到焦点所在区<br/>域。" }
-  class n71 node_system
+  n71@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  class n71 node_observer
   class n71 external_node
-  n72@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
-  class n72 node_observer
+  n72@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>来自crate:bevy​_​transform ↗：同步没有<br/>父子层级的独立实体世界变换。" }
+  class n72 node_system
   class n72 external_node
-  n73@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>来自crate:bevy​_​transform ↗：同步没有<br/>父子层级的独立实体世界变换。" }
+  n73@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
   class n73 node_system
   class n73 external_node
-  n74@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
+  n74@{ shape: rounded, label: "**menu​_​on​_​lose​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：关闭不<br/>再持有内部焦点的菜单。" }
   class n74 node_system
   class n74 external_node
-  n75@{ shape: rounded, label: "**menu​_​on​_​lose​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：关闭不<br/>再持有内部焦点的菜单。" }
-  class n75 node_system
+  n75@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
+  class n75 node_entity
   class n75 external_node
   n76@{ shape: rounded, label: "**spawn​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：创建<br/>变换操作器各轴网格、材质和覆盖相机。" }
   class n76 node_system
@@ -366,8 +366,8 @@ flowchart LR
   class e11 edge_read
   n0 e12@--> n13
   class e12 edge_read
-  n14 e13@-->|"可能包含"| n0
-  class e13 edge_reference
+  n0 e13@--> n14
+  class e13 edge_read
   n0 e14@--> n15
   class e14 edge_read
   n0 e15@--> n16
@@ -406,8 +406,8 @@ flowchart LR
   class e31 edge_read
   n0 e32@--> n33
   class e32 edge_read
-  n34 e33@-->|"可能包含"| n0
-  class e33 edge_reference
+  n0 e33@--> n34
+  class e33 edge_read
   n0 e34@--> n35
   class e34 edge_read
   n0 e35@--> n36
@@ -420,25 +420,25 @@ flowchart LR
   class e38 edge_read
   n0 e39@--> n40
   class e39 edge_read
-  n0 e40@--> n41
-  class e40 edge_read
-  n0 e41@--> n42
-  class e41 edge_read
-  n43 e42@-->|"赋值"| n0
-  class e42 edge_write
+  n41 e40@-->|"赋值"| n0
+  class e40 edge_write
+  n0 e41@-->|"存在性约束"| n42
+  class e41 edge_reference
+  n0 e42@--> n43
+  class e42 edge_read
   n0 e43@-->|"存在性约束"| n44
   class e43 edge_reference
   n0 e44@--> n45
   class e44 edge_read
-  n0 e45@-->|"存在性约束"| n46
-  class e45 edge_reference
+  n0 e45@--> n46
+  class e45 edge_read
   n0 e46@--> n47
   class e46 edge_read
-  n0 e47@--> n48
+  n0 e47@--> n42
   class e47 edge_read
-  n0 e48@--> n49
+  n0 e48@--> n48
   class e48 edge_read
-  n0 e49@--> n44
+  n0 e49@--> n49
   class e49 edge_read
   n0 e50@--> n50
   class e50 edge_read
@@ -448,64 +448,64 @@ flowchart LR
   class e52 edge_read
   n0 e53@--> n53
   class e53 edge_read
-  n0 e54@--> n54
-  class e54 edge_read
-  n0 e55@--> n55
+  n0 e54@-->|"存在性约束"| n54
+  class e54 edge_reference
+  n0 e55@--> n44
   class e55 edge_read
-  n0 e56@-->|"存在性约束"| n56
+  n0 e56@-->|"存在性约束"| n55
   class e56 edge_reference
-  n0 e57@--> n46
+  n0 e57@--> n56
   class e57 edge_read
-  n0 e58@-->|"存在性约束"| n57
-  class e58 edge_reference
-  n0 e59@--> n58
-  class e59 edge_read
-  n0 e60@--> n59
+  n0 e58@--> n57
+  class e58 edge_read
+  n0 e59@-->|"存在性约束"| n18
+  class e59 edge_reference
+  n0 e60@--> n58
   class e60 edge_read
-  n0 e61@-->|"存在性约束"| n19
+  n0 e61@-->|"存在性约束"| n59
   class e61 edge_reference
-  n0 e62@--> n60
-  class e62 edge_read
-  n0 e63@-->|"存在性约束"| n61
-  class e63 edge_reference
-  n0 e64@-->|"存在性约束"| n62
+  n0 e62@-->|"存在性约束"| n60
+  class e62 edge_reference
+  n0 e63@--> n61
+  class e63 edge_read
+  n62 e64@-->|"可能包含"| n0
   class e64 edge_reference
   n0 e65@--> n63
   class e65 edge_read
-  n0 e66@--> n64
-  class e66 edge_read
-  n0 e67@-->|"存在性约束"| n35
-  class e67 edge_reference
+  n0 e66@-->|"存在性约束"| n33
+  class e66 edge_reference
+  n0 e67@--> n64
+  class e67 edge_read
   n0 e68@--> n65
   class e68 edge_read
-  n0 e69@--> n66
-  class e69 edge_read
-  n0 e70@-->|"存在性约束"| n65
-  class e70 edge_reference
+  n0 e69@-->|"存在性约束"| n64
+  class e69 edge_reference
+  n0 e70@--> n66
+  class e70 edge_read
   n0 e71@--> n67
   class e71 edge_read
-  n0 e72@--> n68
+  n0 e72@--> n60
   class e72 edge_read
-  n0 e73@--> n62
+  n0 e73@--> n68
   class e73 edge_read
   n0 e74@--> n69
   class e74 edge_read
-  n0 e75@--> n70
-  class e75 edge_read
-  n0 e76@-->|"存在性约束"| n23
-  class e76 edge_reference
+  n0 e75@-->|"存在性约束"| n22
+  class e75 edge_reference
+  n0 e76@--> n70
+  class e76 edge_read
   n0 e77@--> n71
   class e77 edge_read
-  n0 e78@--> n72
-  class e78 edge_read
-  n0 e79@-->|"存在性约束"| n18
+  n0 e78@-->|"存在性约束"| n17
+  class e78 edge_reference
+  n0 e79@-->|"存在性约束"| n72
   class e79 edge_reference
-  n0 e80@-->|"存在性约束"| n73
-  class e80 edge_reference
+  n0 e80@--> n73
+  class e80 edge_read
   n0 e81@--> n74
   class e81 edge_read
-  n0 e82@--> n75
-  class e82 edge_read
+  n75 e82@-->|"可能包含"| n0
+  class e82 edge_reference
   n76 e83@-->|"插入"| n0
   class e83 edge_write
   n0 e84@--> n77
@@ -534,9 +534,9 @@ flowchart LR
   class e95 edge_read
   n0 e96@--> n89
   class e96 edge_read
-  n0 e97@--> n61
+  n0 e97@--> n59
   class e97 edge_read
-  n0 e98@--> n57
+  n0 e98@--> n55
   class e98 edge_read
   n0 e99@--> n90
   class e99 edge_read
@@ -562,7 +562,7 @@ flowchart LR
   class e109 edge_read
   n0 e110@--> n99
   class e110 edge_read
-  n0 e111@-->|"存在性约束"| n30
+  n0 e111@-->|"存在性约束"| n29
   class e111 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }

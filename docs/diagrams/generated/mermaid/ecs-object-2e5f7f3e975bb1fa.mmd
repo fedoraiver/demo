@@ -46,33 +46,33 @@ flowchart LR
   class n0 node_system
   n1@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;AppSta**<br/>**te#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n2@{ shape: cyl, label: "**MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
   class n2 node_resource
-  class n2 external_node
-  n3@{ shape: cyl, label: "**MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
+  n3@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;AppSta**<br/>**te#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
-  class n4 node_resource
-  n5@{ shape: lean-r, label: "**StateTransitionEvent#lt;AppState#gt;**<br/>来自crate:bevy​_​state ↗：通知状态离开<br/>和进入的变化。" }
-  class n5 node_message
-  class n5 external_node
+  class n3 external_node
+  n4@{ shape: lean-r, label: "**StateTransitionEvent#lt;AppState#gt;**<br/>来自crate:bevy​_​state ↗：通知状态离开<br/>和进入的变化。" }
+  class n4 node_message
+  class n4 external_node
+  n5@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
+  class n5 node_resource
   n1 e0@-->|"调用"| n0
   class e0 edge_registration
-  n2 e1@--> n0
-  class e1 edge_read
-  n0 e2@-->|"可变访问"| n3
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n0 e2@-->|"赋值"| n2
   class e2 edge_write
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n5 e4@--> n0
+  n3 e3@--> n0
+  class e3 edge_read
+  n4 e4@--> n0
   class e4 edge_consume
-  n0 e5@-->|"赋值"| n4
+  n0 e5@-->|"可变访问"| n5
   class e5 edge_write
-  n0 e6@-->|"赋值"| n3
+  n0 e6@-->|"赋值"| n5
   class e6 edge_write
   e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

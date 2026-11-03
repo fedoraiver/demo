@@ -40,13 +40,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**gameplay​_​running**<br/>独立功能测试没有应用状态；真实游戏只在<br/>Running 推进玩法。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
-  class n1 node_system
+  n1@{ shape: cyl, label: "**State#lt;AppState#gt;**<br/>来自crate:bevy​_​state ↗：保存某个状态<br/>类型当前生效的值" }
+  class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**State#lt;AppState#gt;**<br/>来自crate:bevy​_​state ↗：保存某个状态<br/>类型当前生效的值" }
-  class n2 node_resource
+  n2@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  class n2 node_system
   class n2 external_node
-  n0 e0@-->|"运行条件"| n1
-  class e0 edge_reference
-  n2 e1@--> n0
-  class e1 edge_read
+  n1 e0@--> n0
+  class e0 edge_read
+  n0 e1@-->|"运行条件"| n2
+  class e1 edge_reference

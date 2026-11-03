@@ -47,9 +47,9 @@ flowchart LR
   class n2 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n0 e2@-->|"赋值"| n1
-  class e2 edge_write
+  n0 e1@-->|"赋值"| n1
+  class e1 edge_write
+  n2 e2@-->|"调用"| n0
+  class e2 edge_registration
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }

@@ -51,22 +51,22 @@ flowchart LR
   class n3 node_observer
   n4@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为海岛导入几何<br/>创建静态碰撞子体。" }
-  class n5 node_entity
-  class n5 external_node
-  n6@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
-  class n6 node_system
-  n7@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
-  class n7 node_observer
-  n8@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为地图展示<br/>NPC 添加静态碰撞子体。" }
-  class n8 node_entity
-  class n8 external_node
-  n9@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n5@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
+  class n5 node_system
+  n6@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
+  class n6 node_observer
+  n7@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
+  class n7 node_entity
+  class n7 external_node
+  n8@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  class n8 node_observer
+  n9@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化碰撞体包围盒与边距缓存。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化碰撞体包围盒与边距缓存。" }
+  n10@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
-  class n11 node_observer
+  n11@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
+  class n11 node_entity
+  class n11 external_node
   n1 e0@--- n0
   class e0 edge_read
   n1 e1@-->|"可变访问"| n0
@@ -77,29 +77,29 @@ flowchart LR
   class e3 edge_read
   n4 e4@--- n0
   class e4 edge_read
-  n5 e5@-->|"可能包含"| n0
-  class e5 edge_reference
-  n4 e6@-->|"可变访问"| n0
-  class e6 edge_write
+  n4 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n0 e6@--> n5
+  class e6 edge_read
   n0 e7@--> n6
   class e7 edge_read
-  n0 e8@--> n7
-  class e8 edge_read
-  n8 e9@-->|"可能包含"| n0
-  class e9 edge_reference
-  n0 e10@--> n9
-  class e10 edge_read
-  n10 e11@-->|"可变访问"| n0
-  class e11 edge_write
-  n0 e12@--> n11
-  class e12 edge_read
+  n7 e8@-->|"可能包含"| n0
+  class e8 edge_reference
+  n0 e9@--> n8
+  class e9 edge_read
+  n9 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n0 e11@--> n10
+  class e11 edge_read
+  n11 e12@-->|"可能包含"| n0
+  class e12 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
-  e6@{ curve: bumpX }
+  e5@{ curve: bumpX }
+  e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

@@ -46,7 +46,7 @@ flowchart LR
   class n1 node_system
   n2@{ shape: rounded, label: "**apply​_​constant​_​local​_​torques**<br/>按局部惯量把恒定局部扭矩转成角加速度。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为海岛导入几何<br/>创建静态碰撞子体。" }
+  n3@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
   class n3 node_entity
   class n3 external_node
   n4@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
@@ -60,11 +60,11 @@ flowchart LR
   class n7 node_system
   n8@{ shape: rounded, label: "**apply​_​local​_​acceleration**<br/>在子步中把局部加速度作用到世界速度。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为地图展示<br/>NPC 添加静态碰撞子体。" }
-  class n9 node_entity
+  n9@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
+  class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
-  class n10 node_system
+  n10@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
+  class n10 node_entity
   class n10 external_node
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
@@ -86,10 +86,10 @@ flowchart LR
   class e8 edge_read
   n6 e9@-->|"赋值"| n0
   class e9 edge_write
-  n9 e10@-->|"可能包含"| n0
-  class e10 edge_reference
-  n10 e11@-->|"可变访问"| n0
-  class e11 edge_write
+  n9 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n10 e11@-->|"可能包含"| n0
+  class e11 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

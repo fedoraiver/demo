@@ -69,32 +69,32 @@ flowchart LR
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
-  class n5 node_system
+  n5@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
+  class n5 node_entity
   class n5 external_node
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**extract​_​depth​_​of​_​field​_​settings**<br/>来自crate:bevy​_​post​_​process ↗：把透<br/>视相机景深设置转换为 GPU 参数。" }
-  class n6 node_system
+  n6@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  class n6 node_entity
   class n6 external_node
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
+  n7@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n7 node_system
   class n7 external_node
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
-  class n8 node_entity
+  n8@{ shape: rounded, label: "**extract​_​depth​_​of​_​field​_​settings**<br/>来自crate:bevy​_​post​_​process ↗：把透<br/>视相机景深设置转换为 GPU 参数。" }
+  class n8 node_system
   class n8 external_node
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：创建可复用为玩<br/>家镜头的加载相机。" }
-  class n9 node_entity
+  n9@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
+  class n9 node_system
   class n9 external_node
   end
   style layout_card_n9 fill:none,stroke:none
@@ -112,18 +112,18 @@ flowchart LR
   class e2 edge_read
   n0 e3@--> n4
   class e3 edge_read
-  n5 e4@-->|"可变访问"| n0
-  class e4 edge_write
-  n0 e5@--> n6
-  class e5 edge_read
-  n0 e6@--> n7
-  class e6 edge_read
-  n0 e7@--> n2
+  n5 e4@-->|"可能包含"| n0
+  class e4 edge_reference
+  n6 e5@-->|"可能包含"| n0
+  class e5 edge_reference
+  n7 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n0 e7@--> n8
   class e7 edge_read
-  n8 e8@-->|"可能包含"| n0
-  class e8 edge_reference
-  n9 e9@-->|"可能包含"| n0
-  class e9 edge_reference
+  n0 e8@--> n9
+  class e8 edge_read
+  n0 e9@--> n2
+  class e9 edge_read
   n1 e10@--- n0
   class e10 edge_read
   n1 e11@-->|"插入"| n0

@@ -40,11 +40,8 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**solve​_​contacts**<br/>迭代接触冲量以处理穿透与相对速度。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: lin-rect, label: "**Relax**<br/>组织约束子步的求解与松弛。" }
   class n1 node_system_set
   n2@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
@@ -64,7 +61,7 @@ flowchart LR
   class e0 edge_set_membership
   n0 e1@-->|"可变访问"| n2
   class e1 edge_write
-  n0 e2@--->|"可变访问"| n3
+  n0 e2@-->|"可变访问"| n3
   class e2 edge_write
   n4 e3@--> n0
   class e3 edge_read
@@ -74,6 +71,8 @@ flowchart LR
   class e5 edge_read
   n7 e6@--> n0
   class e6 edge_read
+  n2 layout_output_0@~~~ n3
+  n3 layout_output_1@~~~ n5
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

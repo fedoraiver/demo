@@ -51,11 +51,8 @@ flowchart LR
   n4@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
   class n4 node_system
   class n4 external_node
-  subgraph layout_card_n5[" "]
   n5@{ shape: rounded, label: "**mark​_​newly​_​hidden​_​entities​_​invisible**<br/>提交本帧已不再可见的对象状态。" }
   class n5 node_system
-  end
-  style layout_card_n5 fill:none,stroke:none
   n6@{ shape: rounded, label: "**draw​_​all​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的可见 AABB 调试线框。" }
   class n6 node_system
   class n6 external_node
@@ -71,8 +68,10 @@ flowchart LR
   class e4 edge_set_membership
   n0 e5@-->|"先于"| n6
   class e5 edge_order
+  n1 layout_output_0@~~~ n5
+  n5 layout_output_1@~~~ n6
+  e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }

@@ -52,7 +52,7 @@ flowchart LR
   class n4 node_system
   n5@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**begin​_​island**<br/>来自scene​_​assembly ↗：请求创建已加载<br/>海岛的运行实例。" }
+  n6@{ shape: rounded, label: "**begin​_​island**<br/>来自scene​_​assembly ↗：资源就绪后请求<br/>海岛地图实例。" }
   class n6 node_system
   class n6 external_node
   n7@{ shape: rounded, label: "**play​_​courier​_​animation**<br/>来自ui ↗：仅遍历已展开的展示角色子树，<br/>命名资产尚未就绪时保留 pending 供下一帧<br/>重试。" }

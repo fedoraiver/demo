@@ -44,11 +44,8 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: hex, label: "**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>为大气环境光补齐贴图生成组件。" }
   class n0 node_observer
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**GeneratedEnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：在运行时过滤<br/>源立方体贴图生成环境光。" }
   class n1 node_component
   class n1 external_node
@@ -88,11 +85,13 @@ flowchart LR
   class e8 edge_read
   n0 e9@-->|"移除"| n7
   class e9 edge_write
+  n1 layout_output_0@~~~ n2
+  n2 layout_output_1@~~~ n7
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
-  e4@{ curve: basis }
+  e3@{ curve: bumpY }
+  e4@{ curve: bumpX }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }

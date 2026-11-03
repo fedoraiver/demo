@@ -46,10 +46,10 @@ flowchart LR
   n2@{ shape: rounded, label: "**run​_​physics​_​schedule**<br/>来自crate:avian3d ↗：使用物理时钟推<br/>进 PhysicsSchedule 并恢复原时钟。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**transition#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：执行特定旧状<br/>态到新状态的转换调度。；从当前消息批次取<br/>得最后一次状态转换。" }
+  n3@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**transition#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：从当前消息批<br/>次取得最后一次状态转换。；执行特定旧状态<br/>到新状态的转换调度。" }
   class n3 node_system_group
   class n3 external_node
-  n4@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**exit#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：从当前消息批<br/>次取得最后一次状态转换。；执行旧状态的退<br/>出调度。" }
+  n4@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**exit#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：执行旧状态的<br/>退出调度。；从当前消息批次取得最后一次状<br/>态转换。" }
   class n4 node_system_group
   class n4 external_node
   n5@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**enter#lt;AppState#gt;)**<br/>来自crate:bevy​_​state ↗：从当前消息批<br/>次取得最后一次状态转换。；执行新状态的进<br/>入调度。" }

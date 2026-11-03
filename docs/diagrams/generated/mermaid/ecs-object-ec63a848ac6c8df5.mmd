@@ -42,29 +42,29 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**CascadesVisibleEntities**<br/>记录每个视图及级联的可见网格。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：为菜单展示舞台提供带阴影的日<br/>光。" }
-  class n1 node_entity
+  n1@{ shape: rounded, label: "**extract​_​lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
+  class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：为玩法海岛创建<br/>会话日光。" }
-  class n2 node_entity
+  n2@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
+  class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**extract​_​lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
-  class n3 node_system
+  n3@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：为玩法海岛提供<br/>随会话清理的日光照明。" }
+  class n3 node_entity
   class n3 external_node
-  n4@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
-  class n4 node_system
+  n4@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：照亮主菜单海岛展示舞台。" }
+  class n4 node_entity
   class n4 external_node
-  n1 e0@-->|"可能包含"| n0
-  class e0 edge_reference
-  n2 e1@-->|"可能包含"| n0
-  class e1 edge_reference
-  n0 e2@--> n3
-  class e2 edge_read
-  n4 e3@-->|"可变访问"| n0
-  class e3 edge_write
-  n0 e4@-->|"存在性约束"| n3
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"可能包含"| n0
+  class e2 edge_reference
+  n0 e3@-->|"存在性约束"| n1
+  class e3 edge_reference
+  n4 e4@-->|"可能包含"| n0
   class e4 edge_reference
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

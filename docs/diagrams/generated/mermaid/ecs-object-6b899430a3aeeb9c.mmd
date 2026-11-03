@@ -40,11 +40,8 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**AtmosphereProbeTextures**<br/>来自crate:bevy​_​pbr ↗：汇集大气环境目<br/>标与散射查找纹理。" }
   class n1 node_component
   class n1 external_node
@@ -74,7 +71,10 @@ flowchart LR
   class e5 edge_write
   n6 e6@--> n0
   class e6 edge_read
+  n1 layout_output_0@~~~ n2
+  n2 layout_output_1@~~~ n5
   e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: bumpX }
   e4@{ curve: basis }

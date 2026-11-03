@@ -52,12 +52,9 @@ flowchart LR
   n4@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
   class n4 node_system
   class n4 external_node
-  subgraph layout_card_n5[" "]
   n5@{ shape: rounded, label: "**stop​_​on​_​exit**<br/>来自audio ↗：停止音频通道并记录退出。" }
   class n5 node_system
   class n5 external_node
-  end
-  style layout_card_n5 fill:none,stroke:none
   n6@{ shape: rounded, label: "**despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
   class n6 node_system
   class n6 external_node
@@ -79,11 +76,14 @@ flowchart LR
   class e7 edge_read
   n2 e8@-->|"赋值"| n0
   class e8 edge_write
+  n1 layout_output_0@~~~ n5
+  n5 layout_output_1@~~~ n6
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

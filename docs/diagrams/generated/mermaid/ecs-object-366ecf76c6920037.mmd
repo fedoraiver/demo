@@ -48,12 +48,9 @@ flowchart LR
   class n1 node_system
   n2@{ shape: rounded, label: "**AnimationPlayer**<br/>保存当前激活动画及其播放控制状态" }
   class n2 node_component
-  subgraph layout_card_n3[" "]
   n3@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自crate:bevy​_​app ↗：更新动画图、播<br/>放时间和目标姿态。" }
   class n3 node_system_set
   class n3 external_node
-  end
-  style layout_card_n3 fill:none,stroke:none
   n4@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n4 node_system_set
   class n4 external_node
@@ -67,14 +64,16 @@ flowchart LR
   class e1 edge_write
   n3 e2@-->|"集合成员"| n0
   class e2 edge_set_membership
-  n0 e3@--->|"先于"| n4
+  n0 e3@-->|"先于"| n4
   class e3 edge_order
   n5 e4@-->|"调用"| n0
   class e4 edge_registration
   n0 e5@-->|"可变访问"| n6
   class e5 edge_write
+  n2 layout_output_0@~~~ n4
+  n4 layout_output_1@~~~ n6
   e0@{ curve: basis }
   e1@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: bumpX }
+  e5@{ curve: basis }

@@ -40,12 +40,12 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**IsDefaultUiCamera**<br/>优先选择一台默认 UI 相机。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
+  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
   class n1 node_entity
   class n1 external_node
   n2@{ shape: rounded, label: "**propagate​_​ui​_​target​_​cameras**<br/>为 UI 根配置目标相机和视口信息传播源。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：创建可复用为玩<br/>家镜头的加载相机。" }
+  n3@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
   class n3 node_entity
   class n3 external_node
   n1 e0@-->|"可能包含"| n0

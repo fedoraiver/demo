@@ -52,12 +52,9 @@ flowchart LR
   n4@{ shape: rounded, label: "**sync​_​bounds​_​and​_​transforms**<br/>来自crate:bevy​_​ui ↗：把 UI 几何同步到<br/>无障碍树。" }
   class n4 node_system
   class n4 external_node
-  subgraph layout_card_n5[" "]
   n5@{ shape: rounded, label: "**button​_​changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
   class n5 node_system
   class n5 external_node
-  end
-  style layout_card_n5 fill:none,stroke:none
   n6@{ shape: rounded, label: "**label​_​changed**<br/>来自crate:bevy​_​ui ↗：把标签子树文字写<br/>入无障碍节点。" }
   class n6 node_system
   class n6 external_node
@@ -85,7 +82,7 @@ flowchart LR
   class e4 edge_order
   n6 e5@-->|"先于"| n0
   class e5 edge_order
-  n0 e6@--->|"先于"| n7
+  n0 e6@-->|"先于"| n7
   class e6 edge_order
   n0 e7@-->|"集合成员"| n8
   class e7 edge_set_membership
@@ -93,6 +90,10 @@ flowchart LR
   class e8 edge_order
   n0 e9@-->|"集合成员"| n10
   class e9 edge_set_membership
+  n1 layout_output_0@~~~ n3
+  n3 layout_output_1@~~~ n7
+  n7 layout_output_2@~~~ n8
+  n8 layout_output_3@~~~ n10
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

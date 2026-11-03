@@ -46,7 +46,7 @@ flowchart LR
   n2@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**begin​_​island**<br/>来自scene​_​assembly ↗：请求创建已加载<br/>海岛的运行实例。" }
+  n3@{ shape: rounded, label: "**begin​_​island**<br/>来自scene​_​assembly ↗：资源就绪后请求<br/>海岛地图实例。" }
   class n3 node_system
   class n3 external_node
   n4@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }

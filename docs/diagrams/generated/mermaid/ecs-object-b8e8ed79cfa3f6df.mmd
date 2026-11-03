@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-b8e8ed79cfa3f6df-e3{marker-start:url(#object-b8e8ed79cfa3f6df_flowchart-v2-pointStart)!important}\n#object-b8e8ed79cfa3f6df-e18{marker-start:url(#object-b8e8ed79cfa3f6df_flowchart-v2-pointStart)!important}\n#object-b8e8ed79cfa3f6df-e22{marker-start:url(#object-b8e8ed79cfa3f6df_flowchart-v2-pointStart)!important}\n#object-b8e8ed79cfa3f6df-e37{marker-start:url(#object-b8e8ed79cfa3f6df_flowchart-v2-pointStart)!important}\n#object-b8e8ed79cfa3f6df_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-b8e8ed79cfa3f6df-e3{marker-start:url(#object-b8e8ed79cfa3f6df_flowchart-v2-pointStart)!important}\n#object-b8e8ed79cfa3f6df-e17{marker-start:url(#object-b8e8ed79cfa3f6df_flowchart-v2-pointStart)!important}\n#object-b8e8ed79cfa3f6df-e22{marker-start:url(#object-b8e8ed79cfa3f6df_flowchart-v2-pointStart)!important}\n#object-b8e8ed79cfa3f6df-e37{marker-start:url(#object-b8e8ed79cfa3f6df_flowchart-v2-pointStart)!important}\n#object-b8e8ed79cfa3f6df_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -91,26 +91,26 @@ flowchart LR
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为海岛导入几何<br/>创建静态碰撞子体。" }
-  class n9 node_entity
+  n9@{ shape: rounded, label: "**release​_​orphaned​_​items**<br/>来自item​_​interaction ↗：关系被外部解<br/>除或人物销毁时，独立箱实体仍能恢复自由刚<br/>体，不产生残留附属碰撞。" }
+  class n9 node_system
   class n9 external_node
   end
   style layout_card_n9 fill:none,stroke:none
   subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**release​_​orphaned​_​items**<br/>来自item​_​interaction ↗：关系被外部解<br/>除或人物销毁时，独立箱实体仍能恢复自由刚<br/>体，不产生残留附属碰撞。" }
+  n10@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
   class n10 node_system
   class n10 external_node
   end
   style layout_card_n10 fill:none,stroke:none
   subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  n11@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
   class n11 node_system
   class n11 external_node
   end
   style layout_card_n11 fill:none,stroke:none
   subgraph layout_card_n12[" "]
-  n12@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
-  class n12 node_system
+  n12@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
+  class n12 node_entity
   class n12 external_node
   end
   style layout_card_n12 fill:none,stroke:none
@@ -127,7 +127,7 @@ flowchart LR
   end
   style layout_card_n14 fill:none,stroke:none
   subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：为地图展示<br/>NPC 添加静态碰撞子体。" }
+  n15@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
   class n15 node_entity
   class n15 external_node
   end
@@ -227,28 +227,28 @@ flowchart LR
   class e6 edge_write
   n0 e7@--> n8
   class e7 edge_read
-  n9 e8@-->|"可能包含"| n0
-  class e8 edge_reference
-  n7 e9@-->|"可变访问"| n0
-  class e9 edge_write
+  n7 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  n0 e9@--> n9
+  class e9 edge_read
   n0 e10@--> n10
   class e10 edge_read
   n0 e11@--> n11
   class e11 edge_read
-  n0 e12@--> n12
-  class e12 edge_read
-  n1 e13@-->|"赋值"| n0
-  class e13 edge_write
+  n1 e12@-->|"赋值"| n0
+  class e12 edge_write
+  n12 e13@-->|"可能包含"| n0
+  class e13 edge_reference
   n0 e14@--> n13
   class e14 edge_read
   n0 e15@--> n14
   class e15 edge_read
   n0 e16@-->|"存在性约束"| n14
   class e16 edge_reference
-  n15 e17@-->|"可能包含"| n0
-  class e17 edge_reference
-  n7 e18@--- n0
-  class e18 edge_read
+  n7 e17@--- n0
+  class e17 edge_read
+  n15 e18@-->|"可能包含"| n0
+  class e18 edge_reference
   n0 e19@--> n16
   class e19 edge_read
   n17 e20@-->|"可变访问"| n0

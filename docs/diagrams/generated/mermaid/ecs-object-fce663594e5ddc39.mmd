@@ -48,16 +48,16 @@ flowchart LR
   n1@{ shape: rounded, label: "**NoRotationEasing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：显式禁止当前实体的旋<br/>转插值和外推" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: lin-rect, label: "**UpdateStart**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：组织变换缓动端点与帧<br/>间应用。" }
-  class n2 node_system_set
-  class n2 external_node
-  n3@{ shape: rounded, label: "**ResumeInterpolation**<br/>记录本次恢复临时添加的插值暂停项，不移除<br/>原先由其他功能设置的暂停组件。" }
-  class n3 node_component
-  n4@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
-  class n4 node_system
-  class n4 external_node
-  n5@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>注册越界恢复和插值重置，不创建窗口或额外<br/>推进模拟。" }
-  class n5 node_plugin
+  n2@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>注册越界恢复和插值重置，不创建窗口或额外<br/>推进模拟。" }
+  class n2 node_plugin
+  n3@{ shape: lin-rect, label: "**UpdateStart**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：组织变换缓动端点与帧<br/>间应用。" }
+  class n3 node_system_set
+  class n3 external_node
+  n4@{ shape: rounded, label: "**ResumeInterpolation**<br/>记录本次恢复临时添加的插值暂停项，不移除<br/>原先由其他功能设置的暂停组件。" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
+  class n5 node_system
+  class n5 external_node
   n6@{ shape: rounded, label: "**NoTranslationEasing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：显式禁止当前实体的平<br/>移插值和外推" }
   class n6 node_component
   class n6 external_node
@@ -66,25 +66,25 @@ flowchart LR
   class n7 external_node
   n0 e0@-->|"移除"| n1
   class e0 edge_write
-  n0 e1@-->|"先于"| n2
-  class e1 edge_order
-  n3 e2@--> n0
-  class e2 edge_read
-  n4 e3@-->|"运行条件"| n0
-  class e3 edge_reference
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n0 e2@-->|"先于"| n3
+  class e2 edge_order
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"运行条件"| n0
+  class e4 edge_reference
   n0 e5@-->|"移除"| n6
   class e5 edge_write
   n7 e6@-->|"先于"| n0
   class e6 edge_order
-  n3 e7@---|"移除"| n0
+  n4 e7@---|"移除"| n0
   class e7 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
+  e3@{ curve: bumpX }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: bumpX }
+  e7@{ curve: basis }

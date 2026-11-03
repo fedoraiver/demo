@@ -41,48 +41,48 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**WorldAssetRoot**<br/>持有 WorldAsset 句柄" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：在菜单舞台展示物流站模型。" }
+  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
   class n1 node_entity
   class n1 external_node
-  n2@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：挂接初始隐藏的<br/>快递员美术与动画来源。" }
+  n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
   class n2 node_entity
   class n2 external_node
-  n3@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：在菜单舞台铺设野草地块。" }
+  n3@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
   class n3 node_entity
   class n3 external_node
-  n4@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：显示菜单海岛周围的海水。" }
+  n4@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
   class n4 node_entity
   class n4 external_node
-  n5@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：挂接可搬运物品<br/>的美术子场景。" }
+  n5@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
   class n5 node_entity
   class n5 external_node
-  n6@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：在菜单岸边布置弯曲棕榈树。" }
+  n6@{ shape: rounded, label: "**begin​_​island · 创建模板**<br/>来自scene​_​assembly ↗：挂载玩法海岛场<br/>景，作为地图准备和会话清理入口。" }
   class n6 node_entity
   class n6 external_node
-  n7@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：在菜单舞台布置幼年棕榈树。" }
+  n7@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
   class n7 node_entity
   class n7 external_node
-  n8@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：显示菜单舞台的海岛地形。" }
+  n8@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
   class n8 node_entity
   class n8 external_node
-  n9@{ shape: rounded, label: "**world​_​instance​_​spawner**<br/>根据世界资产根组件排队生成或替换实例。" }
-  class n9 node_system
-  n10@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：在菜单舞台展示木箱。" }
+  n9@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：挂载主角模型，<br/>承接动画绑定和自身视觉隐藏。" }
+  class n9 node_entity
+  class n9 external_node
+  n10@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
   class n10 node_entity
   class n10 external_node
-  n11@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：展示播放持箱动画的菜单快递<br/>员。" }
-  class n11 node_entity
-  class n11 external_node
-  n12@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：在菜单沙地展示易碎包裹。" }
+  n11@{ shape: rounded, label: "**world​_​instance​_​spawner**<br/>根据世界资产根组件排队生成或替换实例。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：承载主菜单快递员模型、展示动<br/>画与持握附件。" }
   class n12 node_entity
   class n12 external_node
-  n13@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：在菜单物流站后布置棕榈树。" }
+  n13@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：加载并承载可携<br/>带物品的模型外观。" }
   class n13 node_entity
   class n13 external_node
-  n14@{ shape: rounded, label: "**begin​_​island · 创建模板**<br/>来自scene​_​assembly ↗：请求当前会话的<br/>海岛世界资产实例。" }
+  n14@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
   class n14 node_entity
   class n14 external_node
-  n15@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：显示菜单快递员手中的包裹。" }
+  n15@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
   class n15 node_entity
   class n15 external_node
   n1 e0@-->|"可能包含"| n0
@@ -101,22 +101,22 @@ flowchart LR
   class e6 edge_reference
   n8 e7@-->|"可能包含"| n0
   class e7 edge_reference
-  n0 e8@-->|"存在性约束"| n9
+  n9 e8@-->|"可能包含"| n0
   class e8 edge_reference
   n10 e9@-->|"可能包含"| n0
   class e9 edge_reference
-  n11 e10@-->|"可能包含"| n0
+  n0 e10@-->|"存在性约束"| n11
   class e10 edge_reference
   n12 e11@-->|"可能包含"| n0
   class e11 edge_reference
-  n0 e12@--> n9
-  class e12 edge_read
-  n13 e13@-->|"可能包含"| n0
+  n13 e12@-->|"可能包含"| n0
+  class e12 edge_reference
+  n14 e13@-->|"可能包含"| n0
   class e13 edge_reference
-  n14 e14@-->|"可能包含"| n0
+  n15 e14@-->|"可能包含"| n0
   class e14 edge_reference
-  n15 e15@-->|"可能包含"| n0
-  class e15 edge_reference
+  n0 e15@--> n11
+  class e15 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

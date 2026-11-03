@@ -48,7 +48,7 @@ flowchart LR
   class n1 external_node
   n2@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n2 node_plugin
-  n3@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>组织主菜单独立展示舞台。" }
+  n3@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>组织主菜单海岛展示舞台，并在退出主菜单时<br/>清理。" }
   class n3 node_entity
   n1 e0@--> n0
   class e0 edge_read

@@ -41,24 +41,24 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**EguiContextImeState**<br/>保存各 Egui 上下文是否允许输入法以及活<br/>动编辑区域矩形" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：创建可复用为玩<br/>家镜头的加载相机。" }
-  class n1 node_entity
-  class n1 external_node
-  n2@{ shape: rounded, label: "**process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
-  class n2 node_system
-  n3@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：提供主菜单展示与界面的三维相<br/>机。" }
-  class n3 node_entity
-  class n3 external_node
-  n4@{ shape: rounded, label: "**write​_​ime​_​messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
-  class n4 node_system
-  n1 e0@-->|"可能包含"| n0
-  class e0 edge_reference
-  n2 e1@-->|"可变访问"| n0
-  class e1 edge_write
-  n3 e2@-->|"可能包含"| n0
-  class e2 edge_reference
-  n4 e3@-->|"可变访问"| n0
-  class e3 edge_write
+  n1@{ shape: rounded, label: "**process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  class n2 node_entity
+  class n2 external_node
+  n3@{ shape: rounded, label: "**write​_​ime​_​messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
+  class n4 node_entity
+  class n4 external_node
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"可能包含"| n0
+  class e1 edge_reference
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n4 e3@-->|"可能包含"| n0
+  class e3 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: window::Window · 对象关系
+  accTitle: bevy_window::Window · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -98,7 +98,7 @@ flowchart LR
   n19@{ shape: rounded, label: "**despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: rounded, label: "**sync​_​context**<br/>来自ui ↗：跟随窗口焦点启停菜单输入。" }
+  n20@{ shape: rounded, label: "**sync​_​context**<br/>来自ui ↗：按主窗口焦点启停菜单输入上下<br/>文。" }
   class n20 node_system
   class n20 external_node
   n21@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>来自crate:bevy​_​input​_​focus ↗：在请求<br/>未命中焦点目标时清除焦点。" }

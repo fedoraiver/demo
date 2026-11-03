@@ -41,17 +41,17 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**spawn​_​lighting**<br/>创建会话灯光和可复用的加载相机。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>创建可复用为玩家镜头的加载相机。" }
+  n1@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>加载海岛并复用为角色第一人称视角的相机。" }
   class n1 node_entity
-  n2@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载当前场景资源并装配地图、碰撞与业务实<br/>体。" }
-  class n2 node_plugin
-  n3@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>为玩法海岛创建会话日光。" }
-  class n3 node_entity
+  n2@{ shape: rounded, label: "**spawn​_​lighting · 创建模板**<br/>为玩法海岛提供随会话清理的日光照明。" }
+  class n2 node_entity
+  n3@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载当前场景资源并装配地图、碰撞与业务实<br/>体。" }
+  class n3 node_plugin
   n0 e0@-->|"创建模板"| n1
   class e0 edge_write
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n0 e2@-->|"创建模板"| n3
-  class e2 edge_write
+  n0 e1@-->|"创建模板"| n2
+  class e1 edge_write
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }

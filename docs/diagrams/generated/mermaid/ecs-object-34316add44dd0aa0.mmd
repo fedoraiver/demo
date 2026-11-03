@@ -44,16 +44,16 @@ flowchart LR
   n1@{ shape: cyl, label: "**Time#lt;Physics#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**Time#lt;Virtual#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
-  class n2 node_resource
-  class n2 external_node
-  n3@{ shape: fr-rect, label: "**GameFlowPlugin**<br/>管理游戏状态与时钟，连接各功能公开的调度<br/>阶段。" }
-  class n3 node_plugin
+  n2@{ shape: fr-rect, label: "**GameFlowPlugin**<br/>管理游戏状态与时钟，连接各功能公开的调度<br/>阶段。" }
+  class n2 node_plugin
+  n3@{ shape: cyl, label: "**Time#lt;Virtual#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  class n3 node_resource
+  class n3 external_node
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e2@{ curve: basis }

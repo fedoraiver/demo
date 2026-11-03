@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-a508ffc35bc2547d-e1{marker-start:url(#object-a508ffc35bc2547d_flowchart-v2-pointStart)!important}\n#object-a508ffc35bc2547d_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-a508ffc35bc2547d-e4{marker-start:url(#object-a508ffc35bc2547d_flowchart-v2-pointStart)!important}\n#object-a508ffc35bc2547d_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -43,42 +43,42 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**sync​_​context**<br/>跟随窗口焦点启停菜单输入。" }
+  n0@{ shape: rounded, label: "**sync​_​context**<br/>按主窗口焦点启停菜单输入上下文。" }
   class n0 node_system
   n1@{ shape: lin-rect, label: "**InputSystems**<br/>来自crate:bevy​_​input ↗：把原始设备消<br/>息汇总为本帧输入状态。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**ContextActivity#lt;MenuContext#gt;**<br/>来自crate:bevy​_​enhanced​_​input ↗：控<br/>制保留绑定的输入上下文启停。" }
+  n2@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
-  class n3 node_plugin
-  n4@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n3@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​enhanced​_​input ↗：组<br/>织动作求值、值应用与事件触发。" }
+  class n3 node_system_set
+  class n3 external_node
+  n4@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​enhanced​_​input ↗：组<br/>织动作求值、值应用与事件触发。" }
-  class n5 node_system_set
+  n5@{ shape: rounded, label: "**ContextActivity#lt;MenuContext#gt;**<br/>来自crate:bevy​_​enhanced​_​input ↗：控<br/>制保留绑定的输入上下文启停。" }
+  class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
-  class n6 node_component
-  class n6 external_node
+  n6@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  class n6 node_plugin
   n1 e0@-->|"先于"| n0
   class e0 edge_order
-  n2 e1@---|"插入"| n0
-  class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n4 e3@-->|"存在性约束"| n0
-  class e3 edge_reference
-  n0 e4@-->|"先于"| n5
-  class e4 edge_order
-  n6 e5@--> n0
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n0 e2@-->|"先于"| n3
+  class e2 edge_order
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@---|"插入"| n0
+  class e4 edge_write
+  n5 e5@--> n0
   class e5 edge_read
-  n2 e6@--> n0
-  class e6 edge_read
+  n6 e6@-->|"调用"| n0
+  class e6 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
   e3@{ curve: basis }
+  e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

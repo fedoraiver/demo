@@ -53,11 +53,8 @@ flowchart LR
   class n4 node_resource
   n5@{ shape: cyl, label: "**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
   class n5 node_resource
-  subgraph layout_card_n6[" "]
   n6@{ shape: cyl, label: "**ConstraintGraph**<br/>为并行接触求解维护约束着色图。" }
   class n6 node_resource
-  end
-  style layout_card_n6 fill:none,stroke:none
   n7@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
   class n7 node_resource
   n1 e0@--> n0
@@ -74,6 +71,8 @@ flowchart LR
   class e5 edge_write
   n0 e6@-->|"可变访问"| n7
   class e6 edge_write
+  n4 layout_output_0@~~~ n6
+  n6 layout_output_1@~~~ n7
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

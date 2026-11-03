@@ -46,11 +46,8 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: cyl, label: "**RenderScreenshotTargets**<br/>按截图请求实体保存本帧的规范化渲染目标。" }
   class n1 node_resource
   n2@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
@@ -140,6 +137,8 @@ flowchart LR
   class e20 edge_read
   n20 e21@--> n0
   class e21 edge_read
+  n11 layout_output_0@~~~ n13
+  n13 layout_output_1@~~~ n14
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

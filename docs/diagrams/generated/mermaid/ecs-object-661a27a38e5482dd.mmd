@@ -52,37 +52,37 @@ flowchart LR
   class n1 external_node
   n2@{ shape: rounded, label: "**CharacterMotion**<br/>接地状态由物理查询派生；实际速度直接读<br/>取 Avian 的 LinearVelocity。" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**PrototypeConfig**<br/>来自settings ↗：原型的运动、平地和持箱<br/>参数。" }
-  class n3 node_resource
-  class n3 external_node
+  n3@{ shape: rounded, label: "**Character**<br/>具有移动和跳跃能力的角色。" }
+  class n3 node_component
   n4@{ shape: rounded, label: "**Sensor**<br/>来自crate:avian3d ↗：将碰撞体设为不阻<br/>挡运动的触发器。" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**ColliderTrees**<br/>来自crate:avian3d ↗：按运动类别组织碰<br/>撞体加速树。" }
-  class n6 node_resource
+  n6@{ shape: rounded, label: "**HeldBy**<br/>来自item​_​interaction ↗：物体的持有<br/>者；只由交互系统插入或移除。" }
+  class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**ColliderAabb**<br/>来自crate:avian3d ↗：保存碰撞体的世界<br/>轴对齐包围盒。" }
-  class n7 node_component
+  n7@{ shape: cyl, label: "**PrototypeConfig**<br/>来自settings ↗：原型的运动、平地和持箱<br/>参数。" }
+  class n7 node_resource
   class n7 external_node
-  n8@{ shape: lin-rect, label: "**Motion**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
-  class n8 node_system_set
+  n8@{ shape: cyl, label: "**ColliderTrees**<br/>来自crate:avian3d ↗：按运动类别组织碰<br/>撞体加速树。" }
+  class n8 node_resource
   class n8 external_node
-  n9@{ shape: fr-rect, label: "**CharacterPlugin**<br/>注册角色运动与反射元数据，不加载窗口、场<br/>景或其他项目插件。" }
-  class n9 node_plugin
-  n10@{ shape: rounded, label: "**HeldBy**<br/>来自item​_​interaction ↗：物体的持有<br/>者；只由交互系统插入或移除。" }
-  class n10 node_component
-  class n10 external_node
-  n11@{ shape: rounded, label: "**Collider**<br/>来自crate:avian3d ↗：保存 Parry 碰撞<br/>后端的几何形状。" }
-  class n11 node_component
+  n9@{ shape: rounded, label: "**ColliderAabb**<br/>来自crate:avian3d ↗：保存碰撞体的世界<br/>轴对齐包围盒。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: fr-rect, label: "**CharacterPlugin**<br/>注册角色运动与反射元数据，不加载窗口、场<br/>景或其他项目插件。" }
+  class n10 node_plugin
+  n11@{ shape: lin-rect, label: "**Motion**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
+  class n11 node_system_set
   class n11 external_node
-  n12@{ shape: rounded, label: "**CollisionLayers**<br/>来自crate:avian3d ↗：声明碰撞体所属层<br/>和可交互层。" }
+  n12@{ shape: rounded, label: "**Collider**<br/>来自crate:avian3d ↗：保存 Parry 碰撞<br/>后端的几何形状。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**Character**<br/>具有移动和跳跃能力的角色。" }
+  n13@{ shape: rounded, label: "**CollisionLayers**<br/>来自crate:avian3d ↗：声明碰撞体所属层<br/>和可交互层。" }
   class n13 node_component
+  class n13 external_node
   n14@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n14 node_system_set
   class n14 external_node
@@ -96,30 +96,30 @@ flowchart LR
   class n17 external_node
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference
-  n0 e1@-->|"赋值"| n2
+  n0 e1@-->|"可变访问"| n2
   class e1 edge_write
-  n3 e2@--> n0
-  class e2 edge_read
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
   n4 e3@-->|"存在性约束"| n0
   class e3 edge_reference
   n5 e4@--> n0
   class e4 edge_read
-  n6 e5@--> n0
-  class e5 edge_read
+  n6 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
   n7 e6@--> n0
   class e6 edge_read
-  n8 e7@-->|"集合成员"| n0
-  class e7 edge_set_membership
-  n9 e8@-->|"调用"| n0
-  class e8 edge_registration
-  n10 e9@-->|"存在性约束"| n0
-  class e9 edge_reference
-  n11 e10@--> n0
-  class e10 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@-->|"调用"| n0
+  class e9 edge_registration
+  n11 e10@-->|"集合成员"| n0
+  class e10 edge_set_membership
   n12 e11@--> n0
   class e11 edge_read
-  n13 e12@-->|"存在性约束"| n0
-  class e12 edge_reference
+  n13 e12@--> n0
+  class e12 edge_read
   n14 e13@-->|"集合成员"| n0
   class e13 edge_set_membership
   n15 e14@--> n0
@@ -128,7 +128,7 @@ flowchart LR
   class e15 edge_order
   n17 e16@--> n0
   class e16 edge_read
-  n0 e17@-->|"可变访问"| n2
+  n0 e17@-->|"赋值"| n2
   class e17 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

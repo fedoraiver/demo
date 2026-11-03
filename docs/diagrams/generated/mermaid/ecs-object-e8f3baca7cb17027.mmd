@@ -46,11 +46,8 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
   class n1 node_system
   n2@{ shape: fr-rect, label: "**VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
@@ -136,6 +133,10 @@ flowchart LR
   class e19 edge_read
   n20 e20@--> n0
   class e20 edge_read
+  n5 layout_output_0@~~~ n7
+  n7 layout_output_1@~~~ n9
+  n9 layout_output_2@~~~ n14
+  n14 layout_output_3@~~~ n16
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
