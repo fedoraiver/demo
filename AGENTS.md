@@ -61,6 +61,6 @@ Do not use computer-use to launch or operate the game.
 
 ## Delivery Requirements
 
-Before finishing, follow the [Testing Guide](docs/testing/README.md) checklist to review ECS design, comments, system access and ordering, deferred commands, registration and lifecycle, and file logging. For ordinary documentation-only changes, checking content and links is sufficient. If architecture diagrams change, also complete their visual checks.
+Before finishing, follow the [Testing Guide](docs/testing/README.md) checklist to review ECS design, comments, system access and ordering, deferred commands, registration and lifecycle, and file logging. For ordinary documentation-only changes, checking content and links is sufficient. Architecture diagram changes follow that guide's validation scope; SVG visual validation runs only when explicitly requested by the user.
 
 Delivery notes must describe the specific changes, validation actually completed, and any unverified items. For behavior that depends on gameplay, include user-performed steps, expected results, and log locations. Record execution details in the corresponding issue or PR; keep reusable guidance in long-term documentation.

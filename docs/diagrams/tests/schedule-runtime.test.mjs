@@ -223,7 +223,8 @@ test('the actual embedded Worker runs Graphviz without fetching any external ass
     assert.equal(result.systemCount, 1);
     assert.deepEqual(Array.from(result.legendKinds), ['system', 'system_set']);
     assert.match(result.svg, /<svg/);
-    assert.match(result.svg, /alpha|>a<\/text>/);
+    assert.match(result.svg, />系统<\/text>/);
+    assert.match(result.svg, /xlink:title="demo::系统&lt;Tuple&lt;A, B&gt;&gt;"/);
     assert.match(result.svg, /class="schedule-cluster-title"/);
     assert.match(result.svg, /data-cluster-name="cluster_systems"/);
   } finally { renderer.dispose(); }

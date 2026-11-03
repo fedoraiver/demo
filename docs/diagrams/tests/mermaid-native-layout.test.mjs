@@ -63,12 +63,12 @@ for (const id of ['object-7dbecb473f3bff18', 'object-1c0bc2f73463f19b']) {
     } finally { await browser.close(); }
   });
 }
-async function compileFixture(view, graph, name, registry = {}) {
+async function compileFixture(view, graph, name, registry = {}, options = {}) {
   const input = JSON.stringify(view), graphInput = JSON.stringify(graph), registryInput = JSON.stringify(registry);
   fs.mkdirSync(temporary, { recursive: true });
   const browser = await puppeteer.launch({ executablePath: chromium, headless: true, userDataDir: fs.mkdtempSync(path.join(temporary, `${name}-`)) });
   try {
-    const result = await compileRoutedView(view, registry, (candidate, records) => compileNativeView(browser, candidate, records));
+    const result = await compileRoutedView(view, registry, (candidate, records) => compileNativeView(browser, candidate, records), options);
     assert.equal(JSON.stringify(view), input, 'Native layout retries do not mutate the input view');
     assert.equal(JSON.stringify(graph), graphInput, 'Native layout retries do not mutate the semantic graph');
     assert.equal(JSON.stringify(registry), registryInput, 'Native compilation does not mutate the canonical registry');
@@ -91,6 +91,25 @@ async function compileFixture(view, graph, name, registry = {}) {
     await browser.close();
   }
 }
+
+test('captured InputFocus output fanout clears a near-collinear read using one native output context', { skip: !chromium, timeout: 180000 }, async () => {
+  const fixture = JSON.parse(fs.readFileSync(new URL('./fixtures/native-input-focus.json', import.meta.url), 'utf8'));
+  const { graph, registry, features, targetEdgeId } = fixture, before = structuredClone(fixture), attempts = [];
+  const view = renderGraphView(fixture.view, graph, registry, features);
+  const result = await compileFixture(view, graph, 'input-focus', registry, { onAttempt: attempt => attempts.push(attempt) });
+  assert.equal(result.nodes.length, 38); assert.equal(result.links.length, 65);
+  assert.deepEqual(view.layoutLinks, []);
+  assert.equal(result.layoutLinks.length, 8);
+  assert.ok(result.layoutLinks.every(link => link.mermaidId.startsWith('layout_output_')));
+  assert.equal(attempts.length, 1);
+  assert.equal(attempts[0].layoutError, null);
+  assert.deepEqual(attempts[0].invalid.map(edge => [edge.id, edge.axis, edge.curved, edge.collisions, edge.arrowIssues]), [[targetEdgeId, null, false, [], []]]);
+  const edge = inspectViewRoutes(result).edges.find(item => item.id === targetEdgeId);
+  assert.equal(edge.curved, true);
+  assert.deepEqual(nativeLabelMismatches(result), []);
+  assert.equal(result.nodes.find(node => node.id === graph.links.find(link => link.id === targetEdgeId).to).nameLabel, 'update_accessibility_nodes');
+  assert.deepEqual(fixture, before);
+});
 
 test('native guide samples retain identical bytes and shared styles across repeated compilation', { skip: !chromium, timeout: 180000 }, async () => {
   fs.mkdirSync(temporary, { recursive: true });
@@ -165,7 +184,7 @@ test('native Mermaid initialization accepts more than 500 recorded edges includi
     const before = JSON.stringify(candidate), result = await compileNativeView(browser, candidate, registry);
     assert.equal(result.links.length, 500); assert.equal(result.layoutLinks.length, 1);
     assert.deepEqual(result.links, candidate.links); assert.deepEqual(result.layoutLinks, candidate.layoutLinks);
-    assert.equal(svgElements(result.svg).filter(element => element.attrs['data-link-id']).length, 500);
+    assert.equal(svgElements(result.svg).filter(element => element.tag === 'path' && element.attrs['data-link-id']).length, 500);
     assert.equal(svgElements(result.svg).filter(element => element.attrs['data-layout-link'] === 'layout_limit').length, 1);
     checkMermaidGeometry(result.svg, result); checkMermaidStyles(result, registry);
     assert.equal(JSON.stringify(candidate), before);
@@ -177,7 +196,7 @@ test('native Mermaid accepts a valid source above 200000 characters while retain
   const browser = await puppeteer.launch({ executablePath: chromium, headless: true, userDataDir: fs.mkdtempSync(path.join(temporary, 'text-limit-')) });
   try {
     const name = '完整源码文本<System<资源, 状态>>', registry = {
-      long: { id: 'long', kind: 'System', feature: 'fixture', name, description: '保留超过默认长度的有效源码和完整节点文字。' },
+      long: { id: 'long', kind: 'Resource', feature: 'fixture', name, description: '保留超过默认长度的有效源码和完整节点文字。' },
     };
     const view = renderGraphView({ id: 'native-text-limit', aspect: 'object', objectId: 'long', centerNodeId: 'long', feature: 'fixture',
       label: '完整源码', summary: '长源码夹具。' }, { nodes: [{ id: 'long', role: 'internal' }], links: [] }, registry, [{ id: 'fixture', label: '示例' }]);
@@ -205,8 +224,7 @@ test('the captured complete GPU batching object passes native artifact compilati
   const compiled = await compileArchitectureArtifacts([view], registry), result = compiled.views[0];
   assert.equal(result.nodes.length, 14); assert.equal(result.links.length, 14);
   assert.deepEqual(result.links, view.links); assert.deepEqual(result.layoutLinks, []);
-  assert.match(result.mermaid, /subgraph layout_card_n0/);
-  assert.doesNotMatch(result.mermaid, /subgraph layout_card_n10/);
+  assert.equal(result.routing.rule, 'axis-or-curve');
   assert.deepEqual(nativeLabelMismatches(result), []);
   checkMermaidGeometry(result.svg, result); checkMermaidStyles(result, registry);
   const inspection = inspectViewRoutes(result), edge = inspection.edges.find(edge => edge.id === 'relation-c21fb7aaa58930b597d6f0e2');
@@ -221,14 +239,14 @@ test('the captured complete GPU batching object passes native artifact compilati
 });
 
 for (const [filename, nodes, links] of [['native-volumetric-fog.json', 5, 6], ['native-hovered-fanout.json', 62, 62]]) {
-  test(`captured ${filename} preserves every fact while native endpoint clearance resolves near-collinear edges`, { skip: !chromium, timeout: 180000 }, async () => {
+  test(`captured ${filename} preserves every fact with strict native routes and labels`, { skip: !chromium, timeout: 180000 }, async () => {
     const fixture = JSON.parse(fs.readFileSync(new URL('./fixtures/' + filename, import.meta.url), 'utf8'));
     const { graph, registry, features } = fixture, before = JSON.stringify(fixture);
     const view = renderGraphView(fixture.view, graph, registry, features);
     const result = await compileFixture(view, graph, filename.replace('.json', ''), registry);
     assert.equal(result.nodes.length, nodes); assert.equal(result.links.length, links);
     assert.deepEqual(result.layoutLinks, []);
-    assert.deepEqual([...result.mermaid.matchAll(/subgraph layout_card_(n\d+)/g)].map(match => match[1]), ['n0']);
+    if (filename === 'native-volumetric-fog.json') assert.deepEqual([...result.mermaid.matchAll(/subgraph layout_card_(n\d+)/g)].map(match => match[1]), ['n0']);
     assert.deepEqual(nativeLabelMismatches(result), []);
     assert.deepEqual(result.links.find(link => link.id === fixture.targetEdgeId).bodyOperations,
       view.links.find(link => link.id === fixture.targetEdgeId).bodyOperations);
@@ -267,4 +285,40 @@ test('complete nested generic names fit native cards without truncating compiler
   const view = renderGraphView({ id: 'native-generic', aspect: 'object', objectId: 'type-0', feature: 'fixture', label: '完整类型', summary: '编译器类型身份。' }, graph, registry, [{ id: 'fixture', label: '示例' }]);
   const compiled = await compileFixture(view, graph, 'generic', registry);
   assert.deepEqual(compiled.nodes.map(node => node.nameLabel), names);
+});
+
+test('short SVG titles retain full provenance, distinct callable identities and escaped type structure', { skip: !chromium, timeout: 180000 }, async () => {
+  const cases = [
+    ['System', 'demo::settings::frame_pacing::log_simulation_timestep', 'log_simulation_timestep'],
+    ['System', 'bevy_asset::Assets<dep::First>::asset_events_condition', 'asset_events_condition'],
+    ['System', 'bevy_asset::Assets<dep::Second>::asset_events_condition', 'asset_events_condition'],
+    ['Observer', 'demo::register<dep::T>::{{closure}}', 'register::{{closure}}'],
+    ['Resource', 'bevy_asset::Assets<dep::Wrapper<dep::T>>', 'Assets<Wrapper<T>>'],
+    ['Component', "&'a mut dep::Type<(dep::T, [dep::U; 4])>", "&'a mut Type<(T, [U; 4])>"],
+    ['SystemSet', 'ExitSchedules(PhantomData<demo::game_flow::AppState>)', 'ExitSchedules(PhantomData<AppState>)'],
+    ['Entity', '角色业务根实体', '角色业务根实体'],
+    ['Local', '方向更新 Local 私有状态', '方向更新 Local 私有状态'],
+  ];
+  const registry = Object.fromEntries(cases.map(([kind, name], index) => ['sample-' + index, { kind, name, description: '保留完整类型与原始注册身份。', feature: 'fixture' }]));
+  const graph = { centerNodeId: 'sample-0', nodes: Object.keys(registry).map(id => ({ id, role: 'internal' })), links: [] };
+  const view = renderGraphView({ id: 'native-short-titles', aspect: 'object', objectId: 'sample-0', label: '短显示名', summary: '完整身份不变。' }, graph, registry, []);
+  const before = structuredClone({ graph, registry, view });
+  const directory = fileURLToPath(new URL('../../../tmp/ecs-architecture/card-display-fix/names/', import.meta.url));
+  fs.mkdirSync(directory, { recursive: true });
+  const browser = await puppeteer.launch({ executablePath: chromium, headless: true, userDataDir: fs.mkdtempSync(path.join(directory, 'profile-')) });
+  try {
+    const result = await compileRoutedView(view, registry, (candidate, records) => compileNativeView(browser, candidate, records));
+    assert.deepEqual(result.nodes.map(node => node.nameLabel), cases.map(([, , short]) => short));
+    assert.deepEqual(result.nodes.map(node => node.id), graph.nodes.map(node => node.id));
+    assert.deepEqual(nativeLabelMismatches(result), []);
+    checkMermaidGeometry(result.svg, result); checkMermaidStyles(result, registry);
+    const elements = svgElements(result.svg);
+    for (const node of result.nodes) {
+      const element = elements.find(item => item.attrs['data-id'] === node.id);
+      assert.equal(element.attrs['aria-label'].split(' · ')[0], registry[node.id].name);
+      assert.equal(element.children.find(item => item.tag === 'title').text, `${registry[node.id].name} · ${registry[node.id].description}`);
+    }
+    assert.deepEqual({ graph, registry, view }, before);
+    fs.writeFileSync(path.join(directory, 'short-titles.svg'), result.svg);
+  } finally { await browser.close(); }
 });

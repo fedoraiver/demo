@@ -36,6 +36,32 @@ test('native label validation detects entities split across rows and ignores tit
   assert.deepEqual(nativeLabelMismatches({ ...view, svg: view.svg.replace('AnimationGraph&amp;</tspan><tspan class="row">gt;&gt;', 'AnimationGraph&gt;&gt;') }), []);
 });
 
+test('native short-title checks reject a full visible name even when hidden provenance is correct', () => {
+  const view = { nodes: [{ id: 'method', displayLabel: 'asset_events_condition\n用途' }],
+    svg: '<svg><g data-id="method"><title>bevy_asset::Assets&lt;dep::T&gt;::asset_events_condition</title><g class="label"><text><tspan class="row">asset_events_condition</tspan><tspan class="row">用途</tspan></text></g></g></svg>' };
+  assert.deepEqual(nativeLabelMismatches(view), []);
+  assert.deepEqual(nativeLabelMismatches({ ...view, svg: view.svg.replace('>asset_events_condition<', '>bevy_asset::Assets&lt;dep::T&gt;::asset_events_condition<') }), ['method']);
+  assert.deepEqual(nativeLabelMismatches({ ...view, svg: view.svg.replace('>用途<', '>错误用途<') }), ['method']);
+});
+
+test('native semantic label wrappers bind canonical edge identities without becoming geometry paths', () => {
+  const { view, registry } = clearanceFixture('dagre', 'object');
+  view.links = [{ id: 'canonical-read', mermaidId: 'e0', from: 'b', to: 'a', kind: 'read', edgeSemantic: 'read', nativeReverse: true }];
+  view.scheduleLinks = [{ id: 'canonical-schedule', mermaidId: 'sc0', from: 'a', to: 'b', edgeSemantic: 'schedule' }];
+  const source = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 150">'
+    + '<g class="node" id="flowchart-n0-0"><rect x="10" y="50" width="40" height="40"/></g>'
+    + '<g class="node" id="flowchart-n1-1"><rect x="200" y="50" width="40" height="40"/></g>'
+    + '<path data-id="e0" d="M50 70H200"/><path data-id="sc0" d="M50 80H200"/>'
+    + ['e0', 'sc0'].map(id => `<g class="edgeLabel"><rect class="outer-background"/><g class="label" data-id="${id}"><rect class="background"/><text>${id}</text></g></g>`).join('') + '</svg>';
+  const normalized = normalizeMermaidSvg(view, source, registry), all = svgElements(normalized.svg);
+  const wrappers = all.filter(item => (item.attrs.class || '').split(/\s+/).includes('edge-label'));
+  assert.deepEqual(wrappers.map(item => [item.attrs['data-link-id'], item.attrs['data-schedule-link-id']]), [['canonical-read', undefined], [undefined, 'canonical-schedule']]);
+  assert.ok(wrappers.every(item => !item.attrs.class.split(/\s+/).includes('edge') && item.children.some(child => child.tag === 'rect')));
+  assert.equal(all.filter(item => item.attrs['data-native-reverse'] === 'true').length, 1);
+  assert.match(normalized.svg, /\.edge\.dim,\.edge-label\.dim\{opacity:\.16\}/);
+  assert.deepEqual(normalized.links, view.links);
+});
+
 test('shared native compiler rejects residual overlap after every permitted layout profile', async () => {
   const view = {
     id: 'overlap-fixture', aspect: 'data',
@@ -138,6 +164,57 @@ test('endpoint card containers select exact native IDs even when cards share nam
   assert.equal((source.match(/n[01]@\{/g) || []).length, 2);
   assert.deepEqual(view, before);
   assert.throws(() => routedMermaid(view, { cardContainers: ['missing'] }), /Missing native card container/);
+});
+
+function outputBranchFixture() {
+  const { view, registry } = clearanceFixture('dagre', 'object');
+  view.centerNodeId = 'a';
+  for (const id of ['c', 'd']) {
+    view.nodes.push({ ...view.nodes[1], id, instance: `clearance-${id}`, mermaidId: `n${view.nodes.length}` });
+    registry[id] = { ...registry.b };
+  }
+  view.links = [
+    { id: 'read-b', mermaidId: 'e0', from: 'a', to: 'b' },
+    { id: 'read-c', mermaidId: 'e1', from: 'a', to: 'c' },
+    { id: 'read-d', mermaidId: 'e2', from: 'a', to: 'd', nativeReverse: true },
+    { id: 'write-d', mermaidId: 'e3', from: 'd', to: 'a' },
+  ];
+  return { view, registry };
+}
+
+test('a near-collinear output branch retries one native output context and leaves reversed neighbors outside it', async () => {
+  const { view, registry } = outputBranchFixture(), before = structuredClone({ view, registry }), attempts = [];
+  const result = await compileRoutedView(view, registry, async candidate => candidate, {
+    onAttempt: attempt => attempts.push(attempt),
+    checks: {
+      labels: () => [], geometry: () => {},
+      routes: candidate => ({ edges: view.links.map(link => ({ id: link.id, mermaidId: link.mermaidId, axis: link.id === 'read-b' ? null : 'horizontal',
+        curved: link.id === 'read-b' && candidate.mermaid.includes('layout_output_'), collisions: [], arrowIssues: [] })) }),
+    },
+  });
+  assert.equal(attempts.length, 1);
+  assert.deepEqual(result.layoutLinks, [{ mermaidId: 'layout_output_0', from: 'n1', to: 'n2' }]);
+  assert.match(result.mermaid, /n1 layout_output_0@~~~ n2/);
+  assert.doesNotMatch(result.mermaid, /(?:n3 layout_output_|layout_output_\d+@~~~ n3)/);
+  assert.deepEqual(result.links, view.links);
+  assert.deepEqual({ view, registry }, before);
+});
+
+test('output context is bounded and never substitutes for failed labels, geometry, collisions or arrows', async () => {
+  for (const failure of ['straight', 'label', 'geometry', 'collision', 'arrow']) {
+    const { view, registry } = outputBranchFixture();
+    let outputAttempts = 0, latest;
+    await assert.rejects(compileRoutedView(view, registry, async candidate => { latest = candidate; return candidate; }, {
+      onAttempt: () => { if (latest.mermaid.includes('layout_output_')) outputAttempts++; },
+      checks: {
+        labels: () => failure === 'label' ? ['a'] : [],
+        geometry: () => { if (failure === 'geometry') throw new Error('overlap'); },
+        routes: () => ({ edges: [{ id: 'read-b', mermaidId: 'e0', axis: null, curved: false,
+          collisions: failure === 'collision' ? [{ id: 'unrelated', kind: 'node' }] : [], arrowIssues: failure === 'arrow' ? ['path-target'] : [] }] }),
+      },
+    }), /Mermaid routing failed/);
+    assert.equal(outputAttempts, failure === 'straight' ? 1 : 0, failure);
+  }
 });
 
 test('native retry eligibility follows the configured layout rather than the data aspect', async () => {

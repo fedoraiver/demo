@@ -53,10 +53,11 @@ test('source-local Observer fanout layout never chains unrelated emitters or clo
   assert.deepEqual({ nodes, links, groups }, before);
 });
 
-test('cards show a full name and one purpose while all technical detail stays unchanged in the registry', () => {
+test('cards show a complete short title and one purpose while all technical detail stays unchanged in the registry', () => {
+  const shortName = 'very_long_system_' + 'character_facing_'.repeat(12);
   const record = {
     id: 'long-system', kind: 'system', feature: 'first_person',
-    name: 'very_long_system_' + 'character_facing_'.repeat(12),
+    name: `demo::first_person::${shortName}<dep::State>`,
     display_summary: '同步角色朝向与观察方向。',
     description: '完整说明保留内部实现、所有数据访问和生命周期约束，不用卡片摘要覆盖。',
     reads: ['hidden-read'], writes: ['hidden-write'], schedule: 'Update',
@@ -64,13 +65,31 @@ test('cards show a full name and one purpose while all technical detail stays un
     fields: ['hidden-field'], notes: ['hidden-note'], source: { path: 'src/first_person/facing.rs', line: 1 },
   };
   const original = structuredClone(record), view = isolatedView(record, { aspect: 'systems' }), node = view.nodes[0];
-  assert.equal(node.nameLabel, record.name);
+  assert.equal(node.nameLabel, shortName);
   assert.deepEqual(node.contextLabel, [record.display_summary]);
-  assert.equal(node.displayLabel, `${record.name}\n${record.display_summary}`);
+  assert.equal(node.displayLabel, `${shortName}\n${record.display_summary}`);
   const declaration = view.mermaid.split('\n').find(line => line.startsWith('  n0@{'));
-  assert.ok(declaration.replace(/\*\*|<br\/>|[\u200B\uFEFF]/g, '').includes(record.name));
+  assert.ok(declaration.replace(/\*\*|<br\/>|[\u200B\uFEFF]/g, '').includes(shortName));
+  assert.doesNotMatch(declaration, /demo::|dep::/);
   assert.doesNotMatch(declaration, /…|hidden-|hidden_condition|另有注册|R \d|W \d/);
   assert.deepEqual(record, original);
+});
+
+test('short titles preserve distinct generic identities, links and escaped type structure', () => {
+  const registry = {
+    one: { kind: 'System', name: 'demo::run<dep::First>', description: 'first', feature: 'fixture' },
+    two: { kind: 'System', name: 'demo::run<dep::Second>', description: 'second', feature: 'fixture' },
+    type: { kind: 'Resource', name: 'dep::Assets<dep::Wrapper<dep::T>>', description: 'data', feature: 'fixture' },
+  };
+  const graph = { centerNodeId: 'one', nodes: Object.keys(registry).map(id => ({ id, role: 'internal' })), links: [
+    { id: 'read', from: 'type', to: 'one', kind: 'read' }, { id: 'write', from: 'two', to: 'type', kind: 'write' },
+  ] };
+  const before = structuredClone({ registry, graph });
+  const view = renderGraphView({ id: 'short-titles', aspect: 'object', label: 'types', summary: 'purposes' }, graph, registry, []);
+  assert.deepEqual(view.nodes.map(node => [node.id, node.nameLabel]), [['one', 'run'], ['two', 'run'], ['type', 'Assets<Wrapper<T>>']]);
+  assert.match(view.mermaid, /Assets#lt;Wrapper#lt;T#gt;#gt;/);
+  assert.deepEqual(view.links.map(({ id, from, to }) => ({ id, from, to })), graph.links.map(({ id, from, to }) => ({ id, from, to })));
+  assert.deepEqual({ registry, graph }, before);
 });
 
 test('purpose fallback stays complete and external components retain only their provider context', () => {
