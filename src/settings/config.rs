@@ -10,6 +10,18 @@ use std::{
 use bevy::prelude::*;
 use serde::{Deserialize, Deserializer, Serialize, de::Error};
 
+/// 缺省配置采用的渲染帧率上限。
+const DEFAULT_FPS_LIMIT: u32 = 60;
+
+/// 配置支持的最低渲染帧率上限；不限制固定模拟频率。
+const MIN_FPS_LIMIT: u32 = 60;
+
+/// 默认每像素旋转弧度，也是菜单灵敏度百分比的显示基准。
+pub const DEFAULT_MOUSE_SENSITIVITY: f32 = 0.003;
+
+/// 音量整数百分比的上限；默认值、校验、菜单和混音共用此边界。
+pub const MAX_AUDIO_VOLUME: u8 = 100;
+
 /// 全局玩家设置；非零类型保证帧率上限始终能够转换为等待间隔。
 #[derive(Resource, Clone, Debug, Deserialize, Serialize)]
 #[serde(default, deny_unknown_fields)]
@@ -26,7 +38,7 @@ pub struct GameSettings {
 impl Default for GameSettings {
     fn default() -> Self {
         Self {
-            max_fps: NonZeroU32::new(60).unwrap(),
+            max_fps: NonZeroU32::new(DEFAULT_FPS_LIMIT).unwrap(),
             camera: CameraSettings::default(),
             audio: AudioSettings::default(),
         }
@@ -48,9 +60,9 @@ pub struct AudioSettings {
 impl Default for AudioSettings {
     fn default() -> Self {
         Self {
-            master_volume: 100,
-            sfx_volume: 100,
-            ui_volume: 100,
+            master_volume: MAX_AUDIO_VOLUME,
+            sfx_volume: MAX_AUDIO_VOLUME,
+            ui_volume: MAX_AUDIO_VOLUME,
         }
     }
 }
@@ -69,7 +81,7 @@ pub struct CameraSettings {
 impl Default for CameraSettings {
     fn default() -> Self {
         Self {
-            mouse_sensitivity: 0.003,
+            mouse_sensitivity: DEFAULT_MOUSE_SENSITIVITY,
             invert_y: false,
         }
     }
@@ -94,7 +106,7 @@ where
     D: Deserializer<'de>,
 {
     let value = u8::deserialize(deserializer)?;
-    if value > 100 {
+    if value > MAX_AUDIO_VOLUME {
         return Err(D::Error::custom("audio volume must be between 0 and 100"));
     }
     Ok(value)
@@ -106,7 +118,7 @@ where
 {
     let value = NonZeroU32::deserialize(deserializer)?;
     // 在加载边界检查下限，避免低于支持范围的配置进入限帧系统。
-    if value.get() < 60 {
+    if value.get() < MIN_FPS_LIMIT {
         return Err(D::Error::custom("max_fps must be at least 60"));
     }
     Ok(value)
@@ -128,7 +140,7 @@ where
 
 impl GameSettings {
     pub(super) fn validate(&self) -> io::Result<()> {
-        if self.max_fps.get() < 60 {
+        if self.max_fps.get() < MIN_FPS_LIMIT {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidInput,
                 "max_fps must be at least 60",
@@ -146,7 +158,7 @@ impl GameSettings {
             self.audio.ui_volume,
         ]
         .into_iter()
-        .any(|value| value > 100)
+        .any(|value| value > MAX_AUDIO_VOLUME)
         {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidInput,

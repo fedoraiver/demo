@@ -7,7 +7,10 @@ mod prototype;
 
 use bevy::prelude::*;
 
-pub use config::{AudioSettings, CameraSettings, GameSettings, SettingsFile};
+pub use config::{
+    AudioSettings, CameraSettings, DEFAULT_MOUSE_SENSITIVITY, GameSettings, MAX_AUDIO_VOLUME,
+    SettingsFile,
+};
 pub use draft::{SettingKey, SettingsDraft};
 pub use prototype::PrototypeConfig;
 
