@@ -207,7 +207,7 @@ mod initialization_tests {
             move_speed: 9.0,
             acceleration: 36.0,
             character_mass: 75.0,
-            parcel_mass: 3.0,
+            item_mass: 3.0,
             ..default()
         }
     }
@@ -271,15 +271,15 @@ mod initialization_tests {
                     "pickup_radius: 1.8",
                     "hold_offset: Vec3(0.0, 1.0, -0.9)",
                     "ground_y: 0.0",
-                    "parcel_half_height: 0.3",
+                    "item_half_height: 0.3",
                     "character_mass: 75.0",
                     "character_height: 1.9",
                     "character_radius: 0.32",
-                    "parcel_mass: 3.0",
+                    "item_mass: 3.0",
                     "physics_engine=\"avian3d\"",
                     "physics_version=\"0.7.0\"",
                     "character_body=\"dynamic\"",
-                    "parcel_body=\"dynamic_free_shared_held\"",
+                    "item_body=\"dynamic_free_shared_held\"",
                     "grip_mode=\"shared_body\"",
                     "release_mode=\"preserve_velocity\"",
                 ],

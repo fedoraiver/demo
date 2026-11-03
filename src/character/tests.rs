@@ -2,13 +2,13 @@
 
 use super::motion::update_grounded;
 use crate::character::character_body;
-use crate::item_interaction::parcel_body;
+use crate::item_interaction::item_body;
 use crate::{
     character::{Character, CharacterIntent, CharacterMotion, CharacterPlugin},
     game_flow::configure_feature_order,
-    item_interaction::{HeldBy, ItemInteractionPlugin, Parcel, Pickable},
+    item_interaction::{HeldBy, Item, ItemInteractionPlugin, Pickable},
     physics::{
-        GamePhysicsPlugin, ground_body, held_collision_layers, parcel_collision_layers,
+        GamePhysicsPlugin, ground_body, held_collision_layers, item_collision_layers,
         world_collision_layers,
     },
     settings::PrototypeConfig,
@@ -61,14 +61,14 @@ fn spawn_character(app: &mut App, position: Vec3, intent: CharacterIntent) -> En
         .id()
 }
 
-fn spawn_box(app: &mut App, position: Vec3) -> Entity {
+fn spawn_item(app: &mut App, position: Vec3) -> Entity {
     let config = app.world().resource::<PrototypeConfig>().clone();
     app.world_mut()
         .spawn((
-            Parcel,
+            Item::StandardParcel,
             Pickable,
             Transform::from_translation(position),
-            parcel_body(&config),
+            item_body(&config),
         ))
         .id()
 }
@@ -76,7 +76,7 @@ fn spawn_box(app: &mut App, position: Vec3) -> Entity {
 #[test]
 fn ground_probe_respects_collision_layers_and_excludes_held_boxes() {
     let mut app = test_app();
-    let item = spawn_box(&mut app, Vec3::new(0.0, 0.3, 0.0));
+    let item = spawn_item(&mut app, Vec3::new(0.0, 0.3, 0.0));
     let character = spawn_character(&mut app, Vec3::new(0.0, 0.6, 0.0), default());
     step(&mut app, 30);
     let grounded = |app: &App| {
@@ -105,7 +105,7 @@ fn ground_probe_respects_collision_layers_and_excludes_held_boxes() {
     schedule.run(app.world_mut());
     assert!(grounded(&app));
 
-    let item_layers = parcel_collision_layers();
+    let item_layers = item_collision_layers();
     app.world_mut()
         .entity_mut(item)
         .insert(CollisionLayers::new(
@@ -258,7 +258,7 @@ fn movement_accelerates_brakes_and_diagonal_speed_is_bounded() {
 fn collision_blocks_character_and_dynamic_boxes_receive_momentum() {
     let mut app = test_app();
     let character = spawn_character(&mut app, Vec3::ZERO, default());
-    let item = spawn_box(&mut app, Vec3::new(0.0, 0.3, -1.2));
+    let item = spawn_item(&mut app, Vec3::new(0.0, 0.3, -1.2));
     step(&mut app, 30);
     app.world_mut().spawn((
         RigidBody::Static,

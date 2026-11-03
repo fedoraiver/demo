@@ -111,7 +111,7 @@ pub(super) fn prepare_island(
                         let mut pose = *pose;
                         pose.translation += Vec3::new(0.8, 0.165, -2.06);
                         items.push(ItemPlacement {
-                            model: ItemModel::WoodenCrate,
+                            item: Item::WoodenCrate,
                             pose,
                         });
                     }
@@ -191,12 +191,12 @@ pub(super) fn prepare_island(
             ramp_count += 1;
         }
         player.translation.y += PLAYER_SPAWN_LIFT_M;
-        for (model, offset) in [
-            (ItemModel::StandardParcel, Vec3::new(0.0, 0.3, -1.3)),
-            (ItemModel::FragileParcel, Vec3::new(1.2, 0.3, -1.3)),
+        for (item, offset) in [
+            (Item::StandardParcel, Vec3::new(0.0, 0.3, -1.3)),
+            (Item::FragileParcel, Vec3::new(1.2, 0.3, -1.3)),
         ] {
             items.push(ItemPlacement {
-                model,
+                item,
                 pose: Transform::from_translation(player.translation + offset),
             });
         }

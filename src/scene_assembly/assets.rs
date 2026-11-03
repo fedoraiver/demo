@@ -6,34 +6,17 @@ use bevy::{
     prelude::*,
 };
 
+use crate::item_interaction::Item;
+
 pub(crate) const ISLAND_PATH: &str = "maps/courier_island.glb";
 pub(crate) const COURIER_PATH: &str = "models/characters/chr_courier.glb";
 
-/// 物品的美术种类；搬运能力和持有关系仍由玩法组件保存。
-#[derive(Component, Reflect, Clone, Copy, Default, Debug, PartialEq, Eq)]
-#[reflect(Component)]
-pub(crate) enum ItemModel {
-    #[default]
-    StandardParcel,
-    FragileParcel,
-    WoodenCrate,
-}
-
-impl ItemModel {
-    pub(crate) fn path(self) -> &'static str {
-        match self {
-            Self::StandardParcel => "models/props/prop_parcel_standard.glb",
-            Self::FragileParcel => "models/props/prop_parcel_fragile.glb",
-            Self::WoodenCrate => "models/props/prop_crate.glb",
-        }
-    }
-
-    pub(crate) fn name(self) -> &'static str {
-        match self {
-            Self::StandardParcel => "standard_parcel",
-            Self::FragileParcel => "fragile_parcel",
-            Self::WoodenCrate => "wooden_crate",
-        }
+/// 资产路径归场景加载层管理，物品交互只依赖物品种类。
+fn item_path(item: Item) -> &'static str {
+    match item {
+        Item::StandardParcel => "models/props/prop_parcel_standard.glb",
+        Item::FragileParcel => "models/props/prop_parcel_fragile.glb",
+        Item::WoodenCrate => "models/props/prop_crate.glb",
     }
 }
 
@@ -68,19 +51,19 @@ impl FromWorld for ArtAssets {
         Self {
             island: load(ISLAND_PATH),
             courier: load(COURIER_PATH),
-            standard: load(ItemModel::StandardParcel.path()),
-            fragile: load(ItemModel::FragileParcel.path()),
-            wooden_crate: load(ItemModel::WoodenCrate.path()),
+            standard: load(item_path(Item::StandardParcel)),
+            fragile: load(item_path(Item::FragileParcel)),
+            wooden_crate: load(item_path(Item::WoodenCrate)),
         }
     }
 }
 
 impl ArtAssets {
-    pub(crate) fn item(&self, model: ItemModel) -> &Handle<Gltf> {
-        match model {
-            ItemModel::StandardParcel => &self.standard,
-            ItemModel::FragileParcel => &self.fragile,
-            ItemModel::WoodenCrate => &self.wooden_crate,
+    pub(crate) fn item(&self, item: Item) -> &Handle<Gltf> {
+        match item {
+            Item::StandardParcel => &self.standard,
+            Item::FragileParcel => &self.fragile,
+            Item::WoodenCrate => &self.wooden_crate,
         }
     }
 
@@ -88,9 +71,9 @@ impl ArtAssets {
         [
             (ISLAND_PATH, &self.island),
             (COURIER_PATH, &self.courier),
-            (ItemModel::StandardParcel.path(), &self.standard),
-            (ItemModel::FragileParcel.path(), &self.fragile),
-            (ItemModel::WoodenCrate.path(), &self.wooden_crate),
+            (item_path(Item::StandardParcel), &self.standard),
+            (item_path(Item::FragileParcel), &self.fragile),
+            (item_path(Item::WoodenCrate), &self.wooden_crate),
         ]
     }
 }

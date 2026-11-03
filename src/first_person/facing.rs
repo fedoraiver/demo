@@ -54,7 +54,7 @@ pub(super) fn sync_character_facing(
                 // 仅记录自动放下这一状态变化的阻挡来源，便于区分真实碰障与查询误报。
                 info!(target: "demo::camera", ?item, holder = ?controlled_character.character,
                     ?blocker, blocker_name = names.get(blocker).map_or("unnamed", Name::as_str),
-                    yaw_delta = turn, reason = "turn_collision", "Held parcel turn blocked");
+                    yaw_delta = turn, reason = "turn_collision", "Held item turn blocked");
                 let local = attachment.local_pose;
                 let pose = Transform::from_translation(
                     position.0 + transform.rotation * local.translation,
@@ -69,7 +69,7 @@ pub(super) fn sync_character_facing(
                     angular.0,
                     "turn_collision",
                 );
-                commands.write_message(SoundRequest::new(SoundCue::ParcelRelease, item));
+                commands.write_message(SoundRequest::new(SoundCue::ItemRelease, item));
             }
             transform.rotation = rotation;
             // 只同步安全朝向，不积分平移；延迟命令在同帧持箱同步前应用，避免零固定步状态分裂。

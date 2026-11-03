@@ -34,21 +34,20 @@ pub(super) fn courier_scene(
 }
 
 pub(super) fn carryable_scene(
-    model: ItemModel,
+    item: Item,
     pose: Transform,
     scene: Handle<WorldAsset>,
 ) -> impl Scene {
-    let grip = if model == ItemModel::WoodenCrate {
+    let grip = if item == Item::WoodenCrate {
         WOODEN_CRATE_CARRY_GRIP_M
     } else {
         PARCEL_CARRY_GRIP_M
     };
     bsn! {
-        Name({model.name()})
-        Parcel
+        Name({item.name()})
         Pickable
         CarryGrip { offset: grip }
-        model
+        item
         SpawnPoint { pose }
         pose
         Visibility
@@ -82,15 +81,19 @@ pub(super) fn spawn_actors(
         commands
             .entity(controller)
             .insert(DespawnOnEnter(AppState::MainMenu));
-        for item in &placement.items {
+        for item_placement in &placement.items {
             let scene = gltfs
-                .get(assets.item(item.model))
+                .get(assets.item(item_placement.item))
                 .expect("Ready item must be loaded")
                 .scenes[0]
                 .clone();
-            let mut entity = commands.spawn_scene(carryable_scene(item.model, item.pose, scene));
-            entity.insert((parcel_body(&config), DespawnOnEnter(AppState::MainMenu)));
-            if item.model == ItemModel::WoodenCrate {
+            let mut entity = commands.spawn_scene(carryable_scene(
+                item_placement.item,
+                item_placement.pose,
+                scene,
+            ));
+            entity.insert((item_body(&config), DespawnOnEnter(AppState::MainMenu)));
+            if item_placement.item == Item::WoodenCrate {
                 // 木箱边框超出纸箱尺寸，中心偏移来自导出几何，视觉与碰撞使用相同米制比例。
                 entity.insert(Collider::compound(vec![(
                     WOODEN_CRATE_COLLIDER_CENTER_M,
@@ -102,8 +105,8 @@ pub(super) fn spawn_actors(
                     ),
                 )]));
             }
-            let parcel = entity.id();
-            info!(target: "demo::scene", ?parcel, model = item.model.name(), position = ?item.pose.translation,
+            let item = entity.id();
+            info!(target: "demo::scene", ?item, kind = item_placement.item.name(), position = ?item_placement.pose.translation,
                 reason = "island_ready", "Carryable item spawned");
         }
         let first_person = FirstPersonCamera::new(character);

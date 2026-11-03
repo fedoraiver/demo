@@ -487,11 +487,11 @@ fn triangle_inventory(collider: &Collider) -> BTreeMap<[[i64; 3]; 3], usize> {
 fn clear_turn_envelope(
     world: &mut World,
     character: Entity,
-    parcel: Entity,
+    item: Entity,
     turn: f32,
 ) -> Vec<Entity> {
-    let attachment = *world.get::<HeldAttachment>(parcel).unwrap();
-    let collider = world.get::<Collider>(parcel).unwrap();
+    let attachment = *world.get::<HeldAttachment>(item).unwrap();
+    let collider = world.get::<Collider>(item).unwrap();
     let bounds = collider.shape_scaled().compute_local_aabb();
     let origin = world.get::<Position>(character).unwrap().0;
     let rotation = world.get::<Rotation>(character).unwrap().0;
@@ -530,7 +530,7 @@ fn clear_turn_envelope(
         &envelope,
         (min + max) * 0.5,
         Quat::IDENTITY,
-        &SpatialQueryFilter::from_excluded_entities([character, parcel, attachment.collider]),
+        &SpatialQueryFilter::from_excluded_entities([character, item, attachment.collider]),
     )
 }
 
@@ -547,7 +547,7 @@ fn island_collider_asset(world: &World, collider: Entity) -> Option<String> {
 fn assert_clear_turn_frame(
     app: &mut App,
     character: Entity,
-    parcel: Entity,
+    item: Entity,
     camera: Entity,
     visual: Entity,
     visual_local: Transform,
@@ -556,13 +556,13 @@ fn assert_clear_turn_frame(
 ) {
     use bevy::ecs::relationship::Relationship;
 
-    let intersections = clear_turn_envelope(app.world_mut(), character, parcel, turn);
+    let intersections = clear_turn_envelope(app.world_mut(), character, item, turn);
     assert!(
         intersections.is_empty(),
-        "The complete near-building turn must be clear: model={:?}, holder={:?}, parcel={:?}, turn={turn}, intersections={intersections:?}, obstacle_assets={:?}",
-        app.world().get::<ItemModel>(parcel),
+        "The complete near-building turn must be clear: model={:?}, holder={:?}, item={:?}, turn={turn}, intersections={intersections:?}, obstacle_assets={:?}",
+        app.world().get::<Item>(item),
         app.world().get::<Position>(character),
-        app.world().get::<Position>(parcel),
+        app.world().get::<Position>(item),
         intersections
             .iter()
             .map(|&entity| (entity, island_collider_asset(app.world(), entity)))
@@ -570,8 +570,8 @@ fn assert_clear_turn_frame(
     );
     let start_position = app.world().get::<Position>(character).unwrap().0;
     let start_rotation = app.world().get::<Rotation>(character).unwrap().0;
-    let attachment = *app.world().get::<HeldAttachment>(parcel).unwrap();
-    let collider = app.world().get::<Collider>(parcel).unwrap().clone();
+    let attachment = *app.world().get::<HeldAttachment>(item).unwrap();
+    let collider = app.world().get::<Collider>(item).unwrap().clone();
     app.insert_resource(if fixed {
         TimeUpdateStrategy::FixedTimesteps(1)
     } else {
@@ -588,7 +588,7 @@ fn assert_clear_turn_frame(
         delta: Vec2::X * (-turn / sensitivity),
     });
     app.update();
-    if app.world().get::<HeldBy>(parcel).map(Relationship::get) != Some(character) {
+    if app.world().get::<HeldBy>(item).map(Relationship::get) != Some(character) {
         // 失败时沿实际阻挡体的导入父级报告资产，不能把运行实体 ID 当成固定地图身份。
         let mut state =
             SystemState::<crate::item_interaction::CarryRotationQuery>::new(app.world_mut());
@@ -598,12 +598,12 @@ fn assert_clear_turn_frame(
             start_rotation,
             turn,
             attachment.local_pose.into(),
-            &[character, parcel],
+            &[character, item],
         );
         let source = blocker.and_then(|entity| island_collider_asset(app.world(), entity));
         panic!(
-            "A proven clear turn released the parcel: model={:?}, origin={start_position:?}, rotation={start_rotation:?}, turn={turn}, fixed={fixed}, blocker={blocker:?}, source={source:?}",
-            app.world().get::<ItemModel>(parcel)
+            "A proven clear turn released the item: model={:?}, origin={start_position:?}, rotation={start_rotation:?}, turn={turn}, fixed={fixed}, blocker={blocker:?}, source={source:?}",
+            app.world().get::<Item>(item)
         );
     }
     let world = app.world();
@@ -616,19 +616,19 @@ fn assert_clear_turn_frame(
         "The real mouse action must actually turn the camera"
     );
     assert_eq!(
-        world.get::<HeldBy>(parcel).map(Relationship::get),
+        world.get::<HeldBy>(item).map(Relationship::get),
         Some(character),
-        "A proven clear turn must keep the parcel held: turn={turn}, fixed={fixed}"
+        "A proven clear turn must keep the item held: turn={turn}, fixed={fixed}"
     );
     let character_pose = world.get::<Transform>(character).unwrap();
-    let parcel_pose = world.get::<Transform>(parcel).unwrap();
-    let grip = world.get::<CarryGrip>(parcel).unwrap().offset;
+    let item_pose = world.get::<Transform>(item).unwrap();
+    let grip = world.get::<CarryGrip>(item).unwrap().offset;
     assert!(
-        parcel_pose
+        item_pose
             .translation
             .abs_diff_eq(character_pose.transform_point(grip), 0.0001)
     );
-    let expected_visual = GlobalTransform::from(*parcel_pose).mul_transform(visual_local);
+    let expected_visual = GlobalTransform::from(*item_pose).mul_transform(visual_local);
     assert!(
         world
             .get::<GlobalTransform>(visual)
@@ -872,16 +872,16 @@ mod collision_tests {
             .single(world)
             .unwrap();
         let papers: Vec<_> = world
-            .query::<(Entity, &ItemModel, &SpawnPoint)>()
+            .query::<(Entity, &Item, &SpawnPoint)>()
             .iter(world)
-            .filter(|(_, model, _)| **model != ItemModel::WoodenCrate)
+            .filter(|(_, model, _)| **model != Item::WoodenCrate)
             .map(|(entity, _, spawn)| (entity, spawn.pose.translation))
             .collect();
         assert_eq!(papers.len(), 2);
         let wooden_crates: Vec<_> = world
-            .query::<(Entity, &ItemModel)>()
+            .query::<(Entity, &Item)>()
             .iter(world)
-            .filter(|(_, model)| **model == ItemModel::WoodenCrate)
+            .filter(|(_, model)| **model == Item::WoodenCrate)
             .map(|(entity, _)| entity)
             .collect();
         assert_eq!(wooden_crates.len(), 3);
@@ -1164,14 +1164,14 @@ mod collision_tests {
     }
 
     #[test]
-    fn real_island_npc_blocks_free_and_actually_held_parcels() {
+    fn real_island_npc_blocks_free_and_actually_held_items() {
         use bevy::ecs::relationship::Relationship;
 
         for (held, model) in [
-            (false, ItemModel::StandardParcel),
-            (true, ItemModel::StandardParcel),
-            (true, ItemModel::FragileParcel),
-            (true, ItemModel::WoodenCrate),
+            (false, Item::StandardParcel),
+            (true, Item::StandardParcel),
+            (true, Item::FragileParcel),
+            (true, Item::WoodenCrate),
         ] {
             let mut app = physics_asset_app();
             wait_until(&mut app, |world| {
@@ -1187,14 +1187,14 @@ mod collision_tests {
                 .query_filtered::<Entity, With<Character>>()
                 .single(world)
                 .unwrap();
-            let parcel = world
-                .query::<(Entity, &ItemModel)>()
+            let item = world
+                .query::<(Entity, &Item)>()
                 .iter(world)
                 .find(|(_, item_model)| **item_model == model)
                 .unwrap()
                 .0;
             let character_start = npc_position + Vec3::new(0.0, 0.03, 2.0);
-            let parcel_start = npc_position + Vec3::new(0.0, if held { 0.3 } else { 1.0 }, 1.1);
+            let item_start = npc_position + Vec3::new(0.0, if held { 0.3 } else { 1.0 }, 1.1);
             world
                 .entity_mut(character)
                 .insert((
@@ -1207,11 +1207,11 @@ mod collision_tests {
                 ))
                 .remove::<Sleeping>();
             world
-                .entity_mut(parcel)
+                .entity_mut(item)
                 .insert((
-                    Position(parcel_start),
+                    Position(item_start),
                     Rotation(Quat::IDENTITY),
-                    Transform::from_translation(parcel_start),
+                    Transform::from_translation(item_start),
                     LinearVelocity(if held { Vec3::ZERO } else { Vec3::NEG_Z * 4.0 }),
                     AngularVelocity(Vec3::ZERO),
                     NoTranslationEasing,
@@ -1225,18 +1225,18 @@ mod collision_tests {
                     .unwrap()
                     .interact_pending = true;
                 fixed_steps(&mut app, 1);
-                assert_eq!(app.world().get::<HeldBy>(parcel).unwrap().get(), character);
+                assert_eq!(app.world().get::<HeldBy>(item).unwrap().get(), character);
                 fixed_steps(&mut app, 90);
-                let raised = app.world().get::<Position>(parcel).unwrap().0;
+                let raised = app.world().get::<Position>(item).unwrap().0;
                 let holder_position = app.world().get::<Position>(character).unwrap().0;
-                let holder = app.world().get::<HeldBy>(parcel).map(Relationship::get);
+                let holder = app.world().get::<HeldBy>(item).map(Relationship::get);
                 let local_pose = app
                     .world()
-                    .get::<HeldAttachment>(parcel)
+                    .get::<HeldAttachment>(item)
                     .map(|attachment| attachment.local_pose);
                 assert!(
                     raised.y > npc_position.y + 1.0,
-                    "The held parcel must actually rise before the collision probe: model={model:?}, parcel={raised:?}, holder={holder:?}, holder_position={holder_position:?}, local_pose={local_pose:?}"
+                    "The held item must actually rise before the collision probe: model={model:?}, item={raised:?}, holder={holder:?}, holder_position={holder_position:?}, local_pose={local_pose:?}"
                 );
                 app.world_mut()
                     .get_mut::<CharacterIntent>(character)
@@ -1247,16 +1247,16 @@ mod collision_tests {
             for _ in 0..if held { 90 } else { 30 } {
                 fixed_steps(&mut app, 1);
                 let world = app.world();
-                let position = world.get::<Position>(parcel).unwrap().0;
+                let position = world.get::<Position>(item).unwrap().0;
                 assert!(position.is_finite());
                 assert!(
                     position.z > npc_position.z + 0.2,
-                    "Parcel crossed the NPC body: held={held}, position={position:?}"
+                    "Item crossed the NPC body: held={held}, position={position:?}"
                 );
-                let parcel_collider = world
-                    .get::<HeldAttachment>(parcel)
-                    .map_or(parcel, |attachment| attachment.collider);
-                touched_npc |= npc_contact_solved(world, npc_collider, parcel_collider);
+                let item_collider = world
+                    .get::<HeldAttachment>(item)
+                    .map_or(item, |attachment| attachment.collider);
+                touched_npc |= npc_contact_solved(world, npc_collider, item_collider);
                 assert!(
                     world
                         .get::<Position>(npc_collider)
@@ -1274,64 +1274,64 @@ mod collision_tests {
                         > 0.99999
                 );
                 if held {
-                    assert_eq!(world.get::<HeldBy>(parcel).unwrap().get(), character);
+                    assert_eq!(world.get::<HeldBy>(item).unwrap().get(), character);
                     let character_position = world.get::<Position>(character).unwrap().0;
                     let character_rotation = world.get::<Rotation>(character).unwrap().0;
-                    let grip = world.get::<CarryGrip>(parcel).unwrap().offset;
+                    let grip = world.get::<CarryGrip>(item).unwrap().offset;
                     if touched_npc {
                         assert!(
                             position
                                 .abs_diff_eq(character_position + character_rotation * grip, 0.002),
-                            "The blocked parcel must remain at the normal grip: model={model:?}, character={character_position:?}, parcel={position:?}"
+                            "The blocked item must remain at the normal grip: model={model:?}, character={character_position:?}, item={position:?}"
                         );
                     }
                     assert!(
                         character_position.z > npc_position.z + 0.8,
-                        "The player must stop behind the blocked parcel: model={model:?}, position={character_position:?}"
+                        "The player must stop behind the blocked item: model={model:?}, position={character_position:?}"
                     );
                     assert!(
                         !npc_contact_solved(world, npc_collider, character),
-                        "The parcel must block movement before the player reaches the NPC: model={model:?}"
+                        "The item must block movement before the player reaches the NPC: model={model:?}"
                     );
                 } else {
-                    assert!(world.get::<HeldBy>(parcel).is_none());
+                    assert!(world.get::<HeldBy>(item).is_none());
                 }
             }
             let world = app.world();
             assert!(
                 touched_npc,
-                "Parcel must make a solved contact with the real NPC: held={held}"
+                "Item must make a solved contact with the real NPC: held={held}"
             );
             if held {
                 let position = world.get::<Position>(character).unwrap().0;
-                let target = world.get::<HeldTarget>(parcel).unwrap().translation;
+                let target = world.get::<HeldTarget>(item).unwrap().translation;
                 assert!(
                     character_start.z - position.z > 0.35,
-                    "The player must actually carry the parcel toward the NPC: model={model:?}"
+                    "The player must actually carry the item toward the NPC: model={model:?}"
                 );
                 assert!(
                     world
-                        .get::<Position>(parcel)
+                        .get::<Position>(item)
                         .unwrap()
                         .0
                         .abs_diff_eq(target, 0.002),
                     "The whole carrying body must stop without grip compression: model={model:?}"
                 );
                 assert!(world.get::<LinearVelocity>(character).unwrap().z.abs() < 0.2);
-                assert!(world.get::<RigidBody>(parcel).is_none());
-                let collider = world.get::<HeldAttachment>(parcel).unwrap().collider;
+                assert!(world.get::<RigidBody>(item).is_none());
+                let collider = world.get::<HeldAttachment>(item).unwrap().collider;
                 assert_eq!(world.get::<ColliderOf>(collider).unwrap().body, character);
                 assert!(
                     world
-                        .get::<avian3d::prelude::ColliderDisabled>(parcel)
+                        .get::<avian3d::prelude::ColliderDisabled>(item)
                         .is_some()
                 );
-                assert!(world.get::<ChildOf>(parcel).is_none());
+                assert!(world.get::<ChildOf>(item).is_none());
             } else {
-                let position = world.get::<Position>(parcel).unwrap().0;
+                let position = world.get::<Position>(item).unwrap().0;
                 assert!(
-                    parcel_start.z - position.z > 0.3,
-                    "The free parcel must actually move toward the NPC"
+                    item_start.z - position.z > 0.3,
+                    "The free item must actually move toward the NPC"
                 );
             }
             assert_eq!(
@@ -1484,7 +1484,7 @@ mod turn_tests {
             0
         );
         assert_eq!(
-            app.world_mut().query::<&Parcel>().iter(app.world()).count(),
+            app.world_mut().query::<&Item>().iter(app.world()).count(),
             0
         );
         assert_eq!(
@@ -1516,12 +1516,12 @@ mod turn_tests {
                 .query_filtered::<Entity, With<Character>>()
                 .single(app.world())
                 .unwrap();
-            let parcels: HashSet<_> = app
+            let items: HashSet<_> = app
                 .world_mut()
-                .query_filtered::<Entity, With<Parcel>>()
+                .query_filtered::<Entity, With<Item>>()
                 .iter(app.world())
                 .collect();
-            assert_eq!(parcels.len(), 5);
+            assert_eq!(items.len(), 5);
             let npc_colliders = assert_npc_colliders(app.world_mut());
             let camera = app
                 .world_mut()
@@ -1579,10 +1579,10 @@ mod turn_tests {
             );
             assert_eq!(
                 app.world_mut()
-                    .query_filtered::<Entity, With<Parcel>>()
+                    .query_filtered::<Entity, With<Item>>()
                     .iter(app.world())
                     .collect::<HashSet<_>>(),
-                parcels,
+                items,
             );
             assert_eq!(
                 app.world_mut()
@@ -1616,7 +1616,7 @@ mod turn_tests {
     fn real_island_open_area_turning_keeps_standard_and_fragile_parcels_held() {
         use bevy::ecs::relationship::Relationship;
 
-        for model in [ItemModel::StandardParcel, ItemModel::FragileParcel] {
+        for model in [Item::StandardParcel, Item::FragileParcel] {
             let mut app = build_asset_app_with_camera(true, None, false, true);
             wait_until(&mut app, |world| {
                 world.query::<&Character>().iter(world).count() == 1
@@ -1628,7 +1628,7 @@ mod turn_tests {
                 .single(world)
                 .unwrap();
             let parcel = world
-                .query::<(Entity, &ItemModel)>()
+                .query::<(Entity, &Item)>()
                 .iter(world)
                 .find(|(_, item_model)| **item_model == model)
                 .unwrap()
@@ -1818,14 +1818,10 @@ mod turn_tests {
 
     /// 使用真实建筑侧墙、原始箱体与交互，对完整无障碍的微转和转离做回归。
     #[test]
-    fn real_island_clear_turns_beside_building_walls_keep_all_parcels_held() {
+    fn real_island_clear_turns_beside_building_walls_keep_all_items_held() {
         use bevy::ecs::relationship::Relationship;
 
-        for model in [
-            ItemModel::StandardParcel,
-            ItemModel::FragileParcel,
-            ItemModel::WoodenCrate,
-        ] {
+        for model in [Item::StandardParcel, Item::FragileParcel, Item::WoodenCrate] {
             let mut app = build_asset_app_with_camera(true, None, false, true);
             wait_until(&mut app, |world| {
                 world.query::<&Character>().iter(world).count() == 1
@@ -1836,8 +1832,8 @@ mod turn_tests {
                 .query_filtered::<Entity, With<Character>>()
                 .single(world)
                 .unwrap();
-            let parcel = world
-                .query::<(Entity, &ItemModel)>()
+            let item = world
+                .query::<(Entity, &Item)>()
                 .iter(world)
                 .find(|(_, item_model)| **item_model == model)
                 .unwrap()
@@ -1852,19 +1848,19 @@ mod turn_tests {
             let descendants: Vec<_> = world
                 .query::<&Children>()
                 .query(world)
-                .iter_descendants(parcel)
+                .iter_descendants(item)
                 .collect();
             let visual = descendants
                 .into_iter()
                 .find(|&entity| world.get::<Mesh3d>(entity).is_some())
                 .unwrap();
-            let root = GlobalTransform::from(*world.get::<Transform>(parcel).unwrap());
+            let root = GlobalTransform::from(*world.get::<Transform>(item).unwrap());
             let visual_local = world
                 .get::<GlobalTransform>(visual)
                 .unwrap()
                 .reparented_to(&root);
             let bounds = world
-                .get::<Collider>(parcel)
+                .get::<Collider>(item)
                 .unwrap()
                 .shape_scaled()
                 .compute_local_aabb();
@@ -1876,7 +1872,7 @@ mod turn_tests {
                 let (_, brace_max) = imported_mesh_bounds(world, building, "Side_external_brace_1");
                 // 两栋商铺的真实外平台顶面为 Y=.56，不能在平台内部生成角色和箱体。
                 let start = Vec3::new(brace_max.x - bounds.mins.x + 0.06, 0.59, building_z);
-                let parcel_start = start + Vec3::new(0.0, -bounds.mins.y, -0.9);
+                let item_start = start + Vec3::new(0.0, -bounds.mins.y, -0.9);
                 world
                     .entity_mut(character)
                     .insert((
@@ -1889,11 +1885,11 @@ mod turn_tests {
                     ))
                     .remove::<Sleeping>();
                 world
-                    .entity_mut(parcel)
+                    .entity_mut(item)
                     .insert((
-                        Position(parcel_start),
+                        Position(item_start),
                         Rotation(Quat::IDENTITY),
-                        Transform::from_translation(parcel_start),
+                        Transform::from_translation(item_start),
                         LinearVelocity(Vec3::ZERO),
                         AngularVelocity(Vec3::ZERO),
                         NoTranslationEasing,
@@ -1903,17 +1899,17 @@ mod turn_tests {
                 let world = app.world_mut();
                 let holder_position = world.get::<Position>(character).unwrap().0;
                 let holder_rotation = world.get::<Rotation>(character).unwrap().0;
-                let source_position = world.get::<Position>(parcel).unwrap().0;
-                let source_rotation = world.get::<Rotation>(parcel).unwrap().0;
-                let grip = world.get::<CarryGrip>(parcel).unwrap().offset;
-                let collider = world.get::<Collider>(parcel).unwrap().clone();
+                let source_position = world.get::<Position>(item).unwrap().0;
+                let source_rotation = world.get::<Rotation>(item).unwrap().0;
+                let grip = world.get::<CarryGrip>(item).unwrap().offset;
+                let collider = world.get::<Collider>(item).unwrap().clone();
                 let target_position = holder_position + holder_rotation * grip;
                 let mut query = SystemState::<SpatialQuery>::new(world);
                 let target_intersections = query.get(world).unwrap().shape_intersections(
                     &collider,
                     target_position,
                     holder_rotation,
-                    &SpatialQueryFilter::from_excluded_entities([character, parcel]),
+                    &SpatialQueryFilter::from_excluded_entities([character, item]),
                 );
                 assert!(
                     target_intersections.is_empty(),
@@ -1929,21 +1925,21 @@ mod turn_tests {
                     .interact_pending = true;
                 fixed_steps(&mut app, 1);
                 assert_eq!(
-                    app.world().get::<HeldBy>(parcel).map(Relationship::get),
+                    app.world().get::<HeldBy>(item).map(Relationship::get),
                     Some(character),
-                    "The near-wall interaction must actually pick up the parcel: model={model:?}, asset={asset}, source={:?}, source_rotation={:?}, holder={:?}, holder_rotation={:?}",
-                    app.world().get::<Position>(parcel),
-                    app.world().get::<Rotation>(parcel),
+                    "The near-wall interaction must actually pick up the item: model={model:?}, asset={asset}, source={:?}, source_rotation={:?}, holder={:?}, holder_rotation={:?}",
+                    app.world().get::<Position>(item),
+                    app.world().get::<Rotation>(item),
                     app.world().get::<Position>(character),
                     app.world().get::<Rotation>(character),
                 );
                 fixed_steps(&mut app, 30);
                 assert_eq!(
-                    app.world().get::<HeldBy>(parcel).map(Relationship::get),
+                    app.world().get::<HeldBy>(item).map(Relationship::get),
                     Some(character),
                     "Safe near-wall pickup must align: model={model:?}, asset={asset}, source={:?}, source_rotation={:?}, holder={:?}, holder_rotation={:?}",
-                    app.world().get::<Position>(parcel),
-                    app.world().get::<Rotation>(parcel),
+                    app.world().get::<Position>(item),
+                    app.world().get::<Rotation>(item),
                     app.world().get::<Position>(character),
                     app.world().get::<Rotation>(character),
                 );
@@ -1963,7 +1959,7 @@ mod turn_tests {
                         assert_clear_turn_frame(
                             &mut app,
                             character,
-                            parcel,
+                            item,
                             camera,
                             visual,
                             visual_local,
@@ -1977,7 +1973,7 @@ mod turn_tests {
                     .unwrap()
                     .interact_pending = true;
                 fixed_steps(&mut app, 1);
-                assert!(app.world().get::<HeldBy>(parcel).is_none());
+                assert!(app.world().get::<HeldBy>(item).is_none());
             }
         }
     }
@@ -1989,11 +1985,11 @@ mod turn_tests {
 
         for (model, center) in [
             (
-                ItemModel::StandardParcel,
+                Item::StandardParcel,
                 Vec3::new(-4.0382676, 1.2999693, -2.5877512),
             ),
             (
-                ItemModel::FragileParcel,
+                Item::FragileParcel,
                 Vec3::new(17.734007, 1.2999692, 0.84188503),
             ),
         ] {
@@ -2008,7 +2004,7 @@ mod turn_tests {
                 .single(world)
                 .unwrap();
             let parcel = world
-                .query::<(Entity, &ItemModel)>()
+                .query::<(Entity, &Item)>()
                 .iter(world)
                 .find(|(_, item_model)| **item_model == model)
                 .unwrap()
@@ -2238,24 +2234,16 @@ mod lifecycle_tests {
         let npc_colliders = assert_npc_colliders(world);
         assert_eq!(
             world
-                .query_filtered::<Entity, With<Parcel>>()
+                .query_filtered::<Entity, With<Item>>()
                 .iter(world)
                 .count(),
             5
         );
-        for model in [
-            ItemModel::StandardParcel,
-            ItemModel::FragileParcel,
-            ItemModel::WoodenCrate,
-        ] {
-            let expected = if model == ItemModel::WoodenCrate {
-                3
-            } else {
-                1
-            };
+        for model in [Item::StandardParcel, Item::FragileParcel, Item::WoodenCrate] {
+            let expected = if model == Item::WoodenCrate { 3 } else { 1 };
             let actual = world
                 .query::<(
-                    &ItemModel,
+                    &Item,
                     &RigidBody,
                     &Collider,
                     &Children,
@@ -2475,7 +2463,7 @@ mod lifecycle_tests {
         );
         assert_eq!(
             world
-                .query_filtered::<Entity, With<Parcel>>()
+                .query_filtered::<Entity, With<Item>>()
                 .iter(world)
                 .count(),
             5
@@ -2516,7 +2504,7 @@ mod lifecycle_tests {
             );
             assert_eq!(
                 world
-                    .query_filtered::<Entity, With<Parcel>>()
+                    .query_filtered::<Entity, With<Item>>()
                     .iter(world)
                     .count(),
                 5
@@ -2552,8 +2540,7 @@ mod lifecycle_tests {
             assert!(*world.resource::<ArtLoadState>() == ArtLoadState::Failed);
             assert_eq!(
                 world
-                    .query_filtered::<Entity, Or<(With<Character>, With<Parcel>, With<IslandMap>)>>(
-                    )
+                    .query_filtered::<Entity, Or<(With<Character>, With<Item>, With<IslandMap>)>>()
                     .iter(world)
                     .count(),
                 0
