@@ -26,4 +26,5 @@ docs/diagrams/ecs-data.json -diff
 docs/diagrams/debugdump-manifest.json -diff
 # 分发运行库的完整许可证保留来源格式。
 docs/diagrams/licenses/SCHEDULE-RUNTIME-LICENSES.txt -text -whitespace
-docs/diagrams/generated/data/model.calls.ndjson filter=lfs diff=lfs merge=lfs -text
+# 大型调用图通过 Git LFS 保存，工作树保留原始字节并跳过逐行差异。
+docs/diagrams/generated/data/model.calls.ndjson filter=lfs merge=lfs -text -diff

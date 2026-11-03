@@ -321,6 +321,8 @@ Graphviz 调度图使用 DOT 的原生布局，不适用本节的 Mermaid 排版
 
 ### 生成与校验命令
 
+完整调用图 `generated/data/model.calls.ndjson` 通过 Git LFS 保存。在仓库根完成 `git lfs install`，并用 `git lfs pull --include=docs/diagrams/generated/data/model.calls.ndjson` 取得当前版本的原始文件。模型读取与完整性校验使用恢复后的 NDJSON 字节，只有 LFS 指针文件不能通过校验；推送时须同时上传对应 LFS 对象。
+
 统一入口使用固定 Rust nightly、项目 Node.js（最低 `22.13.0`）及各自锁定依赖：
 
 ```text
