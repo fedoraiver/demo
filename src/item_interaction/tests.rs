@@ -93,7 +93,7 @@ mod attachment_tests {
                 assert!(attachment.pending);
                 assert_eq!(
                     names.get(attachment.collider).unwrap().as_str(),
-                    "Held parcel collision proxy"
+                    "Held item collision proxy"
                 );
                 commands.insert_resource(ReservedProxy {
                     entity: attachment.collider,
@@ -115,7 +115,7 @@ mod attachment_tests {
         assert_eq!(app.world().resource::<ReservedProxy>().entity, proxy);
         assert_eq!(
             app.world().get::<Name>(proxy).unwrap().as_str(),
-            "Held parcel collision proxy"
+            "Held item collision proxy"
         );
         assert_eq!(app.world().get::<ColliderOf>(proxy).unwrap().body, holder);
         assert!(app.world().get::<ColliderDisabled>(item).is_some());
