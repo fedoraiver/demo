@@ -4,6 +4,189 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 static NEXT: AtomicU64 = AtomicU64::new(0);
 
+#[test]
+fn entity_purpose_reuses_semantics_after_source_only_changes() {
+    let fixture = Fixture::new(true);
+    let mut facts = fixture.read("facts.json");
+    let mut entity = EntityTemplate {
+        id: "stable-template".into(),
+        creator: "callable".into(),
+        source: serde_json::from_value(facts["units"][0]["accesses"][0]["source"].clone()).unwrap(),
+        components: vec!["marker-type".into()],
+        ..Default::default()
+    };
+    facts["units"][0]["entities"] = json!([entity]);
+    fixture.write("facts.json", &facts);
+    assert!(fixture.build().is_err());
+    let pending = fixture.read("pending-descriptions.json");
+    let purpose = pending
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["kind"] == "Entity")
+        .unwrap();
+    let mut annotations = fixture.read("annotations.json");
+    annotations["items"]["entity:stable-template"] = json!({"description":"在该创建点装配需要处理的标记实体。","summary":"装配标记实体。","evidenceHash":purpose["evidenceHash"]});
+    fixture.write("annotations.json", &annotations);
+    fixture.build().unwrap();
+
+    // 位置和完整文件校验随输入更新；声明、装配与用途语义保持不变。
+    let contents = "\n\n\nfn system() {}\nstruct Marker;\nconst UNRELATED: u32 = 10;\n";
+    fs::write(fixture.root.join("src/main.rs"), contents).unwrap();
+    let hash = digest(contents);
+    for declaration in facts["units"][0]["declarations"].as_array_mut().unwrap() {
+        declaration["source"]["sha256"] = json!(hash);
+        declaration["source"]["line"] = json!(4);
+        declaration["source"]["endLine"] = json!(4);
+    }
+    facts["units"][0]["sourceFiles"][0]["sha256"] = json!(hash);
+    facts["units"][0]["accesses"][0]["source"]["sha256"] = json!(hash);
+    let source = entity.source.as_mut().unwrap();
+    source.sha256 = hash;
+    source.line += 3;
+    source.end_line += 3;
+    facts["units"][0]["entities"] = json!([entity]);
+    fixture.write("facts.json", &facts);
+    let mut runtime = fixture.read("runtime.json");
+    runtime["sourceFingerprint"] = json!(source_fingerprint(&fixture.root).unwrap());
+    fixture.replace_runtime(&runtime);
+    let mut manifest = fixture.read("debugdump/manifest.json");
+    manifest["sourceFingerprint"] = runtime["sourceFingerprint"].clone();
+    fixture.write("debugdump/manifest.json", &manifest);
+    fixture
+        .build()
+        .expect("Source-only movement must reuse the entity purpose");
+
+    let mut facts = fixture.read("facts.json");
+    facts["units"][0]["entities"][0]["components"] = json!([]);
+    fixture.write("facts.json", &facts);
+    assert!(
+        fixture.build().is_err(),
+        "An assembly change must invalidate the purpose"
+    );
+}
+
+#[test]
+fn entity_purpose_tracks_creator_and_reachable_helper_behavior() {
+    let fixture = Fixture::new(true);
+    let mut facts = fixture.read("facts.json");
+    facts["units"][0]["entities"] = json!([EntityTemplate {
+        id: "semantic-template".into(),
+        creator: "callable".into(),
+        source: serde_json::from_value(facts["units"][0]["accesses"][0]["source"].clone()).unwrap(),
+        ..Default::default()
+    }]);
+    let mut helper = facts["units"][0]["declarations"][0].clone();
+    helper["id"] = json!("helper-definition");
+    helper["name"] = json!("helper");
+    helper["fullName"] = json!("demo::sample::helper");
+    helper["evidenceHash"] = json!("helper-initializer-before");
+    facts["units"][0]["declarations"]
+        .as_array_mut()
+        .unwrap()
+        .push(helper);
+    let mut callable = facts["units"][0]["callables"][0].clone();
+    callable["id"] = json!("helper-callable");
+    callable["declaration"] = json!("helper-definition");
+    callable["display"] = json!("demo::sample::helper");
+    callable["systemTypeIds"] = json!([]);
+    facts["units"][0]["callables"]
+        .as_array_mut()
+        .unwrap()
+        .push(callable);
+    facts["units"][0]["calls"] = json!([CallFact {
+        caller: "callable".into(),
+        callee: Some("helper-callable".into()),
+        declaration: Some("helper-definition".into()),
+        ..Default::default()
+    }]);
+    fixture.write("facts.json", &facts);
+    assert!(fixture.build().is_err());
+    let mut annotations = fixture.read("annotations.json");
+    for purpose in fixture
+        .read("pending-descriptions.json")
+        .as_array()
+        .unwrap()
+    {
+        annotations["items"][purpose["key"].as_str().unwrap()] = json!({"description":"创建该模板所需的命名和初始化数据。","summary":"创建命名与初始化数据。","evidenceHash":purpose["evidenceHash"]});
+    }
+    fixture.write("annotations.json", &annotations);
+    fixture.build().unwrap();
+    for declaration in [0, 2] {
+        let mut changed = facts.clone();
+        changed["units"][0]["declarations"][declaration]["evidenceHash"] =
+            json!("name-or-initializer-after");
+        fixture.write("facts.json", &changed);
+        assert!(fixture.build().is_err());
+        assert!(
+            fixture
+                .read("pending-descriptions.json")
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|purpose| purpose["key"] == "entity:semantic-template")
+        );
+    }
+}
+
+#[test]
+fn unresolved_uses_require_complete_portable_context_and_track_other_owning_units() {
+    let fixture = Fixture::new(true);
+    let mut facts = fixture.read("facts.json");
+    facts["units"][0]["behaviorHash"] = json!("caller-hir");
+    facts["units"][0]["declarations"][0]["unresolvedBehavior"] = json!(true);
+    let dependency = UnitFacts {
+        schema_version: 1,
+        crate_name: "implementation".into(),
+        crate_identity: "implementation-unit".into(),
+        behavior_hash: "impl-before".into(),
+        source_files: serde_json::from_value(facts["units"][0]["sourceFiles"].clone()).unwrap(),
+        ..Default::default()
+    };
+    facts["units"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!(dependency));
+    fixture.write("facts.json", &facts);
+    assert!(fixture.build().is_err());
+    let pending = fixture.read("pending-descriptions.json");
+    let mut annotations = fixture.read("annotations.json");
+    annotations["items"]["demo::sample::system"]["evidenceHash"] =
+        pending[0]["evidenceHash"].clone();
+    fixture.write("annotations.json", &annotations);
+    fixture.build().unwrap();
+
+    let mut changed = facts.clone();
+    changed["units"][1]["behaviorHash"] = json!("impl-after");
+    fixture.write("facts.json", &changed);
+    assert!(
+        fixture.build().is_err(),
+        "An owning impl change must invalidate unresolved callers"
+    );
+
+    changed["units"][1]["behaviorHash"] = json!("");
+    fixture.write("facts.json", &changed);
+    let error = fixture.build().unwrap_err().to_string();
+    assert!(error.contains("binding is incomplete"), "{error}");
+    assert!(
+        fixture.read("model.json")["bindingErrors"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|error| error
+                .as_str()
+                .unwrap()
+                .contains("Portable owning-unit behavior evidence is incomplete"))
+    );
+
+    // 普通声明不因其他编译单元的无关变化扩大失效范围。
+    changed["units"][0]["declarations"][0]["unresolvedBehavior"] = json!(false);
+    annotations["items"]["demo::sample::system"]["evidenceHash"] = json!("body");
+    fixture.write("annotations.json", &annotations);
+    fixture.write("facts.json", &changed);
+    fixture.build().unwrap();
+}
+
 struct Fixture {
     root: PathBuf,
 }
@@ -961,7 +1144,7 @@ fn creation_operations_bind_only_unique_root_templates_at_the_same_compiler_call
     unit.entities.extend([root, child]);
     let mut annotations = fixture.read("annotations.json");
     for entity in &unit.entities {
-        annotations["items"][format!("entity:{}", entity.id)] = json!({"description":"此创建点装配独立实体。","summary":"装配独立实体。","evidenceHash":digest(serde_json::to_vec(entity).unwrap())});
+        annotations["items"][format!("entity:{}", entity.id)] = json!({"description":"此创建点装配独立实体。","summary":"装配独立实体。","evidenceHash":entity_purpose_hash(entity, "body")});
     }
     fixture.write("annotations.json", &annotations);
     facts["units"][0] = serde_json::to_value(&unit).unwrap();
@@ -1217,7 +1400,7 @@ fn structure_alternatives_preserve_group_boundaries_sources_and_real_children() 
     });
     let mut annotations = fixture.read("annotations.json");
     for entity in &unit.entities {
-        annotations["items"][format!("entity:{}", entity.id)] = json!({"description":"保留此原生创建结构及其独立候选。","summary":"保留独立创建结构。","evidenceHash":digest(serde_json::to_vec(entity).unwrap())});
+        annotations["items"][format!("entity:{}", entity.id)] = json!({"description":"保留此原生创建结构及其独立候选。","summary":"保留独立创建结构。","evidenceHash":entity_purpose_hash(entity, "body")});
     }
     fixture.write("annotations.json", &annotations);
     facts["units"][0] = serde_json::to_value(unit).unwrap();
@@ -1382,6 +1565,26 @@ fn owning_unit_hir_evidence_wins_regardless_of_unit_order() {
                 .as_array()
                 .unwrap()
                 .is_empty()
+        );
+    }
+}
+
+#[test]
+fn conflicting_owning_unit_cfg_behavior_is_rejected() {
+    let fixture = Fixture::new(true);
+    let mut facts = fixture.read("facts.json");
+    let mut first = facts["units"][0].clone();
+    first["declarations"][0]["local"] = json!(true);
+    let mut second = first.clone();
+    second["crateIdentity"] = json!("another-native-cfg-unit");
+    second["declarations"][0]["evidenceHash"] = json!("different-cfg-body");
+    for units in [json!([first, second]), json!([second, first])] {
+        facts["units"] = units;
+        fixture.write("facts.json", &facts);
+        let error = fixture.build().unwrap_err().to_string();
+        assert!(
+            error.contains("Conflicting owning-unit behavior"),
+            "{error}"
         );
     }
 }

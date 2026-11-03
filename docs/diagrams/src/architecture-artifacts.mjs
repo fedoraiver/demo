@@ -51,6 +51,7 @@ export function writeExternalArchitecture({ paths, data, writeArtifact, copyArti
     const { svg, mermaid, dot, ...metadata } = view;
     for (const kind of ['svg', 'mermaid', 'dot']) if (view[kind] === null) metadata[kind] = null;
     const entry = { id: view.id, data: put(`data/views/${view.id}.json`, encoded(metadata)) };
+    if (view.renderFingerprint) entry.renderFingerprint = view.renderFingerprint;
     for (const [kind, value] of [['svg', svg], ['mermaid', mermaid], ['dot', dot]]) if (typeof value === 'string') {
       const filename = artifactRelativePath(view, kind);
       // SVG、DOT、Mermaid 已由生成器写入；这里仅声明原始字节，不复制进 JSON。
@@ -125,6 +126,7 @@ export function readArchitectureData(repository) {
   if (descriptors.size !== runtime.views.length || descriptors.size !== manifest.views.length) throw new Error('Architecture view index mismatch');
   const views = manifest.views.map(entry => {
     const metadata = JSON.parse(read(entry.data)), descriptor = descriptors.get(entry.id);
+    if (entry.renderFingerprint !== undefined) assert.equal(metadata.renderFingerprint, entry.renderFingerprint, 'Architecture render input mismatch: ' + entry.id);
     if (metadata.id !== entry.id || !descriptor) throw new Error('Architecture view identity mismatch');
     const expected = Object.fromEntries(descriptorFields.filter(key => metadata[key] !== undefined).map(key => [key, metadata[key]]));
     if (metadata.aspect === 'object') expected.relationCount = metadata.links.length;

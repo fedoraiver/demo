@@ -9,6 +9,8 @@ pub struct UnitFacts {
     pub schema_version: u32,
     pub crate_name: String,
     pub crate_identity: String,
+    #[serde(default)]
+    pub behavior_hash: String,
     pub source_files: Vec<SourceFile>,
     pub declarations: Vec<Declaration>,
     pub types: Vec<TypeInstance>,
@@ -64,6 +66,8 @@ pub struct Declaration {
     pub source: Option<SourceEvidence>,
     pub docs: String,
     pub evidence_hash: String,
+    #[serde(default)]
+    pub unresolved_behavior: bool,
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]

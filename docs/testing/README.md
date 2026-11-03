@@ -235,6 +235,8 @@ pwsh -NoProfile -File ./scripts/rustc-analysis.ps1 model --facts tmp/ecs-archite
 
 核对冷／热缓存、编译单元报告缺失或过期、源文件哈希变化、features／target／ABI 切换、失败恢复和执行锁。Cargo 复用产物不等于存在分析报告；仅在编译器、配置和捕获的源码仍匹配时复用依赖事实，缺失或失效时只在专用目录使对应包重编。编译器分析数据及日志位于所属检出的根 `tmp/ra/`，架构输入输出位于 `tmp/ecs-architecture/compiler/`。
 
+身份与用途回归覆盖相同源码跨 worktree、Cargo metadata 与纯移行的稳定性，以及精确包、Name、初始化值、引用常量和 helper 真正变化时的失效；多个 owning unit 行为冲突不能静默择先。绘图复用由[跨工作树原生回归](../diagrams/tests/mermaid-worktree-cache.test.mjs)覆盖共享池和仅有正式产物的冷 checkout；缺失输入指纹、损坏引用或绘图输入变化必须重编，命中继续核对原生文字、几何和路由。缓存恢复不能把旧源码位置覆盖回当前关系证据。
+
 模型缺少必要中文用途时写入 `pending-descriptions.json` 并返回 `3`。维护 Skill 的大模型读取确切源码与 helper，在 `annotations.json` 补写用途和证据哈希，再恢复模型及受影响下游。回归须确认用途补写不改结构事实、事实未变不重提取、说明失效会重新进入待补状态，且未补齐前不发布正式产物。
 
 ## 调度导出验证

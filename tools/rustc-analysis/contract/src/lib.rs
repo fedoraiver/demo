@@ -26,6 +26,23 @@ pub struct Request {
     pub rule: Rule,
     pub sources: BTreeSet<String>,
     pub manifest_dirs: BTreeSet<String>,
+    #[serde(default)]
+    pub package_origins: Vec<PackageOrigin>,
+}
+
+/// 包的精确 Cargo 来源与目标源码；路径只负责绑定，不参与可持久化定义身份。
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PackageOrigin {
+    pub root: String,
+    pub identity: String,
+    pub targets: Vec<PackageTargetOrigin>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PackageTargetOrigin {
+    pub source: String,
+    pub name: String,
+    pub kind: Vec<String>,
 }
 
 /// 一个编译单元的结果；错误和缺失报告不能被空结果伪装为成功。

@@ -5,6 +5,7 @@ import { prepareArchitecture } from '../../../../docs/diagrams/src/architecture-
 import { sha256, sourceFingerprint } from '../../../../docs/diagrams/src/debugdump-input.mjs';
 import { summarizeModel } from './maintenance-summary.mjs';
 import { summarizeAnalysisGaps } from '../../../../docs/diagrams/src/rustc-model.mjs';
+import { createMermaidCache, mermaidDependencyIdentity, mermaidRenderIdentity } from '../../../../docs/diagrams/src/mermaid-cache.mjs';
 
 export async function preflightArchitecture({ workspace, debugdumpDirectory } = {}) {
   const prepared = await prepareArchitecture({ workspace, debugdumpDirectory });
@@ -13,11 +14,14 @@ export async function preflightArchitecture({ workspace, debugdumpDirectory } = 
     path: path.resolve(source.dependency.root, source.path), sha256: sha256(fs.readFileSync(path.resolve(source.dependency.root, source.path))),
   })).sort((a, b) => a.path.localeCompare(b.path));
   if (sourceFingerprint(workspace) !== dump.manifest.sourceFingerprint) throw new Error('Source changed during architecture preflight; extract again');
+  const dependencies = mermaidDependencyIdentity(workspace);
+  const identities = new Map(prepared.views.filter(view => view.mermaid).map(view => [view.id, mermaidRenderIdentity(view, registry, dependencies)]));
   return {
     counts: { features: model.features.length, systems: model.objects.filter(object => ['System', 'Observer'].includes(object.kind)).length,
       objects: objects.objects.length, componentTypes: model.objects.filter(object => object.kind === 'Component').length,
       relationships: objects.links.length, schedules: schedules.views.length, analysisGaps: model.analysisGaps?.length || 0 },
     analysisGapSummary: summarizeAnalysisGaps(model),
+    renderCache: createMermaidCache(workspace).plan(prepared.views, identities),
     inputFingerprint: sha256(JSON.stringify({ inputs: model.inputs, dependencyInputs })),
     modelSummary: summarizeModel({ model, registry, objects: objects.objects, views: prepared.views }), dependencyInputs,
   };

@@ -17,3 +17,6 @@ analysis-contract = { path = "../contract" }
 anyhow.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
+
+[dev-dependencies]
+rustc-analysis = { path = "../runner" }

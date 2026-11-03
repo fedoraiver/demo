@@ -936,6 +936,32 @@ fn reruns_warm_scans_and_honors_feature_selection() {
 }
 
 #[test]
+fn build_script_artifacts_do_not_require_reports_outside_selected_library_sources() {
+    let root = project_root().join("tmp/rustc-analysis/fixtures/entity-name-build-script-targets");
+    write(
+        &root,
+        "Cargo.toml",
+        "[package]\nname = \"entity-name-build-script-targets\"\nversion = \"0.0.0\"\nedition = \"2024\"\n",
+    );
+    write(
+        &root,
+        "Cargo.lock",
+        "version = 4\n[[package]]\nname = \"entity-name-build-script-targets\"\nversion = \"0.0.0\"\n",
+    );
+    write(
+        &root,
+        "build.rs",
+        "fn main() { println!(\"cargo::rerun-if-changed=build.rs\"); }\n",
+    );
+    write(&root, "src/lib.rs", "pub fn production_source() {}\n");
+    for _ in 0..2 {
+        let report = check(&Options::new(root.clone()))
+            .expect("Only selected library sources require entity-name reports");
+        assert!(!report.has_errors());
+    }
+}
+
+#[test]
 fn rejects_missing_stale_and_incompatible_driver_reports() {
     let root = project_root().join("tmp/entity-names/driver-errors");
     write(

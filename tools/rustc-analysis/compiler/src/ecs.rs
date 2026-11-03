@@ -1,4 +1,5 @@
 //! 从 rustc 的声明、类型检查结果和 MIR 提取事实；显示名不参与身份解析。
+use crate::identity::{BehaviorHashContext, Identities};
 use analysis_contract::facts::*;
 use anyhow::Result;
 use rustc_ast::{BinOpKind, attr::AttributeExt};
@@ -79,6 +80,13 @@ fn alias_definition(alias: ty::AliasTy<'_>) -> DefId {
 
 /// 每个实际编译单元独立产生报告；条件编译和宏处理完全由当前编译器负责。
 pub fn extract(tcx: TyCtxt<'_>) -> Result<UnitFacts> {
+    extract_with_origins(tcx, &[])
+}
+
+pub fn extract_with_origins(
+    tcx: TyCtxt<'_>,
+    origins: &[analysis_contract::PackageOrigin],
+) -> Result<UnitFacts> {
     let traits = tcx
         .all_traits_including_private()
         .filter_map(|id| {
@@ -91,6 +99,7 @@ pub fn extract(tcx: TyCtxt<'_>) -> Result<UnitFacts> {
         .collect();
     let mut collector = Collector {
         tcx,
+        identities: Identities::new(tcx, origins)?,
         declarations: BTreeMap::new(),
         types: BTreeMap::new(),
         callables: BTreeMap::new(),
@@ -123,6 +132,7 @@ pub fn extract(tcx: TyCtxt<'_>) -> Result<UnitFacts> {
             .into_iter()
             .map(|(path, sha256)| SourceFile { path, sha256 })
             .collect();
+        collector.facts.behavior_hash = format!("{:?}", collector.identities.owning_behavior());
         return Ok(collector.facts);
     }
     // HIR 是当前 crate 的真实声明，不扫描未加载的目录或未启用的文件。
@@ -198,6 +208,8 @@ pub fn extract(tcx: TyCtxt<'_>) -> Result<UnitFacts> {
     collector.facts.declarations = collector.declarations.into_values().collect();
     collector.facts.types = collector.types.into_values().collect();
     collector.facts.callables = collector.callables.into_values().collect();
+    collector.facts.behavior_hash = format!("{:?}", collector.identities.owning_behavior());
+    collector.facts.gaps.extend(collector.identities.gaps());
     sort_facts(&mut collector.facts);
     compact_source_previews(&mut collector.facts);
     Ok(collector.facts)
@@ -314,6 +326,7 @@ fn sort_facts(facts: &mut UnitFacts) {
 
 struct Collector<'tcx> {
     tcx: TyCtxt<'tcx>,
+    identities: Identities<'tcx>,
     declarations: BTreeMap<String, Declaration>,
     types: BTreeMap<String, TypeInstance>,
     callables: BTreeMap<String, Callable>,
@@ -324,7 +337,7 @@ struct Collector<'tcx> {
     source_fingerprints: HashMap<String, Option<(String, String)>>,
     hir_call_conditions: HashMap<HirSiteKey, Vec<SourceEvidence>>,
     hir_operation_templates: HashMap<HirSiteKey, HirOperationTemplate>,
-    hir_behavior_hashes: HashMap<rustc_hir::OwnerId, Fingerprint>,
+    hir_behavior_hashes: HashMap<rustc_hir::OwnerId, (Fingerprint, bool)>,
     facts: UnitFacts,
     pending: VecDeque<(Instance<'tcx>, usize)>,
     mir_seen: HashSet<Instance<'tcx>>,
@@ -580,10 +593,7 @@ impl<'tcx> Collector<'tcx> {
     }
 
     fn declaration(&mut self, id: DefId) -> String {
-        let key = format!(
-            "decl-{}",
-            digest(format!("{:?}", self.tcx.def_path_hash(id)))
-        );
+        let key = format!("decl-{}", self.identities.definition(id));
         if self.declarations.contains_key(&key) {
             return key;
         }
@@ -637,21 +647,21 @@ impl<'tcx> Collector<'tcx> {
                 if matches!(nodes.node(), rustc_hir::OwnerNode::Synthetic) {
                     return None;
                 }
-                let fingerprint: Fingerprint =
-                    self.tcx.with_stable_hashing_context(|mut context| {
-                        let mut hasher = StableHasher::new();
-                        context.while_hashing_spans(false, |context| {
-                            nodes.node().stable_hash(context, &mut hasher);
-                            nodes.bodies.stable_hash(context, &mut hasher);
-                        });
-                        hasher.finish()
-                    });
-                self.hir_behavior_hashes.insert(owner, fingerprint);
-                Some(fingerprint)
+                let mut context =
+                    BehaviorHashContext::new(&self.identities, owner.def_id.to_def_id());
+                let mut hasher = StableHasher::new();
+                nodes.node().stable_hash(&mut context, &mut hasher);
+                nodes.bodies.stable_hash(&mut context, &mut hasher);
+                context.hash_body_dependencies(owner, &mut hasher);
+                let fingerprint: Fingerprint = hasher.finish();
+                let evidence = (fingerprint, context.unresolved_behavior());
+                self.hir_behavior_hashes.insert(owner, evidence);
+                Some(evidence)
             });
         // 本地按展开后的 HIR（包括 body、不含物理跨度）校验描述；移动行号不改变行为证据。
         // 外部优先用完整文件 SHA，源码不可读时用 rustc 的整 crate 内容哈希，均不只依赖名称跨度。
-        let evidence_hash = if let Some(behavior_hash) = behavior_hash {
+        let unresolved_behavior = behavior_hash.is_some_and(|(_, unresolved)| unresolved);
+        let evidence_hash = if let Some((behavior_hash, _)) = behavior_hash {
             digest(serde_json::to_vec(&(format!("{behavior_hash:?}"), &full_name, &docs)).unwrap())
         } else if source
             .as_ref()
@@ -691,6 +701,7 @@ impl<'tcx> Collector<'tcx> {
                 source,
                 docs,
                 evidence_hash,
+                unresolved_behavior,
             },
         );
         key
@@ -934,20 +945,20 @@ impl<'tcx> Collector<'tcx> {
         let structure = match ty.kind() {
             ty::Adt(adt, args) => format!(
                 "{:?}<{}>",
-                self.tcx.def_path_hash(adt.did()),
+                self.identities.definition(adt.did()),
                 arguments(args)
             ),
             ty::Closure(id, args) => {
-                format!("{:?}<{}>", self.tcx.def_path_hash(*id), arguments(args))
+                format!("{:?}<{}>", self.identities.definition(*id), arguments(args))
             }
             ty::FnDef(id, args) => format!(
                 "{:?}<{}>",
-                self.tcx.def_path_hash(*id),
+                self.identities.definition(*id),
                 arguments(self.tcx.instantiate_bound_regions_with_erased(*args))
             ),
             ty::Alias(kind, alias) => format!(
                 "{kind:?}:{:?}<{}>",
-                self.tcx.def_path_hash(alias_definition(*alias)),
+                self.identities.definition(alias_definition(*alias)),
                 arguments(alias.args)
             ),
             ty::Ref(_, inner, mutability) => {
@@ -971,7 +982,7 @@ impl<'tcx> Collector<'tcx> {
         if ty.has_non_region_param() {
             format!(
                 "{structure}@{:?}",
-                self.tcx.def_path_hash(self.generic_owner)
+                self.identities.definition(self.generic_owner)
             )
         } else {
             structure
