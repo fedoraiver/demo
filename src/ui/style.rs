@@ -7,7 +7,10 @@ use super::{
     widgets::*,
     *,
 };
-use crate::{audio::AudioPreview, settings::SettingsDraft};
+use crate::{
+    audio::AudioPreview,
+    settings::{DEFAULT_MOUSE_SENSITIVITY, SettingsDraft},
+};
 use bevy::{picking::hover::Hovered, prelude::*, ui::Pressed};
 
 pub(super) fn register(app: &mut App) {
@@ -74,7 +77,10 @@ pub(super) fn style_buttons(
 pub(super) fn setting_value(draft: &SettingsDraft, key: SettingKey) -> String {
     match key {
         SettingKey::FrameRate => format!("{} FPS", draft.max_fps),
-        SettingKey::MouseSensitivity => format!("{:.0}%", draft.mouse_sensitivity / 0.003 * 100.0),
+        SettingKey::MouseSensitivity => format!(
+            "{:.0}%",
+            draft.mouse_sensitivity / DEFAULT_MOUSE_SENSITIVITY * 100.0
+        ),
         SettingKey::InvertY => if draft.invert_y { "On" } else { "Off" }.into(),
         // 音量控件由 volume 模块更新，此处仍保持枚举格式匹配完整。
         key @ (SettingKey::MasterVolume | SettingKey::SfxVolume | SettingKey::UiVolume) => {
