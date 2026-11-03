@@ -26,6 +26,8 @@ pwsh -NoProfile -File ./scripts/rustc-analysis.ps1 extract --workspace . --out t
 
 Graphviz 由锁定的 `@viz-js/viz` 生成默认 SVG，并在浏览器离线 Worker 中按需重排筛选后的 Schedule。呈现样式在布局前应用，系统、集合和依赖线复用对象样式，位置与路径由 Graphviz 产生；不套用 Mermaid 的严格走线检查，不手工接线、改箭头或补画关系。
 
+短标题按[共享显示规则](rendering.md#语义样式与原生布局)在原生布局前生成，节点边距和集合标题背景按新文本测量，并检查实际字形边界；默认图与筛选重排共用。保留显式空标签，不从 tooltip 恢复隐藏的可见标题；完整名称仍用于详情、搜索和身份核对。
+
 图表达导出时的注册结构，不表示条件成立、系统实际执行、后续动态注册、Observer 触发或跨 Schedule 总序。显示名不是声明身份；编译器绑定不唯一时保留缺口或按必要性阻止构建，不用名称、Debug 标题或注册顺序选取候选。
 
 ## Plugin 分组与条件语义

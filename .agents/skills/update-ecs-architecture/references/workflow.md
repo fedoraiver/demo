@@ -2,13 +2,19 @@
 
 实际维护时先读取本参考，再按阶段读取[调度](schedules.md)、[对象模型](object-model.md)、[绘图](rendering.md)、[查看器](viewer.md)及[视觉验收](visual-validation.md)中涉及的规则。局部任务按相关阶段执行；仅修改 Skill 的检查边界见[入口](../SKILL.md#读取与范围)。
 
+## 工作树与启动环境
+
+先确认任务所在工作树、分支与基线，再从该检出读取 Skill、规则和输入；技能引用路径与任务检出路径可能不同，不混用其他检出的旧说明、工具或产物。CLI 在目标检出运行，跨目录调用时显式传入 `--workspace`。
+
+计划、执行、恢复、状态和报告均通过 `npm run maintain --prefix docs/diagrams -- <命令>` 调用。记录的构建上下文包含 `PATH` 和工具身份；状态突然全阶段失效时，先核对工作树、启动方式及环境是否与运行一致，不用不同环境直接导入内部函数后据此重提取事实，也不忽略真实内容差异。
+
 ## 维护输入与文件归属
 
 [共享分析工具](../../../../tools/rustc-analysis/Cargo.toml)分为独立数据契约、rustc 编译器分析和普通运行层三个 crate。编译器提取事实，运行层连接真实 Schedule 并装配语义图；`docs/diagrams/src/` 只校验分发契约、投影可见图和生成页面，不解析 Rust 源码。
 
 工作区 `tmp/ecs-architecture/compiler/` 保存 `facts.json`、`runtime.json`、`model.json`、`model.calls.ndjson`、`pending-descriptions.json`，以及 `debugdump/` 内的真实清单与 DOT。模型主文件与调用图 NDJSON 是一组必需输入、阶段输出和分发产物；调用图按块读取，逐边校验其身份、注册对象和源码，再核对整体哈希与准确边数，不能为缩小文件而删除调用证据。[中文注释目录](../../../../docs/diagrams/catalog/annotations.json)保存用途和短说明，不承载类型、访问、注册、操作或源码行号。正式文件归属、生成目录及命令见[图的说明](../../../../docs/diagrams/README.md#目录与加载)。
 
-维护执行器在 [scripts/](../scripts/maintenance-cli.mjs)，仍通过 `npm run maintain --prefix docs/diagrams -- <命令>` 调用。使用图包的一份锁文件和依赖环境，不另建 npm 环境；编译器工具产物使用所属检出的根 `tmp/rustc-analysis/`，Cargo 分析缓存与报告使用短目录 `tmp/ra/`。
+维护执行器在 [scripts/](../scripts/maintenance-cli.mjs)，使用图包的一份锁文件和依赖环境，不另建 npm 环境；编译器工具产物使用所属检出的根 `tmp/rustc-analysis/`，Cargo 分析缓存与报告使用短目录 `tmp/ra/`。
 
 ## 角色与默认模型
 
@@ -18,7 +24,7 @@
 | --- | --- | --- |
 | 架构维护 | `gpt-6.1-sol` / `high` | 维护提取器、语义装配与用途说明；结构事实以编译器和真实快照为准。 |
 | 独立复审 | `gpt-6.1-terra` / `high` | 复核事实边界、用途和验收缺口，不复审自己参与的修改。 |
-| SVG 目测 | `gpt-6.1-terra` / `medium` | 子代理实际查看分配的 SVG，记录逐图证据。 |
+| SVG 目测 | `gpt-6.1-terra` / `medium` | 仅用户明确启用时，子代理实际查看分配的 SVG 并记录逐图证据。 |
 | HTTP／浏览器验收 | `gpt-6.1-sol` / `medium` | 核对冻结后的页面、资源、交互及访问边界。 |
 | 检查执行 | `gpt-6.1-terra` / `low` | 执行确定的检查并收集退出结果和日志，不补猜结构事实。 |
 
@@ -28,7 +34,11 @@
 
 委派时给出工作区、输入提交及未提交变更指纹、文件范围、依赖和交付证据。同一工作区的分析契约、生成入口及共享索引各指定单写者；Cargo 由单一 owner 串行安排，其他代理读取结果。工作区执行锁不代替跨 worktree 的 Cargo 排队。
 
+同一检出的原生编译、包含浏览器的 Node 回归及附加编译批次由同一协调者排队，避免同时启动多轮图形任务；不依赖图形资源的独立检查可并行。每轮关闭自有页面、上下文和浏览器后再交接，不终止用户已有进程。
+
 确定性的计划、执行、恢复、计时和 SVG 证据管理统一使用[维护入口](../../../../docs/diagrams/README.md#生成与校验命令)。阶段记录在所属工作区 `tmp/ecs-architecture/maintenance/`；恢复时核对内容、进程、输出和退出，不凭 session 标识或 mtime 判定成功。已完成代理用会触发执行的接口唤醒，不只发送普通消息。
+
+大型预检、状态和报告先落任务目录，再读取当前阶段、最新 attempt、错误和计数摘要；调用图按流读取，不向对话打印完整模型或阶段状态。历史通过不能代替失败或进行中的最新 attempt；进度区分新编译、有效缓存复用和待处理数量。
 
 ## 事实提取与预检
 
@@ -50,10 +60,19 @@
 
 依赖与锁文件匹配时不重复安装；渲染输入、配置和工具匹配时复用合法缓存，仍保留文字、身份及几何检查。仅用途或呈现变化时重跑对应阶段，不重做输入未变且已通过的编译器提取。
 
+单图失败时保留真实输入及诊断，先定向复现、修复并通过同一严格检查，再恢复原运行。有效图缓存继续核验后复用，不为修复一张图清空整批缓存；改变标签绑定或归一化契约时更新相应缓存指纹，仅增加候选策略不使已通过检查的图普遍失效。
+
 ```text
 npm run maintain --prefix docs/diagrams -- run
 npm run maintain --prefix docs/diagrams -- run --resume <run-id>
+npm run maintain --prefix docs/diagrams -- status --run-id <run-id>
 npm run maintain --prefix docs/diagrams -- report --format markdown
 ```
 
 失败、中断和未知退出均不作为成功。自动检查稳定后按[验收与交付范围](visual-validation.md)记录结果；SVG 视觉验证默认关闭，浏览器和协议验收单独记录。
+
+## 分发字节与提交
+
+新增参与完整性校验的分发文件时，核对[原字节保护规则](../../../../.gitattributes)，防止 Git 换行转换使检出内容偏离清单哈希。第三方模板字符串中的空白按来源保留，不手工裁剪已生成的运行库。
+
+用户要求提交时，核对暂存范围与已验证输入一致，并确认参与哈希的产物在工作区、索引及检出过滤后的字节匹配。验证结果和人工未验项写入交付记录，不写进提交正文；提交本身不触发无关的重新提取或 SVG 目测。
