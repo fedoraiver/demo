@@ -105,7 +105,8 @@ impl Callbacks for Checker {
                     crate::entity::analysis::check(tcx).map(|entities| report.entities = entities)
                 }
                 Rule::Architecture => {
-                    crate::ecs::extract(tcx).map(|facts| report.facts = Some(facts))
+                    crate::ecs::extract_with_origins(tcx, &self.request.package_origins)
+                        .map(|facts| report.facts = Some(facts))
                 }
                 Rule::NamedFields => unreachable!(),
             };

@@ -15,6 +15,776 @@ struct Extractor {
     facts: Option<UnitFacts>,
 }
 
+struct OriginExtractor {
+    facts: Option<UnitFacts>,
+    origins: Vec<analysis_contract::PackageOrigin>,
+}
+
+#[test]
+fn caller_purpose_tracks_a_downstream_impl_used_inside_a_dependency_generic() {
+    use analysis_contract::runtime::{RuntimeSchedule, RuntimeSnapshot, RuntimeSystem};
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../tmp/rustc-analysis/fixtures/downstream-constant-purpose");
+    let dependency = root.join("dependency");
+    let consumer = root.join("consumer");
+    fs::create_dir_all(dependency.join("src")).unwrap();
+    fs::create_dir_all(consumer.join("src")).unwrap();
+    fs::create_dir_all(consumer.join("debugdump")).unwrap();
+    let dependency_source = dependency.join("src/lib.rs");
+    let consumer_source = consumer.join("src/lib.rs");
+    fs::write(
+        dependency.join("Cargo.toml"),
+        "[package]\nname=\"bevy_ecs\"\nversion=\"0.1.0\"\n",
+    )
+    .unwrap();
+    fs::write(
+        consumer.join("Cargo.toml"),
+        "[package]\nname=\"consumer\"\nversion=\"0.1.0\"\n",
+    )
+    .unwrap();
+    fs::write(consumer.join("Cargo.lock"), "version = 4\n").unwrap();
+    fs::write(&dependency_source, "").unwrap();
+    fs::write(&consumer_source, "").unwrap();
+    let root = root.canonicalize().unwrap();
+    let dependency = dependency.canonicalize().unwrap();
+    let consumer = consumer.canonicalize().unwrap();
+    let origins = [
+        (&dependency, &dependency_source, "bevy_ecs"),
+        (&consumer, &consumer_source, "consumer"),
+    ]
+    .into_iter()
+    .map(|(root, source, name)| analysis_contract::PackageOrigin {
+        root: analysis_contract::normalized(root).unwrap(),
+        identity: format!("exact-package:{name}:1"),
+        targets: vec![analysis_contract::PackageTargetOrigin {
+            source: analysis_contract::normalized(source).unwrap(),
+            name: name.into(),
+            kind: vec!["lib".into()],
+        }],
+    })
+    .collect::<Vec<_>>();
+    let compiler = Command::new("rustc")
+        .args(["--print", "sysroot"])
+        .output()
+        .unwrap();
+    assert!(compiler.status.success());
+    let sysroot = String::from_utf8(compiler.stdout).unwrap();
+    let artifact = dependency.join("libfixture.rlib");
+    let digest = |bytes: &[u8]| format!("{:x}", sha2::Sha256::digest(bytes));
+    let mut hashes = vec![];
+    for (label, number, metadata) in [
+        ("Original", 1, "first"),
+        ("Changed", 1, "first"),
+        ("Original", 2, "first"),
+        ("Original", 1, "second"),
+    ] {
+        fs::write(&dependency_source, format!("pub mod component {{ pub trait Component {{}} }}\npub const NUMBER: u32 = {number};\npub trait Named {{ const LABEL: &'static str; const NUMBER: u32; }}\npub fn create<T: Named>() -> (&'static str, u32) {{ (T::LABEL, T::NUMBER) }}\n")).unwrap();
+        fs::write(&consumer_source, format!("struct Marker;\nimpl bevy_ecs::Named for Marker {{ const LABEL: &'static str = {label:?}; const NUMBER: u32 = bevy_ecs::NUMBER; }}\npub fn entry() {{ let _values = bevy_ecs::create::<Marker>(); }}\n")).unwrap();
+        let compiled = Command::new("rustc")
+            .arg(&dependency_source)
+            .args([
+                "--crate-name=bevy_ecs",
+                "--crate-type=rlib",
+                "--edition=2024",
+                "-Zalways-encode-mir",
+            ])
+            .arg(format!("-Cmetadata={metadata}"))
+            .arg("-o")
+            .arg(&artifact)
+            .output()
+            .unwrap();
+        assert!(
+            compiled.status.success(),
+            "{}",
+            String::from_utf8_lossy(&compiled.stderr)
+        );
+        let mut units = vec![];
+        for (source, name) in [
+            (&dependency_source, "bevy_ecs"),
+            (&consumer_source, "consumer"),
+        ] {
+            let mut arguments = vec![
+                "rustc".into(),
+                source.to_string_lossy().into_owned(),
+                format!("--crate-name={name}"),
+                "--crate-type=lib".into(),
+                "--edition=2024".into(),
+                "--sysroot".into(),
+                sysroot.trim().into(),
+                "--out-dir".into(),
+                root.to_string_lossy().into_owned(),
+                "-Zalways-encode-mir".into(),
+                "-Zmir-opt-level=0".into(),
+            ];
+            if name == "consumer" {
+                arguments.extend([
+                    "--extern".into(),
+                    format!("bevy_ecs={}", artifact.display()),
+                ]);
+            } else {
+                arguments.push(format!("-Cmetadata={metadata}"));
+            }
+            let mut extractor = OriginExtractor {
+                facts: None,
+                origins: origins.clone(),
+            };
+            rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
+            units.push(extractor.facts.unwrap());
+        }
+        // 测试仅模拟 runtime 绑定；声明、泛型实例、初始化体和调用边均来自上面的真实编译。
+        units[1]
+            .callables
+            .iter_mut()
+            .find(|callable| callable.display == "consumer::entry")
+            .unwrap()
+            .system_type_ids
+            .push("entry-runtime".into());
+        let dot = "digraph { entry; }\n";
+        let schedule_id = digest(b"main\0Update")[..16].to_owned();
+        fs::write(consumer.join("debugdump/schedule.dot"), dot).unwrap();
+        let runtime = RuntimeSnapshot {
+            schema_version: 1,
+            source_fingerprint: rustc_analysis::model::source_fingerprint(&consumer).unwrap(),
+            target: "fixture".into(),
+            schedules: vec![RuntimeSchedule {
+                id: schedule_id.clone(),
+                app: "main".into(),
+                label: "Update".into(),
+                dot_filename: "schedule.dot".into(),
+                dot_sha256: digest(dot.as_bytes()),
+                systems: vec![RuntimeSystem {
+                    key: "entry".into(),
+                    graph_name: "entry".into(),
+                    name: "consumer::entry".into(),
+                    type_id: "entry-runtime".into(),
+                    access_scope: "finite".into(),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            }],
+            ..Default::default()
+        };
+        let runtime_bytes = serde_json::to_vec(&runtime).unwrap();
+        fs::write(consumer.join("runtime.json"), &runtime_bytes).unwrap();
+        fs::write(consumer.join("debugdump/manifest.json"), serde_json::to_vec(&serde_json::json!({"schemaVersion":1,"sourceFingerprint":runtime.source_fingerprint,"schedules":[{"id":schedule_id,"app":"main","label":"Update","filename":"schedule.dot","sha256":digest(dot.as_bytes())}]})).unwrap()).unwrap();
+        fs::write(consumer.join("facts.json"), serde_json::to_vec(&serde_json::json!({"schemaVersion":1,"compiler":"fixed-compiler","configuration":"fixed-build","workspace":consumer,"packages":[{"name":"bevy_ecs","version":"0.1.0","manifest_path":dependency.join("Cargo.toml")}],"units":units,"runtimeSha256":digest(&runtime_bytes)})).unwrap()).unwrap();
+        fs::write(
+            consumer.join("annotations.json"),
+            b"{\"schemaVersion\":1,\"items\":{}}",
+        )
+        .unwrap();
+        let result = rustc_analysis::model::build(
+            &consumer.join("facts.json"),
+            &consumer.join("runtime.json"),
+            &consumer.join("annotations.json"),
+            &consumer.join("model.json"),
+        );
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("Chinese descriptions are pending")
+        );
+        let pending: serde_json::Value =
+            serde_json::from_slice(&fs::read(consumer.join("pending-descriptions.json")).unwrap())
+                .unwrap();
+        hashes.push(
+            pending
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|purpose| purpose["key"] == "consumer::entry")
+                .unwrap()["evidenceHash"]
+                .clone(),
+        );
+    }
+    assert_ne!(
+        hashes[0], hashes[1],
+        "A downstream impl value must invalidate the caller's final purpose"
+    );
+    assert_eq!(
+        hashes[0], hashes[3],
+        "Dependency metadata alone must not invalidate the final caller purpose"
+    );
+    assert_ne!(
+        hashes[0], hashes[2],
+        "A foreign initializer used by the downstream impl must invalidate the final caller purpose"
+    );
+}
+
+impl Callbacks for OriginExtractor {
+    fn after_analysis<'tcx>(&mut self, _: &interface::Compiler, tcx: TyCtxt<'tcx>) -> Compilation {
+        self.facts =
+            Some(analysis_compiler::ecs::extract_with_origins(tcx, &self.origins).unwrap());
+        Compilation::Stop
+    }
+}
+
+#[test]
+fn exact_package_target_identity_is_stable_across_workspace_roots_and_distinguishes_packages() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../tmp/rustc-analysis/fixtures/reuse-package-origins");
+    let compiler = Command::new("rustc")
+        .args(["--print", "sysroot"])
+        .output()
+        .unwrap();
+    assert!(compiler.status.success());
+    let sysroot = String::from_utf8(compiler.stdout).unwrap();
+    let mut versions = vec![];
+    for (directory, metadata, package) in [
+        ("first", "a", "package-a"),
+        ("second", "b", "package-a"),
+        ("third", "a", "package-b"),
+    ] {
+        let directory = root.join(directory);
+        fs::create_dir_all(&directory).unwrap();
+        let source = directory.join("lib.rs");
+        fs::write(&source, "#![allow(dead_code)]\npub mod component { pub trait Component {} }\npub struct Marker;\nimpl component::Component for Marker {}\nfn unchanged() { let create = || Marker; let _ = create(); }\n").unwrap();
+        let source = analysis_contract::normalized(&source).unwrap();
+        let arguments = vec![
+            "rustc".into(),
+            source.clone(),
+            "--crate-name=bevy_ecs".into(),
+            "--crate-type=lib".into(),
+            "--edition=2024".into(),
+            "--sysroot".into(),
+            sysroot.trim().into(),
+            "--out-dir".into(),
+            directory.to_string_lossy().into_owned(),
+            "-Zalways-encode-mir".into(),
+            "-Zmir-opt-level=0".into(),
+            format!("-Cmetadata={metadata}"),
+        ];
+        let mut extractor = OriginExtractor {
+            facts: None,
+            origins: vec![analysis_contract::PackageOrigin {
+                root: analysis_contract::normalized(&directory).unwrap(),
+                identity: package.into(),
+                targets: vec![analysis_contract::PackageTargetOrigin {
+                    source,
+                    name: "bevy_ecs".into(),
+                    kind: vec!["lib".into()],
+                }],
+            }],
+        };
+        rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
+        let facts = extractor.facts.unwrap();
+        let declarations = facts
+            .declarations
+            .iter()
+            .filter(|declaration| declaration.crate_name == "bevy_ecs")
+            .map(|declaration| {
+                (
+                    declaration.full_name.clone(),
+                    (declaration.id.clone(), declaration.evidence_hash.clone()),
+                )
+            })
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let callables = facts
+            .callables
+            .iter()
+            .filter(|callable| callable.display.starts_with("bevy_ecs::"))
+            .map(|callable| callable.id.clone())
+            .collect::<std::collections::BTreeSet<_>>();
+        let types = facts
+            .types
+            .iter()
+            .filter(|ty| {
+                declarations
+                    .values()
+                    .any(|(id, _)| ty.declaration.as_ref() == Some(id))
+            })
+            .map(|ty| ty.id.clone())
+            .collect::<std::collections::BTreeSet<_>>();
+        versions.push((declarations, callables, types));
+    }
+    assert!(!versions[0].1.is_empty());
+    assert!(!versions[0].2.is_empty());
+    assert_eq!(versions[0], versions[1]);
+    assert_ne!(
+        versions[0], versions[2],
+        "Identical definition paths from distinct packages must stay separate"
+    );
+}
+
+#[test]
+fn owning_and_importing_compiler_units_agree_on_exact_package_identity() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../tmp/rustc-analysis/fixtures/reuse-imported-origin");
+    let dependency = root.join("dependency");
+    let consumer = root.join("consumer");
+    fs::create_dir_all(&dependency).unwrap();
+    fs::create_dir_all(&consumer).unwrap();
+    let dependency_source = dependency.join("lib.rs");
+    let consumer_source = consumer.join("lib.rs");
+    fs::write(&dependency_source, "pub mod component { pub trait Component {} }\npub struct Marker;\nimpl component::Component for Marker {}\n").unwrap();
+    fs::write(
+        &consumer_source,
+        "pub fn consume(_marker: bevy_ecs::Marker) {}\n",
+    )
+    .unwrap();
+    let artifact = dependency.join("libfixture.rlib");
+    let compiled = Command::new("rustc")
+        .args([
+            dependency_source.as_os_str(),
+            "--crate-name=bevy_ecs".as_ref(),
+            "--crate-type=rlib".as_ref(),
+            "--edition=2024".as_ref(),
+            "-Zalways-encode-mir".as_ref(),
+            "-o".as_ref(),
+            artifact.as_os_str(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        compiled.status.success(),
+        "{}",
+        String::from_utf8_lossy(&compiled.stderr)
+    );
+    let compiler = Command::new("rustc")
+        .args(["--print", "sysroot"])
+        .output()
+        .unwrap();
+    assert!(compiler.status.success());
+    let sysroot = String::from_utf8(compiler.stdout).unwrap();
+    let origins = [
+        (&dependency, &dependency_source, "bevy_ecs"),
+        (&consumer, &consumer_source, "consumer"),
+    ]
+    .into_iter()
+    .map(|(root, source, name)| analysis_contract::PackageOrigin {
+        root: analysis_contract::normalized(root).unwrap(),
+        identity: format!("exact-package:{name}:1"),
+        targets: vec![analysis_contract::PackageTargetOrigin {
+            source: analysis_contract::normalized(source).unwrap(),
+            name: name.into(),
+            kind: vec!["lib".into()],
+        }],
+    })
+    .collect::<Vec<_>>();
+    let mut versions = vec![];
+    for (source, name) in [
+        (&dependency_source, "bevy_ecs"),
+        (&consumer_source, "consumer"),
+    ] {
+        let mut arguments = vec![
+            "rustc".into(),
+            source.to_string_lossy().into_owned(),
+            format!("--crate-name={name}"),
+            "--crate-type=lib".into(),
+            "--edition=2024".into(),
+            "--sysroot".into(),
+            sysroot.trim().into(),
+            "--out-dir".into(),
+            root.to_string_lossy().into_owned(),
+            "-Zalways-encode-mir".into(),
+            "-Zmir-opt-level=0".into(),
+        ];
+        if name == "consumer" {
+            arguments.extend([
+                "--extern".into(),
+                format!("bevy_ecs={}", artifact.display()),
+            ]);
+        }
+        let mut extractor = OriginExtractor {
+            facts: None,
+            origins: origins.clone(),
+        };
+        rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
+        let facts = extractor.facts.unwrap();
+        let marker = facts
+            .declarations
+            .iter()
+            .find(|declaration| declaration.full_name == "bevy_ecs::Marker")
+            .unwrap();
+        versions.push(marker.id.clone());
+    }
+    assert_eq!(versions[0], versions[1]);
+}
+
+#[test]
+fn purpose_evidence_tracks_name_initializer_and_helper_body_changes() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../tmp/rustc-analysis/fixtures/reuse-initializer-evidence");
+    fs::create_dir_all(&root).unwrap();
+    let source = root.join("lib.rs");
+    let compiler = Command::new("rustc")
+        .args(["--print", "sysroot"])
+        .output()
+        .unwrap();
+    assert!(compiler.status.success());
+    let sysroot = String::from_utf8(compiler.stdout).unwrap();
+    let arguments = vec![
+        "rustc".into(),
+        source.to_string_lossy().into_owned(),
+        "--crate-name=bevy_ecs".into(),
+        "--crate-type=lib".into(),
+        "--edition=2024".into(),
+        "--sysroot".into(),
+        sysroot.trim().into(),
+        "--out-dir".into(),
+        root.to_string_lossy().into_owned(),
+        "-Zalways-encode-mir".into(),
+        "-Zmir-opt-level=0".into(),
+    ];
+    let mut versions = vec![];
+    for (name, value, helper) in [
+        ("Original", 1, 1),
+        ("Changed", 1, 1),
+        ("Original", 2, 1),
+        ("Original", 1, 2),
+    ] {
+        fs::write(&source, format!("#![allow(dead_code)]\npub mod component {{ pub trait Component {{}} }}\nstruct Name(&'static str);\nfn create() {{ let _name = Name({name:?}); let _initial_value = {value}; helper(); }}\nfn helper() {{ let _ = {helper}; }}\n")).unwrap();
+        let mut extractor = Extractor { facts: None };
+        rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
+        versions.push(
+            extractor
+                .facts
+                .unwrap()
+                .declarations
+                .into_iter()
+                .filter(|declaration| {
+                    matches!(
+                        declaration.full_name.as_str(),
+                        "bevy_ecs::create" | "bevy_ecs::helper"
+                    )
+                })
+                .map(|declaration| (declaration.full_name, declaration.evidence_hash))
+                .collect::<std::collections::BTreeMap<_, _>>(),
+        );
+    }
+    assert_ne!(
+        versions[0]["bevy_ecs::create"],
+        versions[1]["bevy_ecs::create"]
+    );
+    assert_ne!(
+        versions[0]["bevy_ecs::create"],
+        versions[2]["bevy_ecs::create"]
+    );
+    assert_eq!(
+        versions[0]["bevy_ecs::create"],
+        versions[3]["bevy_ecs::create"]
+    );
+    assert_ne!(
+        versions[0]["bevy_ecs::helper"],
+        versions[3]["bevy_ecs::helper"]
+    );
+}
+
+#[test]
+fn purpose_evidence_tracks_referenced_constants_without_hashing_unrelated_declarations() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../tmp/rustc-analysis/fixtures/reuse-constant-evidence");
+    fs::create_dir_all(&root).unwrap();
+    let source = root.join("lib.rs");
+    let compiler = Command::new("rustc")
+        .args(["--print", "sysroot"])
+        .output()
+        .unwrap();
+    assert!(compiler.status.success());
+    let sysroot = String::from_utf8(compiler.stdout).unwrap();
+    let arguments = vec![
+        "rustc".into(),
+        source.to_string_lossy().into_owned(),
+        "--crate-name=bevy_ecs".into(),
+        "--crate-type=lib".into(),
+        "--edition=2024".into(),
+        "--sysroot".into(),
+        sysroot.trim().into(),
+        "--out-dir".into(),
+        root.to_string_lossy().into_owned(),
+        "-Zalways-encode-mir".into(),
+        "-Zmir-opt-level=0".into(),
+    ];
+    let mut versions = vec![];
+    for (name, value, unrelated) in [
+        ("Original", 1, 1),
+        ("Changed", 1, 1),
+        ("Original", 2, 1),
+        ("Original", 1, 2),
+    ] {
+        fs::write(&source, format!("#![allow(dead_code)]\npub mod component {{ pub trait Component {{}} }}\nstruct Name(&'static str);\nconst NAME: &str = {name:?};\nconst fn initial_value() -> u32 {{ {value} }}\nconst VALUE: u32 = initial_value();\nconst UNRELATED: u32 = {unrelated};\nstruct Node(&'static Node);\nstatic LEFT: Node = Node(&RIGHT);\nstatic RIGHT: Node = Node(&LEFT);\nfn create() {{ let _name = Name(NAME); let _initial_value = VALUE; let _cyclic_reference = &LEFT; }}\n")).unwrap();
+        let mut extractor = Extractor { facts: None };
+        rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
+        versions.push(
+            extractor
+                .facts
+                .unwrap()
+                .declarations
+                .into_iter()
+                .find(|declaration| declaration.full_name == "bevy_ecs::create")
+                .unwrap()
+                .evidence_hash,
+        );
+    }
+    assert_ne!(versions[0], versions[1]);
+    assert_ne!(versions[0], versions[2]);
+    assert_eq!(
+        versions[0], versions[3],
+        "An unrelated constant must not invalidate the creator purpose"
+    );
+}
+
+#[test]
+fn purpose_evidence_tracks_referenced_external_constant_values() {
+    let versions = external_initializer_evidence("const");
+    assert_ne!(versions[0], versions[1]);
+    assert_ne!(versions[0], versions[2]);
+    assert_eq!(versions[0], versions[3]);
+}
+
+#[test]
+fn purpose_evidence_tracks_referenced_external_static_values() {
+    let versions = external_initializer_evidence("static");
+    assert_ne!(versions[0], versions[1]);
+    assert_ne!(versions[0], versions[2]);
+    assert_ne!(
+        versions[0], versions[5],
+        "Equal allocation bytes with different static types must not reuse a purpose"
+    );
+    assert_eq!(
+        versions[0], versions[4],
+        "A dependency metadata-only change must reuse the static purpose"
+    );
+}
+
+#[test]
+fn foreign_generic_trait_uncertainty_is_retained_without_metadata_identity() {
+    let versions = external_initializer_evidence("trait");
+    assert_eq!(
+        versions[0], versions[4],
+        "A dependency metadata-only change must reuse unresolved trait purposes"
+    );
+}
+
+fn external_initializer_evidence(storage: &str) -> Vec<String> {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(format!(
+        "../../../tmp/rustc-analysis/fixtures/reuse-external-{storage}-evidence"
+    ));
+    let dependency = root.join("dependency");
+    let consumer = root.join("consumer");
+    fs::create_dir_all(&dependency).unwrap();
+    fs::create_dir_all(&consumer).unwrap();
+    let dependency_source = dependency.join("lib.rs");
+    let consumer_source = consumer.join("lib.rs");
+    fs::write(&dependency_source, "").unwrap();
+    let consumer_code = if storage == "trait" {
+        "struct Marker;\nimpl bevy_ecs::Named for Marker { const LABEL: &'static str = bevy_ecs::NAME; }\nfn create<T: bevy_ecs::Named>() { let _name = T::LABEL; }\npub fn entry() { create::<Marker>(); }\n"
+    } else {
+        "pub fn create() { let _name = bevy_ecs::NAME; let _number = bevy_ecs::NUMBER; }\n"
+    };
+    fs::write(&consumer_source, consumer_code).unwrap();
+    let artifact = dependency.join("libfixture.rlib");
+    let compiler = Command::new("rustc")
+        .args(["--print", "sysroot"])
+        .output()
+        .unwrap();
+    assert!(compiler.status.success());
+    let sysroot = String::from_utf8(compiler.stdout).unwrap();
+    let origins = [
+        (&dependency, &dependency_source, "bevy_ecs"),
+        (&consumer, &consumer_source, "consumer"),
+    ]
+    .into_iter()
+    .map(|(root, source, name)| analysis_contract::PackageOrigin {
+        root: analysis_contract::normalized(root).unwrap(),
+        identity: format!("exact-package:{name}:1"),
+        targets: vec![analysis_contract::PackageTargetOrigin {
+            source: analysis_contract::normalized(source).unwrap(),
+            name: name.into(),
+            kind: vec!["lib".into()],
+        }],
+    })
+    .collect::<Vec<_>>();
+    let arguments = vec![
+        "rustc".into(),
+        consumer_source.to_string_lossy().into_owned(),
+        "--crate-name=consumer".into(),
+        "--crate-type=lib".into(),
+        "--edition=2024".into(),
+        "--sysroot".into(),
+        sysroot.trim().into(),
+        "--out-dir".into(),
+        root.to_string_lossy().into_owned(),
+        "--extern".into(),
+        format!("bevy_ecs={}", artifact.display()),
+        "-Zalways-encode-mir".into(),
+        "-Zmir-opt-level=0".into(),
+    ];
+    let mut versions = vec![];
+    for (name, number, unrelated, metadata) in [
+        ("Original", 1, 1, "first"),
+        ("Changed", 1, 1, "first"),
+        ("Original", 2, 1, "first"),
+        ("Original", 1, 2, "first"),
+        ("Original", 1, 1, "second"),
+        ("Original", 1, 1, "typechange"),
+    ] {
+        let declaration_storage = if storage == "trait" { "const" } else { storage };
+        let (number_type, number_value) = if storage == "static" {
+            if metadata == "typechange" {
+                ("f32", "0.0".to_owned())
+            } else {
+                ("u32", (number - 1).to_string())
+            }
+        } else {
+            ("u32", number.to_string())
+        };
+        fs::write(&dependency_source, format!("pub mod component {{ pub trait Component {{}} }}\npub trait Named {{ const LABEL: &'static str; }}\npub {declaration_storage} NAME: &str = {name:?};\npub {declaration_storage} NUMBER: {number_type} = {number_value};\npub const UNRELATED: u32 = {unrelated};\n")).unwrap();
+        let compiled = Command::new("rustc")
+            .args([
+                dependency_source.as_os_str(),
+                "--crate-name=bevy_ecs".as_ref(),
+                "--crate-type=rlib".as_ref(),
+                "--edition=2024".as_ref(),
+                format!("-Cmetadata={metadata}").as_ref(),
+                "-o".as_ref(),
+                artifact.as_os_str(),
+            ])
+            .output()
+            .unwrap();
+        assert!(
+            compiled.status.success(),
+            "{}",
+            String::from_utf8_lossy(&compiled.stderr)
+        );
+        let mut extractor = OriginExtractor {
+            facts: None,
+            origins: origins.clone(),
+        };
+        rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
+        let declaration = extractor
+            .facts
+            .unwrap()
+            .declarations
+            .into_iter()
+            .find(|declaration| declaration.full_name == "consumer::create")
+            .unwrap();
+        if storage == "trait" {
+            assert!(
+                declaration.unresolved_behavior,
+                "Unknown dispatch must survive into the final model"
+            );
+        }
+        versions.push(declaration.evidence_hash);
+    }
+    versions
+}
+
+#[test]
+fn purpose_evidence_tracks_generic_trait_impl_constant_values() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../tmp/rustc-analysis/fixtures/reuse-generic-constant-evidence");
+    fs::create_dir_all(&root).unwrap();
+    let source = root.join("lib.rs");
+    let compiler = Command::new("rustc")
+        .args(["--print", "sysroot"])
+        .output()
+        .unwrap();
+    assert!(compiler.status.success());
+    let sysroot = String::from_utf8(compiler.stdout).unwrap();
+    let mut versions = vec![];
+    for (name, metadata, blank_lines) in [
+        ("Original", "a", 0),
+        ("Changed", "a", 0),
+        ("Original", "b", 3),
+    ] {
+        fs::write(&source, format!("#![allow(dead_code)]\n{}pub mod component {{ pub trait Component {{}} }}\ntrait Named {{ const LABEL: &'static str; }}\nstruct Marker;\nimpl Named for Marker {{ const LABEL: &'static str = {name:?}; }}\nfn create<T: Named>() {{ let _name = T::LABEL; }}\nfn entry() {{ create::<Marker>(); }}\n", "\n".repeat(blank_lines))).unwrap();
+        let arguments = vec![
+            "rustc".into(),
+            source.to_string_lossy().into_owned(),
+            "--crate-name=bevy_ecs".into(),
+            "--crate-type=lib".into(),
+            "--edition=2024".into(),
+            "--sysroot".into(),
+            sysroot.trim().into(),
+            "--out-dir".into(),
+            root.to_string_lossy().into_owned(),
+            "-Zalways-encode-mir".into(),
+            "-Zmir-opt-level=0".into(),
+            format!("-Cmetadata={metadata}"),
+        ];
+        let mut extractor = Extractor { facts: None };
+        rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
+        versions.push(
+            extractor
+                .facts
+                .unwrap()
+                .declarations
+                .into_iter()
+                .find(|declaration| declaration.full_name == "bevy_ecs::create")
+                .unwrap()
+                .evidence_hash,
+        );
+    }
+    assert_ne!(
+        versions[0], versions[1],
+        "The selected generic impl initializer must invalidate its creator"
+    );
+    assert_eq!(
+        versions[0], versions[2],
+        "Conservative constant evidence must still ignore metadata and line movement"
+    );
+}
+
+#[test]
+fn compiler_metadata_does_not_change_declaration_identity_or_local_purpose() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../tmp/rustc-analysis/fixtures/reuse-compiler-metadata");
+    fs::create_dir_all(&root).unwrap();
+    let source = root.join("lib.rs");
+    fs::write(&source, "#![allow(dead_code)]\npub mod component { pub trait Component {} }\npub struct Marker;\nimpl component::Component for Marker {}\nfn unchanged(value: Marker) { let _ = value; }\n").unwrap();
+    let compiler = Command::new("rustc")
+        .args(["--print", "sysroot"])
+        .output()
+        .unwrap();
+    assert!(compiler.status.success());
+    let sysroot = String::from_utf8(compiler.stdout).unwrap();
+    let mut versions = vec![];
+    for metadata in ["workspace_a", "workspace_b"] {
+        let arguments = vec![
+            "rustc".into(),
+            source.to_string_lossy().into_owned(),
+            "--crate-name=bevy_ecs".into(),
+            "--crate-type=lib".into(),
+            "--edition=2024".into(),
+            "--sysroot".into(),
+            sysroot.trim().into(),
+            "--out-dir".into(),
+            root.to_string_lossy().into_owned(),
+            "-Zalways-encode-mir".into(),
+            "-Zmir-opt-level=0".into(),
+            format!("-Cmetadata={metadata}"),
+        ];
+        let mut extractor = Extractor { facts: None };
+        rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
+        let facts = extractor.facts.unwrap();
+        versions.push(
+            facts
+                .declarations
+                .into_iter()
+                .filter(|declaration| {
+                    matches!(
+                        declaration.full_name.as_str(),
+                        "bevy_ecs::Marker" | "bevy_ecs::unchanged"
+                    )
+                })
+                .map(|declaration| {
+                    (
+                        declaration.full_name,
+                        (declaration.id, declaration.evidence_hash),
+                    )
+                })
+                .collect::<std::collections::BTreeMap<_, _>>(),
+        );
+    }
+    assert_eq!(versions[0].len(), 2);
+    assert_eq!(
+        versions[0], versions[1],
+        "Cargo metadata must remain provenance, not semantic identity"
+    );
+}
+
 /// 使用主项目已检查的真实依赖，避免测试另行选择 Bevy 配置或重建图形依赖。
 #[test]
 #[ignore = "设置 ANALYSIS_BEVY_DEPS 为主项目构建产物目录，并设置 CARGO_PRIMARY_PACKAGE=1。"]

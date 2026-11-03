@@ -19,4 +19,5 @@ extern crate rustc_type_ir;
 pub mod driver;
 pub mod ecs;
 pub mod entity;
+mod identity;
 pub mod named_fields;

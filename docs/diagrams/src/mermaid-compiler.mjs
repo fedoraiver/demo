@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import { setImmediate } from 'node:timers/promises';
 import path from 'node:path';
-import crypto from 'node:crypto';
 import { availableParallelism } from 'node:os';
 import puppeteer from 'puppeteer';
 import { instance as graphvizInstance } from '@viz-js/viz';
@@ -15,7 +14,8 @@ import { NODE_STYLES, EDGE_STYLES, mermaidStyleDefinitions } from './architectur
 import { mermaidConfiguration } from './architecture-renderer.mjs';
 import { createMermaidCheckPool } from './mermaid-check-pool.mjs';
 import { normalizeMermaidSvg, compileRoutedView as compileRoutedViewCore, measureNativeLabelBounds } from './mermaid-core.mjs';
-import { repositoryRoot as root, pathsForRepository } from './paths.mjs';
+import { repositoryRoot as root } from './paths.mjs';
+import { createMermaidCache, mermaidDependencyIdentity, mermaidRenderIdentity, restoreMermaidGeometry } from './mermaid-cache.mjs';
 export { normalizeMermaidSvg, routedMermaid } from './mermaid-core.mjs';
 
 const elements = node => [...node.getElementsByTagName('*')];
@@ -182,15 +182,11 @@ export async function compileArchitectureArtifacts(views, registry) {
   const jobs = mermaidJobCount();
   const temporary = path.join(root, 'tmp/ecs-architecture/mermaid-build');
   fs.mkdirSync(temporary, { recursive: true });
-  const cacheDirectory = path.join(temporary, 'geometry-cache');
-  fs.mkdirSync(cacheDirectory, { recursive: true });
-  // 独立 Graphviz 与维护专用 TOML parser 不影响对象图的 Mermaid 布局缓存。
-  const lock = JSON.parse(fs.readFileSync(path.join(pathsForRepository(root).packageRoot, 'package-lock.json'), 'utf8'));
-  for (const name of ['@viz-js/viz', 'smol-toml']) {
-    delete lock.packages[''].devDependencies[name];
-    delete lock.packages['node_modules/' + name];
-  }
-  const dependencies = JSON.stringify(lock, null, 2) + '\n';
+  const dependencies = mermaidDependencyIdentity(root);
+  const cache = createMermaidCache(root);
+  const identities = new Map(views.filter(view => view.mermaid).map(view => [view.id, mermaidRenderIdentity(view, registry, dependencies)]));
+  const cacheSummary = { local: 0, shared: 0, published: 0, compiled: 0, rejected: 0 };
+  console.log('Mermaid cache candidates: ' + JSON.stringify(cache.plan(views, identities)));
   const profile = fs.mkdtempSync(path.join(temporary, 'profile-'));
   const browser = await puppeteer.launch({ executablePath: chromiumPath(), headless: true, userDataDir: profile });
   const checks = createMermaidCheckPool({ jobs });
@@ -198,43 +194,42 @@ export async function compileArchitectureArtifacts(views, registry) {
   try {
     async function compile(view) {
       if (!view.mermaid) return view;
-      // 归一化或 SVG 注解规则变化时递增版本；原生源码、依赖及完整标题变化会自动失效。
-      const fingerprint = crypto.createHash('sha256').update(JSON.stringify({ version: 3, id: view.id, definition: view.mermaid, dependencies,
-        categories: view.nodes.map(node => [node.id, node.visualType, NODE_STYLES[node.visualType].label]),
-        titles: view.nodes.map(node => [node.id, registry[node.id].name, registry[node.id].description, registry[node.id].feature]), componentDetails: view.componentDetails,
-      })).digest('hex');
-      const cachePath = path.join(cacheDirectory, fingerprint + '.json');
-      if (fs.existsSync(cachePath)) {
+      const { fingerprint, inputs } = identities.get(view.id);
+      const identified = result => ({ ...result, renderFingerprint: fingerprint, renderInputs: inputs });
+      for (const candidate of cache.candidates(view, fingerprint)) {
+        if (candidate.error) { cacheSummary.rejected++; continue; }
+        let result;
         try {
-          const cached = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
-          const result = { ...view, ...cached.geometry, nodes: view.nodes.map(node => ({ ...node, position: cached.positions[node.id] })),
-            scheduleGroups: view.scheduleGroups.map(group => ({ ...group, ...cached.scheduleBounds[group.id] })),
-          };
+          result = restoreMermaidGeometry(view, candidate.cached);
           await checks.geometry(result);
           if ((await checks.labels(result)).length) throw new Error('Cached native labels are incomplete');
           const inspection = await checks.routes(result);
           if (inspection.edges.some(edge => edge.collisions.length || edge.arrowIssues.length || (edge.axis ? edge.curved : !edge.curved))) throw new Error('Cached native routing is stale');
-          console.log(`Mermaid cached: ${view.id}`);
-          return result;
         } catch (error) {
           if (checks.isFatalError(error)) throw error;
+          cacheSummary.rejected++;
           // 几何规则更新后重新编译；缓存不代替本次严格检查。
+          continue;
         }
+        cacheSummary[candidate.source]++;
+        if (candidate.source === 'published' || (candidate.source === 'local' && cache.localDirectory !== cache.sharedDirectory))
+          cache.store(fingerprint, inputs, result);
+        console.log(`Mermaid cached: ${view.id} (${candidate.source})`);
+        return identified(result);
       }
       let result;
       try { result = await withMermaidContext(browser, scopedBrowser => compileRoutedView(scopedBrowser, view, registry, checks)); }
       catch (error) { throw new Error(`Mermaid view failed: ${view.id}: ${error.message}`, { cause: error }); }
-      const geometry = Object.fromEntries(['svg', 'mermaid', 'width', 'height', 'bounds', 'routing', 'sections', 'entityGroups', 'layoutLinks'].map(key => [key, result[key]]));
-      fs.writeFileSync(cachePath, JSON.stringify({ geometry, positions: Object.fromEntries(result.nodes.map(node => [node.id, node.position])),
-        scheduleBounds: Object.fromEntries(result.scheduleGroups.map(group => [group.id, group.labelBounds ? { labelBounds: group.labelBounds } : {}])),
-      }));
+      cache.store(fingerprint, inputs, result);
+      cacheSummary.compiled++;
       console.log(`Mermaid: ${view.id}`);
-      return result;
+      return identified(result);
     }
     const compiled = await compileMermaidViews(views, compile, { jobs });
     const guideSamples = await compileGuideSamples(browser);
     guideSamples.schedule = await compileScheduleGuideSamples(await graphvizInstance(), { DOMParser, XMLSerializer });
-    return { views: compiled, guideSamples };
+    console.log('Mermaid cache: ' + JSON.stringify(cacheSummary));
+    return { views: compiled, guideSamples, cacheSummary };
   } catch (error) { failure = error; throw error; }
   finally {
     const closed = await Promise.allSettled([checks.close(), browser.close()]);

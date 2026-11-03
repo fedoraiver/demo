@@ -1,5 +1,8 @@
 //! Cargo 编译单元与分析报告共同构成成功条件；缓存只复用内容仍匹配的依赖事实。
-use analysis_contract::{Request, Rule, UnitReport, entity_names, named_fields, normalized};
+use analysis_contract::{
+    PackageOrigin, PackageTargetOrigin, Request, Rule, UnitReport, entity_names, named_fields,
+    normalized,
+};
 use anyhow::{Context, Result, ensure};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -46,6 +49,32 @@ struct Package {
 struct CargoTarget {
     src_path: PathBuf,
     kind: Vec<String>,
+}
+
+fn package_origins(metadata: &serde_json::Value) -> Result<Vec<PackageOrigin>> {
+    let workspace = Path::new(
+        metadata["workspace_root"]
+            .as_str()
+            .context("Missing Cargo workspace root")?,
+    )
+    .canonicalize()?;
+    metadata["packages"].as_array().context("Missing Cargo packages")?.iter().map(|package| {
+        let manifest = Path::new(package["manifest_path"].as_str().context("Missing Cargo manifest")?);
+        let root = manifest.parent().context("Cargo manifest has no parent")?.canonicalize()?;
+        let source = package["source"].as_str().map(str::to_owned).unwrap_or_else(|| {
+            match root.strip_prefix(&workspace) {
+                Ok(relative) => format!("workspace:{}", relative.to_string_lossy().replace('\\', "/")),
+                Err(_) => format!("path:{}", root.to_string_lossy().trim_start_matches(r"\\?\").replace('\\', "/")),
+            }
+        });
+        let identity = serde_json::to_string(&serde_json::json!({"source":source,"name":package["name"],"version":package["version"]}))?;
+        let targets = package["targets"].as_array().context("Missing Cargo targets")?.iter().map(|target| Ok(PackageTargetOrigin {
+            source: normalized(Path::new(target["src_path"].as_str().context("Missing Cargo target source")?))?,
+            name: target["name"].as_str().context("Missing Cargo target name")?.into(),
+            kind: serde_json::from_value(target["kind"].clone())?,
+        })).collect::<Result<Vec<_>>>()?;
+        Ok(PackageOrigin { root: normalized(&root)?, identity, targets })
+    }).collect()
 }
 struct Artifact {
     package_id: String,
@@ -350,6 +379,7 @@ impl Host {
             rule,
             sources,
             manifest_dirs: BTreeSet::from([normalized(&self.root)?]),
+            package_origins: package_origins(&metadata)?,
         };
         let request_path = self
             .directory
@@ -509,6 +539,15 @@ impl Host {
                 {
                     continue;
                 }
+                let source = normalized(Path::new(
+                    value["target"]["src_path"]
+                        .as_str()
+                        .context("Missing target source")?,
+                ))?;
+                // Cargo 也返回构建脚本 artifact；报告覆盖范围仍以本次选中源码为准。
+                if rule != Rule::Architecture && !request.sources.contains(&source) {
+                    continue;
+                }
                 let filenames: Vec<String> = serde_json::from_value(value["filenames"].clone())?;
                 if !seen.insert(filenames.clone()) {
                     continue;
@@ -521,11 +560,7 @@ impl Host {
                 artifacts.push(Artifact {
                     package_id: id.into(),
                     target: named_fields::Target {
-                        source: normalized(Path::new(
-                            value["target"]["src_path"]
-                                .as_str()
-                                .context("Missing target source")?,
-                        ))?,
+                        source,
                         name: value["target"]["name"]
                             .as_str()
                             .context("Missing target name")?
@@ -827,6 +862,7 @@ mod tests {
             rule: Rule::Architecture,
             sources: BTreeSet::new(),
             manifest_dirs: BTreeSet::new(),
+            package_origins: vec![],
         };
         (report, artifact, request)
     }

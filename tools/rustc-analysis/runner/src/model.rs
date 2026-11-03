@@ -37,6 +37,7 @@ struct Model {
     runtime_types: BTreeMap<String, Vec<String>>,
     call_edges: BTreeMap<String, BTreeSet<String>>,
     behavior_hashes: BTreeMap<String, String>,
+    behavior_context: Option<String>,
     objects: BTreeMap<String, Value>,
     relations: BTreeMap<String, Value>,
     features: BTreeMap<String, Value>,
@@ -191,6 +192,25 @@ fn identifier(kind: &str, value: impl serde::Serialize) -> String {
         "{kind}-{}",
         &digest(serde_json::to_vec(&value).expect("Serializable identity"))[..24]
     )
+}
+
+fn entity_purpose_hash(entity: &EntityTemplate, creator_behavior: &str) -> String {
+    let components: BTreeSet<_> = entity.components.iter().collect();
+    let required: BTreeSet<_> = entity.required_components.iter().collect();
+    let gaps: BTreeSet<_> = entity
+        .gaps
+        .iter()
+        .map(|gap| (&gap.kind, &gap.reason))
+        .collect();
+    let alternatives: Vec<_> = entity.alternatives.iter().map(|group| {
+        json!({"id":group.id,"candidates":group.candidates,"selection":group.selection})
+    }).collect();
+    // 完整文件 SHA 继续约束源码快照；用途只依赖装配结构与创建函数/可达 helper 行为。
+    // 行列、宏调用位置和展示片段不能使初始化语义未变的模板用途失效。
+    digest(serde_json::to_vec(&json!({"version":"entity-purpose-v2","creatorBehavior":creator_behavior,
+        "creator":entity.creator,"components":components,"requiredComponents":required,"children":entity.children,
+        "gaps":gaps,"alternatives":alternatives,"alternativeGroup":entity.alternative_group,
+        "alternativeSelection":entity.alternative_selection,"alternativeContext":entity.alternative_context,"possible":entity.possible})).expect("Entity semantic evidence"))
 }
 fn unique(values: Vec<Value>) -> Vec<Value> {
     let mut seen = BTreeSet::new();
@@ -408,6 +428,7 @@ impl Model {
         let mut seen = BTreeSet::new();
         let mut definitions =
             BTreeMap::from([(declaration.id.clone(), declaration.evidence_hash.clone())]);
+        let mut unresolved = declaration.unresolved_behavior;
         while let Some(callable) = pending.pop() {
             if !seen.insert(callable.clone()) {
                 continue;
@@ -417,13 +438,26 @@ impl Model {
                 .get(&callable)
                 .and_then(|callable| self.declarations.get(&callable.declaration))
             {
+                unresolved |= definition.unresolved_behavior;
                 definitions.insert(definition.id.clone(), definition.evidence_hash.clone());
             }
             if let Some(callees) = self.call_edges.get(&callable) {
                 pending.extend(callees.iter().cloned());
             }
         }
-        let hash = if definitions.len() == 1 {
+        let hash = if unresolved {
+            if self.behavior_context.is_none() {
+                self.fatal.push(format!("Portable owning-unit behavior evidence is incomplete for unresolved dispatch in {}", declaration.full_name));
+            }
+            digest(
+                serde_json::to_vec(&(
+                    "unresolved-behavior-v1",
+                    &definitions,
+                    &self.behavior_context,
+                ))
+                .expect("Unresolved behavior evidence"),
+            )
+        } else if definitions.len() == 1 {
             declaration.evidence_hash.clone()
         } else {
             digest(serde_json::to_vec(&definitions).expect("Declaration evidence"))
@@ -592,8 +626,8 @@ impl Model {
             .unwrap_or_else(|| ty.display.clone());
         let evidence_hash = declaration
             .as_ref()
-            .map(|declaration| declaration.evidence_hash.as_str())
-            .unwrap_or("");
+            .map(|declaration| self.behavior_hash(declaration))
+            .unwrap_or_default();
         let docs = declaration
             .as_ref()
             .map(|declaration| declaration.docs.as_str())
@@ -602,7 +636,7 @@ impl Model {
             &purpose_key,
             &ty.display,
             kind,
-            evidence_hash,
+            &evidence_hash,
             docs,
             &sources,
         );
@@ -858,6 +892,21 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         );
     }
     let source_cache = SourceCache::new(root.clone(), bundle.packages, bundle.source_origins);
+    let behavior_context = bundle
+        .units
+        .iter()
+        .all(|unit| !unit.behavior_hash.is_empty())
+        .then(|| {
+            let summaries: BTreeSet<_> = bundle
+                .units
+                .iter()
+                .map(|unit| &unit.behavior_hash)
+                .collect();
+            digest(
+                serde_json::to_vec(&(&bundle.compiler, summaries))
+                    .expect("Owning-unit semantic context"),
+            )
+        });
     let mut model = Model {
         root,
         source_cache,
@@ -870,6 +919,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         runtime_types: BTreeMap::new(),
         call_edges: BTreeMap::new(),
         behavior_hashes: BTreeMap::new(),
+        behavior_context,
         objects: BTreeMap::new(),
         relations: BTreeMap::new(),
         features: BTreeMap::new(),
@@ -919,6 +969,14 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                     entry.insert(declaration);
                 }
                 std::collections::btree_map::Entry::Occupied(mut entry) => {
+                    ensure!(
+                        !declaration.local
+                            || !entry.get().local
+                            || declaration.evidence_hash == entry.get().evidence_hash,
+                        "Conflicting owning-unit behavior for {} ({}); compiler units with different cfg behavior cannot share one fixed-configuration model",
+                        declaration.full_name,
+                        declaration.id
+                    );
                     if declaration.local && !entry.get().local {
                         entry.insert(declaration);
                     }
@@ -1415,11 +1473,12 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                     "保存一组系统的共同配置。".into(),
                 )
             } else if let Some(declaration) = &declaration {
+                let evidence_hash = model.behavior_hash(declaration);
                 model.purpose(
                     &model.purpose_key(declaration),
                     &set.label,
                     "SystemSet",
-                    &declaration.evidence_hash,
+                    &evidence_hash,
                     &declaration.docs,
                     &sources,
                 )
@@ -1792,11 +1851,20 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
             .as_ref()
             .map(|declaration| format!("{} · 创建模板", declaration.name))
             .unwrap_or_else(|| "实体创建模板".into());
+        let creator_behavior = if let Some(declaration) = &declaration {
+            model.behavior_hash(declaration)
+        } else {
+            model.fatal.push(format!(
+                "No compiler declaration for entity creator {}",
+                entity.creator
+            ));
+            String::new()
+        };
         let (description, summary) = model.purpose(
             &key,
             &name,
             "Entity",
-            &digest(serde_json::to_vec(&entity)?),
+            &entity_purpose_hash(&entity, &creator_behavior),
             "",
             &sources,
         );

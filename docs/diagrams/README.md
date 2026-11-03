@@ -37,7 +37,7 @@ Schedule 始终保留右侧说明栏，未选择对象时显示当前调度的�
 
 `tmp/ecs-architecture/compiler/facts.json` 保存编译器事实，`runtime.json` 保存同次构建的运行时快照，`model.json` 及其必需的 `model.calls.ndjson` 共同构成生成器的语义输入。主文件的 `callGraph` 描述调用图文件名、SHA-256 和准确边数；NDJSON 每行保存完整调用边及其条件、延迟与源码证据。[Node 适配器](src/rustc-model.mjs)逐条验证全部调用边及文件完整性，不把整个调用图拼成一个字符串或按显示需要截断。适配器同时验证模型契约、源码快照和调度绑定，投影中心单卡或一跳关系，不再扫描 Rust、猜测声明或维护访问操作副本。
 
-声明以锁定包、定义路径和消歧信息标识，类型实例保留完整类型与常量实参；别名和重导出解析到真实声明。系统声明与每次运行时注册分别标识，实体对象表示静态创建模板而非可持久化的运行时 `Entity`。源码位置来自编译器的声明、调用、操作和宏来源，不以行号作为对象身份。
+声明以精确 Cargo 包来源、目标及编译器定义路径和消歧信息标识，类型实例保留完整类型与常量实参；别名和重导出解析到真实声明。工作树物理路径与 Cargo 编译 metadata 不参与可复用的定义身份，原生编译单元及运行时身份继续用于构建关联。系统声明与每次运行时注册分别标识，实体对象表示静态创建模板而非可持久化的运行时 `Entity`。源码位置来自编译器的声明、调用、操作和宏来源，不以行号作为对象身份。
 
 参数访问与函数体操作分开记录。真实 trait 和方法身份区分 Component、Resource、SystemParam、QueryData 及容器同名 API；MIR 实例化调用保留 helper、闭包、世界范围、条件和 Commands 的延迟时机。Bundle、required components 和 BSN 装配按实际实现提取。无法确认的动态行为、实体目标或关联类型保留具体缺口，不用大模型补猜结构。
 
@@ -340,6 +340,10 @@ npm run maintain --prefix docs/diagrams -- report --format markdown
 默认工作区由入口所在仓库确定，`--workspace PATH` 可明确选择其他 worktree；完整 `run` 使用目标 worktree 内的入口。`--debugdump` 只选择与编译器模型匹配的真实导出，不允许用单独 DOT 替代模型。相对路径以指定工作区为准，未知命令和选项直接失败。
 
 运行记录保存在 `tmp/ecs-architecture/maintenance/<run-id>/`，编译器输入输出保存在 `tmp/ecs-architecture/compiler/`，工具产物保存在根 `tmp/rustc-analysis/`，Cargo 分析缓存与报告保存在短目录 `tmp/ra/`。缓存依据编译器提交、工具实现、Cargo 配置、target、features、锁文件、源码内容及输出哈希复用。Cargo 跳过编译时仍须有对应且源码有效的分析报告；缺失报告仅使专用缓存中的相关包失效重编。
+
+Mermaid 原生几何先查当前工作树的 `tmp/ecs-architecture/mermaid-build/geometry-cache/`，再查 Git 主工作树同路径的共享缓存；有效本地命中会补入共享池，共享池不可写时回退到本地。正式视图元数据和清单保存原始绘图输入的 `renderFingerprint`，没有临时缓存的 checkout 可在输入完全匹配且元数据、SVG、Mermaid 的 SHA-256 与字节数校验通过后复用正式产物。缺少输入指纹的旧产物不作为后备缓存，不凭 SVG 相同推定输入相同。所有命中仍执行当前文字、几何和路由检查，且使用当前模型的源码与关系证据。
+
+预检的 `renderCache` 和生成前的 `Mermaid cache candidates` 列出本地、共享、正式产物候选及缺失原因；候选数量不表示校验已通过。输入改变时可从元数据的 `renderInputs` 比较定义、标题、分类和依赖指纹，生成结束的 `Mermaid cache` 分别统计实际复用、重编译及拒绝数量。
 
 普通 `run` 保留独立历史，`--resume` 使用原运行。失败、中断或未知退出停止下游，不凭 mtime 或进程结束判定成功；同一工作区执行锁冲突直接失败，不抢占其他进程。Cargo 由协调者跨 worktree 串行安排。
 
