@@ -11,7 +11,7 @@ description: 维护本项目基于 rustc 事实和真实 Schedule 的 ECS 架构
 
 - 从仓库根读取 [AGENTS.md](../../../AGENTS.md)、[开发规范](../../../docs/development.md)、[当前架构](../../../docs/architecture.md)、[验证参考](../../../docs/testing/README.md)及[图的说明](../../../docs/diagrams/README.md)。
 - 按[变更类型](../../../docs/testing/README.md#按变更类型选择检查)确定执行范围。仅修改本 Skill 的说明或调用元数据时，检查入口、步骤、事实、相对链接及工作区与修改保护规则，不递归执行提取、构建、Node 测试或图形验收；修改执行脚本、生成器或 Rust 分析工具时运行对应回归。
-- 检查 `git status --short`、暂存与未暂存 diff，保留用户修改。按当前模型契约、编译器证据和真实运行时快照验收，不要求与旧扫描器或旧对象 ID 双跑对照。
+- 检查 `git status --short`、暂存与未暂存 diff，保留用户修改。按当前模型契约、编译器证据和真实运行时快照验收。
 - 原图、diff、日志及截图放根 `tmp/ecs-architecture/` 下的任务目录；正式产物留在 `docs/diagrams/`。只在用户要求时暂存或提交。
 
 ## 按阶段读取并执行

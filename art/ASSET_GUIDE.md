@@ -58,6 +58,13 @@
 
 以下为制作流程；执行前准备 Blender。只调整主角动作时，从第 3 步开始，无需重建整张地图。
 
+在 Blender 内执行生成或导出脚本前，将 Python 的 `sys.pycache_prefix` 设为当前检出根目录下的 `tmp/python-cache`，避免脚本在 `art/scripts/` 产生 `__pycache__`。例如当前检出位于 `D:/demo` 时，在 Blender 的 Python 环境中先执行；其他检出须将路径替换为该检出的绝对路径：
+
+```python
+import sys
+sys.pycache_prefix = "D:/demo/tmp/python-cache"
+```
+
 1. 使用 [build_scene.py](scripts/build_scene.py) 通过 Blender MCP 插件在已打开的 Blender 中生成场景。
 2. 使用 [export_assets.py](scripts/export_assets.py) 导出独立模型和地图；独立模型按原点和单位比例导出，源库保留展示布局。
 3. 使用 [export_courier_actions.py](scripts/export_courier_actions.py) 刷新主角动作、制作源和运行 GLB。完整导出海岛后必须执行此步，保证独立主角包含完整动作；脚本可在 Blender 内执行，或通过 `--background --python` 调用。
