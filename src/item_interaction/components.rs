@@ -69,7 +69,7 @@ pub(super) struct CarryBaseMass {
 
 /// 释放后先丢弃手持期间的插值端点，再恢复调用前未暂停的插值通道。
 #[derive(Component)]
-pub(super) struct ResumeCarryEasing {
+pub(super) struct ResumeInterpolation {
     pub(super) translation: bool,
     pub(super) rotation: bool,
 }
