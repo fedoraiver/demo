@@ -43,41 +43,41 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​preprocess​_​pipelines**<br/>按设备裁剪能力准备网格预处理管线变体。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**SpecializedComputePipelines#lt;BinUnpac**<br/>**kingPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
+  n1@{ shape: cyl, label: "**SpecializedComputePipelines#lt;BuildInd**<br/>**irectParametersPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**SpecializedComputePipelines#lt;ResetInd**<br/>**irectBatchSetsPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
+  n2@{ shape: cyl, label: "**SpecializedComputePipelines#lt;UniformA**<br/>**llocationFanPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**SpecializedComputePipelines#lt;Preproce**<br/>**ssPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
+  n3@{ shape: cyl, label: "**PreprocessPipelines**<br/>汇集网格预处理与间接参数构建管线。" }
   class n3 node_resource
-  class n3 external_node
-  n4@{ shape: cyl, label: "**SpecializedComputePipelines#lt;BuildInd**<br/>**irectParametersPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
+  n4@{ shape: cyl, label: "**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**PreprocessPipelines**<br/>汇集网格预处理与间接参数构建管线。" }
+  n5@{ shape: cyl, label: "**SpecializedComputePipelines#lt;ResetInd**<br/>**irectBatchSetsPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
   class n5 node_resource
-  n6@{ shape: rounded, label: "**prepare​_​preprocess​_​bind​_​groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
-  class n6 node_system
-  n7@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  class n5 external_node
+  n6@{ shape: cyl, label: "**SpecializedComputePipelines#lt;UniformA**<br/>**llocationLocalScanPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
-  class n8 node_resource
-  class n8 external_node
-  n9@{ shape: cyl, label: "**SpecializedComputePipelines#lt;UniformA**<br/>**llocationGlobalScanPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
+  n8@{ shape: rounded, label: "**prepare​_​preprocess​_​bind​_​groups**<br/>绑定各视图网格预处理和间接参数构建资源。" }
+  class n8 node_system
+  n9@{ shape: cyl, label: "**SpecializedComputePipelines#lt;BinUnpac**<br/>**kingPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**SpecializedComputePipelines#lt;UniformA**<br/>**llocationFanPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
+  n10@{ shape: cyl, label: "**SpecializedComputePipelines#lt;UniformA**<br/>**llocationGlobalScanPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
   class n10 node_resource
   class n10 external_node
   n11@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n11 node_system_set
   class n11 external_node
-  n12@{ shape: cyl, label: "**SpecializedComputePipelines#lt;UniformA**<br/>**llocationLocalScanPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
+  n12@{ shape: cyl, label: "**SpecializedComputePipelines#lt;Preproce**<br/>**ssPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>计算管线变体。" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n13@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n13 node_resource
   class n13 external_node
   n0 e0@-->|"可变访问"| n1
@@ -86,16 +86,16 @@ flowchart LR
   class e1 edge_write
   n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
   n0 e4@-->|"可变访问"| n5
   class e4 edge_write
-  n0 e5@-->|"先于"| n6
-  class e5 edge_order
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
   n7 e6@--> n0
   class e6 edge_read
-  n8 e7@--> n0
-  class e7 edge_read
+  n0 e7@-->|"先于"| n8
+  class e7 edge_order
   n0 e8@-->|"可变访问"| n9
   class e8 edge_write
   n0 e9@-->|"可变访问"| n10
@@ -110,7 +110,7 @@ flowchart LR
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e5@{ curve: basis }
+  e4@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

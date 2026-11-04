@@ -44,34 +44,34 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**upload​_​decals**<br/>把本帧渲染贴花列表写入 GPU 缓冲；没有贴<br/>花时仍写入一个默认项，保证后续存在可绑定<br/>的缓冲。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderClusteredDecals**<br/>维护场景贴花数据与纹理绑定索引。" }
   class n1 node_resource
-  class n1 external_node
-  n2@{ shape: fr-rect, label: "**ClusteredDecalPlugin**<br/>提供聚簇贴花投射。" }
-  class n2 node_plugin
-  n3@{ shape: cyl, label: "**RenderClusteredDecals**<br/>维护场景贴花数据与纹理绑定索引。" }
-  class n3 node_resource
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: fr-rect, label: "**ClusteredDecalPlugin**<br/>提供聚簇贴花投射。" }
+  class n3 node_plugin
   n4@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**DecalsBuffer**<br/>保存准备上传的聚簇贴花 GPU 数据。" }
-  class n5 node_resource
-  n6@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n6 node_system_set
-  class n6 external_node
+  n5@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n5 node_system_set
+  class n5 external_node
+  n6@{ shape: cyl, label: "**DecalsBuffer**<br/>保存准备上传的聚簇贴花 GPU 数据。" }
+  class n6 node_resource
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n3 e2@--> n0
-  class e2 edge_read
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
   n4 e3@--> n0
   class e3 edge_read
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
-  n6 e5@-->|"集合成员"| n0
-  class e5 edge_set_membership
+  n5 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e3@{ curve: basis }
-  e5@{ curve: basis }
+  e4@{ curve: basis }

@@ -45,33 +45,35 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**integrate​_​positions**<br/>按子步速度积分刚体位姿增量。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n1@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
   class n1 node_resource
-  class n1 external_node
-  n2@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
-  class n2 node_resource
-  n3@{ shape: lin-rect, label: "**Position**<br/>组织速度与位置积分阶段。" }
-  class n3 node_system_set
-  n4@{ shape: rounded, label: "**update​_​solver​_​body​_​angular​_​inertia**<br/>按当前朝向刷新求解器的有效逆惯量。" }
-  class n4 node_system
-  n5@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
-  class n5 node_resource
+  n2@{ shape: lin-rect, label: "**Position**<br/>组织速度与位置积分阶段。" }
+  class n2 node_system_set
+  n3@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  class n4 node_resource
+  n5@{ shape: rounded, label: "**update​_​solver​_​body​_​angular​_​inertia**<br/>按当前朝向刷新求解器的有效逆惯量。" }
+  class n5 node_system
   n6@{ shape: fr-rect, label: "**IntegratorPlugin**<br/>积分运动并预测刚体姿态。" }
   class n6 node_plugin
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
-  n3 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
-  n0 e3@-->|"先于"| n4
-  class e3 edge_order
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
-  n0 e5@-->|"赋值"| n5
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n3 e2@--> n0
+  class e2 edge_read
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n0 e4@-->|"先于"| n5
+  class e4 edge_order
+  n0 e5@-->|"赋值"| n1
   class e5 edge_write
   n6 e6@-->|"调用"| n0
   class e6 edge_registration
+  n1 layout_output_0@~~~ n4
+  n4 layout_output_1@~~~ n5
   e0@{ curve: basis }
   e1@{ curve: basis }
   e3@{ curve: basis }

@@ -46,43 +46,43 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​smaa​_​textures**<br/>为 SMAA 分配边缘、模板和混合权重纹理。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n1@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
-  class n2 node_component
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**SmaaTextures**<br/>保存 SMAA 的边缘、模板与混合中间纹理。" }
+  n3@{ shape: rounded, label: "**Smaa**<br/>为视图选择 SMAA 质量预设。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n4 node_resource
-  class n4 external_node
-  n5@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n5 node_system_set
-  class n5 external_node
-  n6@{ shape: rounded, label: "**Smaa**<br/>为视图选择 SMAA 质量预设。" }
-  class n6 node_component
-  n7@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
-  class n7 node_resource
+  n4@{ shape: rounded, label: "**SmaaTextures**<br/>保存 SMAA 的边缘、模板与混合中间纹理。" }
+  class n4 node_component
+  n5@{ shape: fr-rect, label: "**SmaaPlugin**<br/>提供亚像素形态抗锯齿。" }
+  class n5 node_plugin
+  n6@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n7 node_system_set
   class n7 external_node
-  n8@{ shape: fr-rect, label: "**SmaaPlugin**<br/>提供亚像素形态抗锯齿。" }
-  class n8 node_plugin
-  n1 e0@-->|"存在性约束"| n0
-  class e0 edge_reference
+  n8@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  class n8 node_component
+  class n8 external_node
+  n1 e0@--> n0
+  class e0 edge_read
   n2 e1@--> n0
   class e1 edge_read
-  n0 e2@-->|"插入"| n3
-  class e2 edge_write
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"集合成员"| n0
-  class e4 edge_set_membership
-  n6 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
-  n8 e7@-->|"调用"| n0
-  class e7 edge_registration
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n0 e3@-->|"插入"| n4
+  class e3 edge_write
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
+  n7 e6@-->|"集合成员"| n0
+  class e6 edge_set_membership
+  n8 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

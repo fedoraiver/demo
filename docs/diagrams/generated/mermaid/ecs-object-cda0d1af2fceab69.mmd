@@ -46,37 +46,37 @@ flowchart LR
   class n0 node_system
   n1@{ shape: cyl, label: "**RenderClusteredDecals**<br/>维护场景贴花数据与纹理绑定索引。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
-  class n2 node_resource
-  class n2 external_node
-  n3@{ shape: rounded, label: "**ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
-  class n3 node_component
-  n4@{ shape: cyl, label: "**RenderViewClusteringReadbackData**<br/>管理各视图的 GPU 聚簇统计回读。" }
+  n2@{ shape: rounded, label: "**ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
+  class n2 node_component
+  n3@{ shape: cyl, label: "**GlobalClusterSettings**<br/>来自crate:bevy​_​light ↗：描述设备支持<br/>的聚簇功能和索引上限。" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**ViewGpuClusteringBuffers**<br/>保存单个视图的 GPU 聚簇工作缓冲。" }
-  class n5 node_component
-  n6@{ shape: cyl, label: "**GlobalClusterSettings**<br/>来自crate:bevy​_​light ↗：描述设备支持<br/>的聚簇功能和索引上限。" }
-  class n6 node_resource
+  class n4 external_node
+  n5@{ shape: cyl, label: "**GlobalClusterableObjectMeta**<br/>维护跨视图的聚簇光源缓冲与对象索引。" }
+  class n5 node_resource
+  n6@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n6 node_system_set
   class n6 external_node
-  n7@{ shape: rounded, label: "**RenderViewLightProbes#lt;IrradianceVolu**<br/>**me#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
+  n7@{ shape: rounded, label: "**ViewClusterBindings**<br/>提供视图聚簇索引和偏移的绑定数据。" }
   class n7 node_component
-  n8@{ shape: cyl, label: "**GlobalClusterableObjectMeta**<br/>维护跨视图的聚簇光源缓冲与对象索引。" }
+  n8@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n8 node_resource
-  n9@{ shape: rounded, label: "**ViewClusterBindings**<br/>提供视图聚簇索引和偏移的绑定数据。" }
+  class n8 external_node
+  n9@{ shape: rounded, label: "**ViewGpuClusteringBuffers**<br/>保存单个视图的 GPU 聚簇工作缓冲。" }
   class n9 node_component
-  n10@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n10 node_system_set
-  class n10 external_node
-  n11@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n11 node_resource
+  n10@{ shape: rounded, label: "**RenderViewLightProbes#lt;IrradianceVolu**<br/>**me#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
+  class n10 node_component
+  n11@{ shape: lin-rect, label: "**AnonymousSet(2)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
+  class n11 node_system_set
   class n11 external_node
   n12@{ shape: rounded, label: "**RenderViewLightProbes#lt;EnvironmentMap**<br/>**Light#gt;**<br/>维护视图光照探针及纹理绑定索引。" }
   class n12 node_component
-  n13@{ shape: lin-rect, label: "**AnonymousSet(2)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
-  class n13 node_system_set
-  class n13 external_node
-  n14@{ shape: rounded, label: "**upload​_​view​_​gpu​_​clustering​_​buffers**<br/>上传聚簇深度切片、元数据和计数暂存。" }
-  class n14 node_system
+  n13@{ shape: rounded, label: "**upload​_​view​_​gpu​_​clustering​_​buffers**<br/>上传聚簇深度切片、元数据和计数暂存。" }
+  class n13 node_system
+  n14@{ shape: cyl, label: "**RenderViewClusteringReadbackData**<br/>管理各视图的 GPU 聚簇统计回读。" }
+  class n14 node_resource
   n15@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
   class n15 node_component
   class n15 external_node
@@ -86,30 +86,30 @@ flowchart LR
   class e1 edge_read
   n3 e2@--> n0
   class e2 edge_read
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n0 e4@-->|"插入"| n5
-  class e4 edge_write
-  n6 e5@--> n0
-  class e5 edge_read
-  n7 e6@--> n0
-  class e6 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
+  n0 e6@-->|"赋值"| n7
+  class e6 edge_write
   n8 e7@--> n0
   class e7 edge_read
   n0 e8@-->|"插入"| n9
   class e8 edge_write
-  n10 e9@-->|"集合成员"| n0
-  class e9 edge_set_membership
-  n0 e10@-->|"赋值"| n9
-  class e10 edge_write
-  n11 e11@--> n0
+  n10 e9@--> n0
+  class e9 edge_read
+  n11 e10@-->|"集合成员"| n0
+  class e10 edge_set_membership
+  n12 e11@--> n0
   class e11 edge_read
-  n12 e12@--> n0
-  class e12 edge_read
-  n13 e13@-->|"集合成员"| n0
-  class e13 edge_set_membership
-  n0 e14@-->|"先于"| n14
-  class e14 edge_order
+  n0 e12@-->|"插入"| n7
+  class e12 edge_write
+  n0 e13@-->|"先于"| n13
+  class e13 edge_order
+  n0 e14@-->|"可变访问"| n14
+  class e14 edge_write
   n15 e15@--> n0
   class e15 edge_read
   e0@{ curve: basis }
@@ -117,9 +117,9 @@ flowchart LR
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
   e6@{ curve: basis }
-  e8@{ curve: bumpX }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }

@@ -46,41 +46,41 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**update​_​translation​_​interpolation​_​**<br/>**start**<br/>把当前位置记录为插值起点。" }
   class n0 node_system
-  n1@{ shape: lin-rect, label: "**UpdateStart**<br/>组织变换缓动端点与帧间应用。" }
-  class n1 node_system_set
-  n2@{ shape: rounded, label: "**TranslationInterpolation**<br/>启用平移插值" }
-  class n2 node_component
+  n1@{ shape: fr-rect, label: "**TransformInterpolationPlugin**<br/>插值固定步之间的显示变换。" }
+  class n1 node_plugin
+  n2@{ shape: lin-rect, label: "**UpdateStart**<br/>组织变换缓动端点与帧间应用。" }
+  class n2 node_system_set
   n3@{ shape: rounded, label: "**update​_​rotation​_​interpolation​_​start**<br/>把当前旋转记录为插值起点。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**NoTranslationEasing**<br/>显式禁止当前实体的平移插值和外推" }
+  n4@{ shape: rounded, label: "**TranslationEasingState**<br/>保存固定步平移插值的起点与终点" }
   class n4 node_component
   n5@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**TranslationEasingState**<br/>保存固定步平移插值的起点与终点" }
+  n6@{ shape: rounded, label: "**NoTranslationEasing**<br/>显式禁止当前实体的平移插值和外推" }
   class n6 node_component
-  n7@{ shape: fr-rect, label: "**TransformInterpolationPlugin**<br/>插值固定步之间的显示变换。" }
-  class n7 node_plugin
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
+  n7@{ shape: rounded, label: "**TranslationInterpolation**<br/>启用平移插值" }
+  class n7 node_component
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
   n0 e2@-->|"先于"| n3
   class e2 edge_order
-  n4 e3@-->|"存在性约束"| n0
-  class e3 edge_reference
-  n5 e4@--> n0
-  class e4 edge_read
-  n0 e5@-->|"赋值"| n6
-  class e5 edge_write
-  n0 e6@-->|"可变访问"| n6
-  class e6 edge_write
-  n7 e7@-->|"调用"| n0
-  class e7 edge_registration
+  n0 e3@-->|"赋值"| n4
+  class e3 edge_write
+  n0 e4@-->|"可变访问"| n4
+  class e4 edge_write
+  n5 e5@--> n0
+  class e5 edge_read
+  n6 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
+  n7 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
+  e3@{ curve: bumpX }
   e4@{ curve: basis }
-  e5@{ curve: bumpX }
   e6@{ curve: basis }
   e7@{ curve: basis }

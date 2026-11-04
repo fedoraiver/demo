@@ -1,0 +1,76 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: ui::scroll::MenuScroll · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**MenuScroll**<br/>可滚动区域的标记；用于键盘导航时把当前按<br/>钮滚入视野。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**scroll​_​focused​_​button**<br/>短窗口中键盘仍能访问所有按钮；新页面先等<br/>布局完成，再滚到焦点所在区域。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>同步设置滚动条的有效范围和交互状态。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>裁切并滚动设置面板内的正文内容。" }
+  class n3 node_entity
+  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>裁切并滚动设置面板内的正文内容。" }
+  class n4 node_entity
+  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>裁切并滚动设置面板内的正文内容。" }
+  class n5 node_entity
+  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>裁切并滚动设置面板内的正文内容。" }
+  class n6 node_entity
+  n7@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>把设置滚动轨道绑定到实际内容视口。" }
+  class n7 node_system
+  n0 e0@-->|"存在性约束"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在性约束"| n2
+  class e1 edge_reference
+  n3 e2@-->|"可能包含"| n0
+  class e2 edge_reference
+  n4 e3@-->|"可能包含"| n0
+  class e3 edge_reference
+  n5 e4@-->|"可能包含"| n0
+  class e4 edge_reference
+  n6 e5@-->|"可能包含"| n0
+  class e5 edge_reference
+  n0 e6@-->|"存在性约束"| n7
+  class e6 edge_reference
+  e0@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

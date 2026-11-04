@@ -45,54 +45,54 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**writeback​_​solver​_​bodies**<br/>将求解后的位姿和速度回写 ECS。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
-  class n1 node_resource
-  n2@{ shape: rounded, label: "**AngularVelocity**<br/>保存刚体的世界角速度。" }
-  class n2 node_component
-  n3@{ shape: fr-rect, label: "**SolverBodyPlugin**<br/>维护约束求解使用的刚体缓存。" }
-  class n3 node_plugin
-  n4@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
-  class n4 node_resource
+  n1@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  class n1 node_component
+  n2@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
+  class n2 node_resource
+  n3@{ shape: rounded, label: "**LinearVelocity**<br/>保存刚体的世界线速度。" }
+  class n3 node_component
+  n4@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
+  class n4 node_component
   n5@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**LinearVelocity**<br/>保存刚体的世界线速度。" }
-  class n6 node_component
-  n7@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  n6@{ shape: fr-rect, label: "**SolverBodyPlugin**<br/>维护约束求解使用的刚体缓存。" }
+  class n6 node_plugin
+  n7@{ shape: rounded, label: "**AngularVelocity**<br/>保存刚体的世界角速度。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
-  class n8 node_component
+  n8@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  class n8 node_resource
   n9@{ shape: lin-rect, label: "**Finalize**<br/>组织约束求解的准备、子步与回写。" }
   class n9 node_system_set
   n10@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n10 node_component
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"可变访问"| n2
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n0 e1@-->|"赋值"| n2
   class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n0 e3@-->|"赋值"| n4
-  class e3 edge_write
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
   n5 e4@--> n0
   class e4 edge_read
-  n0 e5@-->|"可变访问"| n6
+  n0 e5@-->|"可变访问"| n2
   class e5 edge_write
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
-  n8 e7@--> n0
-  class e7 edge_read
-  n9 e8@-->|"集合成员"| n0
-  class e8 edge_set_membership
-  n0 e9@-->|"可变访问"| n4
-  class e9 edge_write
+  n6 e6@-->|"调用"| n0
+  class e6 edge_registration
+  n0 e7@-->|"可变访问"| n7
+  class e7 edge_write
+  n8 e8@--> n0
+  class e8 edge_read
+  n9 e9@-->|"集合成员"| n0
+  class e9 edge_set_membership
   n0 e10@-->|"可变访问"| n10
   class e10 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
+  e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

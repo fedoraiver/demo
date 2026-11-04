@@ -45,25 +45,25 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**submit​_​pending​_​command​_​buffers**<br/>将排队完成的渲染命令缓冲提交到 GPU。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**PendingCommandBuffers**<br/>来自crate:bevy​_​render ↗：暂存等待提交<br/>到渲染队列的命令缓冲和编码器。" }
-  class n1 node_resource
-  class n1 external_node
-  n2@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n1@{ shape: fr-rect, label: "**CorePipelinePlugin**<br/>装配核心渲染管线与相机驱动。" }
+  class n1 node_plugin
+  n2@{ shape: cyl, label: "**PendingCommandBuffers**<br/>来自crate:bevy​_​render ↗：暂存等待提交<br/>到渲染队列的命令缓冲和编码器。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**CorePipelinePlugin**<br/>装配核心渲染管线与相机驱动。" }
-  class n3 node_plugin
+  n3@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  class n3 node_resource
+  class n3 external_node
   n4@{ shape: lin-rect, label: "**Submit**<br/>来自crate:bevy​_​render ↗：组织绘制执<br/>行、提交与收尾。" }
   class n4 node_system_set
   class n4 external_node
   n5@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>清除本帧没有相机覆盖的窗口交换链。" }
   class n5 node_system
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n2 e1@--> n0
-  class e1 edge_read
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
   n4 e3@-->|"集合成员"| n0
   class e3 edge_set_membership
   n0 e4@-->|"先于"| n5

@@ -47,28 +47,28 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**repopulate**<br/>重建指针与相机组合的拾取射线。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n1@{ shape: rounded, label: "**RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n2@{ shape: rounded, label: "**PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
   class n2 node_component
-  class n2 external_node
-  n3@{ shape: rounded, label: "**RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
+  n3@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**RayMap**<br/>按指针和相机组合保存拾取射线" }
-  class n4 node_resource
-  n5@{ shape: fr-rect, label: "**PickingPlugin**<br/>建立指针拾取的公共基础。" }
-  class n5 node_plugin
-  n6@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n4@{ shape: lin-rect, label: "**ProcessInput**<br/>组织指针拾取和悬停处理阶段。" }
+  class n4 node_system_set
+  n5@{ shape: cyl, label: "**RayMap**<br/>按指针和相机组合保存拾取射线" }
+  class n5 node_resource
+  n6@{ shape: rounded, label: "**PointerLocation**<br/>保存指针当前目标及该目标上的位置" }
   class n6 node_component
-  class n6 external_node
-  n7@{ shape: lin-rect, label: "**ProcessInput**<br/>组织指针拾取和悬停处理阶段。" }
-  class n7 node_system_set
-  n8@{ shape: rounded, label: "**PointerLocation**<br/>保存指针当前目标及该目标上的位置" }
-  class n8 node_component
-  n9@{ shape: rounded, label: "**PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
+  n7@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n7 node_component
+  class n7 external_node
+  n8@{ shape: fr-rect, label: "**PickingPlugin**<br/>建立指针拾取的公共基础。" }
+  class n8 node_plugin
+  n9@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n9 node_component
+  class n9 external_node
   n10@{ shape: rounded, label: "**receive**<br/>按输入消息更新拾取指针状态。" }
   class n10 node_system
   n1 e0@--> n0
@@ -77,24 +77,24 @@ flowchart LR
   class e1 edge_read
   n3 e2@--> n0
   class e2 edge_read
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
-  n6 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
-  n7 e6@-->|"集合成员"| n0
-  class e6 edge_set_membership
-  n8 e7@--> n0
-  class e7 edge_read
-  n9 e8@--> n0
-  class e8 edge_read
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@-->|"调用"| n0
+  class e7 edge_registration
+  n9 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
   n10 e9@-->|"先于"| n0
   class e9 edge_order
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e4@{ curve: basis }
+  e3@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

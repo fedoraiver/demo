@@ -1,0 +1,137 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: collision::contact_types::contact_graph::ContactGraph · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
+  class n0 node_resource
+  n1@{ shape: hex, label: "**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
+  class n1 node_observer
+  n2@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**emit​_​item​_​land**<br/>来自item​_​interaction ↗：检测自由物品<br/>支撑撞击并锁存一次落地音效。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: hex, label: "**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
+  class n4 node_observer
+  n5@{ shape: rounded, label: "**split​_​island**<br/>根据接触与关节连接重新拆分物理岛。" }
+  class n5 node_system
+  n6@{ shape: hex, label: "**on​_​disable​_​joint​_​collision**<br/>清理关节两端被禁止的碰撞接触。" }
+  class n6 node_observer
+  n7@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
+  class n8 node_system
+  n9@{ shape: hex, label: "**on​_​disable​_​body**<br/>清理被禁用刚体的接触。" }
+  class n9 node_observer
+  n10@{ shape: rounded, label: "**collect​_​collision​_​pairs**<br/>为移动碰撞代理收集广相候选接触。" }
+  class n10 node_system
+  n11@{ shape: hex, label: "**on​_​add​_​sensor**<br/>清除转为传感器前的旧接触。" }
+  class n11 node_observer
+  n12@{ shape: rounded, label: "**store​_​contact​_​impulses**<br/>保存已求得的接触冲量供下一轮热启动。" }
+  class n12 node_system
+  n13@{ shape: hex, label: "**on​_​body​_​remove​_​rigid​_​body​_​disabled**<br/>清除刚体重新启用时的旧接触。" }
+  class n13 node_observer
+  n14@{ shape: hex, label: "**on​_​remove​_​sensor**<br/>清除传感器转回普通碰撞体的旧接触。" }
+  class n14 node_observer
+  n15@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
+  class n16 node_system
+  n17@{ shape: hex, label: "**remove​_​collider​_​on**<br/>清理碰撞体接触与对端碰撞记录。" }
+  class n17 node_observer
+  n18@{ shape: hex, label: "**remove​_​collider​_​on**<br/>清理碰撞体接触与对端碰撞记录。" }
+  class n18 node_observer
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n0 e4@--> n5
+  class e4 edge_read
+  n6 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n0 e6@--> n7
+  class e6 edge_read
+  n0 e7@--> n8
+  class e7 edge_read
+  n9 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  n10 e9@-->|"可变访问"| n0
+  class e9 edge_write
+  n11 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n12 e11@-->|"可变访问"| n0
+  class e11 edge_write
+  n13 e12@-->|"可变访问"| n0
+  class e12 edge_write
+  n14 e13@-->|"可变访问"| n0
+  class e13 edge_write
+  n15 e14@-->|"可变访问"| n0
+  class e14 edge_write
+  n16 e15@-->|"可变访问"| n0
+  class e15 edge_write
+  n17 e16@-->|"可变访问"| n0
+  class e16 edge_write
+  n18 e17@-->|"可变访问"| n0
+  class e17 edge_write
+  n2 layout_output_0@~~~ n3
+  n3 layout_output_1@~~~ n5
+  n5 layout_output_2@~~~ n7
+  n7 layout_output_3@~~~ n8
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }

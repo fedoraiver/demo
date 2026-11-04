@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-51a3255fc9c9e2d9-e7{marker-start:url(#object-51a3255fc9c9e2d9_flowchart-v2-pointStart)!important}\n#object-51a3255fc9c9e2d9_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-51a3255fc9c9e2d9-e3{marker-start:url(#object-51a3255fc9c9e2d9_flowchart-v2-pointStart)!important}\n#object-51a3255fc9c9e2d9_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -48,50 +48,50 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**clear​_​cancelled​_​primary​_​presses**<br/>Bevy 先从 HoverMap 排除取消的指针，随<br/>后可能无法为它发出 PointerCancel。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n1@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
-  class n2 node_component
+  n2@{ shape: lin-rect, label: "**Last**<br/>来自crate:bevy​_​picking ↗：组织指针拾<br/>取和悬停处理阶段。" }
+  class n2 node_system_set
   class n2 external_node
   n3@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n3 node_plugin
-  n4@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n4@{ shape: rounded, label: "**PrimaryPress**<br/>原生 Button 对任意指针键维护 Pressed；<br/>菜单单独保留主键来源以筛选动作和样式。" }
   class n4 node_component
-  class n4 external_node
-  n5@{ shape: lin-rect, label: "**Last**<br/>来自crate:bevy​_​picking ↗：组织指针拾<br/>取和悬停处理阶段。" }
-  class n5 node_system_set
+  n5@{ shape: rounded, label: "**Pressed**<br/>来自crate:bevy​_​ui ↗：标记按钮或控件当<br/>前处于按住状态。" }
+  class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**PrimaryPress**<br/>原生 Button 对任意指针键维护 Pressed；<br/>菜单单独保留主键来源以筛选动作和样式。" }
-  class n6 node_component
-  n7@{ shape: lean-r, label: "**PointerInput**<br/>来自crate:bevy​_​picking ↗：传递拾取指<br/>针输入动作。" }
-  class n7 node_message
+  n6@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  class n7 node_component
   class n7 external_node
-  n8@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n8 node_resource
+  n8@{ shape: lean-r, label: "**PointerInput**<br/>来自crate:bevy​_​picking ↗：传递拾取指<br/>针输入动作。" }
+  class n8 node_message
   class n8 external_node
-  n1 e0@-->|"存在性约束"| n0
-  class e0 edge_reference
-  n0 e1@-->|"移除"| n2
-  class e1 edge_write
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@-->|"先于"| n0
+  class e1 edge_order
   n3 e2@-->|"调用"| n0
   class e2 edge_registration
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"先于"| n0
-  class e4 edge_order
+  n4 e3@---|"移除"| n0
+  class e3 edge_write
+  n0 e4@-->|"移除"| n5
+  class e4 edge_write
   n6 e5@--> n0
   class e5 edge_read
-  n7 e6@--> n0
-  class e6 edge_consume
-  n6 e7@---|"移除"| n0
-  class e7 edge_write
-  n8 e8@--> n0
+  n7 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
+  n8 e7@--> n0
+  class e7 edge_consume
+  n4 e8@--> n0
   class e8 edge_read
   e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }

@@ -41,12 +41,12 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**GizmoStorage#lt;FrustumGizmoConfigGroup**<br/>**, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n1@{ shape: cyl, label: "**Assets#lt;GizmoAsset#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**Assets#lt;GizmoAsset#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n1 external_node
+  n2@{ shape: cyl, label: "**GizmoHandles**<br/>按配置组记录当前调试图元资产句柄。" }
   class n2 node_resource
-  class n2 external_node
-  n3@{ shape: cyl, label: "**GizmoHandles**<br/>按配置组记录当前调试图元资产句柄。" }
+  n3@{ shape: cyl, label: "**GizmoStorage#lt;FrustumGizmoConfigGroup**<br/>**, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n3 node_resource
   n4@{ shape: lin-rect, label: "**GizmoMeshSystems**<br/>把调试绘制存储转换为渲染网格。" }
   class n4 node_system_set

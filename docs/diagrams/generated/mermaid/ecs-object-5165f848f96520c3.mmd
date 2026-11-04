@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-5165f848f96520c3-e7{marker-start:url(#object-5165f848f96520c3_flowchart-v2-pointStart)!important}\n#object-5165f848f96520c3_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-5165f848f96520c3-e3{marker-start:url(#object-5165f848f96520c3_flowchart-v2-pointStart)!important}\n#object-5165f848f96520c3_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -45,46 +45,46 @@ flowchart LR
   n1@{ shape: rounded, label: "**SmaaTextures**<br/>来自crate:bevy​_​anti​_​alias ↗：保存<br/>SMAA 的边缘、模板与混合中间纹理。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: cyl, label: "**SmaaPipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：保存<br/>SMAA 三个阶段的基础管线。" }
-  class n2 node_resource
-  class n2 external_node
-  n3@{ shape: rounded, label: "**ViewSmaaPipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：记录当<br/>前视图三个 SMAA 管线的标识。" }
-  class n3 node_component
-  class n3 external_node
+  n2@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
+  class n2 node_component
+  n3@{ shape: notch-rect, label: "**Local · arg1**<br/>按上次组件提取数量预留输出容量。" }
+  class n3 node_local
   n4@{ shape: rounded, label: "**Smaa**<br/>来自crate:bevy​_​anti​_​alias ↗：为视图<br/>选择 SMAA 质量预设。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
-  class n5 node_resource
-  n6@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
-  class n6 node_component
-  n7@{ shape: rounded, label: "**SmaaBindGroups**<br/>来自crate:bevy​_​anti​_​alias ↗：保存视<br/>图三个 SMAA 阶段的资源绑定。" }
-  class n7 node_component
-  class n7 external_node
-  n8@{ shape: notch-rect, label: "**Local · arg1**<br/>按上次组件提取数量预留输出容量。" }
-  class n8 node_local
+  n5@{ shape: rounded, label: "**SmaaBindGroups**<br/>来自crate:bevy​_​anti​_​alias ↗：保存视<br/>图三个 SMAA 阶段的资源绑定。" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: cyl, label: "**SmaaPipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：保存<br/>SMAA 三个阶段的基础管线。" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  class n7 node_resource
+  n8@{ shape: rounded, label: "**ViewSmaaPipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：记录当<br/>前视图三个 SMAA 管线的标识。" }
+  class n8 node_component
+  class n8 external_node
   n0 e0@-->|"移除"| n1
   class e0 edge_write
-  n0 e1@-->|"移除"| n2
-  class e1 edge_write
-  n0 e2@-->|"移除"| n3
+  n2 e1@--> n0
+  class e1 edge_read
+  n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@--> n0
-  class e4 edge_read
-  n6 e5@--> n0
-  class e5 edge_read
-  n0 e6@-->|"移除"| n7
-  class e6 edge_write
-  n4 e7@---|"移除"| n0
+  n4 e3@---|"移除"| n0
+  class e3 edge_write
+  n0 e4@-->|"移除"| n5
+  class e4 edge_write
+  n0 e5@-->|"移除"| n6
+  class e5 edge_write
+  n7 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"移除"| n8
   class e7 edge_write
-  n0 e8@-->|"可变访问"| n8
-  class e8 edge_write
+  n4 e8@--> n0
+  class e8 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e3@{ curve: basis }
-  e4@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }

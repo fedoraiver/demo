@@ -45,44 +45,44 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**extract​_​core​_​2d​_​camera​_​phases**<br/>为活动二维相机准备渲染阶段并清理失效视<br/>图。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n1@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent2d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**Camera2d**<br/>来自crate:bevy​_​camera ↗：标记使用二维<br/>渲染流程的相机。" }
-  class n2 node_component
-  class n2 external_node
-  n3@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n2@{ shape: fr-rect, label: "**Core2dPlugin**<br/>建立二维相机的渲染流程。" }
+  class n2 node_plugin
+  n3@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: notch-rect, label: "**Local · live​_​entities**<br/>记录本帧仍活动的二维相机渲染阶段。" }
-  class n4 node_local
-  n5@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
-  class n5 node_component
+  n4@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  class n5 node_resource
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**Core2dPlugin**<br/>建立二维相机的渲染流程。" }
-  class n6 node_plugin
-  n7@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent2d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
-  class n7 node_resource
-  class n7 external_node
-  n8@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n6@{ shape: rounded, label: "**Camera2d**<br/>来自crate:bevy​_​camera ↗：标记使用二维<br/>渲染流程的相机。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: notch-rect, label: "**Local · live​_​entities**<br/>记录本帧仍活动的二维相机渲染阶段。" }
+  class n7 node_local
+  n8@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
   class n8 node_resource
   class n8 external_node
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n5 e4@--> n0
-  class e4 edge_read
-  n6 e5@-->|"调用"| n0
-  class e5 edge_registration
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n6 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
   n0 e6@-->|"可变访问"| n7
   class e6 edge_write
-  n8 e7@--> n0
-  class e7 edge_read
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

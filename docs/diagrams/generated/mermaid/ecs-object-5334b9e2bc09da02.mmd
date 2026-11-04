@@ -45,33 +45,33 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
-  class n1 node_system
-  n2@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
-  class n2 node_plugin
-  n3@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n3 node_resource
-  class n3 external_node
+  n1@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: rounded, label: "**EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
+  class n2 node_component
+  n3@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
+  class n3 node_system
   n4@{ shape: cyl, label: "**EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
   class n4 node_resource
-  n5@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
-  class n5 node_message
-  class n5 external_node
-  n6@{ shape: rounded, label: "**EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
-  class n6 node_component
-  n0 e0@-->|"先于"| n1
-  class e0 edge_order
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n0 e2@-->|"赋值"| n3
-  class e2 edge_write
+  n5@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
+  class n5 node_plugin
+  n6@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  class n6 node_message
+  class n6 external_node
+  n0 e0@-->|"赋值"| n1
+  class e0 edge_write
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n0 e2@-->|"先于"| n3
+  class e2 edge_order
   n0 e3@-->|"移除"| n4
   class e3 edge_write
-  n0 e4@-->|"消息"| n5
-  class e4 edge_publish
-  n0 e5@-->|"可变访问"| n6
-  class e5 edge_write
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n0 e5@-->|"消息"| n6
+  class e5 edge_publish
   e0@{ curve: basis }
-  e2@{ curve: basis }
-  e4@{ curve: basis }
+  e1@{ curve: basis }
+  e3@{ curve: basis }
   e5@{ curve: basis }

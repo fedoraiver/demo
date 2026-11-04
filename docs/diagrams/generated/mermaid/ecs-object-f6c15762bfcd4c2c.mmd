@@ -44,85 +44,55 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**update​_​spot​_​light​_​frusta**<br/>更新可见聚光灯的阴影视锥。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
-  class n1 node_plugin
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
+  n1@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
+  class n1 node_system_set
+  class n1 external_node
+  n2@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n2 node_component
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
-  class n3 node_system_set
+  class n2 external_node
+  n3@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  class n3 node_component
   class n3 external_node
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
+  n4@{ shape: rounded, label: "**SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
   class n4 node_component
-  class n4 external_node
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
-  class n5 node_component
+  n5@{ shape: lin-rect, label: "**FrustumGizmoSystems**<br/>来自crate:bevy​_​gizmos ↗：收集并绘制相<br/>机视锥调试线。" }
+  class n5 node_system_set
   class n5 external_node
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
-  class n6 node_component
-  class n6 external_node
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: lin-rect, label: "**FrustumGizmoSystems**<br/>来自crate:bevy​_​gizmos ↗：收集并绘制相<br/>机视锥调试线。" }
-  class n7 node_system_set
+  n6@{ shape: lin-rect, label: "**AssignLightsToClusters**<br/>组织灯光聚簇与可见性准备。" }
+  class n6 node_system_set
+  n7@{ shape: rounded, label: "**Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
+  class n7 node_component
   class n7 external_node
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: lin-rect, label: "**AssignLightsToClusters**<br/>组织灯光聚簇与可见性准备。" }
-  class n8 node_system_set
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
+  n8@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
+  class n8 node_plugin
   n9@{ shape: lin-rect, label: "**UpdateLightFrusta**<br/>组织灯光聚簇与可见性准备。" }
   class n9 node_system_set
-  end
-  style layout_card_n9 fill:none,stroke:none
-  n1 e0@-->|"调用"| n0
-  class e0 edge_registration
+  n1 e0@-->|"先于"| n0
+  class e0 edge_order
   n2 e1@--> n0
   class e1 edge_read
-  n3 e2@-->|"先于"| n0
-  class e2 edge_order
-  n0 e3@-->|"赋值"| n4
-  class e3 edge_write
-  n5 e4@--> n0
-  class e4 edge_read
-  n6 e5@--> n0
-  class e5 edge_read
-  n0 e6@-->|"先于"| n7
-  class e6 edge_order
-  n0 e7@-->|"可变访问"| n4
-  class e7 edge_write
-  n8 e8@-->|"先于"| n0
-  class e8 edge_order
-  n6 e9@-->|"存在性约束"| n0
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n0 e4@-->|"先于"| n5
+  class e4 edge_order
+  n6 e5@-->|"先于"| n0
+  class e5 edge_order
+  n0 e6@-->|"可变访问"| n7
+  class e6 edge_write
+  n8 e7@-->|"调用"| n0
+  class e7 edge_registration
+  n4 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
+  n3 e9@-->|"存在性约束"| n0
   class e9 edge_reference
-  n5 e10@-->|"存在性约束"| n0
+  n2 e10@-->|"存在性约束"| n0
   class e10 edge_reference
-  n2 e11@-->|"存在性约束"| n0
-  class e11 edge_reference
+  n0 e11@-->|"赋值"| n7
+  class e11 edge_write
   n9 e12@-->|"集合成员"| n0
   class e12 edge_set_membership
   e0@{ curve: basis }
@@ -131,7 +101,7 @@ flowchart LR
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: basis }
+  e6@{ curve: bumpX }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

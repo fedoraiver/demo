@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-32e49e4ec4f32674-e0{marker-start:url(#object-32e49e4ec4f32674_flowchart-v2-pointStart)!important}\n#object-32e49e4ec4f32674-e4{marker-start:url(#object-32e49e4ec4f32674_flowchart-v2-pointStart)!important}\n#object-32e49e4ec4f32674_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-32e49e4ec4f32674-e1{marker-start:url(#object-32e49e4ec4f32674_flowchart-v2-pointStart)!important}\n#object-32e49e4ec4f32674-e3{marker-start:url(#object-32e49e4ec4f32674_flowchart-v2-pointStart)!important}\n#object-32e49e4ec4f32674_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -42,29 +42,28 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​collider​_​constructors**<br/>把就绪的碰撞构造配置变成实际形状。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  n1@{ shape: rounded, label: "**ColliderConstructor**<br/>描述待构建的碰撞体形状。" }
   class n1 node_component
   n2@{ shape: rounded, label: "**Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**ColliderConstructor**<br/>描述待构建的碰撞体形状。" }
+  n3@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
   class n3 node_component
   n4@{ shape: stadium, label: "**ColliderConstructorReady**<br/>通知单实体碰撞体已成功构造。" }
   class n4 node_event
-  n1 e0@---|"插入"| n0
-  class e0 edge_write
-  n2 e1@--> n0
-  class e1 edge_read
-  n3 e2@--> n0
+  n1 e0@--> n0
+  class e0 edge_read
+  n1 e1@---|"移除"| n0
+  class e1 edge_write
+  n2 e2@--> n0
   class e2 edge_read
-  n0 e3@-->|"触发事件"| n4
-  class e3 edge_emit
-  n3 e4@---|"移除"| n0
-  class e4 edge_write
-  n1 e5@--> n0
+  n3 e3@---|"插入"| n0
+  class e3 edge_write
+  n0 e4@-->|"触发事件"| n4
+  class e4 edge_emit
+  n3 e5@--> n0
   class e5 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: bumpX }
-  e4@{ curve: basis }
+  e3@{ curve: basis }
   e5@{ curve: basis }

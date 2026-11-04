@@ -42,13 +42,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**solve​_​restitution**<br/>对接触刚体施加碰撞恢复冲量。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**SolverConfig**<br/>配置接触与关节约束求解参数。" }
+  n1@{ shape: cyl, label: "**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
   class n1 node_resource
   n2@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
   class n2 node_resource
   n3@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
+  n4@{ shape: cyl, label: "**SolverConfig**<br/>配置接触与关节约束求解参数。" }
   class n4 node_resource
   n5@{ shape: lin-rect, label: "**Restitution**<br/>组织约束求解的准备、子步与回写。" }
   class n5 node_system_set
@@ -56,11 +56,11 @@ flowchart LR
   class n6 node_resource
   n1 e0@--> n0
   class e0 edge_read
-  n0 e1@-->|"赋值"| n2
+  n0 e1@-->|"可变访问"| n2
   class e1 edge_write
-  n0 e2@-->|"可变访问"| n2
+  n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n0 e3@-->|"可变访问"| n3
+  n0 e3@-->|"赋值"| n2
   class e3 edge_write
   n4 e4@--> n0
   class e4 edge_read
@@ -70,7 +70,7 @@ flowchart LR
   class e6 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: bumpX }
   e5@{ curve: basis }
   e6@{ curve: basis }

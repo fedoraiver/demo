@@ -46,21 +46,21 @@ flowchart LR
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PrepareResourcesFlush**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: fr-rect, label: "**Mesh2dRenderPlugin**<br/>来自crate:bevy​_​sprite​_​render ↗：准备<br/>二维网格实例和批处理管线。" }
-  class n2 node_plugin
-  class n2 external_node
-  n3@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
-  class n3 node_resource
-  n4@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n2@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  class n2 node_resource
+  n3@{ shape: fr-rect, label: "**Mesh2dRenderPlugin**<br/>来自crate:bevy​_​sprite​_​render ↗：准备<br/>二维网格实例和批处理管线。" }
+  class n3 node_plugin
+  class n3 external_node
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n4 node_resource
   n5@{ shape: cyl, label: "**BatchedInstanceBuffer#lt;Mesh2dUniform#gt;**<br/>保存 CPU 准备路径的批次绘制数据。" }
   class n5 node_resource
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n3 e2@--> n0
-  class e2 edge_read
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
   n4 e3@--> n0
   class e3 edge_read
   n0 e4@-->|"可变访问"| n5

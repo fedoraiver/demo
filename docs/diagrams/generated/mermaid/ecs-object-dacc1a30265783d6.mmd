@@ -46,29 +46,29 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**accumulate​_​mouse​_​motion​_​system**<br/>累计本帧鼠标位移。" }
   class n0 node_system
-  n1@{ shape: lin-rect, label: "**InputSystems**<br/>把原始设备消息汇总为本帧输入状态。" }
-  class n1 node_system_set
-  n2@{ shape: fr-rect, label: "**InputPlugin**<br/>汇集设备输入并维护输入状态。" }
-  class n2 node_plugin
-  n3@{ shape: cyl, label: "**AccumulatedMouseMotion**<br/>累计当前帧鼠标移动位移。" }
-  class n3 node_resource
-  n4@{ shape: lean-r, label: "**MouseMotion**<br/>传递鼠标原始移动增量。" }
-  class n4 node_message
-  n5@{ shape: cyl, label: "**Messages#lt;MouseMotion#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n5 node_resource
-  class n5 external_node
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n0 e2@-->|"赋值"| n3
-  class e2 edge_write
-  n0 e3@-->|"可变访问"| n3
-  class e3 edge_write
-  n4 e4@--> n0
+  n1@{ shape: cyl, label: "**AccumulatedMouseMotion**<br/>累计当前帧鼠标移动位移。" }
+  class n1 node_resource
+  n2@{ shape: lin-rect, label: "**InputSystems**<br/>把原始设备消息汇总为本帧输入状态。" }
+  class n2 node_system_set
+  n3@{ shape: fr-rect, label: "**InputPlugin**<br/>汇集设备输入并维护输入状态。" }
+  class n3 node_plugin
+  n4@{ shape: cyl, label: "**Messages#lt;MouseMotion#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: lean-r, label: "**MouseMotion**<br/>传递鼠标原始移动增量。" }
+  class n5 node_message
+  n0 e0@-->|"赋值"| n1
+  class e0 edge_write
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@--> n0
   class e4 edge_consume
-  n5 e5@--> n0
-  class e5 edge_read
+  n0 e5@-->|"可变访问"| n1
+  class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

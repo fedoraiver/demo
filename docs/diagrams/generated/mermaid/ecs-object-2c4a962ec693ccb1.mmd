@@ -49,60 +49,60 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**generate​_​hovermap**<br/>汇总拾取命中并应用指针捕获。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**PointerCaptureMap**<br/>保存指针捕获目标" }
-  class n1 node_resource
+  n1@{ shape: fr-rect, label: "**InteractionPlugin**<br/>生成并冒泡指针交互事件。" }
+  class n1 node_plugin
   n2@{ shape: notch-rect, label: "**Local · over​_​map**<br/>暂存各指针的后端命中结果以生成悬停映射。" }
   class n2 node_local
-  n3@{ shape: rounded, label: "**PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
-  class n3 node_component
-  n4@{ shape: cyl, label: "**Messages#lt;PointerHits#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n3@{ shape: cyl, label: "**PreviousHoverMap**<br/>保留上一轮指针悬停目标。" }
+  class n3 node_resource
+  n4@{ shape: cyl, label: "**PointerCaptureMap**<br/>保存指针捕获目标" }
   class n4 node_resource
-  class n4 external_node
-  n5@{ shape: rounded, label: "**update​_​interactions**<br/>合并多个指针对目标实体的交互状态。" }
-  class n5 node_system
-  n6@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n6 node_resource
-  class n6 external_node
-  n7@{ shape: lin-rect, label: "**Hover**<br/>组织指针拾取和悬停处理阶段。" }
-  class n7 node_system_set
-  n8@{ shape: rounded, label: "**Pickable**<br/>配置实体是否可被拾取及是否阻挡深度更低的<br/>命中目标" }
-  class n8 node_component
-  n9@{ shape: lean-r, label: "**PointerInput**<br/>传递拾取指针输入动作。" }
+  n5@{ shape: rounded, label: "**Pickable**<br/>配置实体是否可被拾取及是否阻挡深度更低的<br/>命中目标" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**update​_​interactions**<br/>合并多个指针对目标实体的交互状态。" }
+  class n6 node_system
+  n7@{ shape: cyl, label: "**HoverMap**<br/>保存各指针当前可交互的悬停目标。" }
+  class n7 node_resource
+  n8@{ shape: lin-rect, label: "**Hover**<br/>组织指针拾取和悬停处理阶段。" }
+  class n8 node_system_set
+  n9@{ shape: lean-r, label: "**PointerHits**<br/>传递拾取后端的实体命中结果。" }
   class n9 node_message
-  n10@{ shape: cyl, label: "**HoverMap**<br/>保存各指针当前可交互的悬停目标。" }
-  class n10 node_resource
-  n11@{ shape: fr-rect, label: "**InteractionPlugin**<br/>生成并冒泡指针交互事件。" }
-  class n11 node_plugin
-  n12@{ shape: cyl, label: "**PreviousHoverMap**<br/>保留上一轮指针悬停目标。" }
-  class n12 node_resource
-  n13@{ shape: lean-r, label: "**PointerHits**<br/>传递拾取后端的实体命中结果。" }
-  class n13 node_message
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
+  n10@{ shape: lean-r, label: "**PointerInput**<br/>传递拾取指针输入动作。" }
+  class n10 node_message
+  n11@{ shape: cyl, label: "**Messages#lt;PointerHits#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n11 node_resource
+  class n11 external_node
+  n12@{ shape: rounded, label: "**PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
+  class n12 node_component
+  n13@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n13 node_resource
+  class n13 external_node
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
   n0 e1@-->|"可变访问"| n2
   class e1 edge_write
-  n3 e2@--> n0
-  class e2 edge_read
-  n4 e3@--> n0
-  class e3 edge_read
-  n0 e4@-->|"先于"| n5
-  class e4 edge_order
-  n6 e5@--> n0
-  class e5 edge_read
-  n7 e6@-->|"集合成员"| n0
-  class e6 edge_set_membership
-  n8 e7@--> n0
-  class e7 edge_read
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n5 e4@--> n0
+  class e4 edge_read
+  n0 e5@-->|"先于"| n6
+  class e5 edge_order
+  n0 e6@-->|"可变访问"| n7
+  class e6 edge_write
+  n8 e7@-->|"集合成员"| n0
+  class e7 edge_set_membership
   n9 e8@--> n0
   class e8 edge_consume
-  n0 e9@-->|"可变访问"| n10
-  class e9 edge_write
-  n11 e10@-->|"调用"| n0
-  class e10 edge_registration
-  n0 e11@-->|"可变访问"| n12
-  class e11 edge_write
+  n10 e9@--> n0
+  class e9 edge_consume
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@--> n0
+  class e11 edge_read
   n13 e12@--> n0
-  class e12 edge_consume
+  class e12 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

@@ -44,21 +44,21 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**trigger​_​screenshots**<br/>标记已完成截图并触发携带图像的事件。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**Captured**<br/>标记截图已完成且请求实体可以清理。" }
-  class n1 node_component
-  n2@{ shape: stadium, label: "**ScreenshotCaptured**<br/>向截图请求实体通知图像已捕获完成。" }
-  class n2 node_event
-  n3@{ shape: fr-rect, label: "**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
-  class n3 node_plugin
-  n4@{ shape: cyl, label: "**CapturedScreenshots**<br/>接收后台已完成的截图图像。" }
-  class n4 node_resource
-  n0 e0@-->|"插入"| n1
-  class e0 edge_write
-  n0 e1@-->|"触发事件"| n2
-  class e1 edge_emit
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
+  n1@{ shape: stadium, label: "**ScreenshotCaptured**<br/>向截图请求实体通知图像已捕获完成。" }
+  class n1 node_event
+  n2@{ shape: cyl, label: "**CapturedScreenshots**<br/>接收后台已完成的截图图像。" }
+  class n2 node_resource
+  n3@{ shape: rounded, label: "**Captured**<br/>标记截图已完成且请求实体可以清理。" }
+  class n3 node_component
+  n4@{ shape: fr-rect, label: "**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
+  class n4 node_plugin
+  n0 e0@-->|"触发事件"| n1
+  class e0 edge_emit
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n0 e2@-->|"插入"| n3
+  class e2 edge_write
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
   e0@{ curve: basis }
-  e3@{ curve: basis }
+  e2@{ curve: basis }

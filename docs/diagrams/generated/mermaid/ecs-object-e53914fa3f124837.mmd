@@ -43,9 +43,9 @@ flowchart LR
   class n0 node_system
   n1@{ shape: fr-rect, label: "**SkinnedMeshBoundsGizmoPlugin**<br/>绘制动态蒙皮网格包围盒。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**GizmoStorage#lt;SkinnedMeshBoundsGizmoC**<br/>**onfigGroup, Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n2@{ shape: cyl, label: "**GizmoStorage#lt;SkinnedMeshBoundsGizmoC**<br/>**onfigGroup, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**GizmoStorage#lt;SkinnedMeshBoundsGizmoC**<br/>**onfigGroup, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n3@{ shape: cyl, label: "**GizmoStorage#lt;SkinnedMeshBoundsGizmoC**<br/>**onfigGroup, Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n3 node_resource
   n1 e0@-->|"调用"| n0
   class e0 edge_registration

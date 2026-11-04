@@ -48,42 +48,42 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**receive**<br/>按输入消息更新拾取指针状态。" }
   class n0 node_system
-  n1@{ shape: lin-rect, label: "**ProcessInput**<br/>组织指针拾取和悬停处理阶段。" }
-  class n1 node_system_set
-  n2@{ shape: rounded, label: "**PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
-  class n2 node_component
-  n3@{ shape: rounded, label: "**PointerLocation**<br/>保存指针当前目标及该目标上的位置" }
-  class n3 node_component
-  n4@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n4 node_resource
-  class n4 external_node
-  n5@{ shape: fr-rect, label: "**PickingPlugin**<br/>建立指针拾取的公共基础。" }
-  class n5 node_plugin
-  n6@{ shape: lean-r, label: "**PointerInput**<br/>传递拾取指针输入动作。" }
-  class n6 node_message
-  n7@{ shape: rounded, label: "**PointerPressState**<br/>记录指针主键、次键及中键的按下状态" }
-  class n7 node_component
+  n1@{ shape: rounded, label: "**PointerLocation**<br/>保存指针当前目标及该目标上的位置" }
+  class n1 node_component
+  n2@{ shape: cyl, label: "**Messages#lt;PointerInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: fr-rect, label: "**PickingPlugin**<br/>建立指针拾取的公共基础。" }
+  class n3 node_plugin
+  n4@{ shape: lin-rect, label: "**ProcessInput**<br/>组织指针拾取和悬停处理阶段。" }
+  class n4 node_system_set
+  n5@{ shape: rounded, label: "**PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**PointerPressState**<br/>记录指针主键、次键及中键的按下状态" }
+  class n6 node_component
+  n7@{ shape: lean-r, label: "**PointerInput**<br/>传递拾取指针输入动作。" }
+  class n7 node_message
   n8@{ shape: rounded, label: "**repopulate**<br/>重建指针与相机组合的拾取射线。" }
   class n8 node_system
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
   n2 e1@--> n0
   class e1 edge_read
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
-  n6 e5@--> n0
-  class e5 edge_consume
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n5 e4@--> n0
+  class e4 edge_read
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
+  n7 e6@--> n0
+  class e6 edge_consume
   n0 e7@-->|"先于"| n8
   class e7 edge_order
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
+  e6@{ curve: basis }
   e7@{ curve: basis }

@@ -48,60 +48,60 @@ flowchart LR
   n1@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
-  class n2 node_component
+  n2@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  class n2 node_resource
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**DeferredPbrLightingPlugin**<br/>提供延迟物理材质光照。" }
-  class n3 node_plugin
-  n4@{ shape: rounded, label: "**DeferredLightingPipeline**<br/>保存视图选用的延迟光照管线。" }
-  class n4 node_component
-  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n5 node_resource
-  class n5 external_node
-  n6@{ shape: rounded, label: "**screen​_​space​_​reflections**<br/>采样场景颜色、深度与蓝噪声绘制屏幕空间反<br/>射。" }
-  class n6 node_system
-  n7@{ shape: cyl, label: "**DeferredLightingLayout**<br/>描述延迟光照绘制的着色与绑定接口。" }
-  class n7 node_resource
-  n8@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
-  class n8 node_resource
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: fr-rect, label: "**DeferredPbrLightingPlugin**<br/>提供延迟物理材质光照。" }
+  class n4 node_plugin
+  n5@{ shape: rounded, label: "**screen​_​space​_​reflections**<br/>采样场景颜色、深度与蓝噪声绘制屏幕空间反<br/>射。" }
+  class n5 node_system
+  n6@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  class n7 node_component
+  class n7 external_node
+  n8@{ shape: rounded, label: "**DeferredLightingIdDepthTexture**<br/>来自crate:bevy​_​core​_​pipeline ↗：保存<br/>延迟光照通道使用的标识深度纹理。" }
+  class n8 node_component
   class n8 external_node
-  n9@{ shape: lin-rect, label: "**MainPass**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
-  class n9 node_system_set
-  class n9 external_node
-  n10@{ shape: cyl, label: "**ComponentUniforms#lt;PbrDeferredLightin**<br/>**gDepthId#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
-  class n10 node_resource
+  n9@{ shape: rounded, label: "**DeferredLightingPipeline**<br/>保存视图选用的延迟光照管线。" }
+  class n9 node_component
+  n10@{ shape: lin-rect, label: "**MainPass**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
+  class n10 node_system_set
   class n10 external_node
-  n11@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n11@{ shape: cyl, label: "**DeferredLightingLayout**<br/>描述延迟光照绘制的着色与绑定接口。" }
   class n11 node_resource
-  class n11 external_node
-  n12@{ shape: rounded, label: "**DeferredLightingIdDepthTexture**<br/>来自crate:bevy​_​core​_​pipeline ↗：保存<br/>延迟光照通道使用的标识深度纹理。" }
+  n12@{ shape: rounded, label: "**MeshViewBindGroup**<br/>保存网格视图的主要及数组资源绑定。" }
   class n12 node_component
-  class n12 external_node
-  n13@{ shape: rounded, label: "**MeshViewBindGroup**<br/>保存网格视图的主要及数组资源绑定。" }
-  class n13 node_component
-  n14@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n13@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  class n13 node_resource
+  class n13 external_node
+  n14@{ shape: cyl, label: "**ComponentUniforms#lt;PbrDeferredLightin**<br/>**gDepthId#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
   class n14 node_resource
   class n14 external_node
   n0 e0@-->|"先于"| n1
   class e0 edge_order
   n2 e1@--> n0
   class e1 edge_read
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@--> n0
-  class e4 edge_read
-  n0 e5@-->|"先于"| n6
-  class e5 edge_order
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n0 e4@-->|"先于"| n5
+  class e4 edge_order
+  n6 e5@--> n0
+  class e5 edge_read
   n7 e6@--> n0
   class e6 edge_read
   n8 e7@--> n0
   class e7 edge_read
-  n9 e8@-->|"集合成员"| n0
-  class e8 edge_set_membership
-  n10 e9@--> n0
-  class e9 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@-->|"集合成员"| n0
+  class e9 edge_set_membership
   n11 e10@--> n0
   class e10 edge_read
   n12 e11@--> n0

@@ -44,34 +44,34 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**AssetEvent#lt;GltfPrimitive#gt;**<br/>通知指定资产及依赖发生变化。" }
-  class n1 node_message
-  n2@{ shape: cyl, label: "**AssetChanges#lt;GltfPrimitive#gt;**<br/>记录资产最近变化的系统刻度。" }
-  class n2 node_resource
-  n3@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
-  class n3 node_system
-  n4@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;GltfPrimitive#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;GltfPrimitive#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
+  class n2 node_system
+  n3@{ shape: lean-r, label: "**AssetEvent#lt;GltfPrimitive#gt;**<br/>通知指定资产及依赖发生变化。" }
+  class n3 node_message
+  n4@{ shape: cyl, label: "**AssetChanges#lt;GltfPrimitive#gt;**<br/>记录资产最近变化的系统刻度。" }
   class n4 node_resource
-  class n4 external_node
-  n5@{ shape: cyl, label: "**Assets#lt;GltfPrimitive#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
-  class n5 node_resource
-  n6@{ shape: lin-rect, label: "**AssetEventSystems**<br/>发布资产容器积累的变更消息。" }
-  class n6 node_system_set
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_publish
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
-  n3 e2@-->|"运行条件"| n0
-  class e2 edge_reference
-  n0 e3@-->|"赋值"| n4
-  class e3 edge_write
-  n0 e4@-->|"消息"| n1
-  class e4 edge_publish
-  n0 e5@-->|"可变访问"| n5
-  class e5 edge_write
-  n6 e6@-->|"集合成员"| n0
-  class e6 edge_set_membership
-  n0 e7@-->|"可变访问"| n4
+  n5@{ shape: lin-rect, label: "**AssetEventSystems**<br/>发布资产容器积累的变更消息。" }
+  class n5 node_system_set
+  n6@{ shape: cyl, label: "**Assets#lt;GltfPrimitive#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
+  class n6 node_resource
+  n0 e0@-->|"赋值"| n1
+  class e0 edge_write
+  n2 e1@-->|"运行条件"| n0
+  class e1 edge_reference
+  n0 e2@-->|"可变访问"| n1
+  class e2 edge_write
+  n0 e3@-->|"消息"| n3
+  class e3 edge_publish
+  n0 e4@-->|"可变访问"| n4
+  class e4 edge_write
+  n5 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
+  n0 e6@-->|"可变访问"| n3
+  class e6 edge_publish
+  n0 e7@-->|"可变访问"| n6
   class e7 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

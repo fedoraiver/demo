@@ -43,94 +43,58 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**prepare​_​gradient**<br/>将已排队的线性、径向和锥形渐变转换为<br/>GPU 顶点、索引与颜色停靠点数据，建立渐<br/>变绘制批次并上传相关缓冲。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: cyl, label: "**ExtractedGradients**<br/>保存已提取的 UI 背景与边框渐变。" }
+  n1@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n1 node_resource
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
+  class n1 external_node
   n2@{ shape: cyl, label: "**GradientPipeline**<br/>提供 UI 渐变的视图布局与着色器。" }
   class n2 node_resource
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n3@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;TransparentUi**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n3 node_resource
   class n3 external_node
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: cyl, label: "**ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
+  n4@{ shape: cyl, label: "**GradientMeta**<br/>保存 UI 渐变的 GPU 顶点、索引与视图绑<br/>定。" }
   class n4 node_resource
-  class n4 external_node
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n5@{ shape: cyl, label: "**ViewUniforms**<br/>来自crate:bevy​_​render ↗：汇集全部视图<br/>的动态 Uniform 数据。" }
   class n5 node_resource
   class n5 external_node
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: cyl, label: "**GradientMeta**<br/>保存 UI 渐变的 GPU 顶点、索引与视图绑<br/>定。" }
-  class n6 node_resource
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
+  n6@{ shape: fr-rect, label: "**GradientPlugin**<br/>提取并绘制界面渐变。" }
+  class n6 node_plugin
   n7@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n7 node_resource
   class n7 external_node
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: notch-rect, label: "**Local · previous​_​len**<br/>按上次 UI 渐变批次数预留输出空间。" }
-  class n8 node_local
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
-  n9@{ shape: fr-rect, label: "**GradientPlugin**<br/>提取并绘制界面渐变。" }
-  class n9 node_plugin
-  end
-  style layout_card_n9 fill:none,stroke:none
-  subgraph layout_card_n10[" "]
-  n10@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;TransparentUi**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n8@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  class n8 node_resource
+  class n8 external_node
+  n9@{ shape: notch-rect, label: "**Local · previous​_​len**<br/>按上次 UI 渐变批次数预留输出空间。" }
+  class n9 node_local
+  n10@{ shape: cyl, label: "**ExtractedGradients**<br/>保存已提取的 UI 背景与边框渐变。" }
   class n10 node_resource
-  class n10 external_node
-  end
-  style layout_card_n10 fill:none,stroke:none
-  subgraph layout_card_n11[" "]
   n11@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n11 node_system_set
   class n11 external_node
-  end
-  style layout_card_n11 fill:none,stroke:none
   n1 e0@--> n0
   class e0 edge_read
   n2 e1@--> n0
   class e1 edge_read
-  n3 e2@--> n0
-  class e2 edge_read
-  n4 e3@--> n0
-  class e3 edge_read
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n0 e3@-->|"赋值"| n4
+  class e3 edge_write
   n5 e4@--> n0
   class e4 edge_read
-  n0 e5@-->|"赋值"| n6
-  class e5 edge_write
+  n6 e5@-->|"调用"| n0
+  class e5 edge_registration
   n7 e6@--> n0
   class e6 edge_read
-  n0 e7@-->|"可变访问"| n8
-  class e7 edge_write
-  n9 e8@-->|"调用"| n0
-  class e8 edge_registration
-  n0 e9@-->|"可变访问"| n6
+  n8 e7@--> n0
+  class e7 edge_read
+  n0 e8@-->|"可变访问"| n9
+  class e8 edge_write
+  n0 e9@-->|"可变访问"| n4
   class e9 edge_write
-  n0 e10@-->|"可变访问"| n10
-  class e10 edge_write
+  n10 e10@--> n0
+  class e10 edge_read
   n11 e11@-->|"集合成员"| n0
   class e11 edge_set_membership
   e0@{ curve: basis }
@@ -140,6 +104,7 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
+  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

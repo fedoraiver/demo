@@ -45,9 +45,8 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​view​_​depth​_​texture​_​usages​_​**<br/>**for​_​motion​_​blur**<br/>让运动模糊相机的深度纹理可被采样。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n1@{ shape: rounded, label: "**MotionBlurUniform**<br/>向运动模糊着色器传递快门角度和采样数。" }
   class n1 node_component
-  class n1 external_node
   n2@{ shape: lin-rect, label: "**PrepareViews**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n2 node_system_set
   class n2 external_node
@@ -56,19 +55,20 @@ flowchart LR
   n4@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>来自crate:bevy​_​render ↗：为视图维护主<br/>颜色双缓冲及可选多采样目标。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**MotionBlurUniform**<br/>向运动模糊着色器传递快门角度和采样数。" }
+  n5@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n5 node_component
-  n0 e0@-->|"赋值"| n1
-  class e0 edge_write
+  class n5 external_node
+  n1 e0@-->|"存在性约束"| n0
+  class e0 edge_reference
   n2 e1@-->|"集合成员"| n0
   class e1 edge_set_membership
   n3 e2@-->|"调用"| n0
   class e2 edge_registration
   n4 e3@-->|"先于"| n0
   class e3 edge_order
-  n5 e4@-->|"存在性约束"| n0
-  class e4 edge_reference
-  n0 e5@-->|"可变访问"| n1
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n0 e5@-->|"赋值"| n5
   class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-e3dcaf878ac629ef-e1{marker-start:url(#object-e3dcaf878ac629ef_flowchart-v2-pointStart)!important}\n#object-e3dcaf878ac629ef-e6{marker-start:url(#object-e3dcaf878ac629ef_flowchart-v2-pointStart)!important}\n#object-e3dcaf878ac629ef-e15{marker-start:url(#object-e3dcaf878ac629ef_flowchart-v2-pointStart)!important}\n#object-e3dcaf878ac629ef_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-e3dcaf878ac629ef-e0{marker-start:url(#object-e3dcaf878ac629ef_flowchart-v2-pointStart)!important}\n#object-e3dcaf878ac629ef-e5{marker-start:url(#object-e3dcaf878ac629ef_flowchart-v2-pointStart)!important}\n#object-e3dcaf878ac629ef-e11{marker-start:url(#object-e3dcaf878ac629ef_flowchart-v2-pointStart)!important}\n#object-e3dcaf878ac629ef_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -47,80 +47,80 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**update​_​tablist​_​derived​_​state**<br/>从标签选择和焦点派生每个标签的状态。" }
   class n0 node_system
-  n1@{ shape: notch-rect, label: "**Local · removed​_​disabled.0.1**<br/>跟踪 InteractionDisabled 移除记录的读<br/>取进度。" }
-  class n1 node_local
-  n2@{ shape: rounded, label: "**Selected**<br/>来自crate:bevy​_​ui ↗：记录控件的<br/>ARIA 选中状态。" }
+  n1@{ shape: rounded, label: "**Selected**<br/>来自crate:bevy​_​ui ↗：记录控件的<br/>ARIA 选中状态。" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: rounded, label: "**SelectedTab**<br/>保存标签列表当前选中的直接子标签实体" }
   class n2 node_component
-  class n2 external_node
-  n3@{ shape: rounded, label: "**TabIndex**<br/>来自crate:bevy​_​input​_​focus ↗：声明实<br/>体参与 Tab 导航及其排序值" }
+  n3@{ shape: rounded, label: "**TabList**<br/>定义标签栏的导航轴及自动激活策略" }
   class n3 node_component
-  class n3 external_node
-  n4@{ shape: notch-rect, label: "**Local · removed​_​disabled.0.0.0.0**<br/>保存 InteractionDisabled 移除参数的组<br/>件 ID。" }
-  class n4 node_local
-  n5@{ shape: rounded, label: "**TabList**<br/>定义标签栏的导航轴及自动激活策略" }
-  class n5 node_component
-  n6@{ shape: rounded, label: "**Tab**<br/>标识可聚焦的标签标题" }
+  n4@{ shape: rounded, label: "**Tab**<br/>标识可聚焦的标签标题" }
+  class n4 node_component
+  n5@{ shape: fr-rect, label: "**TabPlugin**<br/>处理标签页选择并更新派生状态。" }
+  class n5 node_plugin
+  n6@{ shape: rounded, label: "**TabIndex**<br/>来自crate:bevy​_​input​_​focus ↗：声明实<br/>体参与 Tab 导航及其排序值" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
-  class n7 node_component
+  class n6 external_node
+  n7@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
+  class n7 node_resource
   class n7 external_node
-  n8@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
-  class n8 node_resource
-  class n8 external_node
-  n9@{ shape: lin-rect, label: "**MenuFocusSystem**<br/>为新打开的菜单取得首个内部焦点。" }
-  class n9 node_system_set
-  n10@{ shape: lin-rect, label: "**FocusChangeEvents**<br/>来自crate:bevy​_​input​_​focus ↗：组织焦<br/>点输入派发与变化通知。" }
-  class n10 node_system_set
-  class n10 external_node
-  n11@{ shape: fr-rect, label: "**TabPlugin**<br/>处理标签页选择并更新派生状态。" }
-  class n11 node_plugin
-  n12@{ shape: rounded, label: "**SelectedTab**<br/>保存标签列表当前选中的直接子标签实体" }
-  class n12 node_component
+  n8@{ shape: lin-rect, label: "**MenuFocusSystem**<br/>为新打开的菜单取得首个内部焦点。" }
+  class n8 node_system_set
+  n9@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: notch-rect, label: "**Local · removed​_​disabled.0.0.0.0**<br/>保存 InteractionDisabled 移除参数的组<br/>件 ID。" }
+  class n10 node_local
+  n11@{ shape: notch-rect, label: "**Local · removed​_​disabled.0.1**<br/>跟踪 InteractionDisabled 移除记录的读<br/>取进度。" }
+  class n11 node_local
+  n12@{ shape: lin-rect, label: "**FocusChangeEvents**<br/>来自crate:bevy​_​input​_​focus ↗：组织焦<br/>点输入派发与变化通知。" }
+  class n12 node_system_set
+  class n12 external_node
   n13@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n13 node_component
   class n13 external_node
-  n0 e0@-->|"可变访问"| n1
+  n1 e0@---|"插入"| n0
   class e0 edge_write
-  n2 e1@---|"插入"| n0
-  class e1 edge_write
-  n3 e2@--> n0
-  class e2 edge_read
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n2 e4@-->|"存在性约束"| n0
-  class e4 edge_reference
-  n5 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
-  n2 e6@---|"移除"| n0
-  class e6 edge_write
-  n6 e7@-->|"存在性约束"| n0
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n6 e5@---|"插入"| n0
+  class e5 edge_write
+  n4 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
+  n1 e7@-->|"存在性约束"| n0
   class e7 edge_reference
   n7 e8@--> n0
   class e8 edge_read
-  n8 e9@--> n0
-  class e9 edge_read
-  n9 e10@-->|"先于"| n0
-  class e10 edge_order
-  n6 e11@--> n0
-  class e11 edge_read
-  n0 e12@-->|"先于"| n10
+  n2 e9@-->|"存在性约束"| n0
+  class e9 edge_reference
+  n6 e10@--> n0
+  class e10 edge_read
+  n1 e11@---|"移除"| n0
+  class e11 edge_write
+  n8 e12@-->|"先于"| n0
   class e12 edge_order
-  n11 e13@-->|"调用"| n0
-  class e13 edge_registration
-  n12 e14@--> n0
-  class e14 edge_read
-  n3 e15@---|"插入"| n0
+  n9 e13@--> n0
+  class e13 edge_read
+  n9 e14@-->|"存在性约束"| n0
+  class e14 edge_reference
+  n0 e15@-->|"可变访问"| n10
   class e15 edge_write
-  n13 e16@--> n0
-  class e16 edge_read
-  n13 e17@-->|"存在性约束"| n0
-  class e17 edge_reference
-  n12 e18@-->|"存在性约束"| n0
+  n0 e16@-->|"可变访问"| n11
+  class e16 edge_write
+  n0 e17@-->|"先于"| n12
+  class e17 edge_order
+  n13 e18@-->|"存在性约束"| n0
   class e18 edge_reference
-  n7 e19@-->|"存在性约束"| n0
-  class e19 edge_reference
-  n1 layout_output_0@~~~ n4
-  n4 layout_output_1@~~~ n10
+  n13 e19@--> n0
+  class e19 edge_read
+  n10 layout_output_0@~~~ n11
+  n11 layout_output_1@~~~ n12
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -130,6 +130,7 @@ flowchart LR
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
+  e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }

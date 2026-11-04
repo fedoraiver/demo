@@ -39,15 +39,15 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**collect​_​render​_​assets​_​to​_​reextract**<br/>排空渲染资产并登记设备恢复后的重新提取。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderAssetsToReExtract#lt;GpuImage#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
+  n1@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;GpuImage#gt;**<br/>保留下一帧待准备的渲染源资产。" }
+  n2@{ shape: cyl, label: "**RenderAssetsToReExtract#lt;GpuImage#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n3@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;GpuImage#gt;**<br/>保留下一帧待准备的渲染源资产。" }
   class n3 node_resource
-  n0 e0@-->|"插入"| n1
+  n0 e0@-->|"可变访问"| n1
   class e0 edge_write
-  n0 e1@-->|"可变访问"| n2
+  n0 e1@-->|"插入"| n2
   class e1 edge_write
   n0 e2@-->|"可变访问"| n3
   class e2 edge_write

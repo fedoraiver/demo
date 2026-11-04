@@ -39,9 +39,9 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**collect​_​requested​_​gizmos**<br/>把即时 Gizmo 请求转存到指定清理上下文。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**GizmoStorage#lt;LightGizmoConfigGroup,**<br/>**Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n1@{ shape: cyl, label: "**GizmoStorage#lt;LightGizmoConfigGroup,**<br/>**()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**GizmoStorage#lt;LightGizmoConfigGroup,**<br/>**()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  n2@{ shape: cyl, label: "**GizmoStorage#lt;LightGizmoConfigGroup,**<br/>**Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n2 node_resource
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

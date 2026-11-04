@@ -50,7 +50,7 @@ flowchart LR
   n4@{ shape: rounded, label: "**log​_​collisions**<br/>来自physics ↗：接触开始和结束属于离散<br/>变化，通过现有文件日志设施记录碰撞双方。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**emit​_​parcel​_​land**<br/>来自item​_​interaction ↗：识别自由物品<br/>落地并发出声音请求。" }
+  n5@{ shape: rounded, label: "**emit​_​item​_​land**<br/>来自item​_​interaction ↗：检测自由物品<br/>支撑撞击并锁存一次落地音效。" }
   class n5 node_system
   class n5 external_node
   n6@{ shape: lin-rect, label: "**Writeback**<br/>划分物理准备、模拟与回写边界。" }

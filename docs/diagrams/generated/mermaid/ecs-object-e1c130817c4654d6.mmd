@@ -43,18 +43,18 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**reset​_​mip​_​generation​_​jobs**<br/>清空上一帧登记的 mip 生成任务。" }
   class n0 node_system
-  n1@{ shape: lin-rect, label: "**Cleanup**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n1 node_system_set
-  class n1 external_node
-  n2@{ shape: cyl, label: "**MipGenerationJobs**<br/>记录渲染世界中待生成 mipmap 的图像。" }
-  class n2 node_resource
-  n3@{ shape: fr-rect, label: "**MipGenerationPlugin**<br/>在 GPU 上生成纹理 mip 层级。" }
-  class n3 node_plugin
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n1@{ shape: fr-rect, label: "**MipGenerationPlugin**<br/>在 GPU 上生成纹理 mip 层级。" }
+  class n1 node_plugin
+  n2@{ shape: lin-rect, label: "**Cleanup**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n2 node_system_set
+  class n2 external_node
+  n3@{ shape: cyl, label: "**MipGenerationJobs**<br/>记录渲染世界中待生成 mipmap 的图像。" }
+  class n3 node_resource
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }

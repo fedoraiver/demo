@@ -46,57 +46,57 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**extract​_​2d​_​meshes**<br/>增量同步二维网格变换和渲染实例信息。" }
   class n0 node_system
-  n1@{ shape: notch-rect, label: "**Local · arg5.1.0.0.0.0.0**<br/>保存 NoAutomaticBatching 移除参数的组<br/>件 ID。" }
-  class n1 node_local
-  n2@{ shape: notch-rect, label: "**Local · arg5.1.0.0.1**<br/>跟踪 NoAutomaticBatching 移除记录的读<br/>取进度。" }
+  n1@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: notch-rect, label: "**Local · reextract​_​entities**<br/>保留二维网格下一帧需要重提取的实体。" }
   class n2 node_local
-  n3@{ shape: cyl, label: "**RenderMesh2dInstances**<br/>按主世界实体保存提取后的二维网格实例。" }
-  class n3 node_resource
-  n4@{ shape: cyl, label: "**RenderMaterialBindings**<br/>来自crate:bevy​_​render ↗：按无类型材质<br/>身份查找绑定位置。" }
+  n3@{ shape: notch-rect, label: "**Local · arg5.2.0.0.0.0.0**<br/>保存 MeshTag 移除参数的组件 ID。" }
+  class n3 node_local
+  n4@{ shape: cyl, label: "**RenderMaterial2dInstances**<br/>映射可渲染主世界实体到二维材质资产。" }
   class n4 node_resource
-  class n4 external_node
   n5@{ shape: rounded, label: "**Mesh2d**<br/>来自crate:bevy​_​mesh ↗：为二维可绘制实<br/>体指定网格资产。" }
   class n5 node_component
   class n5 external_node
   n6@{ shape: notch-rect, label: "**Local · arg5.0.0.0.0.0.0**<br/>保存 Mesh2d 移除参数的组件 ID。" }
   class n6 node_local
-  n7@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
-  class n7 node_component
-  class n7 external_node
-  n8@{ shape: notch-rect, label: "**Local · reextract​_​entities**<br/>保留二维网格下一帧需要重提取的实体。" }
-  class n8 node_local
-  n9@{ shape: notch-rect, label: "**Local · arg5.0.0.0.1**<br/>跟踪 Mesh2d 移除记录的读取进度。" }
-  class n9 node_local
-  n10@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>同步可见二维网格使用的材质资产身份。" }
-  class n10 node_system
-  n11@{ shape: fr-rect, label: "**Mesh2dRenderPlugin**<br/>准备二维网格实例和批处理管线。" }
-  class n11 node_plugin
-  n12@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
-  class n12 node_component
-  class n12 external_node
-  n13@{ shape: notch-rect, label: "**Local · arg5.2.0.0.0.0.0**<br/>保存 MeshTag 移除参数的组件 ID。" }
-  class n13 node_local
-  n14@{ shape: rounded, label: "**MeshTag**<br/>来自crate:bevy​_​mesh ↗：向着色器提供网<br/>格实例的数据索引。" }
-  class n14 node_component
-  class n14 external_node
-  n15@{ shape: notch-rect, label: "**Local · arg5.2.0.0.1**<br/>跟踪 MeshTag 移除记录的读取进度。" }
+  n7@{ shape: notch-rect, label: "**Local · arg5.1.0.0.0.0.0**<br/>保存 NoAutomaticBatching 移除参数的组<br/>件 ID。" }
+  class n7 node_local
+  n8@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**MeshTag**<br/>来自crate:bevy​_​mesh ↗：向着色器提供网<br/>格实例的数据索引。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: notch-rect, label: "**Local · reextract​_​entities​_​temp**<br/>暂存上一帧等待重提取的二维网格。" }
+  class n10 node_local
+  n11@{ shape: notch-rect, label: "**Local · arg5.0.0.0.1**<br/>跟踪 Mesh2d 移除记录的读取进度。" }
+  class n11 node_local
+  n12@{ shape: notch-rect, label: "**Local · arg5.2.0.0.1**<br/>跟踪 MeshTag 移除记录的读取进度。" }
+  class n12 node_local
+  n13@{ shape: cyl, label: "**RenderMaterialBindings**<br/>来自crate:bevy​_​render ↗：按无类型材质<br/>身份查找绑定位置。" }
+  class n13 node_resource
+  class n13 external_node
+  n14@{ shape: cyl, label: "**RenderMesh2dInstances**<br/>按主世界实体保存提取后的二维网格实例。" }
+  class n14 node_resource
+  n15@{ shape: notch-rect, label: "**Local · arg5.1.0.0.1**<br/>跟踪 NoAutomaticBatching 移除记录的读<br/>取进度。" }
   class n15 node_local
-  n16@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>同步可见二维网格使用的材质资产身份。" }
-  class n16 node_system
-  n17@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
-  class n17 node_resource
-  class n17 external_node
-  n18@{ shape: rounded, label: "**NoAutomaticBatching**<br/>来自crate:bevy​_​render ↗：禁止网格实体<br/>参与自动合批。" }
-  class n18 node_component
-  class n18 external_node
-  n19@{ shape: notch-rect, label: "**Local · reextract​_​entities​_​temp**<br/>暂存上一帧等待重提取的二维网格。" }
-  class n19 node_local
-  n20@{ shape: cyl, label: "**RenderMaterial2dInstances**<br/>映射可渲染主世界实体到二维材质资产。" }
-  class n20 node_resource
+  n16@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  class n16 node_component
+  class n16 external_node
+  n17@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>同步可见二维网格使用的材质资产身份。" }
+  class n17 node_system
+  n18@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>同步可见二维网格使用的材质资产身份。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**NoAutomaticBatching**<br/>来自crate:bevy​_​render ↗：禁止网格实体<br/>参与自动合批。" }
+  class n19 node_component
+  class n19 external_node
+  n20@{ shape: fr-rect, label: "**Mesh2dRenderPlugin**<br/>准备二维网格实例和批处理管线。" }
+  class n20 node_plugin
   n21@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>同步可见二维网格使用的材质资产身份。" }
   class n21 node_system
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
+  n1 e0@--> n0
+  class e0 edge_read
   n0 e1@-->|"可变访问"| n2
   class e1 edge_write
   n0 e2@-->|"可变访问"| n3
@@ -107,42 +107,42 @@ flowchart LR
   class e4 edge_reference
   n0 e5@-->|"可变访问"| n6
   class e5 edge_write
-  n7 e6@--> n0
-  class e6 edge_read
-  n0 e7@-->|"可变访问"| n8
-  class e7 edge_write
-  n0 e8@-->|"可变访问"| n9
-  class e8 edge_write
-  n10 e9@-->|"先于"| n0
-  class e9 edge_order
-  n11 e10@-->|"调用"| n0
-  class e10 edge_registration
-  n12 e11@--> n0
-  class e11 edge_read
-  n0 e12@-->|"可变访问"| n13
-  class e12 edge_write
-  n14 e13@--> n0
-  class e13 edge_read
+  n0 e6@-->|"可变访问"| n7
+  class e6 edge_write
+  n8 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
+  n9 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"可变访问"| n10
+  class e9 edge_write
+  n0 e10@-->|"可变访问"| n11
+  class e10 edge_write
+  n0 e11@-->|"可变访问"| n12
+  class e11 edge_write
+  n13 e12@--> n0
+  class e12 edge_read
+  n0 e13@-->|"可变访问"| n14
+  class e13 edge_write
   n0 e14@-->|"可变访问"| n15
   class e14 edge_write
-  n5 e15@--> n0
+  n16 e15@--> n0
   class e15 edge_read
-  n7 e16@-->|"存在性约束"| n0
+  n16 e16@-->|"存在性约束"| n0
   class e16 edge_reference
-  n16 e17@-->|"先于"| n0
+  n17 e17@-->|"先于"| n0
   class e17 edge_order
-  n17 e18@--> n0
+  n5 e18@--> n0
   class e18 edge_read
-  n18 e19@-->|"存在性约束"| n0
-  class e19 edge_reference
-  n12 e20@-->|"存在性约束"| n0
-  class e20 edge_reference
-  n0 e21@-->|"可变访问"| n19
-  class e21 edge_write
-  n20 e22@--> n0
-  class e22 edge_read
-  n14 e23@-->|"存在性约束"| n0
-  class e23 edge_reference
+  n8 e19@--> n0
+  class e19 edge_read
+  n18 e20@-->|"先于"| n0
+  class e20 edge_order
+  n19 e21@-->|"存在性约束"| n0
+  class e21 edge_reference
+  n9 e22@-->|"存在性约束"| n0
+  class e22 edge_reference
+  n20 e23@-->|"调用"| n0
+  class e23 edge_registration
   n21 e24@-->|"先于"| n0
   class e24 edge_order
   e0@{ curve: basis }

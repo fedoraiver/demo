@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-32cabbd802e58727-e9{marker-start:url(#object-32cabbd802e58727_flowchart-v2-pointStart)!important}\n#object-32cabbd802e58727_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-32cabbd802e58727-e10{marker-start:url(#object-32cabbd802e58727_flowchart-v2-pointStart)!important}\n#object-32cabbd802e58727_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -47,107 +47,107 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>场景就绪后只遍历该视觉根的子树，避免把<br/>NPC 或其他模型的播放器接到主角上。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**Assets#lt;Gltf#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n1 node_resource
+  n1@{ shape: rounded, label: "**Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
+  class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**CourierAnimation**<br/>只保存视觉混合与步相位；速度、朝向、接地<br/>及持有状态仍由业务组件提供。" }
+  n2@{ shape: rounded, label: "**AnimationGraphHandle**<br/>来自crate:bevy​_​animation ↗：选择播放<br/>器使用的动画图资产。" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**Assets#lt;AnimationGraph#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n3 node_resource
+  class n2 external_node
+  n3@{ shape: rounded, label: "**AnimationTransitions**<br/>来自crate:bevy​_​animation ↗：管理动画<br/>混合权重的淡出过程" }
+  class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**AnimationPlayer**<br/>来自crate:bevy​_​animation ↗：保存当前<br/>激活动画及其播放控制状态" }
-  class n4 node_component
-  class n4 external_node
-  n5@{ shape: rounded, label: "**CourierVisual**<br/>挂在 Character 直属视觉根上的 glTF 引<br/>用；只有标记的快递员接入玩法动画。" }
+  n4@{ shape: fr-rect, label: "**CharacterAnimationPlugin**<br/>注册场景就绪后的动画绑定，以及固定模拟和<br/>同帧呈现朝向同步后的动作混合。" }
+  class n4 node_plugin
+  n5@{ shape: rounded, label: "**CourierAnimationPending**<br/>等待 glTF 场景和命名动画都可用，避免异<br/>步子资产先完成时错过初始化。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
-  class n6 node_component
+  n6@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
+  class n6 node_system_set
   class n6 external_node
-  n7@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
-  class n7 node_system_set
+  n7@{ shape: cyl, label: "**Assets#lt;Gltf#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**AnimationTransitions**<br/>来自crate:bevy​_​animation ↗：管理动画<br/>混合权重的淡出过程" }
+  n8@{ shape: rounded, label: "**CourierVisual**<br/>挂在 Character 直属视觉根上的 glTF 引<br/>用；只有标记的快递员接入玩法动画。" }
   class n8 node_component
-  class n8 external_node
-  n9@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
-  class n9 node_component
+  n9@{ shape: cyl, label: "**Assets#lt;AnimationClip#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n9 node_resource
   class n9 external_node
-  n10@{ shape: rounded, label: "**CourierAnimationPending**<br/>等待 glTF 场景和命名动画都可用，避免异<br/>步子资产先完成时错过初始化。" }
+  n10@{ shape: rounded, label: "**CourierFootGrounding**<br/>导出鞋底四角作为骨骼子节点；接地补偿只抬<br/>视觉根，不改物理或持握来源。" }
   class n10 node_component
-  n11@{ shape: rounded, label: "**AnimationGraphHandle**<br/>来自crate:bevy​_​animation ↗：选择播放<br/>器使用的动画图资产。" }
+  n11@{ shape: rounded, label: "**CourierAnimation**<br/>只保存视觉混合与步相位；速度、朝向、接地<br/>及持有状态仍由业务组件提供。" }
   class n11 node_component
-  class n11 external_node
-  n12@{ shape: fr-rect, label: "**CharacterAnimationPlugin**<br/>注册场景就绪后的动画绑定，以及固定模拟和<br/>同帧呈现朝向同步后的动作混合。" }
-  class n12 node_plugin
-  n13@{ shape: rounded, label: "**HoldingItems**<br/>来自item​_​interaction ↗：Bevy 根据<br/>HeldBy 自动维护的反向索引，业务代码只读<br/>取。" }
+  n12@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: rounded, label: "**AnimationPlayer**<br/>来自crate:bevy​_​animation ↗：保存当前<br/>激活动画及其播放控制状态" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: rounded, label: "**CourierFootGrounding**<br/>导出鞋底四角作为骨骼子节点；接地补偿只抬<br/>视觉根，不改物理或持握来源。" }
+  n14@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
   class n14 node_component
-  n15@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  class n14 external_node
+  n15@{ shape: rounded, label: "**HoldingItems**<br/>来自item​_​interaction ↗：Bevy 根据<br/>HeldBy 自动维护的反向索引，业务代码只读<br/>取。" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: rounded, label: "**Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
+  n16@{ shape: rounded, label: "**CharacterMotion**<br/>来自character ↗：接地状态由物理查询派<br/>生；实际速度直接读取 Avian 的<br/>LinearVelocity。" }
   class n16 node_component
   class n16 external_node
-  n17@{ shape: rounded, label: "**CharacterMotion**<br/>来自character ↗：接地状态由物理查询派<br/>生；实际速度直接读取 Avian 的<br/>LinearVelocity。" }
+  n17@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n17 node_component
   class n17 external_node
-  n18@{ shape: rounded, label: "**sync​_​courier​_​animation**<br/>Update 位于固定模拟与呈现同步之后；零固<br/>定步帧也使用本帧朝向和已有真实速度。" }
-  class n18 node_system
-  n19@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
-  class n19 node_component
-  class n19 external_node
-  n20@{ shape: cyl, label: "**Assets#lt;AnimationClip#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n20 node_resource
+  n18@{ shape: cyl, label: "**Assets#lt;AnimationGraph#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n18 node_resource
+  class n18 external_node
+  n19@{ shape: rounded, label: "**sync​_​courier​_​animation**<br/>Update 位于固定模拟与呈现同步之后；零固<br/>定步帧也使用本帧朝向和已有真实速度。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  class n20 node_component
   class n20 external_node
-  n21@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n21@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n21 node_component
   class n21 external_node
   n1 e0@--> n0
   class e0 edge_read
   n0 e1@-->|"插入"| n2
   class e1 edge_write
-  n0 e2@-->|"可变访问"| n3
+  n0 e2@-->|"移除"| n3
   class e2 edge_write
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n5 e4@--> n0
-  class e4 edge_read
-  n6 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
-  n7 e6@-->|"集合成员"| n0
-  class e6 edge_set_membership
-  n0 e7@-->|"移除"| n8
-  class e7 edge_write
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n5 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
+  n6 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
   n9 e8@--> n0
   class e8 edge_read
-  n10 e9@---|"移除"| n0
+  n0 e9@-->|"插入"| n10
   class e9 edge_write
-  n0 e10@-->|"插入"| n11
+  n5 e10@---|"移除"| n0
   class e10 edge_write
-  n12 e11@-->|"调用"| n0
-  class e11 edge_registration
-  n13 e12@--> n0
+  n0 e11@-->|"插入"| n11
+  class e11 edge_write
+  n12 e12@--> n0
   class e12 edge_read
-  n0 e13@-->|"插入"| n14
+  n0 e13@-->|"可变访问"| n13
   class e13 edge_write
-  n15 e14@--> n0
+  n14 e14@--> n0
   class e14 edge_read
-  n10 e15@-->|"存在性约束"| n0
-  class e15 edge_reference
+  n15 e15@--> n0
+  class e15 edge_read
   n16 e16@--> n0
   class e16 edge_read
   n17 e17@--> n0
   class e17 edge_read
-  n0 e18@-->|"先于"| n18
-  class e18 edge_order
-  n19 e19@--> n0
-  class e19 edge_read
+  n0 e18@-->|"可变访问"| n18
+  class e18 edge_write
+  n0 e19@-->|"先于"| n19
+  class e19 edge_order
   n20 e20@--> n0
   class e20 edge_read
-  n21 e21@--> n0
-  class e21 edge_read
+  n21 e21@-->|"存在性约束"| n0
+  class e21 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -156,10 +156,9 @@ flowchart LR
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e11@{ curve: basis }
+  e11@{ curve: bumpX }
   e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }

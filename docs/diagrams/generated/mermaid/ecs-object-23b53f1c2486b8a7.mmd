@@ -55,22 +55,22 @@ flowchart LR
   n3@{ shape: rounded, label: "**mark​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>来自crate:bevy​_​pbr ↗：材质组件或资产<br/>变化时请求网格重新提取。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;Mesh#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n4 node_resource
+  n4@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
+  class n4 node_system
   class n4 external_node
-  n5@{ shape: lean-r, label: "**AssetEvent#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
-  class n5 node_message
+  n5@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;Mesh#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
-  class n6 node_system
+  n6@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
+  class n6 node_system_set
   class n6 external_node
-  n7@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
-  class n7 node_system_set
-  class n7 external_node
-  n8@{ shape: rounded, label: "**Mesh3d**<br/>为三维可绘制实体指定网格资产。" }
-  class n8 node_component
-  n9@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
-  class n9 node_system
+  n7@{ shape: rounded, label: "**Mesh3d**<br/>为三维可绘制实体指定网格资产。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**check​_​entities​_​needing​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：收集几何或材质<br/>变化及移除的三维网格。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: lean-r, label: "**AssetEvent#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
+  class n9 node_message
   class n9 external_node
   n0 e0@-->|"先于"| n1
   class e0 edge_order
@@ -78,23 +78,23 @@ flowchart LR
   class e1 edge_registration
   n0 e2@-->|"先于"| n3
   class e2 edge_order
-  n4 e3@--> n0
-  class e3 edge_read
+  n0 e3@-->|"先于"| n4
+  class e3 edge_order
   n5 e4@--> n0
-  class e4 edge_consume
-  n0 e5@-->|"先于"| n6
+  class e4 edge_read
+  n6 e5@-->|"先于"| n0
   class e5 edge_order
-  n7 e6@-->|"先于"| n0
-  class e6 edge_order
-  n0 e7@-->|"可变访问"| n8
-  class e7 edge_write
-  n0 e8@-->|"先于"| n9
-  class e8 edge_order
+  n0 e6@-->|"可变访问"| n7
+  class e6 edge_write
+  n0 e7@-->|"先于"| n8
+  class e7 edge_order
+  n9 e8@--> n0
+  class e8 edge_consume
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

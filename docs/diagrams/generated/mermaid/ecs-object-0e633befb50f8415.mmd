@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-0e633befb50f8415-e16{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415-e17{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415-e18{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415-e40{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415-e48{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415-e49{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415-e50{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-0e633befb50f8415-e6{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415-e15{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415-e16{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415-e17{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415-e27{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415-e38{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415-e43{marker-start:url(#object-0e633befb50f8415_flowchart-v2-pointStart)!important}\n#object-0e633befb50f8415_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -48,235 +48,235 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​lights**<br/>准备视图光照参数、阴影视图和阴影贴图。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
+  n1@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**ShadowView**<br/>描述阴影绘制的深度附件与通道名称。" }
-  class n2 node_component
-  n3@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: cyl, label: "**SpecializedShadowMaterialPipelineCac**<br/>**he**<br/>按光源视图缓存材质阴影专用管线。" }
   class n3 node_resource
-  class n3 external_node
-  n4@{ shape: notch-rect, label: "**Local · arg10.1**<br/>限制非聚簇区域光数量超限警告只输出一次。" }
-  class n4 node_local
-  n5@{ shape: cyl, label: "**LightMeta**<br/>汇集各视图的 GPU 光照 Uniform 数据。" }
-  class n5 node_resource
-  n6@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n4@{ shape: cyl, label: "**RenderClusteredDecals**<br/>维护场景贴花数据与纹理绑定索引。" }
+  class n4 node_resource
+  n5@{ shape: notch-rect, label: "**Local · arg10.2**<br/>限制单个方向光阴影级联超限警告只输出一<br/>次。" }
+  class n5 node_local
+  n6@{ shape: cyl, label: "**GlobalAmbientLight**<br/>来自crate:bevy​_​light ↗：配置场景默认<br/>的均匀环境光。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**OcclusionCullingSubview**<br/>来自crate:bevy​_​render ↗：为非相机视图<br/>保存遮挡裁剪深度资源。" }
+  n7@{ shape: rounded, label: "**ShadowView**<br/>描述阴影绘制的深度附件与通道名称。" }
   class n7 node_component
-  class n7 external_node
-  n8@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Shadow#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
-  class n8 node_resource
+  n8@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  class n8 node_component
   class n8 external_node
-  n9@{ shape: cyl, label: "**PointLightShadowMap**<br/>来自crate:bevy​_​light ↗：配置点光源立<br/>方体阴影贴图分辨率。" }
-  class n9 node_resource
-  class n9 external_node
-  n10@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  n9@{ shape: rounded, label: "**ExtractedPointLight**<br/>保存渲染侧点光或聚光的光照参数。" }
+  class n9 node_component
+  n10@{ shape: rounded, label: "**ViewLightEntities**<br/>保存相机相关的全部级联阴影视图。" }
   class n10 node_component
-  class n10 external_node
-  n11@{ shape: cyl, label: "**GlobalClusterableObjectMeta**<br/>维护跨视图的聚簇光源缓冲与对象索引。" }
-  class n11 node_resource
-  n12@{ shape: rounded, label: "**ViewLightsUniformOffset**<br/>定位视图在光照 Uniform 缓冲中的参数。" }
-  class n12 node_component
-  n13@{ shape: rounded, label: "**ExtractedPointLight**<br/>保存渲染侧点光或聚光的光照参数。" }
+  n11@{ shape: rounded, label: "**ViewShadowBindings**<br/>提供视图使用的阴影深度纹理与视图。" }
+  class n11 node_component
+  n12@{ shape: notch-rect, label: "**Local · arg10.3**<br/>记录本帧仍需保留的各类阴影视图。" }
+  class n12 node_local
+  n13@{ shape: rounded, label: "**CubemapFrusta**<br/>来自crate:bevy​_​camera ↗：保存立方体阴<br/>影六面的视锥。" }
   class n13 node_component
-  n14@{ shape: cyl, label: "**DirectionalLightShadowMap**<br/>来自crate:bevy​_​light ↗：配置方向光与<br/>聚光灯阴影贴图分辨率。" }
-  class n14 node_resource
+  class n13 external_node
+  n14@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  class n14 node_component
   class n14 external_node
-  n15@{ shape: notch-rect, label: "**Local · arg10.0**<br/>限制方向光数量超限警告只输出一次。" }
-  class n15 node_local
-  n16@{ shape: rounded, label: "**CubemapFrusta**<br/>来自crate:bevy​_​camera ↗：保存立方体阴<br/>影六面的视锥。" }
+  n15@{ shape: rounded, label: "**PointAndSpotLightViewEntities**<br/>追踪点光和聚光对应的阴影视图。" }
+  class n15 node_component
+  n16@{ shape: rounded, label: "**Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
   class n16 node_component
   class n16 external_node
-  n17@{ shape: rounded, label: "**NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
-  class n17 node_component
+  n17@{ shape: rounded, label: "**sort​_​cameras**<br/>来自crate:bevy​_​render ↗：为同一输出目<br/>标排序相机并分配合成次序。" }
+  class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**PointAndSpotLightViewEntities**<br/>追踪点光和聚光对应的阴影视图。" }
-  class n18 node_component
-  n19@{ shape: rounded, label: "**sort​_​cameras**<br/>来自crate:bevy​_​render ↗：为同一输出目<br/>标排序相机并分配合成次序。" }
-  class n19 node_system
+  n18@{ shape: cyl, label: "**SortedCameras**<br/>来自crate:bevy​_​render ↗：按相机绘制顺<br/>序保存排序结果。" }
+  class n18 node_resource
+  class n18 external_node
+  n19@{ shape: rounded, label: "**OcclusionCullingSubviewEntities**<br/>来自crate:bevy​_​render ↗：关联相机所需<br/>遮挡裁剪的阴影子视图。" }
+  class n19 node_component
   class n19 external_node
-  n20@{ shape: rounded, label: "**ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
-  class n20 node_component
-  n21@{ shape: rounded, label: "**ViewShadowBindings**<br/>提供视图使用的阴影深度纹理与视图。" }
+  n20@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
+  class n20 node_resource
+  class n20 external_node
+  n21@{ shape: rounded, label: "**ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
   class n21 node_component
-  n22@{ shape: notch-rect, label: "**Local · arg10.3**<br/>记录本帧仍需保留的各类阴影视图。" }
-  class n22 node_local
-  n23@{ shape: rounded, label: "**OcclusionCulling**<br/>来自crate:bevy​_​render ↗：启用视图的<br/>GPU 遮挡裁剪。" }
+  n22@{ shape: cyl, label: "**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
+  class n22 node_resource
+  class n22 external_node
+  n23@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
   class n23 node_component
   class n23 external_node
-  n24@{ shape: cyl, label: "**SpecializedShadowMaterialPipelineCac**<br/>**he**<br/>按光源视图缓存材质阴影专用管线。" }
-  class n24 node_resource
-  n25@{ shape: rounded, label: "**RootNonCameraView**<br/>来自crate:bevy​_​core​_​pipeline ↗：为非<br/>相机关联的根视图保存渲染调度入口。" }
+  n24@{ shape: rounded, label: "**specialize​_​shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**ViewLightsUniformOffset**<br/>定位视图在光照 Uniform 缓冲中的参数。" }
   class n25 node_component
-  class n25 external_node
-  n26@{ shape: rounded, label: "**OcclusionCullingSubviewEntities**<br/>来自crate:bevy​_​render ↗：关联相机所需<br/>遮挡裁剪的阴影子视图。" }
+  n26@{ shape: rounded, label: "**NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
   class n26 node_component
   class n26 external_node
-  n27@{ shape: cyl, label: "**GlobalAmbientLight**<br/>来自crate:bevy​_​light ↗：配置场景默认<br/>的均匀环境光。" }
+  n27@{ shape: cyl, label: "**DirectionalLightShadowMap**<br/>来自crate:bevy​_​light ↗：配置方向光与<br/>聚光灯阴影贴图分辨率。" }
   class n27 node_resource
   class n27 external_node
-  n28@{ shape: rounded, label: "**ExtractedDirectionalLight**<br/>保存渲染侧平行光和级联阴影设置。" }
+  n28@{ shape: rounded, label: "**DirectionalLightViewEntities**<br/>追踪各视图对应的平行光阴影视图。" }
   class n28 node_component
-  n29@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n29@{ shape: cyl, label: "**GlobalClusterableObjectMeta**<br/>维护跨视图的聚簇光源缓冲与对象索引。" }
   class n29 node_resource
-  class n29 external_node
-  n30@{ shape: rounded, label: "**specialize​_​shadows**<br/>按阴影视图、网格及材质变化重新选择专用阴<br/>影渲染管线，清理失效缓存，并整理需要补齐<br/>或重新排队的阴影网格任务。" }
-  class n30 node_system
-  n31@{ shape: cyl, label: "**SortedCameras**<br/>来自crate:bevy​_​render ↗：按相机绘制顺<br/>序保存排序结果。" }
-  class n31 node_resource
-  class n31 external_node
-  n32@{ shape: rounded, label: "**DirectionalLightViewEntities**<br/>追踪各视图对应的平行光阴影视图。" }
+  n30@{ shape: rounded, label: "**OcclusionCullingSubview**<br/>来自crate:bevy​_​render ↗：为非相机视图<br/>保存遮挡裁剪深度资源。" }
+  class n30 node_component
+  class n30 external_node
+  n31@{ shape: rounded, label: "**LightEntity**<br/>标识阴影视图对应的光源面或级联。" }
+  class n31 node_component
+  n32@{ shape: rounded, label: "**AmbientLight**<br/>来自crate:bevy​_​light ↗：为单台相机配<br/>置均匀环境光。" }
   class n32 node_component
-  n33@{ shape: rounded, label: "**AmbientLight**<br/>来自crate:bevy​_​light ↗：为单台相机配<br/>置均匀环境光。" }
-  class n33 node_component
+  class n32 external_node
+  n33@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Shadow#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  class n33 node_resource
   class n33 external_node
-  n34@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n34@{ shape: rounded, label: "**RootNonCameraView**<br/>来自crate:bevy​_​core​_​pipeline ↗：为非<br/>相机关联的根视图保存渲染调度入口。" }
   class n34 node_component
   class n34 external_node
-  n35@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
-  class n35 node_component
+  n35@{ shape: cyl, label: "**PointLightShadowMap**<br/>来自crate:bevy​_​light ↗：配置点光源立<br/>方体阴影贴图分辨率。" }
+  class n35 node_resource
   class n35 external_node
-  n36@{ shape: cyl, label: "**RenderClusteredDecals**<br/>维护场景贴花数据与纹理绑定索引。" }
-  class n36 node_resource
-  n37@{ shape: cyl, label: "**GpuPreprocessingSupport**<br/>来自crate:bevy​_​render ↗：记录设备可采<br/>用的 GPU 预处理级别。" }
+  n36@{ shape: rounded, label: "**prepare​_​decals**<br/>将已提取贴花的索引登记到全局聚簇元数据。" }
+  class n36 node_system
+  n37@{ shape: cyl, label: "**LightMeta**<br/>汇集各视图的 GPU 光照 Uniform 数据。" }
   class n37 node_resource
-  class n37 external_node
-  n38@{ shape: cyl, label: "**LightKeyCache**<br/>缓存阴影光源视图的管线配置键。" }
-  class n38 node_resource
-  n39@{ shape: notch-rect, label: "**Local · arg10.2**<br/>限制单个方向光阴影级联超限警告只输出一<br/>次。" }
-  class n39 node_local
-  n40@{ shape: rounded, label: "**prepare​_​decals**<br/>将已提取贴花的索引登记到全局聚簇元数据。" }
-  class n40 node_system
-  n41@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
-  class n41 node_component
-  class n41 external_node
+  n38@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
+  class n38 node_plugin
+  n39@{ shape: rounded, label: "**OcclusionCulling**<br/>来自crate:bevy​_​render ↗：启用视图的<br/>GPU 遮挡裁剪。" }
+  class n39 node_component
+  class n39 external_node
+  n40@{ shape: notch-rect, label: "**Local · arg10.1**<br/>限制非聚簇区域光数量超限警告只输出一次。" }
+  class n40 node_local
+  n41@{ shape: cyl, label: "**LightKeyCache**<br/>缓存阴影光源视图的管线配置键。" }
+  class n41 node_resource
   n42@{ shape: rounded, label: "**ExtractedRectLight**<br/>保存渲染侧矩形光源的尺寸与光照。" }
   class n42 node_component
-  n43@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
-  class n43 node_plugin
-  n44@{ shape: rounded, label: "**LightEntity**<br/>标识阴影视图对应的光源面或级联。" }
+  n43@{ shape: notch-rect, label: "**Local · arg10.0**<br/>限制方向光数量超限警告只输出一次。" }
+  class n43 node_local
+  n44@{ shape: rounded, label: "**ExtractedDirectionalLight**<br/>保存渲染侧平行光和级联阴影设置。" }
   class n44 node_component
-  n45@{ shape: rounded, label: "**ViewLightEntities**<br/>保存相机相关的全部级联阴影视图。" }
-  class n45 node_component
-  n46@{ shape: lin-rect, label: "**CreateViews**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n46 node_system_set
+  n45@{ shape: lin-rect, label: "**CreateViews**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n45 node_system_set
+  class n45 external_node
+  n46@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  class n46 node_resource
   class n46 external_node
-  n1 e0@-->|"存在性约束"| n0
-  class e0 edge_reference
+  n1 e0@--> n0
+  class e0 edge_read
   n2 e1@--> n0
   class e1 edge_read
   n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
   n0 e4@-->|"可变访问"| n5
   class e4 edge_write
   n6 e5@--> n0
   class e5 edge_read
-  n0 e6@-->|"插入"| n7
+  n7 e6@---|"插入"| n0
   class e6 edge_write
-  n0 e7@-->|"可变访问"| n8
-  class e7 edge_write
+  n8 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
   n9 e8@--> n0
   class e8 edge_read
-  n10 e9@--> n0
-  class e9 edge_read
-  n0 e10@-->|"可变访问"| n11
+  n0 e9@-->|"插入"| n10
+  class e9 edge_write
+  n0 e10@-->|"插入"| n11
   class e10 edge_write
-  n0 e11@-->|"插入"| n12
+  n0 e11@-->|"可变访问"| n12
   class e11 edge_write
-  n13 e12@-->|"存在性约束"| n0
-  class e12 edge_reference
-  n14 e13@--> n0
-  class e13 edge_read
-  n0 e14@-->|"可变访问"| n15
-  class e14 edge_write
-  n16 e15@-->|"存在性约束"| n0
-  class e15 edge_reference
-  n10 e16@---|"插入"| n0
+  n13 e12@--> n0
+  class e12 edge_read
+  n13 e13@-->|"存在性约束"| n0
+  class e13 edge_reference
+  n14 e14@--> n0
+  class e14 edge_read
+  n1 e15@---|"插入"| n0
+  class e15 edge_write
+  n15 e16@---|"赋值"| n0
   class e16 edge_write
-  n17 e17@---|"插入"| n0
+  n16 e17@---|"插入"| n0
   class e17 edge_write
-  n18 e18@---|"赋值"| n0
-  class e18 edge_write
-  n19 e19@-->|"先于"| n0
-  class e19 edge_order
-  n20 e20@--> n0
-  class e20 edge_read
-  n0 e21@-->|"插入"| n21
-  class e21 edge_write
-  n0 e22@-->|"可变访问"| n22
+  n17 e18@-->|"先于"| n0
+  class e18 edge_order
+  n18 e19@--> n0
+  class e19 edge_read
+  n0 e20@-->|"插入"| n19
+  class e20 edge_write
+  n9 e21@-->|"存在性约束"| n0
+  class e21 edge_reference
+  n0 e22@-->|"可变访问"| n20
   class e22 edge_write
-  n13 e23@--> n0
+  n21 e23@--> n0
   class e23 edge_read
-  n10 e24@-->|"存在性约束"| n0
-  class e24 edge_reference
-  n17 e25@-->|"存在性约束"| n0
-  class e25 edge_reference
-  n0 e26@-->|"插入"| n23
-  class e26 edge_write
-  n0 e27@-->|"可变访问"| n24
+  n16 e24@--> n0
+  class e24 edge_read
+  n22 e25@--> n0
+  class e25 edge_read
+  n23 e26@--> n0
+  class e26 edge_read
+  n15 e27@---|"可变访问"| n0
   class e27 edge_write
-  n0 e28@-->|"插入"| n25
-  class e28 edge_write
-  n0 e29@-->|"插入"| n26
+  n0 e28@-->|"先于"| n24
+  class e28 edge_order
+  n0 e29@-->|"插入"| n25
   class e29 edge_write
-  n27 e30@--> n0
-  class e30 edge_read
-  n28 e31@--> n0
+  n26 e30@-->|"存在性约束"| n0
+  class e30 edge_reference
+  n15 e31@--> n0
   class e31 edge_read
-  n29 e32@--> n0
+  n27 e32@--> n0
   class e32 edge_read
-  n0 e33@-->|"先于"| n30
-  class e33 edge_order
-  n31 e34@--> n0
-  class e34 edge_read
-  n0 e35@-->|"可变访问"| n32
-  class e35 edge_write
-  n33 e36@--> n0
-  class e36 edge_read
-  n1 e37@--> n0
-  class e37 edge_read
-  n34 e38@--> n0
-  class e38 edge_read
-  n35 e39@--> n0
-  class e39 edge_read
-  n1 e40@---|"插入"| n0
-  class e40 edge_write
-  n36 e41@--> n0
+  n0 e33@-->|"可变访问"| n28
+  class e33 edge_write
+  n0 e34@-->|"可变访问"| n29
+  class e34 edge_write
+  n14 e35@-->|"存在性约束"| n0
+  class e35 edge_reference
+  n16 e36@-->|"存在性约束"| n0
+  class e36 edge_reference
+  n0 e37@-->|"插入"| n30
+  class e37 edge_write
+  n14 e38@---|"插入"| n0
+  class e38 edge_write
+  n0 e39@-->|"插入"| n31
+  class e39 edge_write
+  n32 e40@--> n0
+  class e40 edge_read
+  n7 e41@--> n0
   class e41 edge_read
-  n37 e42@--> n0
-  class e42 edge_read
-  n0 e43@-->|"可变访问"| n38
+  n0 e42@-->|"可变访问"| n33
+  class e42 edge_write
+  n26 e43@---|"插入"| n0
   class e43 edge_write
-  n0 e44@-->|"可变访问"| n39
+  n0 e44@-->|"插入"| n34
   class e44 edge_write
-  n0 e45@-->|"先于"| n40
-  class e45 edge_order
-  n41 e46@-->|"存在性约束"| n0
-  class e46 edge_reference
-  n18 e47@--> n0
-  class e47 edge_read
-  n18 e48@---|"可变访问"| n0
-  class e48 edge_write
-  n2 e49@---|"插入"| n0
+  n35 e45@--> n0
+  class e45 edge_read
+  n0 e46@-->|"先于"| n36
+  class e46 edge_order
+  n0 e47@-->|"可变访问"| n37
+  class e47 edge_write
+  n38 e48@-->|"调用"| n0
+  class e48 edge_registration
+  n0 e49@-->|"插入"| n39
   class e49 edge_write
-  n34 e50@---|"插入"| n0
+  n0 e50@-->|"可变访问"| n40
   class e50 edge_write
-  n42 e51@--> n0
-  class e51 edge_read
-  n43 e52@-->|"调用"| n0
-  class e52 edge_registration
-  n0 e53@-->|"插入"| n44
+  n0 e51@-->|"可变访问"| n41
+  class e51 edge_write
+  n42 e52@--> n0
+  class e52 edge_read
+  n0 e53@-->|"可变访问"| n43
   class e53 edge_write
-  n16 e54@--> n0
+  n44 e54@--> n0
   class e54 edge_read
-  n0 e55@-->|"插入"| n45
-  class e55 edge_write
-  n46 e56@-->|"集合成员"| n0
-  class e56 edge_set_membership
+  n45 e55@-->|"集合成员"| n0
+  class e55 edge_set_membership
+  n46 e56@--> n0
+  class e56 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

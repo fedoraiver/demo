@@ -55,50 +55,50 @@ flowchart LR
   class n1 external_node
   n2@{ shape: cyl, label: "**MessageRegistry**<br/>登记 World 中各消息缓冲的更新函数及是否<br/>需要轮换的状态" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**PipelinedRenderingPlugin**<br/>来自crate:bevy​_​render ↗：在独立线程执<br/>行流水化渲染。" }
-  class n3 node_plugin
-  class n3 external_node
-  n4@{ shape: notch-rect, label: "**Local · last​_​change​_​tick**<br/>保存上次消息缓冲更新的变更刻度。" }
-  class n4 node_local
-  n5@{ shape: rounded, label: "**MessageRegistry**<br/>登记 World 中各消息缓冲的更新函数及是否<br/>需要轮换的状态" }
-  class n5 node_component
-  n6@{ shape: rounded, label: "**message​_​update​_​condition**<br/>判断本次是否允许轮换消息缓冲。" }
-  class n6 node_system
-  n7@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
-  class n7 node_resource
-  n8@{ shape: fr-rect, label: "**main / App**<br/>来自应用 ↗：装配应用并导出真实调度。" }
-  class n8 node_app
-  class n8 external_node
-  n9@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>记录发生组件移除的实体。" }
-  class n9 node_message
-  n10@{ shape: notch-rect, label: "**Local · arg1**<br/>保存消息缓冲轮换的上次变化刻度。" }
-  class n10 node_local
-  n11@{ shape: lin-rect, label: "**MessageUpdateSystems**<br/>统一轮换已登记的消息缓冲。" }
-  class n11 node_system_set
+  n3@{ shape: notch-rect, label: "**Local · last​_​change​_​tick**<br/>保存上次消息缓冲更新的变更刻度。" }
+  class n3 node_local
+  n4@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>记录发生组件移除的实体。" }
+  class n4 node_message
+  n5@{ shape: rounded, label: "**message​_​update​_​condition**<br/>判断本次是否允许轮换消息缓冲。" }
+  class n5 node_system
+  n6@{ shape: fr-rect, label: "**main / App**<br/>来自应用 ↗：装配应用并导出真实调度。" }
+  class n6 node_app
+  class n6 external_node
+  n7@{ shape: fr-rect, label: "**PipelinedRenderingPlugin**<br/>来自crate:bevy​_​render ↗：在独立线程执<br/>行流水化渲染。" }
+  class n7 node_plugin
+  class n7 external_node
+  n8@{ shape: notch-rect, label: "**Local · arg1**<br/>保存消息缓冲轮换的上次变化刻度。" }
+  class n8 node_local
+  n9@{ shape: lin-rect, label: "**MessageUpdateSystems**<br/>统一轮换已登记的消息缓冲。" }
+  class n9 node_system_set
+  n10@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
+  class n10 node_resource
+  n11@{ shape: rounded, label: "**MessageRegistry**<br/>登记 World 中各消息缓冲的更新函数及是否<br/>需要轮换的状态" }
+  class n11 node_component
   n0 e0@-->|"先于"| n1
   class e0 edge_order
-  n0 e1@-->|"移除"| n2
+  n0 e1@-->|"赋值"| n2
   class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
-  n6 e5@-->|"运行条件"| n0
-  class e5 edge_reference
-  n0 e6@-->|"赋值"| n7
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n0 e3@-->|"消息"| n4
+  class e3 edge_publish
+  n5 e4@-->|"运行条件"| n0
+  class e4 edge_reference
+  n6 e5@-->|"调用"| n0
+  class e5 edge_registration
+  n0 e6@-->|"移除"| n2
   class e6 edge_write
-  n0 e7@-->|"赋值"| n2
-  class e7 edge_write
-  n8 e8@-->|"调用"| n0
-  class e8 edge_registration
-  n0 e9@-->|"消息"| n9
-  class e9 edge_publish
-  n0 e10@-->|"可变访问"| n10
+  n7 e7@-->|"调用"| n0
+  class e7 edge_registration
+  n0 e8@-->|"可变访问"| n8
+  class e8 edge_write
+  n9 e9@-->|"集合成员"| n0
+  class e9 edge_set_membership
+  n0 e10@-->|"赋值"| n10
   class e10 edge_write
-  n11 e11@-->|"集合成员"| n0
-  class e11 edge_set_membership
+  n0 e11@-->|"可变访问"| n11
+  class e11 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

@@ -46,31 +46,31 @@ flowchart LR
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Prepass**<br/>划分三维相机绘制与后处理阶段。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**ViewPrepassTextures**<br/>汇集视图已启用的预通道输出纹理。" }
-  class n2 node_component
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n2 node_resource
+  class n2 external_node
   n3@{ shape: cyl, label: "**CopyDeferredLightingIdPipeline**<br/>把延迟光照标识复制为深度附件。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
-  class n4 node_resource
-  class n4 external_node
-  n5@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
-  class n5 node_component
+  n4@{ shape: rounded, label: "**ViewPrepassTextures**<br/>汇集视图已启用的预通道输出纹理。" }
+  class n4 node_component
+  n5@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n6@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n6 node_resource
   class n6 external_node
   n7@{ shape: rounded, label: "**DeferredLightingIdDepthTexture**<br/>保存延迟光照通道使用的标识深度纹理。" }
   class n7 node_component
-  n8@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  n8@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
-  class n9 node_resource
-  class n9 external_node
-  n10@{ shape: fr-rect, label: "**Core3dPlugin**<br/>建立三维相机的渲染流程。" }
-  class n10 node_plugin
-  n11@{ shape: lin-rect, label: "**MainPass**<br/>划分三维相机绘制与后处理阶段。" }
-  class n11 node_system_set
+  n9@{ shape: lin-rect, label: "**MainPass**<br/>划分三维相机绘制与后处理阶段。" }
+  class n9 node_system_set
+  n10@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: fr-rect, label: "**Core3dPlugin**<br/>建立三维相机的渲染流程。" }
+  class n11 node_plugin
   n1 e0@-->|"先于"| n0
   class e0 edge_order
   n2 e1@--> n0
@@ -87,12 +87,12 @@ flowchart LR
   class e6 edge_read
   n8 e7@--> n0
   class e7 edge_read
-  n9 e8@--> n0
-  class e8 edge_read
-  n10 e9@-->|"调用"| n0
-  class e9 edge_registration
-  n0 e10@-->|"先于"| n11
-  class e10 edge_order
+  n0 e8@-->|"先于"| n9
+  class e8 edge_order
+  n10 e9@--> n0
+  class e9 edge_read
+  n11 e10@-->|"调用"| n0
+  class e10 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -101,5 +101,5 @@ flowchart LR
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }
   e9@{ curve: basis }
+  e10@{ curve: basis }

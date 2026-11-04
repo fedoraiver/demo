@@ -46,42 +46,42 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​contact​_​shadows​_​settings**<br/>上传各视图接触阴影设置并记录动态偏移。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ContactShadows**<br/>配置相机的屏幕空间接触阴影。" }
+  n1@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**ViewContactShadowsUniformOffset**<br/>定位视图在接触阴影参数缓冲中的位置。" }
-  class n2 node_component
-  n3@{ shape: fr-rect, label: "**ContactShadowsPlugin**<br/>提供相机接触阴影。" }
-  class n3 node_plugin
-  n4@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
-  class n4 node_resource
-  class n4 external_node
-  n5@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n5 node_system_set
+  class n1 external_node
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: rounded, label: "**ContactShadows**<br/>配置相机的屏幕空间接触阴影。" }
+  class n3 node_component
+  n4@{ shape: fr-rect, label: "**ContactShadowsPlugin**<br/>提供相机接触阴影。" }
+  class n4 node_plugin
+  n5@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n6 node_resource
-  class n6 external_node
-  n7@{ shape: cyl, label: "**ContactShadowsBuffer**<br/>在 GPU 缓冲中保存各视图接触阴影设置。" }
-  class n7 node_resource
-  n8@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
-  class n8 node_component
-  class n8 external_node
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"插入"| n2
-  class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"集合成员"| n0
-  class e4 edge_set_membership
-  n6 e5@--> n0
-  class e5 edge_read
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
-  n8 e7@-->|"存在性约束"| n0
-  class e7 edge_reference
+  n6@{ shape: rounded, label: "**ViewContactShadowsUniformOffset**<br/>定位视图在接触阴影参数缓冲中的位置。" }
+  class n6 node_component
+  n7@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n7 node_system_set
+  class n7 external_node
+  n8@{ shape: cyl, label: "**ContactShadowsBuffer**<br/>在 GPU 缓冲中保存各视图接触阴影设置。" }
+  class n8 node_resource
+  n1 e0@-->|"存在性约束"| n0
+  class e0 edge_reference
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n5 e4@--> n0
+  class e4 edge_read
+  n0 e5@-->|"插入"| n6
+  class e5 edge_write
+  n7 e6@-->|"集合成员"| n0
+  class e6 edge_set_membership
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

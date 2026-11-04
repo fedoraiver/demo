@@ -46,23 +46,23 @@ flowchart LR
   class n0 node_system
   n1@{ shape: fr-rect, label: "**TransformEasingPlugin**<br/>在变换端点之间应用显示缓动。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**reset​_​rotation​_​easing**<br/>清除旧旋转平滑的起点和终点。" }
-  class n2 node_system
-  n3@{ shape: lin-rect, label: "**Reset**<br/>组织变换缓动端点与帧间应用。" }
-  class n3 node_system_set
-  n4@{ shape: rounded, label: "**ScaleEasingState**<br/>保存固定步缩放插值的起点与终点" }
-  class n4 node_component
+  n2@{ shape: rounded, label: "**ScaleEasingState**<br/>保存固定步缩放插值的起点与终点" }
+  class n2 node_component
+  n3@{ shape: rounded, label: "**reset​_​rotation​_​easing**<br/>清除旧旋转平滑的起点和终点。" }
+  class n3 node_system
+  n4@{ shape: lin-rect, label: "**Reset**<br/>组织变换缓动端点与帧间应用。" }
+  class n4 node_system_set
   n1 e0@-->|"调用"| n0
   class e0 edge_registration
-  n2 e1@-->|"先于"| n0
-  class e1 edge_order
-  n3 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
-  n0 e3@-->|"赋值"| n4
-  class e3 edge_write
-  n0 e4@-->|"可变访问"| n4
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@-->|"先于"| n0
+  class e2 edge_order
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n0 e4@-->|"赋值"| n2
   class e4 edge_write
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

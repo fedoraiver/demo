@@ -44,44 +44,44 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​mesh​_​bind​_​groups**<br/>按预处理路径准备网格、蒙皮和形变资源绑<br/>定。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**MeshMetadataFallbackBuffer**<br/>来自crate:bevy​_​render ↗：为无元数据网<br/>格提供可绑定的缺省缓冲。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**MeshPipeline**<br/>提供三维网格管线的着色与资源布局。" }
+  n2@{ shape: cyl, label: "**BatchedInstanceBuffers#lt;MeshUniform,**<br/>**MeshInputUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存批次绘制<br/>的 GPU 输入与实例缓冲。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**SkinUniforms**<br/>以双缓冲保存蒙皮前后帧关节矩阵。" }
+  class n2 external_node
+  n3@{ shape: cyl, label: "**RenderMorphTargetAllocator**<br/>来自crate:bevy​_​render ↗：按设备能力存<br/>放网格形变位移数据。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**MorphUniforms**<br/>以双缓冲保存网格前后帧形变权重。" }
+  class n3 external_node
+  n4@{ shape: cyl, label: "**MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**MeshBindGroups**<br/>按预处理方式保存已加载网格的绑定组。" }
+  class n4 external_node
+  n5@{ shape: cyl, label: "**MorphUniforms**<br/>以双缓冲保存网格前后帧形变权重。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**MeshMetadataFallbackBuffer**<br/>来自crate:bevy​_​render ↗：为无元数据网<br/>格提供可绑定的缺省缓冲。" }
+  n6@{ shape: cyl, label: "**RenderLightmaps**<br/>管理渲染侧光照贴图的槽位和纹理。" }
   class n6 node_resource
-  class n6 external_node
-  n7@{ shape: cyl, label: "**BatchedInstanceBuffers#lt;MeshUniform,**<br/>**MeshInputUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存批次绘制<br/>的 GPU 输入与实例缓冲。" }
-  class n7 node_resource
-  class n7 external_node
-  n8@{ shape: cyl, label: "**MeshAllocator**<br/>来自crate:bevy​_​render ↗：分配并管理网<br/>格顶点和索引 GPU 缓冲。" }
+  n7@{ shape: fr-rect, label: "**MeshRenderPlugin**<br/>建立三维网格绘制支持。" }
+  class n7 node_plugin
+  n8@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**RenderMorphTargetAllocator**<br/>来自crate:bevy​_​render ↗：按设备能力存<br/>放网格形变位移数据。" }
+  n9@{ shape: cyl, label: "**MeshBindGroups**<br/>按预处理方式保存已加载网格的绑定组。" }
   class n9 node_resource
-  class n9 external_node
-  n10@{ shape: cyl, label: "**RenderLightmaps**<br/>管理渲染侧光照贴图的槽位和纹理。" }
+  n10@{ shape: cyl, label: "**RenderAssets#lt;RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n10 node_resource
-  n11@{ shape: cyl, label: "**BatchedInstanceBuffer#lt;MeshUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存 CPU 准<br/>备路径的批次绘制数据。" }
+  class n10 external_node
+  n11@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: fr-rect, label: "**MeshRenderPlugin**<br/>建立三维网格绘制支持。" }
-  class n12 node_plugin
-  n13@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n13 node_system_set
+  n12@{ shape: cyl, label: "**SkinUniforms**<br/>以双缓冲保存蒙皮前后帧关节矩阵。" }
+  class n12 node_resource
+  n13@{ shape: cyl, label: "**BatchedInstanceBuffer#lt;MeshUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存 CPU 准<br/>备路径的批次绘制数据。" }
+  class n13 node_resource
   class n13 external_node
-  n14@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n14@{ shape: cyl, label: "**MeshPipeline**<br/>提供三维网格管线的着色与资源布局。" }
   class n14 node_resource
-  class n14 external_node
-  n15@{ shape: cyl, label: "**RenderAssets#lt;RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
-  class n15 node_resource
+  n15@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n15 node_system_set
   class n15 external_node
   n1 e0@--> n0
   class e0 edge_read
@@ -91,30 +91,30 @@ flowchart LR
   class e2 edge_read
   n4 e3@--> n0
   class e3 edge_read
-  n0 e4@-->|"插入"| n5
-  class e4 edge_write
+  n5 e4@--> n0
+  class e4 edge_read
   n6 e5@--> n0
   class e5 edge_read
-  n7 e6@--> n0
-  class e6 edge_read
+  n7 e6@-->|"调用"| n0
+  class e6 edge_registration
   n8 e7@--> n0
   class e7 edge_read
-  n0 e8@-->|"可变访问"| n5
+  n0 e8@-->|"可变访问"| n9
   class e8 edge_write
-  n9 e9@--> n0
+  n10 e9@--> n0
   class e9 edge_read
-  n10 e10@--> n0
+  n11 e10@--> n0
   class e10 edge_read
-  n11 e11@--> n0
+  n12 e11@--> n0
   class e11 edge_read
-  n12 e12@-->|"调用"| n0
-  class e12 edge_registration
-  n13 e13@-->|"集合成员"| n0
-  class e13 edge_set_membership
-  n14 e14@--> n0
-  class e14 edge_read
-  n15 e15@--> n0
-  class e15 edge_read
+  n13 e12@--> n0
+  class e12 edge_read
+  n14 e13@--> n0
+  class e13 edge_read
+  n15 e14@-->|"集合成员"| n0
+  class e14 edge_set_membership
+  n0 e15@-->|"插入"| n9
+  class e15 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

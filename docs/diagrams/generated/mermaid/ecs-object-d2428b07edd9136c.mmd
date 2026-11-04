@@ -42,36 +42,36 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderChangedShaderBuffers**<br/>记录底层 GPU 缓冲身份已变化的着色器缓<br/>冲。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n2@{ shape: cyl, label: "**RenderAssets#lt;GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;GpuShaderBuff**<br/>**er#gt;**<br/>保留下一帧待准备的渲染源资产。" }
+  n3@{ shape: cyl, label: "**ExtractedAssets#lt;GpuShaderBuffer#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
   class n3 node_resource
   n4@{ shape: lin-rect, label: "**PrepareAssets**<br/>组织渲染数据准备与绘制排队。" }
   class n4 node_system_set
-  n5@{ shape: cyl, label: "**RenderChangedShaderBuffers**<br/>记录底层 GPU 缓冲身份已变化的着色器缓<br/>冲。" }
+  n5@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;GpuShaderBuff**<br/>**er#gt;**<br/>保留下一帧待准备的渲染源资产。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**RenderAssets#lt;GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n6@{ shape: cyl, label: "**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**ExtractedAssets#lt;GpuShaderBuffer#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
+  n7@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
+  n8@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n8 node_resource
-  n1 e0@--> n0
-  class e0 edge_read
-  n2 e1@--> n0
-  class e1 edge_read
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
   n0 e2@-->|"可变访问"| n3
   class e2 edge_write
   n4 e3@-->|"集合成员"| n0
   class e3 edge_set_membership
   n0 e4@-->|"可变访问"| n5
   class e4 edge_write
-  n0 e5@-->|"可变访问"| n6
-  class e5 edge_write
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
   n8 e7@--> n0
   class e7 edge_read
   e0@{ curve: basis }

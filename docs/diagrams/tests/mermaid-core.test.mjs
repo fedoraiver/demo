@@ -217,6 +217,124 @@ test('output context is bounded and never substitutes for failed labels, geometr
   }
 });
 
+function inputBranchFixture() {
+  const fixture = outputBranchFixture(), { view } = fixture;
+  view.mermaid += view.nodes.slice(2).map(node => `  ${node.mermaidId}@{ shape: rect, label: "${node.id}" }\n  class ${node.mermaidId} node_component\n`).join('');
+  const nodes = new Map(view.nodes.map(node => [node.id, node.mermaidId]));
+  view.mermaid += view.links.map(link => `  ${nodes.get(link.nativeReverse ? link.to : link.from)} ${link.mermaidId}@${link.nativeReverse ? '---' : '-->'} ${nodes.get(link.nativeReverse ? link.from : link.to)}\n`).join('');
+  return fixture;
+}
+
+test('a lone near-collinear input retries native output clearance without adding reversed neighbors', async () => {
+  const { view, registry } = inputBranchFixture(), before = structuredClone({ view, registry }), profiles = [], attempts = [];
+  let latest;
+  const result = await compileRoutedView(view, registry, async candidate => { latest = candidate; return candidate; }, {
+    onAttempt: attempt => attempts.push({ ...attempt, output: latest.mermaid.includes('layout_output_') }),
+    checks: {
+      labels: () => [],
+      geometry: candidate => {
+        if (!candidate.mermaid.includes('layout_output_')) return;
+        const configuration = JSON.parse(/^---\n([\s\S]*?)\n---/.exec(candidate.mermaid)[1]).config;
+        profiles.push({ spacing: configuration.flowchart.nodeSpacing - 32, wrapped: candidate.mermaid.includes('layout_card_') });
+        assert.match(candidate.mermaid, /n3 e3@--> n0/);
+      },
+      routes: candidate => {
+        const configuration = JSON.parse(/^---\n([\s\S]*?)\n---/.exec(candidate.mermaid)[1]).config;
+        const cleared = candidate.mermaid.includes('layout_output_') && candidate.mermaid.includes('layout_card_') && configuration.flowchart.nodeSpacing >= 48;
+        return { edges: view.links.map(link => ({ id: link.id, mermaidId: link.mermaidId, axis: link.id === 'write-d' ? null : 'horizontal',
+          curved: link.id === 'write-d' && cleared, collisions: [], arrowIssues: [] })) };
+      },
+    },
+  });
+  assert.deepEqual(profiles, [{ spacing: 0, wrapped: false }, { spacing: 16, wrapped: true }]);
+  assert.ok(attempts.length > 2);
+  assert.ok(attempts.slice(0, -1).every(attempt => !attempt.output));
+  assert.equal(attempts.at(-1).output, true);
+  assert.deepEqual(result.layoutLinks, [{ mermaidId: 'layout_output_0', from: 'n1', to: 'n2' }]);
+  assert.doesNotMatch(result.mermaid, /(?:n3 layout_output_|layout_output_\d+@~~~ n3)/);
+  assert.deepEqual(result.links, view.links);
+  assert.deepEqual({ view, registry }, before);
+
+  let calls = 0;
+  const direct = await compileRoutedView(view, registry, async candidate => { calls++; return candidate; }, {
+    checks: { labels: () => [], geometry: () => {}, routes: () => ({ edges: view.links.map(link => ({ id: link.id, mermaidId: link.mermaidId,
+      axis: 'horizontal', curved: false, collisions: [], arrowIssues: [] })) }) },
+  });
+  assert.equal(calls, 1);
+  assert.deepEqual(direct.layoutLinks, []);
+  assert.equal(direct.mermaid, routedMermaid(view));
+});
+
+test('lone input output-context retries are bounded and retain all failure gates', async () => {
+  for (const failure of ['straight', 'label', 'geometry', 'collision', 'arrow', 'axis-curve', 'multiple-inputs', 'no-output-chain', 'elk', 'data']) {
+    const { view, registry } = inputBranchFixture();
+    if (failure === 'multiple-inputs') view.links.push({ id: 'write-c', mermaidId: 'e4', from: 'c', to: 'a' });
+    if (failure === 'no-output-chain') view.links.find(link => link.id === 'read-c').nativeReverse = true;
+    if (failure === 'elk') view.mermaid = view.mermaid.replace('"layout":"dagre"', '"layout":"elk"');
+    if (failure === 'data') view.aspect = 'data';
+    const before = structuredClone({ view, registry }), profiles = [], order = [];
+    let latest;
+    await assert.rejects(compileRoutedView(view, registry, async candidate => { latest = candidate; return candidate; }, {
+      onAttempt: () => {
+        order.push(latest.mermaid.includes('layout_output_'));
+        if (!latest.mermaid.includes('layout_output_')) return;
+        const configuration = JSON.parse(/^---\n([\s\S]*?)\n---/.exec(latest.mermaid)[1]).config;
+        profiles.push({ spacing: configuration.flowchart.nodeSpacing - 32, wrapped: latest.mermaid.includes('layout_card_') });
+        assert.match(latest.mermaid, /n3 e3@--> n0/);
+      },
+      checks: {
+        labels: () => failure === 'label' ? ['a'] : [],
+        geometry: () => { if (failure === 'geometry') throw new Error('overlap'); },
+        routes: () => ({ edges: [{ id: 'write-d', mermaidId: 'e3', axis: failure === 'axis-curve' ? 'horizontal' : null,
+          curved: failure === 'axis-curve', collisions: failure === 'collision' ? [{ id: 'unrelated', kind: 'node' }] : [],
+          arrowIssues: failure === 'arrow' ? ['path-target'] : [] }] }),
+      },
+    }), /Mermaid routing failed/);
+    assert.deepEqual(profiles, failure === 'straight' ? [
+      { spacing: 0, wrapped: false }, ...[16, 32, 64].map(spacing => ({ spacing, wrapped: true })),
+    ] : [], failure);
+    if (failure === 'straight') {
+      const firstOutput = order.indexOf(true);
+      assert.ok(firstOutput > 0);
+      assert.deepEqual(order.slice(firstOutput), [true, true, true, true]);
+    }
+    assert.deepEqual({ view, registry }, before);
+  }
+});
+
+test('existing endpoint clearance succeeds before lone-input output fallback is attempted', async () => {
+  const { view, registry } = inputBranchFixture(), before = structuredClone({ view, registry }), sources = [];
+  const result = await compileRoutedView(view, registry, async candidate => candidate, {
+    checks: {
+      labels: () => [], geometry: candidate => sources.push(candidate.mermaid),
+      routes: candidate => ({ edges: [{ id: 'write-d', mermaidId: 'e3', axis: null,
+        curved: candidate.mermaid.includes('layout_card_n0') && !candidate.mermaid.includes('layout_card_n3'), collisions: [], arrowIssues: [] }] }),
+    },
+  });
+  assert.ok(sources.every(source => !source.includes('layout_output_')));
+  assert.deepEqual(result.layoutLinks, []);
+  assert.deepEqual([...result.mermaid.matchAll(/subgraph layout_card_(n\d+)/g)].map(match => match[1]), ['n0']);
+  assert.deepEqual({ view, registry }, before);
+});
+
+test('a pending lone-input fallback does not consume the original immediate output context', async () => {
+  const { view, registry } = inputBranchFixture(), rejected = [];
+  const result = await compileRoutedView(view, registry, async candidate => candidate, {
+    onAttempt: attempt => rejected.push(attempt.invalid[0].id),
+    checks: {
+      labels: () => [], geometry: () => {},
+      routes: candidate => {
+        const output = candidate.mermaid.includes('layout_card_n3');
+        return { edges: [{ id: output ? 'read-b' : 'write-d', mermaidId: output ? 'e0' : 'e3', axis: null,
+          curved: candidate.mermaid.includes('layout_output_'), collisions: [], arrowIssues: [] }] };
+      },
+    },
+  });
+  assert.deepEqual(rejected, ['write-d', 'read-b']);
+  assert.equal(result.layoutLinks.length, 1);
+  assert.doesNotMatch(result.mermaid, /layout_card_/);
+});
+
 test('native retry eligibility follows the configured layout rather than the data aspect', async () => {
   const { view, registry, native } = clearanceFixture('elk', 'data');
   let compilations = 0;

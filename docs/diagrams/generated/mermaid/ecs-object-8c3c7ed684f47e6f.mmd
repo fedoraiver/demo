@@ -1,0 +1,98 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: dialog::DialogStack · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**DialogStack**<br/>按从底到顶的顺序保存已打开浮动对话框" }
+  class n0 node_resource
+  n1@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
+  class n1 node_observer
+  n2@{ shape: hex, label: "**bring​_​to​_​front**<br/>将被操作的浮动对话框提到前方。" }
+  class n2 node_observer
+  n3@{ shape: hex, label: "**bring​_​to​_​front**<br/>将被操作的浮动对话框提到前方。" }
+  class n3 node_observer
+  n4@{ shape: rounded, label: "**sync​_​dialog​_​z**<br/>按对话框栈顺序设置全局层级。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**resource​_​changed**<br/>来自crate:bevy​_​ecs ↗：判断资源是否被<br/>标记为变化。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: hex, label: "**bring​_​to​_​front**<br/>将被操作的浮动对话框提到前方。" }
+  class n6 node_observer
+  n7@{ shape: hex, label: "**register​_​dialog**<br/>登记新建浮动对话框的层级。" }
+  class n7 node_observer
+  n8@{ shape: hex, label: "**register​_​dialog**<br/>登记新建浮动对话框的层级。" }
+  class n8 node_observer
+  n9@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
+  class n9 node_observer
+  n10@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
+  class n10 node_observer
+  n11@{ shape: hex, label: "**register​_​dialog**<br/>登记新建浮动对话框的层级。" }
+  class n11 node_observer
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n6 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n7 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n8 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n9 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  n10 e9@-->|"可变访问"| n0
+  class e9 edge_write
+  n11 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

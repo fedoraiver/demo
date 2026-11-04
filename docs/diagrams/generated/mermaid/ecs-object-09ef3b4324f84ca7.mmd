@@ -50,53 +50,53 @@ flowchart LR
   class n1 node_system
   n2@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
   class n2 node_system
-  n3@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
-  class n3 node_resource
-  n4@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
-  class n4 node_component
-  n5@{ shape: rounded, label: "**create​_​surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
-  class n5 node_system
-  n6@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  n3@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: rounded, label: "**create​_​surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
   class n6 node_component
-  class n6 external_node
-  n7@{ shape: rounded, label: "**ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
-  class n7 node_component
+  n7@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  class n7 node_resource
   n8@{ shape: cyl, label: "**SortedCameras**<br/>按相机绘制顺序保存排序结果。" }
   class n8 node_resource
-  n9@{ shape: fr-rect, label: "**WindowRenderPlugin**<br/>同步窗口并准备渲染表面。" }
-  class n9 node_plugin
-  n10@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
-  class n10 node_system_set
+  n9@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
+  class n9 node_system_set
+  n10@{ shape: fr-rect, label: "**WindowRenderPlugin**<br/>同步窗口并准备渲染表面。" }
+  class n10 node_plugin
   n0 e0@-->|"先于"| n1
   class e0 edge_order
   n0 e1@-->|"先于"| n2
   class e1 edge_order
   n3 e2@--> n0
   class e2 edge_read
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"先于"| n0
-  class e4 edge_order
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
   n6 e5@--> n0
   class e5 edge_read
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
-  n0 e7@-->|"赋值"| n7
+  n7 e6@--> n0
+  class e6 edge_read
+  n0 e7@-->|"赋值"| n5
   class e7 edge_write
   n8 e8@--> n0
   class e8 edge_read
-  n9 e9@-->|"调用"| n0
-  class e9 edge_registration
-  n10 e10@-->|"集合成员"| n0
-  class e10 edge_set_membership
+  n9 e9@-->|"集合成员"| n0
+  class e9 edge_set_membership
+  n10 e10@-->|"调用"| n0
+  class e10 edge_registration
   n1 layout_output_0@~~~ n2
-  n2 layout_output_1@~~~ n7
+  n2 layout_output_1@~~~ n5
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e6@{ curve: basis }
+  e5@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

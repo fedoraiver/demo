@@ -44,16 +44,16 @@ flowchart LR
   class n0 node_system
   n1@{ shape: fr-rect, label: "**SmaaPlugin**<br/>提供亚像素形态抗锯齿。" }
   class n1 node_plugin
-  n2@{ shape: cyl, label: "**SmaaPipelines**<br/>保存 SMAA 三个阶段的基础管线。" }
+  n2@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  class n2 external_node
+  n3@{ shape: cyl, label: "**SmaaPipelines**<br/>保存 SMAA 三个阶段的基础管线。" }
   class n3 node_resource
-  class n3 external_node
   n1 e0@-->|"调用"| n0
   class e0 edge_registration
-  n0 e1@-->|"插入"| n2
-  class e1 edge_write
-  n3 e2@--> n0
-  class e2 edge_read
+  n2 e1@--> n0
+  class e1 edge_read
+  n0 e2@-->|"插入"| n3
+  class e2 edge_write
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }

@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-e3ffb9cbfd40c8a3-e9{marker-start:url(#object-e3ffb9cbfd40c8a3_flowchart-v2-pointStart)!important}\n#object-e3ffb9cbfd40c8a3-e13{marker-start:url(#object-e3ffb9cbfd40c8a3_flowchart-v2-pointStart)!important}\n#object-e3ffb9cbfd40c8a3_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-e3ffb9cbfd40c8a3-e5{marker-start:url(#object-e3ffb9cbfd40c8a3_flowchart-v2-pointStart)!important}\n#object-e3ffb9cbfd40c8a3-e10{marker-start:url(#object-e3ffb9cbfd40c8a3_flowchart-v2-pointStart)!important}\n#object-e3ffb9cbfd40c8a3_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -49,61 +49,61 @@ flowchart LR
   class n1 node_system_set
   n2@{ shape: rounded, label: "**propagate​_​output**<br/>把继承结果写入或移出实体实际组件。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**Inherited#lt;ComputedUiRenderTargetInfo**<br/>**#gt;**<br/>保存层级传播算法继承到当前节点的中间组件<br/>值" }
+  n3@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n3 node_component
-  n4@{ shape: notch-rect, label: "**Local · arg3.0.0.0.0**<br/>保存 Inherited#lt;C#gt; 移除参数的组件 ID。" }
-  class n4 node_local
-  n5@{ shape: notch-rect, label: "**Local · arg4**<br/>复用继承值传播的实体工作栈。" }
-  class n5 node_local
-  n6@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
-  class n6 node_component
-  class n6 external_node
-  n7@{ shape: rounded, label: "**PropagateStop#lt;ComputedUiRenderTarget**<br/>**Info#gt;**<br/>在当前实体截断该组件的层级传播" }
+  class n3 external_node
+  n4@{ shape: rounded, label: "**Inherited#lt;ComputedUiRenderTargetInfo**<br/>**#gt;**<br/>保存层级传播算法继承到当前节点的中间组件<br/>值" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**PropagateStop#lt;ComputedUiRenderTarget**<br/>**Info#gt;**<br/>在当前实体截断该组件的层级传播" }
+  class n5 node_component
+  n6@{ shape: notch-rect, label: "**Local · arg4**<br/>复用继承值传播的实体工作栈。" }
+  class n6 node_local
+  n7@{ shape: rounded, label: "**Propagate#lt;ComputedUiRenderTargetInfo**<br/>**#gt;**<br/>从当前实体向直接及间接关系目标传播内部组<br/>件值" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**update​_​removed​_​limit**<br/>在传播限制移除后重新标记继承链。" }
-  class n8 node_system
+  n8@{ shape: notch-rect, label: "**Local · arg3.0.0.0.0**<br/>保存 Inherited#lt;C#gt; 移除参数的组件 ID。" }
+  class n8 node_local
   n9@{ shape: notch-rect, label: "**Local · arg3.0.1**<br/>跟踪 Inherited#lt;C#gt; 移除记录的读取进度。" }
   class n9 node_local
-  n10@{ shape: rounded, label: "**Propagate#lt;ComputedUiRenderTargetInfo**<br/>**#gt;**<br/>从当前实体向直接及间接关系目标传播内部组<br/>件值" }
-  class n10 node_component
+  n10@{ shape: rounded, label: "**update​_​removed​_​limit**<br/>在传播限制移除后重新标记继承链。" }
+  class n10 node_system
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
   n0 e1@-->|"先于"| n2
   class e1 edge_order
   n3 e2@--> n0
   class e2 edge_read
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
-  n3 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
-  n6 e6@--> n0
-  class e6 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_read
+  n4 e5@---|"插入"| n0
+  class e5 edge_write
+  n0 e6@-->|"可变访问"| n6
+  class e6 edge_write
   n7 e7@-->|"存在性约束"| n0
   class e7 edge_reference
-  n8 e8@-->|"先于"| n0
-  class e8 edge_order
-  n3 e9@---|"插入"| n0
+  n0 e8@-->|"可变访问"| n8
+  class e8 edge_write
+  n0 e9@-->|"可变访问"| n9
   class e9 edge_write
-  n0 e10@-->|"可变访问"| n9
+  n4 e10@---|"移除"| n0
   class e10 edge_write
-  n7 e11@--> n0
-  class e11 edge_read
-  n10 e12@-->|"存在性约束"| n0
-  class e12 edge_reference
-  n3 e13@---|"移除"| n0
-  class e13 edge_write
+  n5 e11@-->|"存在性约束"| n0
+  class e11 edge_reference
+  n10 e12@-->|"先于"| n0
+  class e12 edge_order
+  n4 e13@-->|"存在性约束"| n0
+  class e13 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
+  e3@{ curve: bumpY }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
-  e9@{ curve: bumpX }
+  e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }

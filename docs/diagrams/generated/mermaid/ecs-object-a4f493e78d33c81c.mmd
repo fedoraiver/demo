@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-a4f493e78d33c81c-e1{marker-start:url(#object-a4f493e78d33c81c_flowchart-v2-pointStart)!important}\n#object-a4f493e78d33c81c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-a4f493e78d33c81c-e2{marker-start:url(#object-a4f493e78d33c81c_flowchart-v2-pointStart)!important}\n#object-a4f493e78d33c81c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -42,16 +42,16 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**clear​_​view​_​upscaling​_​pipelines**<br/>清除视图缩放管线以便设备恢复后重建。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ViewUpscalingPipeline**<br/>记录视图颜色输出所用的缩放管线。" }
-  class n1 node_component
-  n2@{ shape: fr-rect, label: "**UpscalingPlugin**<br/>准备视图输出放大与合成管线。" }
-  class n2 node_plugin
-  n1 e0@-->|"存在性约束"| n0
-  class e0 edge_reference
-  n1 e1@---|"移除"| n0
-  class e1 edge_write
-  n2 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n1@{ shape: fr-rect, label: "**UpscalingPlugin**<br/>准备视图输出放大与合成管线。" }
+  class n1 node_plugin
+  n2@{ shape: rounded, label: "**ViewUpscalingPipeline**<br/>记录视图颜色输出所用的缩放管线。" }
+  class n2 node_component
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n2 e2@---|"移除"| n0
+  class e2 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

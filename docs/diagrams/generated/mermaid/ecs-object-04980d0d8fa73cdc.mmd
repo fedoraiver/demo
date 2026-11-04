@@ -47,147 +47,147 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**extract​_​ui​_​texture​_​slices**<br/>增量提取九宫格或平铺 UI 图像切片。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**CalculatedClip**<br/>来自crate:bevy​_​ui ↗：缓存节点从祖先继<br/>承的裁剪结果。" }
-  class n1 node_component
+  n1@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  n2@{ shape: rounded, label: "**ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
-  class n3 node_component
-  class n3 external_node
-  n4@{ shape: notch-rect, label: "**Local · arg6.3.0.0.0.0.0**<br/>保存 InheritedVisibility 移除参数的组<br/>件 ID。" }
+  n3@{ shape: notch-rect, label: "**Local · arg6.3.0.0.1**<br/>跟踪 InheritedVisibility 移除记录的读<br/>取进度。" }
+  class n3 node_local
+  n4@{ shape: notch-rect, label: "**Local · arg6.0.0.0.0.0.0**<br/>保存 ComputedNode 移除参数的组件 ID。" }
   class n4 node_local
-  n5@{ shape: fr-rect, label: "**UiTextureSlicerPlugin**<br/>提取并绘制界面纹理切片。" }
-  class n5 node_plugin
-  n6@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
-  class n6 node_resource
-  class n6 external_node
-  n7@{ shape: rounded, label: "**ComputedStackIndex**<br/>来自crate:bevy​_​ui ↗：保存节点计算后的<br/>绘制堆叠位置。" }
-  class n7 node_component
-  class n7 external_node
-  n8@{ shape: notch-rect, label: "**Local · arg6.6.0.0.1**<br/>跟踪 ImageNode 移除记录的读取进度。" }
-  class n8 node_local
-  n9@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
-  class n9 node_component
-  class n9 external_node
-  n10@{ shape: notch-rect, label: "**Local · nodes​_​processed​_​this​_​frame**<br/>去重本轮已重建的 UI 纹理切片节点。" }
-  class n10 node_local
-  n11@{ shape: notch-rect, label: "**Local · arg6.4.0.0.0.0.0**<br/>保存 CalculatedClip 移除参数的组件<br/>ID。" }
-  class n11 node_local
-  n12@{ shape: notch-rect, label: "**Local · arg6.1.0.0.0.0.0**<br/>保存 ComputedStackIndex 移除参数的组<br/>件 ID。" }
-  class n12 node_local
-  n13@{ shape: rounded, label: "**ImageNode**<br/>来自crate:bevy​_​ui ↗：描述 UI 图像及其<br/>绘制参数。" }
+  n5@{ shape: notch-rect, label: "**Local · arg6.3.0.0.0.0.0**<br/>保存 InheritedVisibility 移除参数的组<br/>件 ID。" }
+  class n5 node_local
+  n6@{ shape: notch-rect, label: "**Local · arg6.5.0.0.0.0.0**<br/>保存 ComputedUiTargetCamera 移除参数<br/>的组件 ID。" }
+  class n6 node_local
+  n7@{ shape: notch-rect, label: "**Local · nodes​_​processed​_​this​_​frame**<br/>去重本轮已重建的 UI 纹理切片节点。" }
+  class n7 node_local
+  n8@{ shape: rounded, label: "**ImageNodeSize**<br/>来自crate:bevy​_​ui ↗：缓存 UI 图像纹理<br/>的像素尺寸。" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: notch-rect, label: "**Local · arg6.5.0.0.1**<br/>跟踪 ComputedUiTargetCamera 移除记录<br/>的读取进度。" }
+  class n9 node_local
+  n10@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: fr-rect, label: "**UiTextureSlicerPlugin**<br/>提取并绘制界面纹理切片。" }
+  class n11 node_plugin
+  n12@{ shape: lin-rect, label: "**ExtractTextureSlice**<br/>组织各类界面绘制数据提取。" }
+  class n12 node_system_set
+  n13@{ shape: rounded, label: "**ComputedStackIndex**<br/>来自crate:bevy​_​ui ↗：保存节点计算后的<br/>绘制堆叠位置。" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: cyl, label: "**Assets#lt;TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n14 node_resource
-  class n14 external_node
-  n15@{ shape: notch-rect, label: "**Local · arg6.0.0.0.1**<br/>跟踪 ComputedNode 移除记录的读取进度。" }
-  class n15 node_local
-  n16@{ shape: notch-rect, label: "**Local · arg6.2.0.0.1**<br/>跟踪 UiGlobalTransform 移除记录的读取<br/>进度。" }
-  class n16 node_local
-  n17@{ shape: lin-rect, label: "**ExtractTextureSlice**<br/>组织各类界面绘制数据提取。" }
-  class n17 node_system_set
-  n18@{ shape: notch-rect, label: "**Local · arg6.0.0.0.0.0.0**<br/>保存 ComputedNode 移除参数的组件 ID。" }
-  class n18 node_local
-  n19@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  n14@{ shape: notch-rect, label: "**Local · arg6.6.0.0.0.0.0**<br/>保存 ImageNode 移除参数的组件 ID。" }
+  class n14 node_local
+  n15@{ shape: rounded, label: "**ImageNode**<br/>来自crate:bevy​_​ui ↗：描述 UI 图像及其<br/>绘制参数。" }
+  class n15 node_component
+  class n15 external_node
+  n16@{ shape: rounded, label: "**CalculatedClip**<br/>来自crate:bevy​_​ui ↗：缓存节点从祖先继<br/>承的裁剪结果。" }
+  class n16 node_component
+  class n16 external_node
+  n17@{ shape: notch-rect, label: "**Local · arg6.1.0.0.1**<br/>跟踪 ComputedStackIndex 移除记录的读<br/>取进度。" }
+  class n17 node_local
+  n18@{ shape: cyl, label: "**Assets#lt;TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n18 node_resource
+  class n18 external_node
+  n19@{ shape: rounded, label: "**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
   class n19 node_component
   class n19 external_node
-  n20@{ shape: notch-rect, label: "**Local · arg6.4.0.0.1**<br/>跟踪 CalculatedClip 移除记录的读取进<br/>度。" }
-  class n20 node_local
-  n21@{ shape: notch-rect, label: "**Local · arg6.5.0.0.1**<br/>跟踪 ComputedUiTargetCamera 移除记录<br/>的读取进度。" }
-  class n21 node_local
-  n22@{ shape: rounded, label: "**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
-  class n22 node_component
-  class n22 external_node
-  n23@{ shape: notch-rect, label: "**Local · arg6.3.0.0.1**<br/>跟踪 InheritedVisibility 移除记录的读<br/>取进度。" }
+  n20@{ shape: cyl, label: "**ExtractedUiTextureSlices**<br/>按节点保存提取后的 UI 纹理切片。" }
+  class n20 node_resource
+  n21@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  class n21 node_component
+  class n21 external_node
+  n22@{ shape: notch-rect, label: "**Local · arg6.6.0.0.1**<br/>跟踪 ImageNode 移除记录的读取进度。" }
+  class n22 node_local
+  n23@{ shape: notch-rect, label: "**Local · arg6.1.0.0.0.0.0**<br/>保存 ComputedStackIndex 移除参数的组<br/>件 ID。" }
   class n23 node_local
-  n24@{ shape: cyl, label: "**ExtractedUiTextureSlices**<br/>按节点保存提取后的 UI 纹理切片。" }
-  class n24 node_resource
-  n25@{ shape: notch-rect, label: "**Local · arg6.1.0.0.1**<br/>跟踪 ComputedStackIndex 移除记录的读<br/>取进度。" }
+  n24@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  class n24 node_component
+  class n24 external_node
+  n25@{ shape: notch-rect, label: "**Local · arg6.0.0.0.1**<br/>跟踪 ComputedNode 移除记录的读取进度。" }
   class n25 node_local
-  n26@{ shape: notch-rect, label: "**Local · arg6.2.0.0.0.0.0**<br/>保存 UiGlobalTransform 移除参数的组<br/>件 ID。" }
+  n26@{ shape: notch-rect, label: "**Local · arg6.2.0.0.1**<br/>跟踪 UiGlobalTransform 移除记录的读取<br/>进度。" }
   class n26 node_local
-  n27@{ shape: notch-rect, label: "**Local · arg6.6.0.0.0.0.0**<br/>保存 ImageNode 移除参数的组件 ID。" }
+  n27@{ shape: notch-rect, label: "**Local · arg6.2.0.0.0.0.0**<br/>保存 UiGlobalTransform 移除参数的组<br/>件 ID。" }
   class n27 node_local
-  n28@{ shape: notch-rect, label: "**Local · arg6.5.0.0.0.0.0**<br/>保存 ComputedUiTargetCamera 移除参数<br/>的组件 ID。" }
+  n28@{ shape: notch-rect, label: "**Local · arg6.4.0.0.1**<br/>跟踪 CalculatedClip 移除记录的读取进<br/>度。" }
   class n28 node_local
-  n29@{ shape: rounded, label: "**ImageNodeSize**<br/>来自crate:bevy​_​ui ↗：缓存 UI 图像纹理<br/>的像素尺寸。" }
-  class n29 node_component
-  class n29 external_node
-  n1 e0@-->|"存在性约束"| n0
-  class e0 edge_reference
+  n29@{ shape: notch-rect, label: "**Local · arg6.4.0.0.0.0.0**<br/>保存 CalculatedClip 移除参数的组件<br/>ID。" }
+  class n29 node_local
+  n1 e0@--> n0
+  class e0 edge_read
   n2 e1@--> n0
   class e1 edge_read
-  n3 e2@--> n0
-  class e2 edge_read
-  n0 e3@-->|"可变访问"| n4
+  n2 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n0 e3@-->|"可变访问"| n3
   class e3 edge_write
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
-  n6 e5@--> n0
-  class e5 edge_read
-  n7 e6@--> n0
-  class e6 edge_read
-  n0 e7@-->|"可变访问"| n8
+  n0 e4@-->|"可变访问"| n4
+  class e4 edge_write
+  n0 e5@-->|"可变访问"| n5
+  class e5 edge_write
+  n0 e6@-->|"可变访问"| n6
+  class e6 edge_write
+  n0 e7@-->|"可变访问"| n7
   class e7 edge_write
-  n9 e8@--> n0
-  class e8 edge_read
-  n0 e9@-->|"可变访问"| n10
+  n8 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
+  n0 e9@-->|"可变访问"| n9
   class e9 edge_write
-  n0 e10@-->|"可变访问"| n11
-  class e10 edge_write
-  n0 e11@-->|"可变访问"| n12
-  class e11 edge_write
-  n13 e12@-->|"存在性约束"| n0
-  class e12 edge_reference
-  n14 e13@--> n0
-  class e13 edge_read
-  n0 e14@-->|"可变访问"| n15
+  n10 e10@--> n0
+  class e10 edge_read
+  n11 e11@-->|"调用"| n0
+  class e11 edge_registration
+  n12 e12@-->|"集合成员"| n0
+  class e12 edge_set_membership
+  n13 e13@-->|"存在性约束"| n0
+  class e13 edge_reference
+  n0 e14@-->|"可变访问"| n14
   class e14 edge_write
-  n0 e15@-->|"可变访问"| n16
-  class e15 edge_write
-  n1 e16@--> n0
+  n15 e15@--> n0
+  class e15 edge_read
+  n16 e16@--> n0
   class e16 edge_read
-  n17 e17@-->|"集合成员"| n0
-  class e17 edge_set_membership
-  n0 e18@-->|"可变访问"| n18
-  class e18 edge_write
-  n19 e19@-->|"存在性约束"| n0
-  class e19 edge_reference
-  n3 e20@-->|"存在性约束"| n0
-  class e20 edge_reference
-  n0 e21@-->|"可变访问"| n20
-  class e21 edge_write
-  n0 e22@-->|"可变访问"| n21
-  class e22 edge_write
-  n19 e23@--> n0
-  class e23 edge_read
+  n0 e17@-->|"可变访问"| n17
+  class e17 edge_write
+  n18 e18@--> n0
+  class e18 edge_read
+  n19 e19@--> n0
+  class e19 edge_read
+  n0 e20@-->|"可变访问"| n20
+  class e20 edge_write
+  n21 e21@--> n0
+  class e21 edge_read
+  n15 e22@-->|"存在性约束"| n0
+  class e22 edge_reference
+  n0 e23@-->|"可变访问"| n22
+  class e23 edge_write
   n13 e24@--> n0
   class e24 edge_read
-  n22 e25@--> n0
-  class e25 edge_read
-  n0 e26@-->|"可变访问"| n23
-  class e26 edge_write
-  n0 e27@-->|"可变访问"| n24
+  n0 e25@-->|"可变访问"| n23
+  class e25 edge_write
+  n24 e26@--> n0
+  class e26 edge_read
+  n0 e27@-->|"可变访问"| n25
   class e27 edge_write
-  n2 e28@-->|"存在性约束"| n0
+  n10 e28@-->|"存在性约束"| n0
   class e28 edge_reference
-  n0 e29@-->|"可变访问"| n25
-  class e29 edge_write
-  n0 e30@-->|"可变访问"| n26
-  class e30 edge_write
-  n0 e31@-->|"可变访问"| n27
+  n16 e29@-->|"存在性约束"| n0
+  class e29 edge_reference
+  n24 e30@-->|"存在性约束"| n0
+  class e30 edge_reference
+  n0 e31@-->|"可变访问"| n26
   class e31 edge_write
-  n22 e32@-->|"存在性约束"| n0
-  class e32 edge_reference
-  n7 e33@-->|"存在性约束"| n0
-  class e33 edge_reference
-  n0 e34@-->|"可变访问"| n28
-  class e34 edge_write
-  n29 e35@-->|"存在性约束"| n0
-  class e35 edge_reference
+  n0 e32@-->|"可变访问"| n27
+  class e32 edge_write
+  n0 e33@-->|"可变访问"| n28
+  class e33 edge_write
+  n19 e34@-->|"存在性约束"| n0
+  class e34 edge_reference
+  n0 e35@-->|"可变访问"| n29
+  class e35 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

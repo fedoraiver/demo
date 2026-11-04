@@ -1,0 +1,56 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: render::mesh::RenderMeshInstanceGpuQueues · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**RenderMeshInstanceGpuQueues**<br/>暂存各线程提取的 GPU 网格实例。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**collect​_​meshes​_​for​_​gpu​_​building**<br/>把线程提取队列整理为 GPU 网格实例和输入<br/>缓冲。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**extract​_​meshes​_​for​_​gpu​_​building**<br/>增量提取变化或需重试网格到线程队列。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
+  class n3 node_system
+  class n3 external_node
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"插入"| n0
+  class e2 edge_write
+  e0@{ curve: basis }
+  e2@{ curve: basis }

@@ -40,12 +40,12 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled​_​during​_​**<br/>**extraction**<br/>判断提取阶段是否使用 GPU 聚簇。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**extract​_​clusters​_​for​_​gpu​_​clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
-  class n1 node_system
-  n2@{ shape: cyl, label: "**GlobalClusterSettings**<br/>来自crate:bevy​_​light ↗：描述设备支持<br/>的聚簇功能和索引上限。" }
-  class n2 node_resource
-  class n2 external_node
-  n0 e0@-->|"运行条件"| n1
-  class e0 edge_reference
-  n2 e1@--> n0
-  class e1 edge_read
+  n1@{ shape: cyl, label: "**GlobalClusterSettings**<br/>来自crate:bevy​_​light ↗：描述设备支持<br/>的聚簇功能和索引上限。" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: rounded, label: "**extract​_​clusters​_​for​_​gpu​_​clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
+  class n2 node_system
+  n1 e0@--> n0
+  class e0 edge_read
+  n0 e1@-->|"运行条件"| n2
+  class e1 edge_reference

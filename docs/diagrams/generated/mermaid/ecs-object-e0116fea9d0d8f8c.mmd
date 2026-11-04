@@ -44,64 +44,76 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**update​_​interactions**<br/>合并多个指针对目标实体的交互状态。" }
   class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**PointerInteraction**<br/>保存当前指针命中的实体及 HitData" }
   class n1 node_component
-  n2@{ shape: cyl, label: "**HoverMap**<br/>保存各指针当前可交互的悬停目标。" }
-  class n2 node_resource
-  n3@{ shape: rounded, label: "**PointerPressState**<br/>记录指针主键、次键及中键的按下状态" }
-  class n3 node_component
+  n2@{ shape: fr-rect, label: "**InteractionPlugin**<br/>生成并冒泡指针交互事件。" }
+  class n2 node_plugin
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**generate​_​hovermap**<br/>汇总拾取命中并应用指针捕获。" }
+  class n3 node_system
+  end
+  style layout_card_n3 fill:none,stroke:none
   n4@{ shape: rounded, label: "**PickingInteraction**<br/>汇总所有指针对实体的交互状态" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**generate​_​hovermap**<br/>汇总拾取命中并应用指针捕获。" }
-  class n5 node_system
-  n6@{ shape: fr-rect, label: "**InteractionPlugin**<br/>生成并冒泡指针交互事件。" }
-  class n6 node_plugin
-  n7@{ shape: lin-rect, label: "**Hover**<br/>组织指针拾取和悬停处理阶段。" }
-  class n7 node_system_set
-  n8@{ shape: rounded, label: "**update​_​is​_​hovered**<br/>把鼠标悬停传播到实体祖先。" }
-  class n8 node_system
-  n9@{ shape: rounded, label: "**update​_​is​_​directly​_​hovered**<br/>更新鼠标直接悬停的实体标记。" }
-  class n9 node_system
-  n10@{ shape: cyl, label: "**PreviousHoverMap**<br/>保留上一轮指针悬停目标。" }
-  class n10 node_resource
-  n11@{ shape: rounded, label: "**PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
-  class n11 node_component
+  n5@{ shape: lin-rect, label: "**Hover**<br/>组织指针拾取和悬停处理阶段。" }
+  class n5 node_system_set
+  n6@{ shape: rounded, label: "**PointerPressState**<br/>记录指针主键、次键及中键的按下状态" }
+  class n6 node_component
+  n7@{ shape: cyl, label: "**HoverMap**<br/>保存各指针当前可交互的悬停目标。" }
+  class n7 node_resource
+  n8@{ shape: rounded, label: "**PointerId**<br/>以鼠标、触摸编号或自定义 UUID 提供稳定<br/>指针身份" }
+  class n8 node_component
+  n9@{ shape: cyl, label: "**PreviousHoverMap**<br/>保留上一轮指针悬停目标。" }
+  class n9 node_resource
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**update​_​is​_​hovered**<br/>把鼠标悬停传播到实体祖先。" }
+  class n10 node_system
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**update​_​is​_​directly​_​hovered**<br/>更新鼠标直接悬停的实体标记。" }
+  class n11 node_system
+  end
+  style layout_card_n11 fill:none,stroke:none
   n0 e0@-->|"赋值"| n1
   class e0 edge_write
-  n2 e1@--> n0
-  class e1 edge_read
-  n3 e2@--> n0
-  class e2 edge_read
-  n0 e3@-->|"插入"| n4
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@-->|"先于"| n0
+  class e2 edge_order
+  n0 e3@-->|"赋值"| n4
   class e3 edge_write
-  n0 e4@-->|"赋值"| n4
-  class e4 edge_write
-  n5 e5@-->|"先于"| n0
-  class e5 edge_order
-  n6 e6@-->|"调用"| n0
-  class e6 edge_registration
-  n0 e7@-->|"可变访问"| n4
-  class e7 edge_write
-  n7 e8@-->|"集合成员"| n0
-  class e8 edge_set_membership
-  n0 e9@-->|"可变访问"| n1
+  n5 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"可变访问"| n4
   class e9 edge_write
-  n0 e10@-->|"先于"| n8
+  n0 e10@-->|"先于"| n10
   class e10 edge_order
-  n0 e11@-->|"先于"| n9
-  class e11 edge_order
-  n10 e12@--> n0
-  class e12 edge_read
-  n11 e13@--> n0
-  class e13 edge_read
+  n0 e11@-->|"可变访问"| n1
+  class e11 edge_write
+  n0 e12@-->|"先于"| n11
+  class e12 edge_order
+  n0 e13@-->|"插入"| n4
+  class e13 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
+  e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

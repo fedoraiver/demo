@@ -1,0 +1,106 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: material_bind_groups::MaterialBindGroupAllocators · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**MaterialBindGroupAllocators**<br/>为材质分配绑定组并追踪引用资源。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**add​_​material2d​_​bind​_​group​_​allocator**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维材质类型注册 GPU 绑定组分配器。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**prepare​_​material​_​bind​_​groups**<br/>重建本帧变化材质所需的 GPU 绑定组。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**add​_​material2d​_​bind​_​group​_​allocator**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维材质类型注册 GPU 绑定组分配器。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**add​_​material​_​bind​_​group​_​allocator**<br/>来自crate:bevy​_​pbr ↗：为具体材质类型<br/>注册 GPU 绑定分配器。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**write​_​material​_​bind​_​group​_​buffers**<br/>上传材质分配器管理的无绑定缓冲内容。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**add​_​material​_​bind​_​group​_​allocator**<br/>来自crate:bevy​_​pbr ↗：为具体材质类型<br/>注册 GPU 绑定分配器。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**add​_​material2d​_​bind​_​group​_​allocator**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维材质类型注册 GPU 绑定组分配器。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  class n12 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n5 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  n6 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n7 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n8 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n9 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  n10 e9@-->|"可变访问"| n0
+  class e9 edge_write
+  n11 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n12 e11@-->|"可变访问"| n0
+  class e11 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }

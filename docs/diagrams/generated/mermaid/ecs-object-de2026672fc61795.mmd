@@ -1,0 +1,74 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: text_input::QueuedSelectAll · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**QueuedSelectAll**<br/>暂存由指针按下触发焦点的编辑实体" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**apply​_​queued​_​select​_​all**<br/>在指针释放时应用延后的文本全选。" }
+  class n1 node_system
+  n2@{ shape: hex, label: "**on​_​focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
+  class n2 node_observer
+  n3@{ shape: hex, label: "**on​_​focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
+  class n3 node_observer
+  n4@{ shape: hex, label: "**on​_​focus​_​select​_​all**<br/>按聚焦来源安排文本全选。" }
+  class n4 node_observer
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"赋值"| n0
+  class e1 edge_write
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n4 e3@-->|"赋值"| n0
+  class e3 edge_write
+  n3 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n4 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n1 e6@-->|"赋值"| n0
+  class e6 edge_write
+  n2 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: bumpX }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: bumpX }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

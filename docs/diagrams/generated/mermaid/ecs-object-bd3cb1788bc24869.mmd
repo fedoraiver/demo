@@ -42,18 +42,18 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​depth​_​pyramid​_​dummy​_​texture**<br/>创建深度金字塔的占位纹理资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n1 node_resource
-  class n1 external_node
-  n2@{ shape: fr-rect, label: "**MipGenerationPlugin**<br/>在 GPU 上生成纹理 mip 层级。" }
-  class n2 node_plugin
-  n3@{ shape: cyl, label: "**DepthPyramidDummyTexture**<br/>提供未启用深度金字塔时的占位绑定纹理。" }
+  n1@{ shape: fr-rect, label: "**MipGenerationPlugin**<br/>在 GPU 上生成纹理 mip 层级。" }
+  class n1 node_plugin
+  n2@{ shape: cyl, label: "**DepthPyramidDummyTexture**<br/>提供未启用深度金字塔时的占位绑定纹理。" }
+  class n2 node_resource
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n3 node_resource
-  n1 e0@--> n0
-  class e0 edge_read
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n0 e2@-->|"插入"| n3
-  class e2 edge_write
+  class n3 external_node
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n0 e1@-->|"插入"| n2
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e2@{ curve: basis }

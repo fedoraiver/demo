@@ -1,0 +1,659 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-ffc5e6ec38513855-e48{marker-start:url(#object-ffc5e6ec38513855_flowchart-v2-pointStart)!important}\n#object-ffc5e6ec38513855_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: AccessibilityNode · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**AccessibilityNode**<br/>把实体转换为 AccessKit 可访问性节点" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**image​_​changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: hex, label: "**slider​_​on​_​insert**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍方向。" }
+  class n2 node_observer
+  class n2 external_node
+  n3@{ shape: hex, label: "**on​_​add​_​selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
+  class n3 node_observer
+  class n3 external_node
+  n4@{ shape: hex, label: "**slider​_​on​_​insert​_​range**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍数值范围。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n5 node_entity
+  class n5 external_node
+  n6@{ shape: hex, label: "**on​_​add​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
+  class n6 node_observer
+  class n6 external_node
+  n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  class n7 node_entity
+  class n7 external_node
+  n8@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n8 node_entity
+  class n8 external_node
+  n9@{ shape: rounded, label: "**button​_​changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: hex, label: "**on​_​remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
+  class n10 node_observer
+  class n10 external_node
+  n11@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  class n11 node_entity
+  class n11 external_node
+  n12@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n12 node_entity
+  class n12 external_node
+  n13@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n13 node_entity
+  class n13 external_node
+  n14@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  class n14 node_entity
+  class n14 external_node
+  n15@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n15 node_entity
+  class n15 external_node
+  n16@{ shape: hex, label: "**on​_​add​_​checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
+  class n16 node_observer
+  class n16 external_node
+  n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  class n17 node_entity
+  class n17 external_node
+  n18@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  class n18 node_entity
+  class n18 external_node
+  n19@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n19 node_entity
+  class n19 external_node
+  n20@{ shape: hex, label: "**on​_​remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
+  class n20 node_observer
+  class n20 external_node
+  n21@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  class n21 node_entity
+  class n21 external_node
+  n22@{ shape: hex, label: "**on​_​add​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
+  class n22 node_observer
+  class n22 external_node
+  n23@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  class n23 node_entity
+  class n23 external_node
+  n24@{ shape: rounded, label: "**label​_​changed**<br/>来自crate:bevy​_​ui ↗：把标签子树文字写<br/>入无障碍节点。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  class n25 node_entity
+  class n25 external_node
+  n26@{ shape: hex, label: "**on​_​remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
+  class n26 node_observer
+  class n26 external_node
+  n27@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n27 node_entity
+  class n27 external_node
+  n28@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供可导航和指针拖动的音量调<br/>节入口。" }
+  class n28 node_entity
+  class n28 external_node
+  n29@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n29 node_entity
+  class n29 external_node
+  n30@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n30 node_entity
+  class n30 external_node
+  n31@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  class n31 node_entity
+  class n31 external_node
+  n32@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n32 node_entity
+  class n32 external_node
+  n33@{ shape: hex, label: "**on​_​remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
+  class n33 node_observer
+  class n33 external_node
+  n34@{ shape: hex, label: "**on​_​add​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
+  class n34 node_observer
+  class n34 external_node
+  n35@{ shape: hex, label: "**on​_​remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
+  class n35 node_observer
+  class n35 external_node
+  n36@{ shape: hex, label: "**on​_​add​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
+  class n36 node_observer
+  class n36 external_node
+  n37@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n37 node_entity
+  class n37 external_node
+  n38@{ shape: hex, label: "**slider​_​on​_​insert​_​range**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍数值范围。" }
+  class n38 node_observer
+  class n38 external_node
+  n39@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  class n39 node_entity
+  class n39 external_node
+  n40@{ shape: hex, label: "**on​_​remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
+  class n40 node_observer
+  class n40 external_node
+  n41@{ shape: hex, label: "**on​_​remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
+  class n41 node_observer
+  class n41 external_node
+  n42@{ shape: hex, label: "**on​_​remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
+  class n42 node_observer
+  class n42 external_node
+  n43@{ shape: hex, label: "**on​_​add​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
+  class n43 node_observer
+  class n43 external_node
+  n44@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  class n44 node_entity
+  class n44 external_node
+  n45@{ shape: hex, label: "**slider​_​on​_​insert**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍方向。" }
+  class n45 node_observer
+  class n45 external_node
+  n46@{ shape: rounded, label: "**sync​_​bounds​_​and​_​transforms**<br/>来自crate:bevy​_​ui ↗：把 UI 几何同步到<br/>无障碍树。" }
+  class n46 node_system
+  class n46 external_node
+  n47@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n47 node_entity
+  class n47 external_node
+  n48@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  class n48 node_entity
+  class n48 external_node
+  n49@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  class n49 node_entity
+  class n49 external_node
+  n50@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  class n50 node_entity
+  class n50 external_node
+  n51@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  class n51 node_entity
+  class n51 external_node
+  n52@{ shape: hex, label: "**slider​_​on​_​insert​_​range**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍数值范围。" }
+  class n52 node_observer
+  class n52 external_node
+  n53@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  class n53 node_entity
+  class n53 external_node
+  n54@{ shape: hex, label: "**on​_​add​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>禁用状态。" }
+  class n54 node_observer
+  class n54 external_node
+  n55@{ shape: hex, label: "**on​_​remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
+  class n55 node_observer
+  class n55 external_node
+  n56@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  class n56 node_entity
+  class n56 external_node
+  n57@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  class n57 node_entity
+  class n57 external_node
+  n58@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
+  class n58 node_system
+  class n58 external_node
+  n59@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  class n59 node_entity
+  class n59 external_node
+  n60@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n60 node_entity
+  class n60 external_node
+  n61@{ shape: hex, label: "**slider​_​on​_​insert​_​step**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍步长。" }
+  class n61 node_observer
+  class n61 external_node
+  n62@{ shape: hex, label: "**slider​_​on​_​insert​_​value**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍当前值。" }
+  class n62 node_observer
+  class n62 external_node
+  n63@{ shape: hex, label: "**on​_​add​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
+  class n63 node_observer
+  class n63 external_node
+  n64@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  class n64 node_entity
+  class n64 external_node
+  n65@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  class n65 node_entity
+  class n65 external_node
+  n66@{ shape: hex, label: "**on​_​remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
+  class n66 node_observer
+  class n66 external_node
+  n67@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n67 node_entity
+  class n67 external_node
+  n68@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  class n68 node_entity
+  class n68 external_node
+  n69@{ shape: hex, label: "**on​_​add​_​checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
+  class n69 node_observer
+  class n69 external_node
+  n70@{ shape: hex, label: "**on​_​add​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已勾选状态。" }
+  class n70 node_observer
+  class n70 external_node
+  n71@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  class n71 node_entity
+  class n71 external_node
+  n72@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在音频设置页触发测试音效。" }
+  class n72 node_entity
+  class n72 external_node
+  n73@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  class n73 node_entity
+  class n73 external_node
+  n74@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n74 node_entity
+  class n74 external_node
+  n75@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  class n75 node_entity
+  class n75 external_node
+  n76@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  class n76 node_entity
+  class n76 external_node
+  n77@{ shape: hex, label: "**on​_​remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
+  class n77 node_observer
+  class n77 external_node
+  n78@{ shape: hex, label: "**on​_​add​_​selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
+  class n78 node_observer
+  class n78 external_node
+  n79@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  class n79 node_entity
+  class n79 external_node
+  n80@{ shape: hex, label: "**on​_​add​_​checkable**<br/>来自crate:bevy​_​ui ↗：初始化可勾选控件<br/>的无障碍状态。" }
+  class n80 node_observer
+  class n80 external_node
+  n81@{ shape: hex, label: "**slider​_​on​_​insert​_​step**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍步长。" }
+  class n81 node_observer
+  class n81 external_node
+  n82@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供可导航和指针拖动的音量调<br/>节入口。" }
+  class n82 node_entity
+  class n82 external_node
+  n83@{ shape: hex, label: "**slider​_​on​_​insert​_​value**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍当前值。" }
+  class n83 node_observer
+  class n83 external_node
+  n84@{ shape: hex, label: "**slider​_​on​_​insert​_​value**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍当前值。" }
+  class n84 node_observer
+  class n84 external_node
+  n85@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  class n85 node_entity
+  class n85 external_node
+  n86@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供离开帮助页的返回入口。" }
+  class n86 node_entity
+  class n86 external_node
+  n87@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  class n87 node_entity
+  class n87 external_node
+  n88@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  class n88 node_entity
+  class n88 external_node
+  n89@{ shape: hex, label: "**on​_​remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
+  class n89 node_observer
+  class n89 external_node
+  n90@{ shape: hex, label: "**on​_​add​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>已选中状态。" }
+  class n90 node_observer
+  class n90 external_node
+  n91@{ shape: hex, label: "**slider​_​on​_​insert​_​step**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍步长。" }
+  class n91 node_observer
+  class n91 external_node
+  n92@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  class n92 node_entity
+  class n92 external_node
+  n93@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  class n93 node_entity
+  class n93 external_node
+  n94@{ shape: hex, label: "**on​_​remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
+  class n94 node_observer
+  class n94 external_node
+  n95@{ shape: hex, label: "**on​_​remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
+  class n95 node_observer
+  class n95 external_node
+  n96@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供可导航和指针拖动的音量调<br/>节入口。" }
+  class n96 node_entity
+  class n96 external_node
+  n97@{ shape: hex, label: "**on​_​add​_​selectable**<br/>来自crate:bevy​_​ui ↗：初始化可选择控件<br/>的无障碍状态。" }
+  class n97 node_observer
+  class n97 external_node
+  n98@{ shape: hex, label: "**slider​_​on​_​insert**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍方向。" }
+  class n98 node_observer
+  class n98 external_node
+  n99@{ shape: hex, label: "**on​_​remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
+  class n99 node_observer
+  class n99 external_node
+  n100@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  class n100 node_entity
+  class n100 external_node
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n5 e4@-->|"可能包含"| n0
+  class e4 edge_reference
+  n6 e5@-->|"可变访问"| n0
+  class e5 edge_write
+  n7 e6@-->|"可能包含"| n0
+  class e6 edge_reference
+  n8 e7@-->|"可能包含"| n0
+  class e7 edge_reference
+  n9 e8@-->|"插入"| n0
+  class e8 edge_write
+  n10 e9@-->|"可变访问"| n0
+  class e9 edge_write
+  n11 e10@-->|"可能包含"| n0
+  class e10 edge_reference
+  n12 e11@-->|"可能包含"| n0
+  class e11 edge_reference
+  n13 e12@-->|"可能包含"| n0
+  class e12 edge_reference
+  n14 e13@-->|"可能包含"| n0
+  class e13 edge_reference
+  n15 e14@-->|"可能包含"| n0
+  class e14 edge_reference
+  n16 e15@-->|"可变访问"| n0
+  class e15 edge_write
+  n17 e16@-->|"可能包含"| n0
+  class e16 edge_reference
+  n18 e17@-->|"可能包含"| n0
+  class e17 edge_reference
+  n19 e18@-->|"可能包含"| n0
+  class e18 edge_reference
+  n20 e19@-->|"可变访问"| n0
+  class e19 edge_write
+  n21 e20@-->|"可能包含"| n0
+  class e20 edge_reference
+  n22 e21@-->|"可变访问"| n0
+  class e21 edge_write
+  n23 e22@-->|"可能包含"| n0
+  class e22 edge_reference
+  n24 e23@-->|"可变访问"| n0
+  class e23 edge_write
+  n9 e24@-->|"可变访问"| n0
+  class e24 edge_write
+  n25 e25@-->|"可能包含"| n0
+  class e25 edge_reference
+  n26 e26@-->|"可变访问"| n0
+  class e26 edge_write
+  n27 e27@-->|"可能包含"| n0
+  class e27 edge_reference
+  n28 e28@-->|"可能包含"| n0
+  class e28 edge_reference
+  n29 e29@-->|"可能包含"| n0
+  class e29 edge_reference
+  n30 e30@-->|"可能包含"| n0
+  class e30 edge_reference
+  n31 e31@-->|"可能包含"| n0
+  class e31 edge_reference
+  n32 e32@-->|"可能包含"| n0
+  class e32 edge_reference
+  n1 e33@-->|"插入"| n0
+  class e33 edge_write
+  n33 e34@-->|"可变访问"| n0
+  class e34 edge_write
+  n34 e35@-->|"可变访问"| n0
+  class e35 edge_write
+  n35 e36@-->|"可变访问"| n0
+  class e36 edge_write
+  n24 e37@-->|"插入"| n0
+  class e37 edge_write
+  n36 e38@-->|"可变访问"| n0
+  class e38 edge_write
+  n37 e39@-->|"可能包含"| n0
+  class e39 edge_reference
+  n38 e40@-->|"可变访问"| n0
+  class e40 edge_write
+  n39 e41@-->|"可能包含"| n0
+  class e41 edge_reference
+  n40 e42@-->|"可变访问"| n0
+  class e42 edge_write
+  n41 e43@-->|"可变访问"| n0
+  class e43 edge_write
+  n42 e44@-->|"可变访问"| n0
+  class e44 edge_write
+  n43 e45@-->|"可变访问"| n0
+  class e45 edge_write
+  n44 e46@-->|"可能包含"| n0
+  class e46 edge_reference
+  n45 e47@-->|"可变访问"| n0
+  class e47 edge_write
+  n46 e48@---|"存在性约束"| n0
+  class e48 edge_reference
+  n47 e49@-->|"可能包含"| n0
+  class e49 edge_reference
+  n48 e50@-->|"可能包含"| n0
+  class e50 edge_reference
+  n49 e51@-->|"可能包含"| n0
+  class e51 edge_reference
+  n50 e52@-->|"可能包含"| n0
+  class e52 edge_reference
+  n51 e53@-->|"可能包含"| n0
+  class e53 edge_reference
+  n52 e54@-->|"可变访问"| n0
+  class e54 edge_write
+  n53 e55@-->|"可能包含"| n0
+  class e55 edge_reference
+  n54 e56@-->|"可变访问"| n0
+  class e56 edge_write
+  n55 e57@-->|"可变访问"| n0
+  class e57 edge_write
+  n56 e58@-->|"可能包含"| n0
+  class e58 edge_reference
+  n57 e59@-->|"可能包含"| n0
+  class e59 edge_reference
+  n0 e60@--> n58
+  class e60 edge_read
+  n59 e61@-->|"可能包含"| n0
+  class e61 edge_reference
+  n60 e62@-->|"可能包含"| n0
+  class e62 edge_reference
+  n61 e63@-->|"可变访问"| n0
+  class e63 edge_write
+  n62 e64@-->|"可变访问"| n0
+  class e64 edge_write
+  n63 e65@-->|"可变访问"| n0
+  class e65 edge_write
+  n64 e66@-->|"可能包含"| n0
+  class e66 edge_reference
+  n65 e67@-->|"可能包含"| n0
+  class e67 edge_reference
+  n66 e68@-->|"可变访问"| n0
+  class e68 edge_write
+  n67 e69@-->|"可能包含"| n0
+  class e69 edge_reference
+  n68 e70@-->|"可能包含"| n0
+  class e70 edge_reference
+  n69 e71@-->|"可变访问"| n0
+  class e71 edge_write
+  n70 e72@-->|"可变访问"| n0
+  class e72 edge_write
+  n71 e73@-->|"可能包含"| n0
+  class e73 edge_reference
+  n72 e74@-->|"可能包含"| n0
+  class e74 edge_reference
+  n73 e75@-->|"可能包含"| n0
+  class e75 edge_reference
+  n74 e76@-->|"可能包含"| n0
+  class e76 edge_reference
+  n75 e77@-->|"可能包含"| n0
+  class e77 edge_reference
+  n76 e78@-->|"可能包含"| n0
+  class e78 edge_reference
+  n77 e79@-->|"可变访问"| n0
+  class e79 edge_write
+  n78 e80@-->|"可变访问"| n0
+  class e80 edge_write
+  n79 e81@-->|"可能包含"| n0
+  class e81 edge_reference
+  n0 e82@-->|"存在性约束"| n58
+  class e82 edge_reference
+  n80 e83@-->|"可变访问"| n0
+  class e83 edge_write
+  n81 e84@-->|"可变访问"| n0
+  class e84 edge_write
+  n82 e85@-->|"可能包含"| n0
+  class e85 edge_reference
+  n46 e86@-->|"可变访问"| n0
+  class e86 edge_write
+  n83 e87@-->|"可变访问"| n0
+  class e87 edge_write
+  n84 e88@-->|"可变访问"| n0
+  class e88 edge_write
+  n85 e89@-->|"可能包含"| n0
+  class e89 edge_reference
+  n86 e90@-->|"可能包含"| n0
+  class e90 edge_reference
+  n87 e91@-->|"可能包含"| n0
+  class e91 edge_reference
+  n88 e92@-->|"可能包含"| n0
+  class e92 edge_reference
+  n89 e93@-->|"可变访问"| n0
+  class e93 edge_write
+  n90 e94@-->|"可变访问"| n0
+  class e94 edge_write
+  n91 e95@-->|"可变访问"| n0
+  class e95 edge_write
+  n92 e96@-->|"可能包含"| n0
+  class e96 edge_reference
+  n93 e97@-->|"可能包含"| n0
+  class e97 edge_reference
+  n94 e98@-->|"可变访问"| n0
+  class e98 edge_write
+  n95 e99@-->|"可变访问"| n0
+  class e99 edge_write
+  n96 e100@-->|"可能包含"| n0
+  class e100 edge_reference
+  n97 e101@-->|"可变访问"| n0
+  class e101 edge_write
+  n98 e102@-->|"可变访问"| n0
+  class e102 edge_write
+  n99 e103@-->|"可变访问"| n0
+  class e103 edge_write
+  n100 e104@-->|"可能包含"| n0
+  class e104 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }
+  e65@{ curve: basis }
+  e66@{ curve: basis }
+  e67@{ curve: basis }
+  e68@{ curve: basis }
+  e69@{ curve: basis }
+  e70@{ curve: basis }
+  e71@{ curve: basis }
+  e72@{ curve: basis }
+  e73@{ curve: basis }
+  e74@{ curve: basis }
+  e75@{ curve: basis }
+  e76@{ curve: basis }
+  e77@{ curve: basis }
+  e78@{ curve: basis }
+  e79@{ curve: basis }
+  e80@{ curve: basis }
+  e81@{ curve: basis }
+  e82@{ curve: basis }
+  e83@{ curve: basis }
+  e84@{ curve: basis }
+  e85@{ curve: basis }
+  e86@{ curve: basis }
+  e87@{ curve: basis }
+  e88@{ curve: basis }
+  e89@{ curve: basis }
+  e90@{ curve: basis }
+  e91@{ curve: basis }
+  e92@{ curve: basis }
+  e93@{ curve: basis }
+  e94@{ curve: basis }
+  e95@{ curve: basis }
+  e96@{ curve: basis }
+  e97@{ curve: basis }
+  e98@{ curve: basis }
+  e99@{ curve: basis }
+  e100@{ curve: basis }
+  e101@{ curve: basis }
+  e102@{ curve: basis }
+  e103@{ curve: basis }
+  e104@{ curve: basis }

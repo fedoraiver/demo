@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-0bbc4e3cc64c302d-e9{marker-start:url(#object-0bbc4e3cc64c302d_flowchart-v2-pointStart)!important}\n#object-0bbc4e3cc64c302d_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-0bbc4e3cc64c302d-e6{marker-start:url(#object-0bbc4e3cc64c302d_flowchart-v2-pointStart)!important}\n#object-0bbc4e3cc64c302d_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -45,53 +45,53 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**extract​_​screenshots**<br/>收集并去重本帧尚未捕获的截图请求。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
-  class n1 node_resource
-  class n1 external_node
-  n2@{ shape: notch-rect, label: "**Local · seen​_​targets**<br/>去重本帧指向相同渲染目标的截图请求。" }
+  n1@{ shape: rounded, label: "**Capturing**<br/>标记截图请求正在异步捕获。" }
+  class n1 node_component
+  n2@{ shape: notch-rect, label: "**Local · system​_​state**<br/>缓存主世界截图提取使用的系统参数状态。" }
   class n2 node_local
-  n3@{ shape: cyl, label: "**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
-  class n3 node_resource
-  class n3 external_node
-  n4@{ shape: rounded, label: "**Screenshot**<br/>提交异步截图请求。" }
-  class n4 node_component
-  n5@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
-  class n5 node_component
+  n3@{ shape: fr-rect, label: "**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
+  class n3 node_plugin
+  n4@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: cyl, label: "**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
+  class n5 node_resource
   class n5 external_node
-  n6@{ shape: cyl, label: "**RenderScreenshotTargets**<br/>按截图请求实体保存本帧的规范化渲染目标。" }
-  class n6 node_resource
-  n7@{ shape: rounded, label: "**Capturing**<br/>标记截图请求正在异步捕获。" }
-  class n7 node_component
-  n8@{ shape: notch-rect, label: "**Local · system​_​state**<br/>缓存主世界截图提取使用的系统参数状态。" }
-  class n8 node_local
-  n9@{ shape: fr-rect, label: "**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
-  class n9 node_plugin
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
+  n6@{ shape: notch-rect, label: "**Local · seen​_​targets**<br/>去重本帧指向相同渲染目标的截图请求。" }
+  class n6 node_local
+  n7@{ shape: cyl, label: "**RenderScreenshotTargets**<br/>按截图请求实体保存本帧的规范化渲染目标。" }
+  class n7 node_resource
+  n8@{ shape: rounded, label: "**Screenshot**<br/>提交异步截图请求。" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  class n9 node_component
+  class n9 external_node
+  n1 e0@-->|"存在性约束"| n0
+  class e0 edge_reference
   n0 e1@-->|"可变访问"| n2
   class e1 edge_write
-  n3 e2@--> n0
-  class e2 edge_read
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"存在性约束"| n0
-  class e4 edge_reference
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n5 e4@--> n0
+  class e4 edge_read
   n0 e5@-->|"可变访问"| n6
   class e5 edge_write
-  n7 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
-  n0 e7@-->|"可变访问"| n8
+  n1 e6@---|"插入"| n0
+  class e6 edge_write
+  n0 e7@-->|"可变访问"| n7
   class e7 edge_write
-  n9 e8@-->|"调用"| n0
-  class e8 edge_registration
-  n7 e9@---|"插入"| n0
-  class e9 edge_write
+  n8 e8@--> n0
+  class e8 edge_read
+  n9 e9@-->|"存在性约束"| n0
+  class e9 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
+  e3@{ curve: bumpX }
   e4@{ curve: basis }
-  e5@{ curve: bumpX }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

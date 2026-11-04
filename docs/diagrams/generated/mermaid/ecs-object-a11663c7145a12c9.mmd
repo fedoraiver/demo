@@ -43,7 +43,7 @@ flowchart LR
   n1@{ shape: cyl, label: "**State#lt;AppState#gt;**<br/>来自crate:bevy​_​state ↗：保存某个状态<br/>类型当前生效的值" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**spawn​_​lighting**<br/>来自scene​_​assembly ↗：创建会话灯光和<br/>可复用的加载相机。" }
+  n2@{ shape: rounded, label: "**spawn​_​session​_​environment**<br/>来自scene​_​assembly ↗：为海岛会话创建<br/>日光和加载相机。" }
   class n2 node_system
   class n2 external_node
   n1 e0@--> n0

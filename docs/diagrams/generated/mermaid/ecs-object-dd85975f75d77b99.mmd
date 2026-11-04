@@ -46,25 +46,25 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: rounded, label: "**ScreenSpaceAmbientOcclusionResources**<br/>保存环境光遮蔽的中间纹理与设置缓冲。" }
+  n2@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
-  class n3 node_component
-  class n3 external_node
-  n4@{ shape: cyl, label: "**SsaoPipelines**<br/>汇集 SSAO 管线、纹理接口和采样器。" }
+  class n2 external_node
+  n3@{ shape: cyl, label: "**SsaoPipelines**<br/>汇集 SSAO 管线、纹理接口和采样器。" }
+  class n3 node_resource
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n5 node_resource
-  class n5 external_node
+  class n4 external_node
+  n5@{ shape: rounded, label: "**ScreenSpaceAmbientOcclusion**<br/>配置三维相机的屏幕空间环境光遮蔽。" }
+  class n5 node_component
   n6@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
   class n6 node_resource
   class n6 external_node
-  n7@{ shape: rounded, label: "**ScreenSpaceAmbientOcclusion**<br/>配置三维相机的屏幕空间环境光遮蔽。" }
+  n7@{ shape: rounded, label: "**ScreenSpaceAmbientOcclusionResources**<br/>保存环境光遮蔽的中间纹理与设置缓冲。" }
   class n7 node_component
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
-  n0 e1@-->|"插入"| n2
-  class e1 edge_write
+  n2 e1@--> n0
+  class e1 edge_read
   n3 e2@--> n0
   class e2 edge_read
   n4 e3@--> n0
@@ -73,11 +73,11 @@ flowchart LR
   class e4 edge_read
   n0 e5@-->|"可变访问"| n6
   class e5 edge_write
-  n7 e6@--> n0
-  class e6 edge_read
+  n0 e6@-->|"插入"| n7
+  class e6 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

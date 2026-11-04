@@ -47,196 +47,196 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>重新排版变化的二维文字并准备字形。" }
   class n0 node_system
-  n1@{ shape: notch-rect, label: "**Local · target​_​scale​_​factors**<br/>收集二维文字各目标相机的缩放因子和渲染<br/>层。" }
-  class n1 node_local
-  n2@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n1@{ shape: rounded, label: "**TextFont**<br/>来自crate:bevy​_​text ↗：保存文字段的字<br/>体来源、字号及抗锯齿方式等字体样式" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: rounded, label: "**ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**TextFont**<br/>来自crate:bevy​_​text ↗：保存文字段的字<br/>体来源、字号及抗锯齿方式等字体样式" }
+  n3@{ shape: rounded, label: "**FontHinting**<br/>来自crate:bevy​_​text ↗：选择字形光栅化<br/>时是否启用字体 hinting" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: fr-rect, label: "**SpritePlugin**<br/>建立二维精灵基础支持。" }
-  class n4 node_plugin
-  n5@{ shape: cyl, label: "**TextPipeline**<br/>来自crate:bevy​_​text ↗：执行文字块布局<br/>与渲染数据生成" }
-  class n5 node_resource
-  class n5 external_node
-  n6@{ shape: rounded, label: "**ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
-  class n6 node_component
+  n4@{ shape: rounded, label: "**TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: notch-rect, label: "**Local · target​_​scale​_​factors**<br/>收集二维文字各目标相机的缩放因子和渲染<br/>层。" }
+  class n5 node_local
+  n6@{ shape: cyl, label: "**Assets#lt;Font#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n6 node_resource
   class n6 external_node
-  n7@{ shape: cyl, label: "**Assets#lt;Font#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n7 node_resource
+  n7@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  class n7 node_component
   class n7 external_node
   n8@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
   class n8 node_system_set
   class n8 external_node
-  n9@{ shape: notch-rect, label: "**Local · last​_​logical​_​viewport​_​size**<br/>保存二维文字布局上次使用的逻辑视口尺寸。" }
-  class n9 node_local
-  n10@{ shape: rounded, label: "**LetterSpacing**<br/>来自crate:bevy​_​text ↗：配置相邻文字之<br/>间的额外间距" }
+  n9@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n9 node_resource
+  class n9 external_node
+  n10@{ shape: rounded, label: "**TextColor**<br/>来自crate:bevy​_​text ↗：保存当前文字段<br/>的前景色" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**TextLayout**<br/>来自crate:bevy​_​text ↗：保存文字块的内<br/>部对齐与换行策略" }
-  class n11 node_component
-  class n11 external_node
-  n12@{ shape: cyl, label: "**RemSize**<br/>来自crate:bevy​_​text ↗：保存全局根字号" }
+  n11@{ shape: notch-rect, label: "**Local · reprocess​_​queue**<br/>保留因字体或字形尚未就绪而待重排的二维文<br/>字。" }
+  class n11 node_local
+  n12@{ shape: cyl, label: "**FontCx**<br/>来自crate:bevy​_​text ↗：维护字体数据<br/>库、家族解析与字体缓存" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: cyl, label: "**FontAtlasSet**<br/>来自crate:bevy​_​text ↗：保存字体光栅化<br/>结果所在的 FontAtlas 集合" }
-  class n13 node_resource
-  class n13 external_node
-  n14@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
-  class n14 node_component
+  n13@{ shape: rounded, label: "**Text2d**<br/>保存二维世界文字块的根文本内容" }
+  class n13 node_component
+  n14@{ shape: cyl, label: "**ScaleCx**<br/>来自crate:bevy​_​text ↗：持有字形缩放上<br/>下文" }
+  class n14 node_resource
   class n14 external_node
-  n15@{ shape: rounded, label: "**apply​_​text​_​edits**<br/>来自crate:bevy​_​text ↗：应用可编辑文字<br/>排队的编辑操作。" }
-  class n15 node_system
+  n15@{ shape: cyl, label: "**LayoutCx**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>文字布局上下文" }
+  class n15 node_resource
   class n15 external_node
-  n16@{ shape: rounded, label: "**TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
-  class n16 node_component
-  class n16 external_node
-  n17@{ shape: rounded, label: "**TextBounds**<br/>来自crate:bevy​_​text ↗：保存文字逻辑像<br/>素宽高上限" }
-  class n17 node_component
+  n16@{ shape: fr-rect, label: "**SpritePlugin**<br/>建立二维精灵基础支持。" }
+  class n16 node_plugin
+  n17@{ shape: cyl, label: "**TextPipeline**<br/>来自crate:bevy​_​text ↗：执行文字块布局<br/>与渲染数据生成" }
+  class n17 node_resource
   class n17 external_node
-  n18@{ shape: notch-rect, label: "**Local · text​_​reader.0.0**<br/>复用二维文字排版的文本树遍历空间。" }
-  class n18 node_local
-  n19@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  n18@{ shape: rounded, label: "**apply​_​text​_​edits**<br/>来自crate:bevy​_​text ↗：应用可编辑文字<br/>排队的编辑操作。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**LetterSpacing**<br/>来自crate:bevy​_​text ↗：配置相邻文字之<br/>间的额外间距" }
   class n19 node_component
   class n19 external_node
-  n20@{ shape: rounded, label: "**calculate​_​bounds​_​text2d**<br/>按文字布局与锚点更新二维文字包围盒。" }
-  class n20 node_system
-  n21@{ shape: rounded, label: "**FontHinting**<br/>来自crate:bevy​_​text ↗：选择字形光栅化<br/>时是否启用字体 hinting" }
-  class n21 node_component
-  class n21 external_node
-  n22@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自crate:bevy​_​app ↗：更新动画图、播<br/>放时间和目标姿态。" }
-  class n22 node_system_set
+  n20@{ shape: cyl, label: "**RemSize**<br/>来自crate:bevy​_​text ↗：保存全局根字号" }
+  class n20 node_resource
+  class n20 external_node
+  n21@{ shape: rounded, label: "**calculate​_​bounds​_​text2d**<br/>按文字布局与锚点更新二维文字包围盒。" }
+  class n21 node_system
+  n22@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  class n22 node_component
   class n22 external_node
-  n23@{ shape: cyl, label: "**FontCx**<br/>来自crate:bevy​_​text ↗：维护字体数据<br/>库、家族解析与字体缓存" }
-  class n23 node_resource
+  n23@{ shape: rounded, label: "**InlineBox**<br/>来自crate:bevy​_​text ↗：描述与文字同行<br/>排版的盒子尺寸和流内、流外行为" }
+  class n23 node_component
   class n23 external_node
-  n24@{ shape: lin-rect, label: "**CameraUpdateSystems**<br/>来自crate:bevy​_​camera ↗：统一更新相机<br/>目标、视口与投影计算结果。" }
-  class n24 node_system_set
+  n24@{ shape: rounded, label: "**TextSpan**<br/>来自crate:bevy​_​text ↗：保存附加到<br/>Text 或 Text2d 根文字块的子文本段内容" }
+  class n24 node_component
   class n24 external_node
-  n25@{ shape: cyl, label: "**ScaleCx**<br/>来自crate:bevy​_​text ↗：持有字形缩放上<br/>下文" }
-  class n25 node_resource
+  n25@{ shape: rounded, label: "**TextLayout**<br/>来自crate:bevy​_​text ↗：保存文字块的内<br/>部对齐与换行策略" }
+  class n25 node_component
   class n25 external_node
-  n26@{ shape: rounded, label: "**InlineBox**<br/>来自crate:bevy​_​text ↗：描述与文字同行<br/>排版的盒子尺寸和流内、流外行为" }
+  n26@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n26 node_component
   class n26 external_node
-  n27@{ shape: notch-rect, label: "**Local · reprocess​_​queue**<br/>保留因字体或字形尚未就绪而待重排的二维文<br/>字。" }
-  class n27 node_local
-  n28@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n28 node_resource
+  n27@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自crate:bevy​_​app ↗：更新动画图、播<br/>放时间和目标姿态。" }
+  class n27 node_system_set
+  class n27 external_node
+  n28@{ shape: lin-rect, label: "**CameraUpdateSystems**<br/>来自crate:bevy​_​camera ↗：统一更新相机<br/>目标、视口与投影计算结果。" }
+  class n28 node_system_set
   class n28 external_node
-  n29@{ shape: rounded, label: "**LineHeight**<br/>来自crate:bevy​_​text ↗：配置每行文字的<br/>高度" }
+  n29@{ shape: rounded, label: "**TextBounds**<br/>来自crate:bevy​_​text ↗：保存文字逻辑像<br/>素宽高上限" }
   class n29 node_component
   class n29 external_node
-  n30@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  n30@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n30 node_component
   class n30 external_node
   n31@{ shape: rounded, label: "**detect​_​text​_​needs​_​rerender**<br/>来自crate:bevy​_​text ↗：把文字段和层级<br/>变化标为需要重绘。" }
   class n31 node_system
   class n31 external_node
-  n32@{ shape: rounded, label: "**TextSpan**<br/>来自crate:bevy​_​text ↗：保存附加到<br/>Text 或 Text2d 根文字块的子文本段内容" }
+  n32@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n32 node_component
   class n32 external_node
-  n33@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  n33@{ shape: rounded, label: "**VisibleEntities**<br/>来自crate:bevy​_​camera ↗：按类别保存当<br/>前视图可见的实体。" }
   class n33 node_component
   class n33 external_node
-  n34@{ shape: rounded, label: "**TextColor**<br/>来自crate:bevy​_​text ↗：保存当前文字段<br/>的前景色" }
-  class n34 node_component
+  n34@{ shape: cyl, label: "**FontAtlasSet**<br/>来自crate:bevy​_​text ↗：保存字体光栅化<br/>结果所在的 FontAtlas 集合" }
+  class n34 node_resource
   class n34 external_node
-  n35@{ shape: cyl, label: "**LayoutCx**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>文字布局上下文" }
-  class n35 node_resource
-  class n35 external_node
-  n36@{ shape: rounded, label: "**VisibleEntities**<br/>来自crate:bevy​_​camera ↗：按类别保存当<br/>前视图可见的实体。" }
-  class n36 node_component
-  class n36 external_node
-  n37@{ shape: rounded, label: "**load​_​font​_​assets​_​into​_​font​_​**<br/>**collection**<br/>来自crate:bevy​_​text ↗：把字体资产注册<br/>到排版字体数据库。" }
-  class n37 node_system
+  n35@{ shape: notch-rect, label: "**Local · last​_​logical​_​viewport​_​size**<br/>保存二维文字布局上次使用的逻辑视口尺寸。" }
+  class n35 node_local
+  n36@{ shape: notch-rect, label: "**Local · text​_​reader.0.0**<br/>复用二维文字排版的文本树遍历空间。" }
+  class n36 node_local
+  n37@{ shape: rounded, label: "**LineHeight**<br/>来自crate:bevy​_​text ↗：配置每行文字的<br/>高度" }
+  class n37 node_component
   class n37 external_node
-  n38@{ shape: rounded, label: "**Text2d**<br/>保存二维世界文字块的根文本内容" }
-  class n38 node_component
+  n38@{ shape: rounded, label: "**load​_​font​_​assets​_​into​_​font​_​**<br/>**collection**<br/>来自crate:bevy​_​text ↗：把字体资产注册<br/>到排版字体数据库。" }
+  class n38 node_system
+  class n38 external_node
   n39@{ shape: lin-rect, label: "**TransformGizmoRenderStep**<br/>来自crate:bevy​_​app ↗：准备变换操纵器<br/>的网格和显示变换。" }
   class n39 node_system_set
   class n39 external_node
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n2 e1@--> n0
-  class e1 edge_read
+  n1 e0@--> n0
+  class e0 edge_read
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
   n3 e2@--> n0
   class e2 edge_read
-  n4 e3@-->|"调用"| n0
-  class e3 edge_registration
+  n0 e3@-->|"赋值"| n4
+  class e3 edge_write
   n0 e4@-->|"可变访问"| n5
   class e4 edge_write
-  n0 e5@-->|"赋值"| n6
-  class e5 edge_write
+  n6 e5@--> n0
+  class e5 edge_read
   n7 e6@--> n0
   class e6 edge_read
   n0 e7@-->|"先于"| n8
   class e7 edge_order
   n0 e8@-->|"可变访问"| n9
   class e8 edge_write
-  n10 e9@--> n0
-  class e9 edge_read
-  n11 e10@--> n0
+  n0 e9@-->|"赋值"| n2
+  class e9 edge_write
+  n10 e10@--> n0
   class e10 edge_read
-  n12 e11@--> n0
-  class e11 edge_read
-  n0 e12@-->|"可变访问"| n13
+  n0 e11@-->|"可变访问"| n11
+  class e11 edge_write
+  n0 e12@-->|"可变访问"| n12
   class e12 edge_write
-  n14 e13@--> n0
+  n13 e13@--> n0
   class e13 edge_read
-  n15 e14@-->|"先于"| n0
-  class e14 edge_order
-  n0 e15@-->|"可变访问"| n16
+  n0 e14@-->|"可变访问"| n14
+  class e14 edge_write
+  n0 e15@-->|"可变访问"| n15
   class e15 edge_write
-  n17 e16@--> n0
-  class e16 edge_read
-  n0 e17@-->|"可变访问"| n18
+  n16 e16@-->|"调用"| n0
+  class e16 edge_registration
+  n0 e17@-->|"可变访问"| n17
   class e17 edge_write
-  n19 e18@--> n0
-  class e18 edge_read
-  n0 e19@-->|"先于"| n20
-  class e19 edge_order
-  n21 e20@--> n0
+  n18 e18@-->|"先于"| n0
+  class e18 edge_order
+  n19 e19@--> n0
+  class e19 edge_read
+  n20 e20@--> n0
   class e20 edge_read
-  n0 e21@-->|"可变访问"| n6
-  class e21 edge_write
-  n22 e22@-->|"先于"| n0
-  class e22 edge_order
-  n0 e23@-->|"可变访问"| n23
-  class e23 edge_write
-  n24 e24@-->|"先于"| n0
-  class e24 edge_order
-  n0 e25@-->|"可变访问"| n25
-  class e25 edge_write
+  n0 e21@-->|"先于"| n21
+  class e21 edge_order
+  n22 e22@--> n0
+  class e22 edge_read
+  n23 e23@--> n0
+  class e23 edge_read
+  n24 e24@--> n0
+  class e24 edge_read
+  n25 e25@--> n0
+  class e25 edge_read
   n26 e26@--> n0
   class e26 edge_read
-  n0 e27@-->|"可变访问"| n27
-  class e27 edge_write
-  n0 e28@-->|"可变访问"| n28
-  class e28 edge_write
+  n27 e27@-->|"先于"| n0
+  class e27 edge_order
+  n28 e28@-->|"先于"| n0
+  class e28 edge_order
   n29 e29@--> n0
   class e29 edge_read
-  n0 e30@-->|"赋值"| n16
+  n0 e30@-->|"可变访问"| n4
   class e30 edge_write
   n30 e31@--> n0
   class e31 edge_read
   n31 e32@-->|"先于"| n0
   class e32 edge_order
-  n32 e33@--> n0
-  class e33 edge_read
-  n33 e34@-->|"存在性约束"| n0
-  class e34 edge_reference
-  n34 e35@--> n0
-  class e35 edge_read
+  n32 e33@-->|"存在性约束"| n0
+  class e33 edge_reference
+  n33 e34@--> n0
+  class e34 edge_read
+  n0 e35@-->|"可变访问"| n34
+  class e35 edge_write
   n0 e36@-->|"可变访问"| n35
   class e36 edge_write
-  n36 e37@--> n0
-  class e37 edge_read
-  n37 e38@-->|"先于"| n0
-  class e38 edge_order
-  n38 e39@--> n0
-  class e39 edge_read
+  n0 e37@-->|"可变访问"| n36
+  class e37 edge_write
+  n37 e38@--> n0
+  class e38 edge_read
+  n38 e39@-->|"先于"| n0
+  class e39 edge_order
   n0 e40@-->|"先于"| n39
   class e40 edge_order
   e0@{ curve: basis }

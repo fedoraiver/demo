@@ -42,22 +42,22 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​fallback​_​resources**<br/>创建材质绑定的采样器及缓冲回退资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**FallbackBuffer**<br/>为无效着色器缓冲句柄提供占位缓冲。" }
+  n1@{ shape: cyl, label: "**FallbackBindlessResources**<br/>填充绑定数组中未使用的资源槽位。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**FallbackBuffer**<br/>为无效着色器缓冲句柄提供占位缓冲。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**FallbackBindlessResources**<br/>填充绑定数组中未使用的资源槽位。" }
-  class n3 node_resource
-  n4@{ shape: fr-rect, label: "**MaterialBindGroupPlugin**<br/>分配并打包材质绑定组。" }
-  class n4 node_plugin
+  n3@{ shape: fr-rect, label: "**MaterialBindGroupPlugin**<br/>分配并打包材质绑定组。" }
+  class n3 node_plugin
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  class n4 node_resource
   n0 e0@-->|"插入"| n1
   class e0 edge_write
-  n2 e1@--> n0
-  class e1 edge_read
-  n0 e2@-->|"插入"| n3
-  class e2 edge_write
-  n4 e3@-->|"调用"| n0
-  class e3 edge_registration
+  n0 e1@-->|"插入"| n2
+  class e1 edge_write
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n4 e3@--> n0
+  class e3 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

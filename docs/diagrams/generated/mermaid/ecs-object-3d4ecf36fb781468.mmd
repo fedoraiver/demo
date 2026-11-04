@@ -48,97 +48,97 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**GlobalTransform**<br/>保存实体合并祖先变换后的世界空间仿射变换" }
-  class n1 node_component
+  n1@{ shape: notch-rect, label: "**Local · consumer​_​channels**<br/>传递变换树脏标记的待写入实体。" }
+  class n1 node_local
   n2@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
   class n2 node_system
-  n3@{ shape: notch-rect, label: "**Local · arg1.0.1**<br/>跟踪 ChildOf 移除记录的读取进度。" }
-  class n3 node_local
-  n4@{ shape: lin-rect, label: "**Propagate**<br/>组织实体层级变换传播。" }
-  class n4 node_system_set
-  n5@{ shape: fr-rect, label: "**TransformPlugin**<br/>更新并传播实体变换。" }
-  class n5 node_plugin
-  n6@{ shape: notch-rect, label: "**Local · orphaned.0.1**<br/>跟踪 ChildOf 移除记录的读取进度。" }
-  class n6 node_local
-  n7@{ shape: notch-rect, label: "**Local · arg7**<br/>传递需要标记变换树变化的实体批次。" }
-  class n7 node_local
-  n8@{ shape: fr-rect, label: "**PhysicsTransformPlugin**<br/>来自crate:avian3d ↗：同步物理姿态与实<br/>体变换。" }
-  class n8 node_plugin
-  class n8 external_node
-  n9@{ shape: notch-rect, label: "**Local · shared​_​bitset**<br/>用共享原子位图去重祖先遍历。" }
+  n3@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: notch-rect, label: "**Local · orphaned.0.0.0.0**<br/>保存 ChildOf 移除参数的组件 ID。" }
+  class n4 node_local
+  n5@{ shape: notch-rect, label: "**Local · arg7**<br/>传递需要标记变换树变化的实体批次。" }
+  class n5 node_local
+  n6@{ shape: rounded, label: "**GlobalTransform**<br/>保存实体合并祖先变换后的世界空间仿射变换" }
+  class n6 node_component
+  n7@{ shape: lin-rect, label: "**Propagate**<br/>组织实体层级变换传播。" }
+  class n7 node_system_set
+  n8@{ shape: notch-rect, label: "**Local · arg1.0.1**<br/>跟踪 ChildOf 移除记录的读取进度。" }
+  class n8 node_local
+  n9@{ shape: notch-rect, label: "**Local · traversal​_​channels**<br/>分发变换树祖先遍历的起始节点。" }
   class n9 node_local
-  n10@{ shape: rounded, label: "**Transform**<br/>保存实体相对父实体的平移、旋转和缩放" }
-  class n10 node_component
-  n11@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
-  class n11 node_component
-  class n11 external_node
-  n12@{ shape: notch-rect, label: "**Local · local​_​bitset**<br/>复用变换树遍历的线程位图。" }
+  n10@{ shape: notch-rect, label: "**Local · arg5**<br/>用共享原子位集去重变换树祖先遍历。" }
+  class n10 node_local
+  n11@{ shape: cyl, label: "**StaticTransformOptimizations**<br/>控制变换传播是否追踪并跳过静态子树" }
+  class n11 node_resource
+  n12@{ shape: notch-rect, label: "**Local · arg1.0.0.0.0**<br/>保存 ChildOf 移除参数的组件 ID。" }
   class n12 node_local
-  n13@{ shape: notch-rect, label: "**Local · arg6**<br/>为变换树祖先遍历复用线程位图。" }
+  n13@{ shape: notch-rect, label: "**Local · shared​_​bitset**<br/>用共享原子位图去重祖先遍历。" }
   class n13 node_local
-  n14@{ shape: notch-rect, label: "**Local · orphaned.0.0.0.0**<br/>保存 ChildOf 移除参数的组件 ID。" }
+  n14@{ shape: notch-rect, label: "**Local · orphaned.0.1**<br/>跟踪 ChildOf 移除记录的读取进度。" }
   class n14 node_local
-  n15@{ shape: notch-rect, label: "**Local · arg8**<br/>向并行变换树遍历任务分发变化实体。" }
+  n15@{ shape: notch-rect, label: "**Local · local​_​bitset**<br/>复用变换树遍历的线程位图。" }
   class n15 node_local
-  n16@{ shape: cyl, label: "**StaticTransformOptimizations**<br/>控制变换传播是否追踪并跳过静态子树" }
-  class n16 node_resource
-  n17@{ shape: notch-rect, label: "**Local · traversal​_​channels**<br/>分发变换树祖先遍历的起始节点。" }
+  n16@{ shape: fr-rect, label: "**TransformPlugin**<br/>更新并传播实体变换。" }
+  class n16 node_plugin
+  n17@{ shape: notch-rect, label: "**Local · arg8**<br/>向并行变换树遍历任务分发变化实体。" }
   class n17 node_local
   n18@{ shape: rounded, label: "**TransformTreeChanged**<br/>以变化检测标记存在变换变化的层级分支" }
   class n18 node_component
-  n19@{ shape: notch-rect, label: "**Local · arg1.0.0.0.0**<br/>保存 ChildOf 移除参数的组件 ID。" }
-  class n19 node_local
-  n20@{ shape: notch-rect, label: "**Local · consumer​_​channels**<br/>传递变换树脏标记的待写入实体。" }
-  class n20 node_local
-  n21@{ shape: notch-rect, label: "**Local · arg5**<br/>用共享原子位集去重变换树祖先遍历。" }
+  n19@{ shape: fr-rect, label: "**PhysicsTransformPlugin**<br/>来自crate:avian3d ↗：同步物理姿态与实<br/>体变换。" }
+  class n19 node_plugin
+  class n19 external_node
+  n20@{ shape: rounded, label: "**Transform**<br/>保存实体相对父实体的平移、旋转和缩放" }
+  class n20 node_component
+  n21@{ shape: notch-rect, label: "**Local · arg6**<br/>为变换树祖先遍历复用线程位图。" }
   class n21 node_local
-  n1 e0@-->|"存在性约束"| n0
-  class e0 edge_reference
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
   n0 e1@-->|"先于"| n2
   class e1 edge_order
-  n1 e2@--> n0
+  n3 e2@--> n0
   class e2 edge_read
-  n0 e3@-->|"可变访问"| n3
+  n0 e3@-->|"可变访问"| n4
   class e3 edge_write
-  n4 e4@-->|"集合成员"| n0
-  class e4 edge_set_membership
-  n5 e5@-->|"调用"| n0
-  class e5 edge_registration
-  n0 e6@-->|"可变访问"| n6
-  class e6 edge_write
-  n0 e7@-->|"可变访问"| n7
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@-->|"集合成员"| n0
+  class e6 edge_set_membership
+  n0 e7@-->|"可变访问"| n8
   class e7 edge_write
-  n8 e8@-->|"调用"| n0
-  class e8 edge_registration
-  n0 e9@-->|"可变访问"| n9
+  n0 e8@-->|"可变访问"| n9
+  class e8 edge_write
+  n0 e9@-->|"可变访问"| n10
   class e9 edge_write
-  n10 e10@--> n0
+  n11 e10@--> n0
   class e10 edge_read
-  n11 e11@--> n0
-  class e11 edge_read
-  n0 e12@-->|"可变访问"| n12
+  n0 e11@-->|"可变访问"| n12
+  class e11 edge_write
+  n0 e12@-->|"可变访问"| n13
   class e12 edge_write
-  n0 e13@-->|"可变访问"| n13
+  n0 e13@-->|"可变访问"| n14
   class e13 edge_write
-  n0 e14@-->|"可变访问"| n14
+  n0 e14@-->|"可变访问"| n15
   class e14 edge_write
-  n0 e15@-->|"可变访问"| n15
-  class e15 edge_write
-  n16 e16@--> n0
-  class e16 edge_read
+  n3 e15@-->|"存在性约束"| n0
+  class e15 edge_reference
+  n16 e16@-->|"调用"| n0
+  class e16 edge_registration
   n0 e17@-->|"可变访问"| n17
   class e17 edge_write
   n0 e18@-->|"可变访问"| n18
   class e18 edge_write
-  n0 e19@-->|"可变访问"| n19
-  class e19 edge_write
-  n11 e20@-->|"存在性约束"| n0
-  class e20 edge_reference
-  n0 e21@-->|"可变访问"| n20
-  class e21 edge_write
+  n6 e19@-->|"存在性约束"| n0
+  class e19 edge_reference
+  n19 e20@-->|"调用"| n0
+  class e20 edge_registration
+  n20 e21@--> n0
+  class e21 edge_read
   n0 e22@-->|"可变访问"| n21
   class e22 edge_write
-  n10 e23@-->|"存在性约束"| n0
+  n20 e23@-->|"存在性约束"| n0
   class e23 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }

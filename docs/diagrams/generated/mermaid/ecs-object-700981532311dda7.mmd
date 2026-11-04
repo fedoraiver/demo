@@ -1,0 +1,77 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: PrimaryEguiContext · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**PrimaryEguiContext**<br/>标记运行主Egui调度的上下文。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**setup​_​primary​_​egui​_​context​_​system**<br/>为首个合适相机建立主 Egui 上下文。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**setup​_​primary​_​egui​_​context​_​system**<br/>为首个合适相机建立主 Egui 上下文。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**world​_​inspector​_​ui**<br/>来自crate:bevy​_​inspector​_​egui ↗：在<br/>主 Egui 上下文展示可编辑的 World 检视<br/>器。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**sync​_​mouse​_​capture**<br/>来自first​_​person ↗：在输入转发前确定<br/>归属；切换前约定其他按键已松开，检查器没<br/>有进行中的交互。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
+  class n5 node_entity
+  class n5 external_node
+  n6@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  class n6 node_entity
+  class n6 external_node
+  n1 e0@-->|"插入"| n0
+  class e0 edge_write
+  n2 e1@-->|"插入"| n0
+  class e1 edge_write
+  n0 e2@-->|"存在性约束"| n3
+  class e2 edge_reference
+  n0 e3@-->|"存在性约束"| n4
+  class e3 edge_reference
+  n5 e4@-->|"可能包含"| n0
+  class e4 edge_reference
+  n6 e5@-->|"可能包含"| n0
+  class e5 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

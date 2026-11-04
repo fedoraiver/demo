@@ -42,10 +42,10 @@ flowchart LR
   class n0 node_system
   n1@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
   class n1 node_system
-  n2@{ shape: cyl, label: "**AccessibilityRequested**<br/>来自crate:bevy​_​a11y ↗：记录辅助技术的<br/>信息请求状态。" }
+  n2@{ shape: cyl, label: "**ManageAccessibilityUpdates**<br/>来自crate:bevy​_​a11y ↗：控制无障碍树由<br/>谁更新。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**ManageAccessibilityUpdates**<br/>来自crate:bevy​_​a11y ↗：控制无障碍树由<br/>谁更新。" }
+  n3@{ shape: cyl, label: "**AccessibilityRequested**<br/>来自crate:bevy​_​a11y ↗：记录辅助技术的<br/>信息请求状态。" }
   class n3 node_resource
   class n3 external_node
   n0 e0@-->|"运行条件"| n1

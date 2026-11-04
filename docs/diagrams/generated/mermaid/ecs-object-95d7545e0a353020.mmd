@@ -49,26 +49,26 @@ flowchart LR
   class n1 node_system_set
   n2@{ shape: rounded, label: "**apply​_​constant​_​torques**<br/>按求解器有效惯量换算世界恒定扭矩。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
-  class n3 node_component
-  n4@{ shape: rounded, label: "**apply​_​constant​_​angular​_​acceleration**<br/>把恒定世界角加速度加入待积分增量。" }
-  class n4 node_system
-  n5@{ shape: rounded, label: "**ConstantLinearAcceleration**<br/>持续施加世界空间线性加速度。" }
-  class n5 node_component
-  n6@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
-  class n6 node_plugin
+  n3@{ shape: rounded, label: "**apply​_​constant​_​angular​_​acceleration**<br/>把恒定世界角加速度加入待积分增量。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**ConstantLinearAcceleration**<br/>持续施加世界空间线性加速度。" }
+  class n4 node_component
+  n5@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
+  class n5 node_plugin
+  n6@{ shape: rounded, label: "**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
+  class n6 node_component
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
   n2 e1@-->|"先于"| n0
   class e1 edge_order
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  n0 e3@-->|"先于"| n4
-  class e3 edge_order
-  n5 e4@--> n0
-  class e4 edge_read
-  n6 e5@-->|"调用"| n0
-  class e5 edge_registration
+  n0 e2@-->|"先于"| n3
+  class e2 edge_order
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

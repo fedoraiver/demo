@@ -45,15 +45,15 @@ flowchart LR
   class n0 node_system
   n1@{ shape: cyl, label: "**TextureCache**<br/>复用渲染中反复创建的临时纹理。" }
   class n1 node_resource
-  n2@{ shape: fr-rect, label: "**TexturePlugin**<br/>准备 GPU 图像、纹理缓存与采样器。" }
-  class n2 node_plugin
-  n3@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }
-  class n3 node_system_set
+  n2@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }
+  class n2 node_system_set
+  n3@{ shape: fr-rect, label: "**TexturePlugin**<br/>准备 GPU 图像、纹理缓存与采样器。" }
+  class n3 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n3 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
   e1@{ curve: basis }
   e2@{ curve: basis }

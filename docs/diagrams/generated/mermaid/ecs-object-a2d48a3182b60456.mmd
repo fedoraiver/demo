@@ -43,27 +43,30 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
+  n1@{ shape: rounded, label: "**CasUniform**<br/>来自crate:bevy​_​anti​_​alias ↗：向锐化<br/>着色器传递相机锐度参数。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**DenoiseCas**<br/>来自crate:bevy​_​anti​_​alias ↗：保存<br/>CAS 锐化管线的去噪开关。" }
-  class n2 node_component
-  class n2 external_node
+  class n1 external_node
+  subgraph layout_card_n2[" "]
+  n2@{ shape: notch-rect, label: "**Local · arg1**<br/>按上次组件提取数量预留输出容量。" }
+  class n2 node_local
+  end
+  style layout_card_n2 fill:none,stroke:none
   n3@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**CasUniform**<br/>来自crate:bevy​_​anti​_​alias ↗：向锐化<br/>着色器传递相机锐度参数。" }
+  n4@{ shape: rounded, label: "**DenoiseCas**<br/>来自crate:bevy​_​anti​_​alias ↗：保存<br/>CAS 锐化管线的去噪开关。" }
   class n4 node_component
   class n4 external_node
   n5@{ shape: rounded, label: "**ContrastAdaptiveSharpening**<br/>来自crate:bevy​_​anti​_​alias ↗：配置相<br/>机对比度自适应锐化。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: notch-rect, label: "**Local · arg1**<br/>按上次组件提取数量预留输出容量。" }
-  class n6 node_local
-  n7@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n6@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
   class n7 node_component
-  class n7 external_node
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"移除"| n2
+  n0 e0@-->|"移除"| n1
+  class e0 edge_write
+  n0 e1@-->|"可变访问"| n2
   class e1 edge_write
   n3 e2@--> n0
   class e2 edge_read
@@ -71,14 +74,14 @@ flowchart LR
   class e3 edge_write
   n5 e4@--> n0
   class e4 edge_read
-  n0 e5@-->|"可变访问"| n6
-  class e5 edge_write
-  n7 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
-  e0@{ curve: basis }
+  n6 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
+  n7 e6@--> n0
+  class e6 edge_read
+  e0@{ curve: bumpX }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

@@ -1,0 +1,87 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: visibility::NoCpuCulling · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**NoCpuCulling**<br/>退出内置的 CPU 视锥裁剪。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**check​_​visibility​_​gpu​_​culling**<br/>同步退出 CPU 裁剪对象的层级可见状态。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**mark​_​newly​_​hidden​_​entities​_​invisible**<br/>提交本帧已不再可见的对象状态。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**extract​_​meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：增量提取变化或<br/>需重试网格到线程队列。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**reset​_​view​_​visibility**<br/>为本帧可见性检查保留上帧状态。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
+  class n8 node_system
+  class n8 external_node
+  n0 e0@-->|"存在性约束"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在性约束"| n2
+  class e1 edge_reference
+  n0 e2@-->|"存在性约束"| n3
+  class e2 edge_reference
+  n0 e3@-->|"存在性约束"| n4
+  class e3 edge_reference
+  n0 e4@-->|"存在性约束"| n5
+  class e4 edge_reference
+  n0 e5@--> n1
+  class e5 edge_read
+  n0 e6@-->|"存在性约束"| n6
+  class e6 edge_reference
+  n0 e7@-->|"存在性约束"| n7
+  class e7 edge_reference
+  n0 e8@-->|"存在性约束"| n8
+  class e8 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }

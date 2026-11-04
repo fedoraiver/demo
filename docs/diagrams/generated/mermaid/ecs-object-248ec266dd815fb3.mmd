@@ -53,38 +53,38 @@ flowchart LR
   n2@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**MeshPlugin**<br/>注册网格资产类型。" }
-  class n3 node_plugin
-  n4@{ shape: rounded, label: "**add​_​mesh**<br/>来自crate:bevy​_​sprite​_​render ↗：为新<br/>增精灵安装共享单位矩形网格。" }
-  class n4 node_system
-  class n4 external_node
-  n5@{ shape: rounded, label: "**Mesh2d**<br/>为二维可绘制实体指定网格资产。" }
-  class n5 node_component
-  n6@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;Mesh#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n6 node_resource
+  n3@{ shape: lean-r, label: "**AssetEvent#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
+  class n3 node_message
+  class n3 external_node
+  n4@{ shape: rounded, label: "**Mesh2d**<br/>为二维可绘制实体指定网格资产。" }
+  class n4 node_component
+  n5@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;Mesh#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: rounded, label: "**add​_​mesh**<br/>来自crate:bevy​_​sprite​_​render ↗：为新<br/>增精灵安装共享单位矩形网格。" }
+  class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**add​_​material**<br/>来自crate:bevy​_​sprite​_​render ↗：按精<br/>灵与锚点复用或创建默认网格材质。" }
-  class n7 node_system
-  class n7 external_node
-  n8@{ shape: lean-r, label: "**AssetEvent#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
-  class n8 node_message
+  n7@{ shape: fr-rect, label: "**MeshPlugin**<br/>注册网格资产类型。" }
+  class n7 node_plugin
+  n8@{ shape: rounded, label: "**add​_​material**<br/>来自crate:bevy​_​sprite​_​render ↗：按精<br/>灵与锚点复用或创建默认网格材质。" }
+  class n8 node_system
   class n8 external_node
   n0 e0@-->|"先于"| n1
   class e0 edge_order
   n2 e1@-->|"先于"| n0
   class e1 edge_order
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n4 e3@-->|"先于"| n0
-  class e3 edge_order
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
-  n6 e5@--> n0
-  class e5 edge_read
-  n7 e6@-->|"先于"| n0
-  class e6 edge_order
-  n8 e7@--> n0
-  class e7 edge_consume
+  n3 e2@--> n0
+  class e2 edge_consume
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@-->|"先于"| n0
+  class e5 edge_order
+  n7 e6@-->|"调用"| n0
+  class e6 edge_registration
+  n8 e7@-->|"先于"| n0
+  class e7 edge_order
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-28b136c97116227c-e10{marker-start:url(#object-28b136c97116227c_flowchart-v2-pointStart)!important}\n#object-28b136c97116227c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-28b136c97116227c-e8{marker-start:url(#object-28b136c97116227c_flowchart-v2-pointStart)!important}\n#object-28b136c97116227c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -53,22 +53,22 @@ flowchart LR
   n3@{ shape: lin-rect, label: "**Update**<br/>来自crate:bevy​_​a11y ↗：组织无障碍信息<br/>更新。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**UiGlobalTransform**<br/>保存 UI 节点的绝对二维变换。" }
-  class n4 node_component
-  n5@{ shape: rounded, label: "**image​_​changed**<br/>为非按钮图像生成或更新无障碍标签。" }
-  class n5 node_system
-  n6@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n4@{ shape: rounded, label: "**image​_​changed**<br/>为非按钮图像生成或更新无障碍标签。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**AccessibilityNode**<br/>来自crate:bevy​_​a11y ↗：把实体转换为<br/>AccessKit 可访问性节点" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: rounded, label: "**UiGlobalTransform**<br/>保存 UI 节点的绝对二维变换。" }
   class n6 node_component
-  class n6 external_node
-  n7@{ shape: rounded, label: "**AccessibilityNode**<br/>来自crate:bevy​_​a11y ↗：把实体转换为<br/>AccessKit 可访问性节点" }
-  class n7 node_component
-  class n7 external_node
-  n8@{ shape: lin-rect, label: "**AccessibilityUiSystems**<br/>更新 UI 控件的可访问性语义和几何。" }
+  n7@{ shape: lin-rect, label: "**AccessibilityUiSystems**<br/>更新 UI 控件的可访问性语义和几何。" }
+  class n7 node_system_set
+  n8@{ shape: lin-rect, label: "**PostLayout**<br/>组织界面交互、布局与堆叠更新。" }
   class n8 node_system_set
   n9@{ shape: fr-rect, label: "**AccessibilityPlugin**<br/>把界面语义接入无障碍树。" }
   class n9 node_plugin
-  n10@{ shape: lin-rect, label: "**PostLayout**<br/>组织界面交互、布局与堆叠更新。" }
-  class n10 node_system_set
+  n10@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  class n10 node_component
+  class n10 external_node
   n11@{ shape: rounded, label: "**ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
   class n11 node_component
   n1 e0@-->|"先于"| n0
@@ -77,22 +77,22 @@ flowchart LR
   class e1 edge_order
   n0 e2@-->|"先于"| n3
   class e2 edge_order
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"先于"| n0
-  class e4 edge_order
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
+  n5 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
   n6 e5@--> n0
   class e5 edge_read
-  n7 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
+  n7 e6@-->|"集合成员"| n0
+  class e6 edge_set_membership
   n8 e7@-->|"集合成员"| n0
   class e7 edge_set_membership
-  n9 e8@-->|"调用"| n0
-  class e8 edge_registration
-  n10 e9@-->|"集合成员"| n0
-  class e9 edge_set_membership
-  n7 e10@---|"可变访问"| n0
-  class e10 edge_write
+  n5 e8@---|"可变访问"| n0
+  class e8 edge_write
+  n9 e9@-->|"调用"| n0
+  class e9 edge_registration
+  n10 e10@--> n0
+  class e10 edge_read
   n11 e11@--> n0
   class e11 edge_read
   e0@{ curve: basis }
@@ -101,6 +101,7 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
+  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

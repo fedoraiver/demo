@@ -41,21 +41,21 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>把配置组即时线条缓冲转交 Gizmo 资产。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**Assets#lt;GizmoAsset#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n1@{ shape: cyl, label: "**GizmoHandles**<br/>按配置组记录当前调试图元资产句柄。" }
   class n1 node_resource
-  class n1 external_node
-  n2@{ shape: lin-rect, label: "**GizmoMeshSystems**<br/>把调试绘制存储转换为渲染网格。" }
-  class n2 node_system_set
-  n3@{ shape: cyl, label: "**GizmoStorage#lt;DefaultGizmoConfigGroup**<br/>**, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
-  class n3 node_resource
-  n4@{ shape: cyl, label: "**GizmoHandles**<br/>按配置组记录当前调试图元资产句柄。" }
+  n2@{ shape: cyl, label: "**GizmoStorage#lt;DefaultGizmoConfigGroup**<br/>**, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  class n2 node_resource
+  n3@{ shape: lin-rect, label: "**GizmoMeshSystems**<br/>把调试绘制存储转换为渲染网格。" }
+  class n3 node_system_set
+  n4@{ shape: cyl, label: "**Assets#lt;GizmoAsset#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n4 node_resource
+  class n4 external_node
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
   n0 e3@-->|"可变访问"| n4
   class e3 edge_write
   e0@{ curve: basis }

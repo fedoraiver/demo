@@ -47,27 +47,27 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: cyl, label: "**SkinUniforms**<br/>以双缓冲保存蒙皮前后帧关节矩阵。" }
-  class n2 node_resource
-  n3@{ shape: fr-rect, label: "**MeshRenderPlugin**<br/>建立三维网格绘制支持。" }
-  class n3 node_plugin
-  n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n2@{ shape: fr-rect, label: "**MeshRenderPlugin**<br/>建立三维网格绘制支持。" }
+  class n2 node_plugin
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n5@{ shape: cyl, label: "**SkinUniforms**<br/>以双缓冲保存蒙皮前后帧关节矩阵。" }
   class n5 node_resource
-  class n5 external_node
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
-  n0 e1@-->|"赋值"| n2
-  class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@--> n0
+  class e2 edge_read
   n4 e3@--> n0
   class e3 edge_read
-  n5 e4@--> n0
-  class e4 edge_read
-  n0 e5@-->|"可变访问"| n2
+  n0 e4@-->|"赋值"| n5
+  class e4 edge_write
+  n0 e5@-->|"可变访问"| n5
   class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

@@ -47,64 +47,66 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**run​_​render​_​schedule**<br/>按 RenderScheduleOrder 中维护的阶段标<br/>签顺序，依次尝试运行渲染子应用的各个调<br/>度。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
-  class n1 node_message
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
-  class n2 node_resource
+  n2@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  class n2 node_message
   class n2 external_node
   n3@{ shape: cyl, label: "**RenderScheduleOrder**<br/>记录渲染调度的执行顺序。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n4 node_resource
+  n4@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  class n4 node_component
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
-  class n5 node_plugin
-  n6@{ shape: rounded, label: "**renderer​_​is​_​ready**<br/>判断渲染器是否已经就绪。" }
-  class n6 node_system
-  n7@{ shape: rounded, label: "**RenderScheduleOrder**<br/>记录渲染调度的执行顺序。" }
-  class n7 node_component
+  n5@{ shape: rounded, label: "**renderer​_​is​_​ready**<br/>判断渲染器是否已经就绪。" }
+  class n5 node_system
+  n6@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: stadium, label: "**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
+  class n7 node_event
+  class n7 external_node
   n8@{ shape: rounded, label: "**send​_​time**<br/>通过渲染到主应用的时间通道发送当前时刻，<br/>无论本帧是否实际绘制；通道断开时忽略，通<br/>道意外仍满时报告执行顺序错误。" }
   class n8 node_system
-  n9@{ shape: stadium, label: "**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
-  class n9 node_event
-  class n9 external_node
-  n10@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
-  class n10 node_component
-  class n10 external_node
-  n11@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
+  n9@{ shape: rounded, label: "**RenderScheduleOrder**<br/>记录渲染调度的执行顺序。" }
+  class n9 node_component
+  n10@{ shape: fr-rect, label: "**RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
+  class n10 node_plugin
+  n11@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n11 node_resource
   class n11 external_node
-  n0 e0@-->|"消息"| n1
-  class e0 edge_publish
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
+  n0 e0@-->|"赋值"| n1
+  class e0 edge_write
+  n0 e1@-->|"消息"| n2
+  class e1 edge_publish
   n0 e2@-->|"移除"| n3
   class e2 edge_write
-  n0 e3@-->|"赋值"| n4
+  n0 e3@-->|"可变访问"| n4
   class e3 edge_write
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
-  n6 e5@-->|"运行条件"| n0
-  class e5 edge_reference
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
+  n5 e4@-->|"运行条件"| n0
+  class e4 edge_reference
+  n6 e5@--> n0
+  class e5 edge_read
+  n0 e6@-->|"触发事件"| n7
+  class e6 edge_emit
   n0 e7@-->|"先于"| n8
   class e7 edge_order
-  n0 e8@-->|"触发事件"| n9
-  class e8 edge_emit
-  n0 e9@-->|"可变访问"| n10
-  class e9 edge_write
-  n11 e10@--> n0
-  class e10 edge_read
+  n0 e8@-->|"可变访问"| n9
+  class e8 edge_write
+  n10 e9@-->|"调用"| n0
+  class e9 edge_registration
+  n0 e10@-->|"可变访问"| n11
+  class e10 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

@@ -46,83 +46,83 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**queue​_​material2d​_​meshes**<br/>按透明模式更新二维网格渲染批次。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent2d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n1@{ shape: cyl, label: "**RenderMaterial2dInstances**<br/>映射可渲染主世界实体到二维材质资产。" }
   class n1 node_resource
-  class n1 external_node
-  n2@{ shape: cyl, label: "**RenderMaterial2dInstances**<br/>映射可渲染主世界实体到二维材质资产。" }
-  class n2 node_resource
-  n3@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
-  class n3 node_component
+  n2@{ shape: fr-rect, label: "**Materials2dPlugin**<br/>建立二维材质共享渲染基础。" }
+  class n2 node_plugin
+  n3@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n4@{ shape: cyl, label: "**DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**SpecializedMaterial2dPipelineCache**<br/>按视图缓存二维材质专用管线。" }
+  n5@{ shape: cyl, label: "**RenderAssets#lt;RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**PendingMeshMaterial2dQueues**<br/>保留等待材质加载的二维网格绘制任务。" }
+  class n5 external_node
+  n6@{ shape: cyl, label: "**SpecializedMaterial2dPipelineCache**<br/>按视图缓存二维材质专用管线。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  n7@{ shape: cyl, label: "**RenderMesh2dInstances**<br/>按主世界实体保存提取后的二维网格实例。" }
   class n7 node_resource
-  class n7 external_node
-  n8@{ shape: rounded, label: "**RenderVisibleEntities**<br/>来自crate:bevy​_​render ↗：按类别保存视<br/>图的可见实体及变化列表。" }
+  n8@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: cyl, label: "**DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
+  n9@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent2d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**RenderMesh2dInstances**<br/>按主世界实体保存提取后的二维网格实例。" }
+  n10@{ shape: cyl, label: "**PendingMeshMaterial2dQueues**<br/>保留等待材质加载的二维网格绘制任务。" }
   class n10 node_resource
-  n11@{ shape: cyl, label: "**ErasedRenderAssets#lt;PreparedMaterial2**<br/>**d#gt;**<br/>来自crate:bevy​_​render ↗：存储源资产对<br/>应的类型擦除 GPU 表示。" }
-  class n11 node_resource
+  n11@{ shape: lin-rect, label: "**QueueMeshes**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n11 node_system_set
   class n11 external_node
-  n12@{ shape: notch-rect, label: "**Local · mesh​_​instances​_​queued​_​this​_​**<br/>**iteration​_​scratch​_​space**<br/>去重二维网格本轮需要重新排队的实例。" }
-  class n12 node_local
-  n13@{ shape: lin-rect, label: "**QueueMeshes**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n13 node_system_set
+  n12@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask2d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图按<br/>分桶组织的绘制指令。" }
+  class n12 node_resource
+  class n12 external_node
+  n13@{ shape: cyl, label: "**ErasedRenderAssets#lt;PreparedMaterial2**<br/>**d#gt;**<br/>来自crate:bevy​_​render ↗：存储源资产对<br/>应的类型擦除 GPU 表示。" }
+  class n13 node_resource
   class n13 external_node
-  n14@{ shape: cyl, label: "**RenderAssets#lt;RenderMesh#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
-  class n14 node_resource
-  class n14 external_node
-  n15@{ shape: fr-rect, label: "**Materials2dPlugin**<br/>建立二维材质共享渲染基础。" }
-  class n15 node_plugin
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n2 e1@--> n0
-  class e1 edge_read
-  n3 e2@--> n0
-  class e2 edge_read
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
+  n14@{ shape: notch-rect, label: "**Local · mesh​_​instances​_​queued​_​this​_​**<br/>**iteration​_​scratch​_​space**<br/>去重二维网格本轮需要重新排队的实例。" }
+  class n14 node_local
+  n15@{ shape: rounded, label: "**RenderVisibleEntities**<br/>来自crate:bevy​_​render ↗：按类别保存视<br/>图的可见实体及变化列表。" }
+  class n15 node_component
+  class n15 external_node
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_read
   n0 e5@-->|"可变访问"| n6
   class e5 edge_write
   n0 e6@-->|"可变访问"| n7
   class e6 edge_write
   n8 e7@--> n0
   class e7 edge_read
-  n9 e8@--> n0
-  class e8 edge_read
+  n0 e8@-->|"可变访问"| n9
+  class e8 edge_write
   n0 e9@-->|"可变访问"| n10
   class e9 edge_write
-  n11 e10@--> n0
-  class e10 edge_read
+  n11 e10@-->|"集合成员"| n0
+  class e10 edge_set_membership
   n0 e11@-->|"可变访问"| n12
   class e11 edge_write
-  n13 e12@-->|"集合成员"| n0
-  class e12 edge_set_membership
-  n14 e13@--> n0
-  class e13 edge_read
-  n15 e14@-->|"调用"| n0
-  class e14 edge_registration
+  n13 e12@--> n0
+  class e12 edge_read
+  n0 e13@-->|"可变访问"| n14
+  class e13 edge_write
+  n15 e14@--> n0
+  class e14 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }

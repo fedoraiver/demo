@@ -45,53 +45,53 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**main​_​transparent​_​pass​_​2d**<br/>使用已有深度绘制二维透明阶段。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
-  class n1 node_component
+  n1@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  class n1 node_resource
   class n1 external_node
-  n2@{ shape: lin-rect, label: "**MainPass**<br/>划分二维相机绘制与后处理阶段。" }
-  class n2 node_system_set
-  n3@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n2@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent2d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
-  class n4 node_resource
+  n4@{ shape: rounded, label: "**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
+  class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**main​_​opaque​_​pass​_​2d**<br/>绘制二维不透明和 AlphaMask 阶段。" }
-  class n5 node_system
-  n6@{ shape: fr-rect, label: "**Core2dPlugin**<br/>建立二维相机的渲染流程。" }
-  class n6 node_plugin
-  n7@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent2d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
-  class n7 node_resource
-  class n7 external_node
-  n8@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
-  class n8 node_component
+  n5@{ shape: lin-rect, label: "**MainPass**<br/>划分二维相机绘制与后处理阶段。" }
+  class n5 node_system_set
+  n6@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: fr-rect, label: "**Core2dPlugin**<br/>建立二维相机的渲染流程。" }
+  class n7 node_plugin
+  n8@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
+  n9@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n10 node_resource
-  class n10 external_node
+  n10@{ shape: rounded, label: "**main​_​opaque​_​pass​_​2d**<br/>绘制二维不透明和 AlphaMask 阶段。" }
+  class n10 node_system
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
+  n2 e1@--> n0
+  class e1 edge_read
   n3 e2@--> n0
   class e2 edge_read
   n4 e3@--> n0
   class e3 edge_read
-  n5 e4@-->|"先于"| n0
-  class e4 edge_order
-  n6 e5@-->|"调用"| n0
-  class e5 edge_registration
-  n7 e6@--> n0
-  class e6 edge_read
+  n5 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@-->|"调用"| n0
+  class e6 edge_registration
   n8 e7@--> n0
   class e7 edge_read
   n9 e8@--> n0
   class e8 edge_read
-  n10 e9@--> n0
-  class e9 edge_read
+  n10 e9@-->|"先于"| n0
+  class e9 edge_order
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

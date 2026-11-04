@@ -43,22 +43,22 @@ flowchart LR
   n1@{ shape: cyl, label: "**ExtractedEguiManagedTextures**<br/>来自crate:bevy​_​egui ↗：在渲染世界保存<br/>从 EguiManagedTextures 提取的纹理句柄<br/>表" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**EguiManagedTextures**<br/>来自crate:bevy​_​egui ↗：保存 Egui 分<br/>配并绘制的纹理及其 Bevy 图像句柄" }
+  n2@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
   class n2 node_resource
-  class n2 external_node
-  n3@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  n3@{ shape: cyl, label: "**EguiManagedTextures**<br/>来自crate:bevy​_​egui ↗：保存 Egui 分<br/>配并绘制的纹理及其 Bevy 图像句柄" }
   class n3 node_resource
-  n0 e0@-->|"插入"| n1
+  class n3 external_node
+  n0 e0@-->|"赋值"| n1
   class e0 edge_write
-  n2 e1@--> n0
-  class e1 edge_read
-  n0 e2@-->|"可变访问"| n1
+  n0 e1@-->|"可变访问"| n1
+  class e1 edge_write
+  n0 e2@-->|"插入"| n1
   class e2 edge_write
-  n3 e3@--> n0
+  n2 e3@--> n0
   class e3 edge_read
-  n0 e4@-->|"赋值"| n1
-  class e4 edge_write
+  n3 e4@--> n0
+  class e4 edge_read
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

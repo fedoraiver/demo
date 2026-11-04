@@ -44,15 +44,15 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**upload​_​view​_​gpu​_​clustering​_​buffers**<br/>上传聚簇深度切片、元数据和计数暂存。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ViewGpuClusteringBuffers**<br/>保存单个视图的 GPU 聚簇工作缓冲。" }
-  class n1 node_component
-  n2@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n2 node_system_set
-  class n2 external_node
-  n3@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
-  class n3 node_resource
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: rounded, label: "**ViewGpuClusteringBuffers**<br/>保存单个视图的 GPU 聚簇工作缓冲。" }
+  class n2 node_component
+  n3@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n3 node_system_set
   class n3 external_node
-  n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n4@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n4 node_resource
   class n4 external_node
   n5@{ shape: lin-rect, label: "**AnonymousSet(2)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
@@ -60,19 +60,19 @@ flowchart LR
   class n5 external_node
   n6@{ shape: rounded, label: "**prepare​_​clusters​_​for​_​gpu​_​clustering**<br/>按视图规模和回读容量分配 GPU 聚簇缓冲。" }
   class n6 node_system
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
-  n3 e2@--> n0
-  class e2 edge_read
+  n1 e0@--> n0
+  class e0 edge_read
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
   n4 e3@--> n0
   class e3 edge_read
   n5 e4@-->|"集合成员"| n0
   class e4 edge_set_membership
   n6 e5@-->|"先于"| n0
   class e5 edge_order
-  e1@{ curve: basis }
+  e0@{ curve: basis }
   e2@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }

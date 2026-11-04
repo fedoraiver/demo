@@ -43,25 +43,25 @@ flowchart LR
   end
   style layout_card_n0 fill:none,stroke:none
   subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
+  n1@{ shape: rounded, label: "**NormalPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：输出<br/>已应用法线贴图的世界空间法线。" }
   class n1 node_component
   class n1 external_node
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**SkipGpuPreprocess**<br/>来自crate:bevy​_​pbr ↗：避免视图重复执<br/>行 GPU 网格预处理。" }
+  n2@{ shape: rounded, label: "**DeferredPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机启用延迟材质 G-buffer 预通道。" }
   class n2 node_component
   class n2 external_node
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**MotionVectorPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为相<br/>机输出屏幕空间运动矢量。" }
+  n3@{ shape: rounded, label: "**ShadowView**<br/>来自crate:bevy​_​pbr ↗：描述阴影绘制的<br/>深度附件与通道名称。" }
   class n3 node_component
   class n3 external_node
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**ShadowView**<br/>来自crate:bevy​_​pbr ↗：描述阴影绘制的<br/>深度附件与通道名称。" }
+  n4@{ shape: rounded, label: "**NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
   class n4 node_component
   class n4 external_node
   end
@@ -73,26 +73,26 @@ flowchart LR
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**early​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：构建早期预通道<br/>使用的多重间接绘制参数。" }
-  class n6 node_system
+  n6@{ shape: rounded, label: "**DepthPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机生成独立的深度纹理。" }
+  class n6 node_component
   class n6 external_node
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**DeferredPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机启用延迟材质 G-buffer 预通道。" }
+  n7@{ shape: rounded, label: "**MotionVectorPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为相<br/>机输出屏幕空间运动矢量。" }
   class n7 node_component
   class n7 external_node
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**DepthPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机生成独立的深度纹理。" }
+  n8@{ shape: rounded, label: "**SkipGpuPreprocess**<br/>来自crate:bevy​_​pbr ↗：避免视图重复执<br/>行 GPU 网格预处理。" }
   class n8 node_component
   class n8 external_node
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**NormalPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：输出<br/>已应用法线贴图的世界空间法线。" }
-  class n9 node_component
+  n9@{ shape: rounded, label: "**early​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：构建早期预通道<br/>使用的多重间接绘制参数。" }
+  class n9 node_system
   class n9 external_node
   end
   style layout_card_n9 fill:none,stroke:none
@@ -106,19 +106,19 @@ flowchart LR
   class e3 edge_reference
   n5 e4@-->|"存在性约束"| n0
   class e4 edge_reference
-  n0 e5@-->|"运行条件"| n6
+  n6 e5@-->|"存在性约束"| n0
   class e5 edge_reference
   n7 e6@-->|"存在性约束"| n0
   class e6 edge_reference
   n8 e7@-->|"存在性约束"| n0
   class e7 edge_reference
-  n9 e8@-->|"存在性约束"| n0
+  n0 e8@-->|"运行条件"| n9
   class e8 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }

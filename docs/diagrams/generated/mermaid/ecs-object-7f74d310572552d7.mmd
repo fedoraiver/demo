@@ -41,68 +41,68 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: fr-rect, label: "**main / App**<br/>装配应用并导出真实调度。" }
   class n0 node_app
-  n1@{ shape: fr-rect, label: "**CharacterPlugin**<br/>来自character ↗：注册角色运动与反射元<br/>数据，不加载窗口、场景或其他项目插件。" }
+  n1@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>来自item​_​interaction ↗：注册交互、持<br/>握生命周期、物理与呈现同步及物品反馈；物<br/>理插件由调用方显式安装。" }
   class n1 node_plugin
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>来自item​_​interaction ↗：注册交互、持<br/>握生命周期、物理与呈现同步及物品反馈；物<br/>理插件由调用方显式安装。" }
+  n2@{ shape: fr-rect, label: "**GamePhysicsPlugin**<br/>来自physics ↗：注册固定物理模拟与统一<br/>碰撞日志；不加载场景、窗口或音频设备。" }
   class n2 node_plugin
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**InspectorPlugin**<br/>来自inspector ↗：注册检查器及其启动日<br/>志；面板只在游戏运行时显示。" }
-  class n3 node_plugin
+  n3@{ shape: rounded, label: "**message​_​update​_​system**<br/>来自crate:bevy​_​ecs ↗：轮换世界中已注<br/>册的消息缓冲。" }
+  class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**message​_​update​_​system**<br/>来自crate:bevy​_​ecs ↗：轮换世界中已注<br/>册的消息缓冲。" }
-  class n4 node_system
+  n4@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>来自first​_​person ↗：注册第一人称动<br/>作、捕获、朝向与镜头，不安装输入基础设施<br/>或物理插件。" }
+  class n4 node_plugin
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**WindowPolicyPlugin**<br/>来自window​_​policy ↗：在现有会话日志和<br/>原生窗口创建之后安装比例策略。" }
+  n5@{ shape: fr-rect, label: "**EnhancedInputPlugin**<br/>来自crate:bevy​_​enhanced​_​input ↗：驱<br/>动输入上下文和动作状态更新。" }
   class n5 node_plugin
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**SessionLogPlugin**<br/>来自session​_​log ↗：提前准备可失败的文<br/>件与线程；插件构建后，守卫仍由主入口持有<br/>到退出刷新完成。" }
-  class n6 node_plugin
+  n6@{ shape: rounded, label: "**message​_​update​_​system**<br/>来自crate:bevy​_​ecs ↗：轮换世界中已注<br/>册的消息缓冲。" }
+  class n6 node_system
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**EnhancedInputPlugin**<br/>来自crate:bevy​_​enhanced​_​input ↗：驱<br/>动输入上下文和动作状态更新。" }
+  n7@{ shape: fr-rect, label: "**InspectorPlugin**<br/>来自inspector ↗：注册检查器及其启动日<br/>志；面板只在游戏运行时显示。" }
   class n7 node_plugin
   class n7 external_node
-  n8@{ shape: fr-rect, label: "**GameUiPlugin**<br/>来自ui ↗：组装菜单功能，不安装窗口或重<br/>复初始化会话日志。" }
-  class n8 node_plugin
+  n8@{ shape: fr-rect, label: "**PluginGroupBuilder**<br/>来自crate:bevy​_​app ↗：配置插件组成员<br/>与构建顺序。" }
+  class n8 node_plugin_group
   class n8 external_node
-  n9@{ shape: fr-rect, label: "**SettingsPlugin**<br/>来自settings ↗：注册设置资源、原型参数<br/>反射与渲染限帧，不覆盖调用方已提供的配置<br/>或固定时间步。" }
+  n9@{ shape: fr-rect, label: "**CharacterPlugin**<br/>来自character ↗：注册角色运动与反射元<br/>数据，不加载窗口、场景或其他项目插件。" }
   class n9 node_plugin
   class n9 external_node
   n10@{ shape: fr-rect, label: "**MainSchedulePlugin**<br/>来自crate:bevy​_​app ↗：建立应用主调度<br/>与执行阶段。" }
   class n10 node_plugin
   class n10 external_node
-  n11@{ shape: rounded, label: "**message​_​update​_​system**<br/>来自crate:bevy​_​ecs ↗：轮换世界中已注<br/>册的消息缓冲。" }
-  class n11 node_system
+  n11@{ shape: fr-rect, label: "**SessionLogPlugin**<br/>来自session​_​log ↗：提前准备可失败的文<br/>件与线程；插件构建后，守卫仍由主入口持有<br/>到退出刷新完成。" }
+  class n11 node_plugin
   class n11 external_node
-  n12@{ shape: fr-rect, label: "**CharacterAnimationPlugin**<br/>来自character​_​animation ↗：注册场景<br/>就绪后的动画绑定，以及固定模拟和同帧呈现<br/>朝向同步后的动作混合。" }
+  n12@{ shape: fr-rect, label: "**WindowPolicyPlugin**<br/>来自window​_​policy ↗：在现有会话日志和<br/>原生窗口创建之后安装比例策略。" }
   class n12 node_plugin
   class n12 external_node
-  n13@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>来自bounds​_​recovery ↗：注册越界恢复和<br/>插值重置，不创建窗口或额外推进模拟。" }
+  n13@{ shape: fr-rect, label: "**GameAudioPlugin**<br/>来自audio ↗：安装 Kira 输出与音频生命<br/>周期；无设备测试直接使用内部纯数据夹具。" }
   class n13 node_plugin
   class n13 external_node
-  n14@{ shape: fr-rect, label: "**GameAudioPlugin**<br/>来自audio ↗：安装 Kira 输出与音频生命<br/>周期；无设备测试直接使用内部纯数据夹具。" }
+  n14@{ shape: fr-rect, label: "**CharacterAnimationPlugin**<br/>来自character​_​animation ↗：注册场景<br/>就绪后的动画绑定，以及固定模拟和同帧呈现<br/>朝向同步后的动作混合。" }
   class n14 node_plugin
   class n14 external_node
-  n15@{ shape: fr-rect, label: "**FirstPersonPlugin**<br/>来自first​_​person ↗：注册第一人称动<br/>作、捕获、朝向与镜头，不安装输入基础设施<br/>或物理插件。" }
+  n15@{ shape: fr-rect, label: "**GameUiPlugin**<br/>来自ui ↗：组装菜单功能，不安装窗口或重<br/>复初始化会话日志。" }
   class n15 node_plugin
   class n15 external_node
-  n16@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>来自scene​_​assembly ↗：加载当前场景资<br/>源并装配地图、碰撞与业务实体。" }
-  class n16 node_plugin
+  n16@{ shape: rounded, label: "**despawn​_​unused​_​registered​_​systems**<br/>来自crate:bevy​_​ecs ↗：安全清理已无句<br/>柄引用的注册系统实体。" }
+  class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**despawn​_​unused​_​registered​_​systems**<br/>来自crate:bevy​_​ecs ↗：安全清理已无句<br/>柄引用的注册系统实体。" }
-  class n17 node_system
+  n17@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>来自scene​_​assembly ↗：加载当前场景资<br/>源并装配地图、碰撞与业务实体。" }
+  class n17 node_plugin
   class n17 external_node
-  n18@{ shape: fr-rect, label: "**GamePhysicsPlugin**<br/>来自physics ↗：注册固定物理模拟与统一<br/>碰撞日志；不加载场景、窗口或音频设备。" }
-  class n18 node_plugin
+  n18@{ shape: rounded, label: "**message​_​update​_​system**<br/>来自crate:bevy​_​ecs ↗：轮换世界中已注<br/>册的消息缓冲。" }
+  class n18 node_system
   class n18 external_node
-  n19@{ shape: rounded, label: "**message​_​update​_​system**<br/>来自crate:bevy​_​ecs ↗：轮换世界中已注<br/>册的消息缓冲。" }
-  class n19 node_system
+  n19@{ shape: fr-rect, label: "**SettingsPlugin**<br/>来自settings ↗：注册设置资源、原型参数<br/>反射与渲染限帧，不覆盖调用方已提供的配置<br/>或固定时间步。" }
+  class n19 node_plugin
   class n19 external_node
-  n20@{ shape: fr-rect, label: "**GameFlowPlugin**<br/>来自game​_​flow ↗：管理游戏状态与时钟，<br/>连接各功能公开的调度阶段。" }
+  n20@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>来自bounds​_​recovery ↗：注册越界恢复和<br/>插值重置，不创建窗口或额外推进模拟。" }
   class n20 node_plugin
   class n20 external_node
-  n21@{ shape: fr-rect, label: "**PluginGroupBuilder**<br/>来自crate:bevy​_​app ↗：配置插件组成员<br/>与构建顺序。" }
-  class n21 node_plugin_group
+  n21@{ shape: fr-rect, label: "**GameFlowPlugin**<br/>来自game​_​flow ↗：管理游戏状态与时钟，<br/>连接各功能公开的调度阶段。" }
+  class n21 node_plugin
   class n21 external_node
   n0 e0@-->|"调用"| n1
   class e0 edge_registration

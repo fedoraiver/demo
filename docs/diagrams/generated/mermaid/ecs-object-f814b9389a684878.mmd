@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-f814b9389a684878-e0{marker-start:url(#object-f814b9389a684878_flowchart-v2-pointStart)!important}\n#object-f814b9389a684878_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-f814b9389a684878-e4{marker-start:url(#object-f814b9389a684878_flowchart-v2-pointStart)!important}\n#object-f814b9389a684878_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -42,25 +42,26 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**automatically​_​add​_​parallax​_​**<br/>**correction​_​components**<br/>为局部反射探针补入默认视差校正。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ParallaxCorrection**<br/>配置反射探针的视差校正边界。" }
+  n1@{ shape: rounded, label: "**EnvironmentMapLight**<br/>用漫反射与镜面反射立方体贴图提供环境光。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**LightProbe**<br/>定义局部间接光照的长方体影响区域。" }
-  class n2 node_component
-  n3@{ shape: rounded, label: "**EnvironmentMapLight**<br/>用漫反射与镜面反射立方体贴图提供环境光。" }
+  n2@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
+  class n2 node_plugin
+  n3@{ shape: rounded, label: "**ParallaxCorrection**<br/>配置反射探针的视差校正边界。" }
   class n3 node_component
-  n4@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
-  class n4 node_plugin
-  n1 e0@---|"插入"| n0
-  class e0 edge_write
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
-  n1 e2@-->|"存在性约束"| n0
+  n4@{ shape: rounded, label: "**LightProbe**<br/>定义局部间接光照的长方体影响区域。" }
+  class n4 node_component
+  n1 e0@-->|"存在性约束"| n0
+  class e0 edge_reference
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@-->|"存在性约束"| n0
   class e2 edge_reference
-  n3 e3@-->|"存在性约束"| n0
+  n4 e3@-->|"存在性约束"| n0
   class e3 edge_reference
-  n4 e4@-->|"调用"| n0
-  class e4 edge_registration
+  n3 e4@---|"插入"| n0
+  class e4 edge_write
   e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

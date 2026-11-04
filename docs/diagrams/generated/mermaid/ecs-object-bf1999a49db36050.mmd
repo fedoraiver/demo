@@ -44,27 +44,27 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**hide​_​menu**<br/>隐藏菜单并清除提示。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;AppSta**<br/>**te#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
   class n1 node_resource
-  class n1 external_node
   n2@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n2 node_plugin
   n3@{ shape: lean-r, label: "**StateTransitionEvent#lt;AppState#gt;**<br/>来自crate:bevy​_​state ↗：通知状态离开<br/>和进入的变化。" }
   class n3 node_message
   class n3 external_node
-  n4@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
+  n4@{ shape: cyl, label: "**Messages#lt;StateTransitionEvent#lt;AppSta**<br/>**te#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
-  n1 e0@--> n0
-  class e0 edge_read
+  class n4 external_node
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
   n2 e1@-->|"调用"| n0
   class e1 edge_registration
   n3 e2@--> n0
   class e2 edge_consume
-  n0 e3@-->|"可变访问"| n4
+  n0 e3@-->|"赋值"| n1
   class e3 edge_write
-  n0 e4@-->|"赋值"| n4
-  class e4 edge_write
+  n4 e4@--> n0
+  class e4 edge_read
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

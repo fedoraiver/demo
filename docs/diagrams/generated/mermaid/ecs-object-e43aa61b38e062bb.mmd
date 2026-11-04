@@ -49,56 +49,56 @@ flowchart LR
   n1@{ shape: cyl, label: "**Assets#lt;TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**Text**<br/>保存 UI 文本根的第一段内容。" }
+  n2@{ shape: rounded, label: "**ImageNode**<br/>描述 UI 图像及其绘制参数。" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n3 node_resource
-  class n3 external_node
-  n4@{ shape: rounded, label: "**ImageNode**<br/>描述 UI 图像及其绘制参数。" }
-  class n4 node_component
-  n5@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
-  class n5 node_plugin
-  n6@{ shape: rounded, label: "**ContentSize**<br/>提供内容驱动的固有尺寸测量。" }
+  n3@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  class n3 node_plugin
+  n4@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: lin-rect, label: "**Content**<br/>组织界面交互、布局与堆叠更新。" }
+  class n5 node_system_set
+  n6@{ shape: rounded, label: "**Node**<br/>声明 UI 节点的布局规则。" }
   class n6 node_component
-  n7@{ shape: lin-rect, label: "**Content**<br/>组织界面交互、布局与堆叠更新。" }
-  class n7 node_system_set
-  n8@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
+  n7@{ shape: rounded, label: "**Text**<br/>保存 UI 文本根的第一段内容。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**ContentSize**<br/>提供内容驱动的固有尺寸测量。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**Node**<br/>声明 UI 节点的布局规则。" }
-  class n9 node_component
+  n9@{ shape: lin-rect, label: "**AmbiguousWithUpdateText2dLayout**<br/>声明图像类 UI 更新可与二维文字布局无<br/>序。" }
+  class n9 node_system_set
   n10@{ shape: rounded, label: "**ImageNodeSize**<br/>缓存 UI 图像纹理的像素尺寸。" }
   class n10 node_component
-  n11@{ shape: lin-rect, label: "**AmbiguousWithUpdateText2dLayout**<br/>声明图像类 UI 更新可与二维文字布局无<br/>序。" }
+  n11@{ shape: lin-rect, label: "**AmbiguousWithText**<br/>声明图像类 UI 更新可与 UI 文字系统无<br/>序。" }
   class n11 node_system_set
-  n12@{ shape: lin-rect, label: "**AmbiguousWithText**<br/>声明图像类 UI 更新可与 UI 文字系统无<br/>序。" }
-  class n12 node_system_set
+  n12@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
+  class n12 node_component
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
-  n3 e2@--> n0
-  class e2 edge_read
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
   n4 e3@--> n0
   class e3 edge_read
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
-  n0 e5@-->|"赋值"| n6
-  class e5 edge_write
-  n0 e6@-->|"可变访问"| n6
-  class e6 edge_write
-  n7 e7@-->|"集合成员"| n0
-  class e7 edge_set_membership
-  n8 e8@--> n0
-  class e8 edge_read
-  n9 e9@-->|"存在性约束"| n0
-  class e9 edge_reference
-  n0 e10@-->|"可变访问"| n10
-  class e10 edge_write
-  n11 e11@-->|"集合成员"| n0
-  class e11 edge_set_membership
-  n12 e12@-->|"集合成员"| n0
-  class e12 edge_set_membership
-  n0 e13@-->|"赋值"| n10
+  n5 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
+  n6 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
+  n7 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
+  n0 e7@-->|"赋值"| n8
+  class e7 edge_write
+  n9 e8@-->|"集合成员"| n0
+  class e8 edge_set_membership
+  n0 e9@-->|"赋值"| n10
+  class e9 edge_write
+  n11 e10@-->|"集合成员"| n0
+  class e10 edge_set_membership
+  n0 e11@-->|"可变访问"| n8
+  class e11 edge_write
+  n12 e12@--> n0
+  class e12 edge_read
+  n0 e13@-->|"可变访问"| n10
   class e13 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -106,11 +106,11 @@ flowchart LR
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: bumpX }
+  e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
-  e9@{ curve: basis }
-  e10@{ curve: bumpX }
-  e11@{ curve: basis }
+  e9@{ curve: bumpX }
+  e10@{ curve: basis }
+  e11@{ curve: bumpX }
   e12@{ curve: basis }
   e13@{ curve: basis }

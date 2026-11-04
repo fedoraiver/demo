@@ -41,25 +41,25 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**DownsamplePipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：生成<br/>颜色纹理的下采样计算管线。" }
   class n1 node_resource
+  class n1 external_node
   n2@{ shape: rounded, label: "**initialize​_​generated​_​environment​_​**<br/>**map​_​resources**<br/>来自crate:bevy​_​pbr ↗：初始化环境图降<br/>采样、复制和卷积的 GPU 接口。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: cyl, label: "**DownsampleShaders**<br/>来自crate:bevy​_​core​_​pipeline ↗：保存<br/>颜色和深度下采样着色器。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n3 node_resource
-  class n3 external_node
-  n4@{ shape: cyl, label: "**DownsamplePipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：生成<br/>颜色纹理的下采样计算管线。" }
+  n4@{ shape: cyl, label: "**DownsampleShaders**<br/>来自crate:bevy​_​core​_​pipeline ↗：保存<br/>颜色和深度下采样着色器。" }
   class n4 node_resource
   class n4 external_node
-  n1 e0@--> n0
-  class e0 edge_read
+  n0 e0@-->|"插入"| n1
+  class e0 edge_write
   n0 e1@-->|"先于"| n2
   class e1 edge_order
   n3 e2@--> n0
   class e2 edge_read
-  n0 e3@-->|"插入"| n4
-  class e3 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

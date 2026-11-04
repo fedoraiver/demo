@@ -42,18 +42,18 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​sprite​_​pipeline**<br/>建立精灵视图和图像材质管线资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n1@{ shape: cyl, label: "**SpritePipeline**<br/>提供精灵视图、材质布局及着色器。" }
   class n1 node_resource
-  class n1 external_node
-  n2@{ shape: cyl, label: "**SpritePipeline**<br/>提供精灵视图、材质布局及着色器。" }
-  class n2 node_resource
-  n3@{ shape: fr-rect, label: "**SpriteRenderPlugin**<br/>准备并渲染二维精灵。" }
-  class n3 node_plugin
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"插入"| n2
-  class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  e0@{ curve: basis }
+  n2@{ shape: fr-rect, label: "**SpriteRenderPlugin**<br/>准备并渲染二维精灵。" }
+  class n2 node_plugin
+  n3@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  class n3 node_resource
+  class n3 external_node
+  n0 e0@-->|"插入"| n1
+  class e0 edge_write
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@--> n0
+  class e2 edge_read
+  e1@{ curve: basis }
   e2@{ curve: basis }

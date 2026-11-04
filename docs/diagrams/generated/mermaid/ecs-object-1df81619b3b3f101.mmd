@@ -43,18 +43,18 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**SpriteRenderPlugin**<br/>来自crate:bevy​_​sprite​_​render ↗：准备<br/>并渲染二维精灵。" }
-  class n1 node_plugin
-  class n1 external_node
+  n1@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque2d#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
+  class n1 node_resource
   n2@{ shape: lin-rect, label: "**PhaseSort**<br/>组织渲染数据准备与绘制排队。" }
   class n2 node_system_set
-  n3@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Opaque2d#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
-  class n3 node_resource
-  n1 e0@-->|"调用"| n0
-  class e0 edge_registration
+  n3@{ shape: fr-rect, label: "**SpriteRenderPlugin**<br/>来自crate:bevy​_​sprite​_​render ↗：准备<br/>并渲染二维精灵。" }
+  class n3 node_plugin
+  class n3 external_node
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
   n2 e1@-->|"集合成员"| n0
   class e1 edge_set_membership
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  e0@{ curve: basis }
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
   e1@{ curve: basis }
+  e2@{ curve: basis }

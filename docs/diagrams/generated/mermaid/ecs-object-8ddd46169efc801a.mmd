@@ -41,21 +41,21 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​sparse​_​buffer​_​update​_​pipelines**<br/>按设备存储绑定能力建立稀疏更新计算资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**SparseBufferUpdatePipelines**<br/>提供稀疏缓冲散射写入的计算接口。" }
-  class n1 node_resource
-  n2@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n1@{ shape: rounded, label: "**init​_​sparse​_​buffer​_​update​_​bind​_​**<br/>**groups**<br/>准备稀疏更新管线标识与弱键绑定缓存。" }
+  class n1 node_system
+  n2@{ shape: cyl, label: "**SparseBufferUpdatePipelines**<br/>提供稀疏缓冲散射写入的计算接口。" }
   class n2 node_resource
-  class n2 external_node
-  n3@{ shape: rounded, label: "**init​_​sparse​_​buffer​_​update​_​bind​_​**<br/>**groups**<br/>准备稀疏更新管线标识与弱键绑定缓存。" }
-  class n3 node_system
+  n3@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  class n3 node_resource
+  class n3 external_node
   n4@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n4 node_resource
-  n0 e0@-->|"插入"| n1
-  class e0 edge_write
-  n2 e1@--> n0
-  class e1 edge_read
-  n0 e2@-->|"先于"| n3
-  class e2 edge_order
+  n0 e0@-->|"先于"| n1
+  class e0 edge_order
+  n0 e1@-->|"插入"| n2
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
   n4 e3@--> n0
   class e3 edge_read
   e0@{ curve: basis }

@@ -46,37 +46,37 @@ flowchart LR
   class n0 node_system
   n1@{ shape: lin-rect, label: "**UpdateEnd**<br/>组织变换缓动端点与帧间应用。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**NoRotationEasing**<br/>显式禁止当前实体的旋转插值和外推" }
+  n2@{ shape: rounded, label: "**RotationEasingState**<br/>保存固定步旋转插值的起点与终点" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**RotationEasingState**<br/>保存固定步旋转插值的起点与终点" }
-  class n3 node_component
+  n3@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  class n3 node_resource
+  class n3 external_node
   n4@{ shape: rounded, label: "**RotationExtrapolation**<br/>启用旋转外推" }
   class n4 node_component
   n5@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
-  class n6 node_resource
+  n6@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
+  class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
+  n7@{ shape: rounded, label: "**NoRotationEasing**<br/>显式禁止当前实体的旋转插值和外推" }
   class n7 node_component
-  class n7 external_node
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
-  n0 e2@-->|"赋值"| n3
-  class e2 edge_write
-  n0 e3@-->|"可变访问"| n3
-  class e3 edge_write
-  n4 e4@-->|"存在性约束"| n0
-  class e4 edge_reference
-  n5 e5@--> n0
+  n0 e1@-->|"赋值"| n2
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
   class e5 edge_read
-  n6 e6@--> n0
-  class e6 edge_read
-  n7 e7@--> n0
-  class e7 edge_read
+  n0 e6@-->|"可变访问"| n2
+  class e6 edge_write
+  n7 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

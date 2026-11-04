@@ -43,104 +43,158 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**extract​_​clusters​_​for​_​cpu​_​clustering**<br/>把 CPU 聚簇结果转换为渲染侧对象列表。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ExtractedClusterableObjects**<br/>保存渲染侧已提取的可聚簇对象。" }
-  class n1 node_component
-  n2@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
-  class n2 node_plugin
-  n3@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
-  class n3 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n1 node_resource
+  class n1 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n2 node_component
+  class n2 external_node
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: cyl, label: "**GlobalClusterSettings**<br/>来自crate:bevy​_​light ↗：描述设备支持<br/>的聚簇功能和索引上限。" }
+  class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**GlobalClusterSettings**<br/>来自crate:bevy​_​light ↗：描述设备支持<br/>的聚簇功能和索引上限。" }
-  class n4 node_resource
-  class n4 external_node
-  n5@{ shape: rounded, label: "**EnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：用漫反射与镜<br/>面反射立方体贴图提供环境光。" }
-  class n5 node_component
-  class n5 external_node
-  n6@{ shape: rounded, label: "**ClusteredDecal**<br/>来自crate:bevy​_​light ↗：在立方体范围<br/>内向表面投射材质贴花。" }
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
+  class n4 node_plugin
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  class n5 node_system
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**ExtractedClusterableObjects**<br/>保存渲染侧已提取的可聚簇对象。" }
   class n6 node_component
-  class n6 external_node
-  n7@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>按相机可见集合和距离分配已就绪光照探针。" }
-  class n7 node_system
-  n8@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
+  class n7 node_component
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**Clusters**<br/>来自crate:bevy​_​light ↗：保存视图的聚<br/>簇几何与簇内对象。" }
   class n8 node_component
   class n8 external_node
-  n9@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
-  class n9 node_resource
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**EnvironmentMapLight**<br/>来自crate:bevy​_​light ↗：用漫反射与镜<br/>面反射立方体贴图提供环境光。" }
+  class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**RectLight**<br/>来自crate:bevy​_​light ↗：配置朝局部负<br/>Z 发光的矩形区域光。" }
   class n10 node_component
-  n11@{ shape: rounded, label: "**RectLight**<br/>来自crate:bevy​_​light ↗：配置朝局部负<br/>Z 发光的矩形区域光。" }
+  class n10 external_node
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: rounded, label: "**Clusters**<br/>来自crate:bevy​_​light ↗：保存视图的聚<br/>簇几何与簇内对象。" }
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**ClusteredDecal**<br/>来自crate:bevy​_​light ↗：在立方体范围<br/>内向表面投射材质贴花。" }
   class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**SpotLight**<br/>来自crate:bevy​_​light ↗：配置沿指定方<br/>向照射的聚光灯。" }
-  class n13 node_component
-  class n13 external_node
-  n14@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled​_​during​_​**<br/>**extraction**<br/>判断提取阶段是否使用 GPU 聚簇。" }
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled​_​during​_​**<br/>**extraction**<br/>判断提取阶段是否使用 GPU 聚簇。" }
+  class n13 node_system
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>按相机可见集合和距离分配已就绪光照探针。" }
   class n14 node_system
-  n15@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>按相机可见集合和距离分配已就绪光照探针。" }
-  class n15 node_system
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
+  n15@{ shape: rounded, label: "**PointLight**<br/>来自crate:bevy​_​light ↗：配置向四周发<br/>光的点光源。" }
+  class n15 node_component
+  class n15 external_node
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
   n16@{ shape: rounded, label: "**IrradianceVolume**<br/>来自crate:bevy​_​light ↗：用三维环境光<br/>体素提供局部间接照明。" }
   class n16 node_component
   class n16 external_node
-  n17@{ shape: rounded, label: "**PointLight**<br/>来自crate:bevy​_​light ↗：配置向四周发<br/>光的点光源。" }
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: rounded, label: "**SpotLight**<br/>来自crate:bevy​_​light ↗：配置沿指定方<br/>向照射的聚光灯。" }
   class n17 node_component
   class n17 external_node
-  n0 e0@-->|"移除"| n1
-  class e0 edge_write
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
+  end
+  style layout_card_n17 fill:none,stroke:none
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@--> n0
+  class e1 edge_read
   n3 e2@--> n0
   class e2 edge_read
-  n4 e3@--> n0
-  class e3 edge_read
-  n0 e4@-->|"插入"| n1
-  class e4 edge_write
-  n5 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
-  n6 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
-  n7 e7@-->|"先于"| n0
-  class e7 edge_order
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n5 e4@-->|"先于"| n0
+  class e4 edge_order
+  n0 e5@-->|"插入"| n6
+  class e5 edge_write
+  n0 e6@-->|"插入"| n7
+  class e6 edge_write
+  n0 e7@-->|"移除"| n7
+  class e7 edge_write
   n8 e8@--> n0
   class e8 edge_read
-  n9 e9@--> n0
-  class e9 edge_read
-  n0 e10@-->|"移除"| n10
-  class e10 edge_write
-  n11 e11@-->|"存在性约束"| n0
-  class e11 edge_reference
-  n12 e12@--> n0
-  class e12 edge_read
-  n13 e13@-->|"存在性约束"| n0
+  n9 e9@-->|"存在性约束"| n0
+  class e9 edge_reference
+  n10 e10@-->|"存在性约束"| n0
+  class e10 edge_reference
+  n11 e11@--> n0
+  class e11 edge_read
+  n12 e12@-->|"存在性约束"| n0
+  class e12 edge_reference
+  n13 e13@-->|"运行条件"| n0
   class e13 edge_reference
-  n14 e14@-->|"运行条件"| n0
-  class e14 edge_reference
-  n15 e15@-->|"先于"| n0
-  class e15 edge_order
+  n14 e14@-->|"先于"| n0
+  class e14 edge_order
+  n15 e15@-->|"存在性约束"| n0
+  class e15 edge_reference
   n16 e16@-->|"存在性约束"| n0
   class e16 edge_reference
-  n4 e17@---|"插入"| n0
+  n3 e17@---|"插入"| n0
   class e17 edge_write
-  n17 e18@-->|"存在性约束"| n0
-  class e18 edge_reference
-  n0 e19@-->|"插入"| n10
-  class e19 edge_write
+  n0 e18@-->|"移除"| n6
+  class e18 edge_write
+  n17 e19@-->|"存在性约束"| n0
+  class e19 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: bumpX }
+  e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
-  e10@{ curve: bumpX }
+  e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }

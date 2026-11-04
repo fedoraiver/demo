@@ -50,38 +50,40 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**Update**<br/>来自crate:bevy​_​a11y ↗：组织无障碍信息<br/>更新。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: lean-r, label: "**WindowClosed**<br/>来自crate:bevy​_​window ↗：通知窗口已经<br/>关闭。" }
-  class n2 node_message
-  class n2 external_node
-  n3@{ shape: rounded, label: "**poll​_​receivers**<br/>将原生无障碍动作请求转为应用消息。" }
+  n2@{ shape: rounded, label: "**poll​_​receivers**<br/>将原生无障碍动作请求转为应用消息。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
-  class n4 node_system
-  n5@{ shape: cyl, label: "**Messages#lt;WindowClosed#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n4@{ shape: cyl, label: "**Messages#lt;WindowClosed#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: cyl, label: "**WinitActionRequestHandlers**<br/>把窗口实体映射到 AccessKit 动作请求处<br/>理入口" }
   class n5 node_resource
-  class n5 external_node
   n6@{ shape: fr-rect, label: "**AccessKitPlugin**<br/>连接窗口平台的无障碍接口。" }
   class n6 node_plugin
-  n7@{ shape: cyl, label: "**WinitActionRequestHandlers**<br/>把窗口实体映射到 AccessKit 动作请求处<br/>理入口" }
-  class n7 node_resource
+  n7@{ shape: lean-r, label: "**WindowClosed**<br/>来自crate:bevy​_​window ↗：通知窗口已经<br/>关闭。" }
+  class n7 node_message
+  class n7 external_node
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
-  n2 e1@--> n0
-  class e1 edge_consume
+  n0 e1@-->|"先于"| n2
+  class e1 edge_order
   n0 e2@-->|"先于"| n3
   class e2 edge_order
-  n0 e3@-->|"先于"| n4
-  class e3 edge_order
-  n5 e4@--> n0
-  class e4 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
   n6 e5@-->|"调用"| n0
   class e5 edge_registration
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
+  n7 e6@--> n0
+  class e6 edge_consume
+  n2 layout_output_0@~~~ n3
+  n3 layout_output_1@~~~ n5
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

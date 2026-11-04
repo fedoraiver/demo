@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-fce663594e5ddc39-e7{marker-start:url(#object-fce663594e5ddc39_flowchart-v2-pointStart)!important}\n#object-fce663594e5ddc39_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-fce663594e5ddc39-e0{marker-start:url(#object-fce663594e5ddc39_flowchart-v2-pointStart)!important}\n#object-fce663594e5ddc39_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -45,46 +45,46 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**resume​_​interpolation**<br/>下一固定步从恢复后的位置重新采样插值，只<br/>移除本模块临时添加的暂停项。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**NoRotationEasing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：显式禁止当前实体的旋<br/>转插值和外推" }
+  n1@{ shape: rounded, label: "**ResumeInterpolation**<br/>记录本次恢复临时添加的插值暂停项，不移除<br/>原先由其他功能设置的暂停组件。" }
   class n1 node_component
-  class n1 external_node
-  n2@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>注册越界恢复和插值重置，不创建窗口或额外<br/>推进模拟。" }
-  class n2 node_plugin
-  n3@{ shape: lin-rect, label: "**UpdateStart**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：组织变换缓动端点与帧<br/>间应用。" }
-  class n3 node_system_set
+  n2@{ shape: rounded, label: "**NoTranslationEasing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：显式禁止当前实体的平<br/>移插值和外推" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: rounded, label: "**NoRotationEasing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：显式禁止当前实体的旋<br/>转插值和外推" }
+  class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**ResumeInterpolation**<br/>记录本次恢复临时添加的插值暂停项，不移除<br/>原先由其他功能设置的暂停组件。" }
-  class n4 node_component
+  n4@{ shape: lin-rect, label: "**UpdateStart**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：组织变换缓动端点与帧<br/>间应用。" }
+  class n4 node_system_set
+  class n4 external_node
   n5@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**NoTranslationEasing**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：显式禁止当前实体的平<br/>移插值和外推" }
-  class n6 node_component
+  n6@{ shape: lin-rect, label: "**Reset**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：组织变换缓动端点与帧<br/>间应用。" }
+  class n6 node_system_set
   class n6 external_node
-  n7@{ shape: lin-rect, label: "**Reset**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：组织变换缓动端点与帧<br/>间应用。" }
-  class n7 node_system_set
-  class n7 external_node
-  n0 e0@-->|"移除"| n1
+  n7@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>注册越界恢复和插值重置，不创建窗口或额外<br/>推进模拟。" }
+  class n7 node_plugin
+  n1 e0@---|"移除"| n0
   class e0 edge_write
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n0 e2@-->|"先于"| n3
-  class e2 edge_order
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"运行条件"| n0
-  class e4 edge_reference
-  n0 e5@-->|"移除"| n6
-  class e5 edge_write
-  n7 e6@-->|"先于"| n0
+  n0 e1@-->|"移除"| n2
+  class e1 edge_write
+  n0 e2@-->|"移除"| n3
+  class e2 edge_write
+  n0 e3@-->|"先于"| n4
+  class e3 edge_order
+  n1 e4@--> n0
+  class e4 edge_read
+  n5 e5@-->|"运行条件"| n0
+  class e5 edge_reference
+  n6 e6@-->|"先于"| n0
   class e6 edge_order
-  n4 e7@---|"移除"| n0
-  class e7 edge_write
+  n7 e7@-->|"调用"| n0
+  class e7 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
+  e5@{ curve: bumpX }
   e6@{ curve: basis }
   e7@{ curve: basis }

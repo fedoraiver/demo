@@ -51,54 +51,54 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
   class n0 node_system
-  n1@{ shape: stadium, label: "**FocusedInput#lt;MouseWheel#gt;**<br/>把输入消息路由到焦点实体并向窗口冒泡。" }
-  class n1 node_event
-  n2@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
-  class n2 node_component
-  class n2 external_node
-  n3@{ shape: fr-rect, label: "**InputDispatchPlugin**<br/>向当前焦点派发键盘和手柄输入。" }
-  class n3 node_plugin
-  n4@{ shape: lin-rect, label: "**InputSystems**<br/>来自crate:bevy​_​input ↗：把原始设备消<br/>息汇总为本帧输入状态。" }
-  class n4 node_system_set
+  n1@{ shape: lean-r, label: "**MouseWheel**<br/>来自crate:bevy​_​input ↗：传递鼠标滚轮<br/>位移。" }
+  class n1 node_message
+  class n1 external_node
+  n2@{ shape: cyl, label: "**InputFocus**<br/>保存当前输入焦点实体、待派发的焦点变化及<br/>原焦点" }
+  class n2 node_resource
+  n3@{ shape: lin-rect, label: "**InputSystems**<br/>来自crate:bevy​_​input ↗：把原始设备消<br/>息汇总为本帧输入状态。" }
+  class n3 node_system_set
+  class n3 external_node
+  n4@{ shape: cyl, label: "**Messages#lt;MouseWheel#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n4 node_resource
   class n4 external_node
-  n5@{ shape: cyl, label: "**InputFocus**<br/>保存当前输入焦点实体、待派发的焦点变化及<br/>原焦点" }
-  class n5 node_resource
-  n6@{ shape: lin-rect, label: "**Dispatch**<br/>组织焦点输入派发与变化通知。" }
-  class n6 node_system_set
-  n7@{ shape: cyl, label: "**Messages#lt;MouseWheel#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n7 node_resource
+  n5@{ shape: lin-rect, label: "**Dispatch**<br/>组织焦点输入派发与变化通知。" }
+  class n5 node_system_set
+  n6@{ shape: stadium, label: "**FocusedInput#lt;MouseWheel#gt;**<br/>把输入消息路由到焦点实体并向窗口冒泡。" }
+  class n6 node_event
+  n7@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  class n7 node_component
   class n7 external_node
-  n8@{ shape: lean-r, label: "**MouseWheel**<br/>来自crate:bevy​_​input ↗：传递鼠标滚轮<br/>位移。" }
-  class n8 node_message
-  class n8 external_node
-  n9@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
-  class n9 node_system
-  n0 e0@-->|"触发事件"| n1
-  class e0 edge_emit
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n4 e3@-->|"先于"| n0
-  class e3 edge_order
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
-  n6 e5@-->|"集合成员"| n0
-  class e5 edge_set_membership
-  n0 e6@-->|"赋值"| n5
-  class e6 edge_write
-  n7 e7@--> n0
-  class e7 edge_read
-  n8 e8@--> n0
-  class e8 edge_consume
-  n9 e9@-->|"先于"| n0
-  class e9 edge_order
+  n8@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
+  class n8 node_system
+  n9@{ shape: fr-rect, label: "**InputDispatchPlugin**<br/>向当前焦点派发键盘和手柄输入。" }
+  class n9 node_plugin
+  n1 e0@--> n0
+  class e0 edge_consume
+  n0 e1@-->|"赋值"| n2
+  class e1 edge_write
+  n3 e2@-->|"先于"| n0
+  class e2 edge_order
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
+  n0 e5@-->|"触发事件"| n6
+  class e5 edge_emit
+  n7 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
+  n8 e7@-->|"先于"| n0
+  class e7 edge_order
+  n0 e8@-->|"可变访问"| n2
+  class e8 edge_write
+  n9 e9@-->|"调用"| n0
+  class e9 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: bumpX }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }
+  e8@{ curve: bumpX }
   e9@{ curve: basis }

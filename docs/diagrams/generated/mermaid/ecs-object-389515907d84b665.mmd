@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-389515907d84b665-e1{marker-start:url(#object-389515907d84b665_flowchart-v2-pointStart)!important}\n#object-389515907d84b665-e3{marker-start:url(#object-389515907d84b665_flowchart-v2-pointStart)!important}\n#object-389515907d84b665_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-389515907d84b665-e4{marker-start:url(#object-389515907d84b665_flowchart-v2-pointStart)!important}\n#object-389515907d84b665-e5{marker-start:url(#object-389515907d84b665_flowchart-v2-pointStart)!important}\n#object-389515907d84b665_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -44,28 +44,28 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>允许 OIT 相机采样自己的深度纹理。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**OrderIndependentTransparencySettings**<br/>配置透明片元排序容量和混合阈值。" }
+  n1@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
-  class n2 node_component
+  class n1 external_node
+  n2@{ shape: lin-rect, label: "**PrepareViews**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n2 node_system_set
   class n2 external_node
-  n3@{ shape: lin-rect, label: "**PrepareViews**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n3 node_system_set
-  class n3 external_node
+  n3@{ shape: rounded, label: "**OrderIndependentTransparencySettings**<br/>配置透明片元排序容量和混合阈值。" }
+  class n3 node_component
   n4@{ shape: fr-rect, label: "**OrderIndependentTransparencyPlugin**<br/>提供顺序无关透明渲染。" }
   class n4 node_plugin
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference
-  n2 e1@---|"可变访问"| n0
-  class e1 edge_write
-  n3 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
-  n2 e3@---|"赋值"| n0
-  class e3 edge_write
-  n4 e4@-->|"调用"| n0
-  class e4 edge_registration
-  n2 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n1 e4@---|"可变访问"| n0
+  class e4 edge_write
+  n1 e5@---|"赋值"| n0
+  class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

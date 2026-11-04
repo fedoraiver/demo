@@ -45,26 +45,26 @@ flowchart LR
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PrepareResources**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n2@{ shape: cyl, label: "**ComponentUniforms#lt;MotionBlurUniform#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**ComponentUniforms#lt;MotionBlurUniform#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n4@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n4 node_resource
   n5@{ shape: rounded, label: "**MotionBlurUniform**<br/>来自crate:bevy​_​post​_​process ↗：向运<br/>动模糊着色器传递快门角度和采样数。" }
   class n5 node_component
   class n5 external_node
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
-  n2 e1@--> n0
-  class e1 edge_read
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
   n4 e3@--> n0
   class e3 edge_read
   n5 e4@--> n0
   class e4 edge_read
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

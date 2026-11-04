@@ -44,69 +44,69 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**OcclusionCulling**<br/>启用视图的 GPU 遮挡裁剪。" }
-  class n1 node_component
-  n2@{ shape: cyl, label: "**MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
+  n1@{ shape: cyl, label: "**PhaseBatchedInstanceBuffers#lt;Transpar**<br/>**ent3d, MeshUniform#gt;**<br/>为单个绘制阶段保存 GPU 批次实例缓冲。" }
+  class n1 node_resource
+  n2@{ shape: cyl, label: "**SkinUniforms**<br/>来自crate:bevy​_​pbr ↗：以双缓冲保存蒙<br/>皮前后帧关节矩阵。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**SkinUniforms**<br/>来自crate:bevy​_​pbr ↗：以双缓冲保存蒙<br/>皮前后帧关节矩阵。" }
+  class n2 external_node
+  n3@{ shape: cyl, label: "**RenderMeshInstances**<br/>来自crate:bevy​_​pbr ↗：保存 CPU 或<br/>GPU 构建所需的网格实例。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**PhaseIndirectParametersBuffers#lt;Trans**<br/>**parent3d#gt;**<br/>为单个绘制阶段保存间接绘制参数。" }
+  n4@{ shape: cyl, label: "**RenderLightmaps**<br/>来自crate:bevy​_​pbr ↗：管理渲染侧光照<br/>贴图的槽位和纹理。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**RenderLightmaps**<br/>来自crate:bevy​_​pbr ↗：管理渲染侧光照<br/>贴图的槽位和纹理。" }
+  class n4 external_node
+  n5@{ shape: cyl, label: "**PhaseIndirectParametersBuffers#lt;Trans**<br/>**parent3d#gt;**<br/>为单个绘制阶段保存间接绘制参数。" }
   class n5 node_resource
-  class n5 external_node
   n6@{ shape: rounded, label: "**NoIndirectDrawing**<br/>关闭相机的间接绘制模式。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**PhaseBatchedInstanceBuffers#lt;Transpar**<br/>**ent3d, MeshUniform#gt;**<br/>为单个绘制阶段保存 GPU 批次实例缓冲。" }
-  class n7 node_resource
-  n8@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent3d**<br/>**#gt;**<br/>汇集各视图需要排序的绘制指令。" }
+  n7@{ shape: lin-rect, label: "**PrepareResourcesBatchPhases**<br/>组织渲染数据准备与绘制排队。" }
+  class n7 node_system_set
+  n8@{ shape: cyl, label: "**MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
   class n8 node_resource
-  n9@{ shape: lin-rect, label: "**PrepareResourcesBatchPhases**<br/>组织渲染数据准备与绘制排队。" }
-  class n9 node_system_set
+  n9@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent3d**<br/>**#gt;**<br/>汇集各视图需要排序的绘制指令。" }
+  class n9 node_resource
   n10@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
   class n10 node_component
-  n11@{ shape: cyl, label: "**RenderMeshInstances**<br/>来自crate:bevy​_​pbr ↗：保存 CPU 或<br/>GPU 构建所需的网格实例。" }
-  class n11 node_resource
+  n11@{ shape: rounded, label: "**resource​_​exists**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
+  class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**resource​_​exists**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
-  class n12 node_system
+  n12@{ shape: cyl, label: "**MorphIndices**<br/>来自crate:bevy​_​pbr ↗：关联形变网格与<br/>当前及上一帧权重位置。" }
+  class n12 node_resource
   class n12 external_node
-  n13@{ shape: cyl, label: "**MorphIndices**<br/>来自crate:bevy​_​pbr ↗：关联形变网格与<br/>当前及上一帧权重位置。" }
-  class n13 node_resource
-  class n13 external_node
-  n1 e0@-->|"存在性约束"| n0
-  class e0 edge_reference
+  n13@{ shape: rounded, label: "**OcclusionCulling**<br/>启用视图的 GPU 遮挡裁剪。" }
+  class n13 node_component
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
   n2 e1@--> n0
   class e1 edge_read
   n3 e2@--> n0
   class e2 edge_read
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n5 e4@--> n0
-  class e4 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
   n6 e5@-->|"存在性约束"| n0
   class e5 edge_reference
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
-  n0 e7@-->|"可变访问"| n8
-  class e7 edge_write
-  n9 e8@-->|"集合成员"| n0
-  class e8 edge_set_membership
+  n7 e6@-->|"集合成员"| n0
+  class e6 edge_set_membership
+  n8 e7@--> n0
+  class e7 edge_read
+  n0 e8@-->|"可变访问"| n9
+  class e8 edge_write
   n10 e9@--> n0
   class e9 edge_read
-  n11 e10@--> n0
-  class e10 edge_read
-  n12 e11@-->|"运行条件"| n0
-  class e11 edge_reference
-  n13 e12@--> n0
-  class e12 edge_read
+  n11 e10@-->|"运行条件"| n0
+  class e10 edge_reference
+  n12 e11@--> n0
+  class e11 edge_read
+  n13 e12@-->|"存在性约束"| n0
+  class e12 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }
   e5@{ curve: basis }
+  e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

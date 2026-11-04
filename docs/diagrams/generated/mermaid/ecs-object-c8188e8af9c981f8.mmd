@@ -40,11 +40,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**renderer​_​is​_​ready**<br/>判断渲染器是否已经就绪。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderState**<br/>记录渲染器当前状态。" }
-  class n1 node_resource
-  n2@{ shape: rounded, label: "**run​_​render​_​schedule**<br/>按 RenderScheduleOrder 中维护的阶段标<br/>签顺序，依次尝试运行渲染子应用的各个调<br/>度。" }
-  class n2 node_system
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"运行条件"| n2
-  class e1 edge_reference
+  n1@{ shape: rounded, label: "**run​_​render​_​schedule**<br/>按 RenderScheduleOrder 中维护的阶段标<br/>签顺序，依次尝试运行渲染子应用的各个调<br/>度。" }
+  class n1 node_system
+  n2@{ shape: cyl, label: "**RenderState**<br/>记录渲染器当前状态。" }
+  class n2 node_resource
+  n0 e0@-->|"运行条件"| n1
+  class e0 edge_reference
+  n2 e1@--> n0
+  class e1 edge_read

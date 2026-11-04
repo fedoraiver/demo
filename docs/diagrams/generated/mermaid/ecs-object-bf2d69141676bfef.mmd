@@ -1,0 +1,105 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: character::components::CharacterMotion · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**CharacterMotion**<br/>接地状态由物理查询派生；实际速度直接读<br/>取 Avian 的 LinearVelocity。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**log​_​character​_​velocity**<br/>采样物理解算后的实际速度，便于检查加速<br/>度、刹车和碰撞反馈。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update​_​grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**jump​_​characters**<br/>跳跃只消费一次，通过冲量改变速度；重力和<br/>位置积分全部交给 Avian。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**update​_​grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：承载可控制快递<br/>员的玩法状态与角色层级。" }
+  class n7 node_entity
+  class n7 external_node
+  n8@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**move​_​characters**<br/>用有上限的加速度趋近目标水平速度，保留碰<br/>撞和外部冲量造成的实际运动。" }
+  class n9 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"赋值"| n0
+  class e2 edge_write
+  n4 e3@-->|"赋值"| n0
+  class e3 edge_write
+  n5 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n6 e5@-->|"赋值"| n0
+  class e5 edge_write
+  n5 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n3 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n7 e8@-->|"可能包含"| n0
+  class e8 edge_reference
+  n0 e9@--> n8
+  class e9 edge_read
+  n0 e10@--> n9
+  class e10 edge_read
+  n6 e11@-->|"可变访问"| n0
+  class e11 edge_write
+  n4 e12@-->|"可变访问"| n0
+  class e12 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }

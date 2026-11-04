@@ -43,28 +43,28 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​uniform​_​components**<br/>将组件值批量上传为动态着色器参数。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**ComponentUniforms#lt;GpuAtmosphere#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**ComponentUniforms#lt;GpuAtmosphere#gt;**<br/>汇集同类组件的动态 Uniform 数据。" }
-  class n2 node_resource
+  n2@{ shape: rounded, label: "**GpuAtmosphere**<br/>来自crate:bevy​_​pbr ↗：以 Uniform 格<br/>式描述大气几何与地面。" }
+  class n2 node_component
+  class n2 external_node
   n3@{ shape: lin-rect, label: "**PrepareResources**<br/>组织渲染数据准备与绘制排队。" }
   class n3 node_system_set
-  n4@{ shape: rounded, label: "**GpuAtmosphere**<br/>来自crate:bevy​_​pbr ↗：以 Uniform 格<br/>式描述大气几何与地面。" }
-  class n4 node_component
-  class n4 external_node
-  n5@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n4@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  class n4 node_resource
+  n5@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n5 node_resource
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@--> n0
+  class e1 edge_read
   n3 e2@-->|"集合成员"| n0
   class e2 edge_set_membership
   n4 e3@--> n0
   class e3 edge_read
   n5 e4@--> n0
   class e4 edge_read
-  e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

@@ -48,80 +48,80 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**sprite​_​picking**<br/>按精灵图像和拾取配置计算指针命中。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**Pickable**<br/>来自crate:bevy​_​picking ↗：配置实体是<br/>否可被拾取及是否阻挡深度更低的命中目标" }
+  n1@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: fr-rect, label: "**SpritePickingPlugin**<br/>提供二维精灵拾取结果。" }
-  class n2 node_plugin
-  n3@{ shape: lin-rect, label: "**Backend**<br/>来自crate:bevy​_​picking ↗：组织指针拾<br/>取和悬停处理阶段。" }
-  class n3 node_system_set
+  n2@{ shape: lin-rect, label: "**Backend**<br/>来自crate:bevy​_​picking ↗：组织指针拾<br/>取和悬停处理阶段。" }
+  class n2 node_system_set
+  class n2 external_node
+  n3@{ shape: rounded, label: "**Pickable**<br/>来自crate:bevy​_​picking ↗：配置实体是<br/>否可被拾取及是否阻挡深度更低的命中目标" }
+  class n3 node_component
   class n3 external_node
-  n4@{ shape: cyl, label: "**Messages#lt;PointerHits#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n4 node_resource
+  n4@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
+  n5@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**PointerId**<br/>来自crate:bevy​_​picking ↗：以鼠标、触<br/>摸编号或自定义 UUID 提供稳定指针身份" }
+  n6@{ shape: rounded, label: "**RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**Sprite**<br/>描述二维精灵的图像、图集、颜色、翻转、尺<br/>寸和裁剪区域" }
+  n7@{ shape: rounded, label: "**Projection**<br/>来自crate:bevy​_​camera ↗：定义相机从视<br/>图到裁剪空间的投影。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
-  class n8 node_component
-  class n8 external_node
+  class n7 external_node
+  n8@{ shape: fr-rect, label: "**SpritePickingPlugin**<br/>提供二维精灵拾取结果。" }
+  class n8 node_plugin
   n9@{ shape: cyl, label: "**Assets#lt;TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n9 node_resource
   class n9 external_node
   n10@{ shape: rounded, label: "**Anchor**<br/>保存二维可渲染实体相对自身尺寸的归一化锚<br/>点偏移" }
   class n10 node_component
-  n11@{ shape: cyl, label: "**RayMap**<br/>来自crate:bevy​_​picking ↗：按指针和相<br/>机组合保存拾取射线" }
-  class n11 node_resource
-  class n11 external_node
-  n12@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
-  class n12 node_component
+  n11@{ shape: rounded, label: "**Sprite**<br/>描述二维精灵的图像、图集、颜色、翻转、尺<br/>寸和裁剪区域" }
+  class n11 node_component
+  n12@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n12 node_resource
   class n12 external_node
-  n13@{ shape: lean-r, label: "**PointerHits**<br/>来自crate:bevy​_​picking ↗：传递拾取后<br/>端的实体命中结果。" }
-  class n13 node_message
+  n13@{ shape: rounded, label: "**PointerId**<br/>来自crate:bevy​_​picking ↗：以鼠标、触<br/>摸编号或自定义 UUID 提供稳定指针身份" }
+  class n13 node_component
   class n13 external_node
-  n14@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  n14@{ shape: rounded, label: "**PointerLocation**<br/>来自crate:bevy​_​picking ↗：保存指针当<br/>前目标及该目标上的位置" }
   class n14 node_component
   class n14 external_node
-  n15@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n15@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
   class n15 node_component
   class n15 external_node
   n16@{ shape: rounded, label: "**SpritePickingCamera**<br/>在启用标记限制时指定精灵拾取相机。" }
   class n16 node_component
-  n17@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
-  class n17 node_component
+  n17@{ shape: lean-r, label: "**PointerHits**<br/>来自crate:bevy​_​picking ↗：传递拾取后<br/>端的实体命中结果。" }
+  class n17 node_message
   class n17 external_node
-  n18@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
-  class n18 node_component
+  n18@{ shape: cyl, label: "**Messages#lt;PointerHits#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n18 node_resource
   class n18 external_node
-  n19@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n19@{ shape: cyl, label: "**SpritePickingSettings**<br/>配置精灵拾取的相机筛选与透明像素判定。" }
   class n19 node_resource
-  class n19 external_node
-  n20@{ shape: cyl, label: "**SpritePickingSettings**<br/>配置精灵拾取的相机筛选与透明像素判定。" }
-  class n20 node_resource
-  n21@{ shape: rounded, label: "**PointerLocation**<br/>来自crate:bevy​_​picking ↗：保存指针当<br/>前目标及该目标上的位置" }
-  class n21 node_component
+  n20@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  class n20 node_component
+  class n20 external_node
+  n21@{ shape: cyl, label: "**RayMap**<br/>来自crate:bevy​_​picking ↗：按指针和相<br/>机组合保存拾取射线" }
+  class n21 node_resource
   class n21 external_node
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n3 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
   n5 e4@--> n0
   class e4 edge_read
   n6 e5@--> n0
   class e5 edge_read
   n7 e6@--> n0
   class e6 edge_read
-  n8 e7@--> n0
-  class e7 edge_read
+  n8 e7@-->|"调用"| n0
+  class e7 edge_registration
   n9 e8@--> n0
   class e8 edge_read
   n10 e9@--> n0
@@ -130,18 +130,18 @@ flowchart LR
   class e10 edge_read
   n12 e11@--> n0
   class e11 edge_read
-  n0 e12@-->|"可变访问"| n13
-  class e12 edge_publish
+  n13 e12@--> n0
+  class e12 edge_read
   n14 e13@--> n0
   class e13 edge_read
   n15 e14@--> n0
   class e14 edge_read
   n16 e15@-->|"存在性约束"| n0
   class e15 edge_reference
-  n17 e16@-->|"存在性约束"| n0
-  class e16 edge_reference
-  n18 e17@--> n0
-  class e17 edge_read
+  n0 e16@-->|"可变访问"| n17
+  class e16 edge_publish
+  n0 e17@-->|"可变访问"| n18
+  class e17 edge_write
   n19 e18@--> n0
   class e18 edge_read
   n20 e19@--> n0
@@ -157,7 +157,7 @@ flowchart LR
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
-  e9@{ curve: basis }
+  e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }

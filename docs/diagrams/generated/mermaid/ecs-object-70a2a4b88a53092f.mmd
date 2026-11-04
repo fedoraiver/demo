@@ -40,13 +40,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​atmosphere​_​probe​_​layout**<br/>定义大气环境探针的计算资源接口。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**AtmosphereProbeLayouts**<br/>描述大气环境贴图计算的资源布局。" }
-  class n1 node_resource
-  n2@{ shape: rounded, label: "**init​_​atmosphere​_​probe​_​pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
-  class n2 node_system
-  n0 e0@-->|"插入"| n1
-  class e0 edge_write
-  n0 e1@-->|"先于"| n2
-  class e1 edge_order
+  n1@{ shape: rounded, label: "**init​_​atmosphere​_​probe​_​pipeline**<br/>排队创建大气环境贴图生成计算管线。" }
+  class n1 node_system
+  n2@{ shape: cyl, label: "**AtmosphereProbeLayouts**<br/>描述大气环境贴图计算的资源布局。" }
+  class n2 node_resource
+  n0 e0@-->|"先于"| n1
+  class e0 edge_order
+  n0 e1@-->|"插入"| n2
+  class e1 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

@@ -52,53 +52,53 @@ flowchart LR
   n2@{ shape: lin-rect, label: "**Update**<br/>来自crate:bevy​_​a11y ↗：组织无障碍信息<br/>更新。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
-  class n3 node_plugin
-  n4@{ shape: rounded, label: "**ImageNodeTextureAtlasLayout**<br/>缓存 UI 图像节点引用的纹理图集布局。" }
-  class n4 node_component
-  n5@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
-  class n5 node_system_set
+  n3@{ shape: rounded, label: "**ImageNodeTextureAtlasLayout**<br/>缓存 UI 图像节点引用的纹理图集布局。" }
+  class n3 node_component
+  n4@{ shape: cyl, label: "**AssetChanges#lt;TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: rounded, label: "**ImageNode**<br/>来自crate:bevy​_​ui ↗：描述 UI 图像及其<br/>绘制参数。" }
+  class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**AssetChanges#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
-  class n6 node_resource
+  n6@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
+  class n6 node_system_set
   class n6 external_node
   n7@{ shape: lin-rect, label: "**ImageNodeAssetChangedSystems**<br/>将底层图像和图集资产变化反馈给 UI 节<br/>点。" }
   class n7 node_system_set
-  n8@{ shape: cyl, label: "**AssetChanges#lt;TextureAtlasLayout#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
+  n8@{ shape: cyl, label: "**AssetChanges#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：记录资产最近<br/>变化的系统刻度。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**update​_​texture​_​atlas​_​layout​_​**<br/>**components**<br/>同步 UI 图像所引用的图集布局组件。" }
-  class n9 node_system
-  n10@{ shape: rounded, label: "**ImageNode**<br/>来自crate:bevy​_​ui ↗：描述 UI 图像及其<br/>绘制参数。" }
-  class n10 node_component
-  class n10 external_node
+  n9@{ shape: fr-rect, label: "**UiRenderPlugin**<br/>提取并准备界面绘制数据。" }
+  class n9 node_plugin
+  n10@{ shape: rounded, label: "**update​_​texture​_​atlas​_​layout​_​**<br/>**components**<br/>同步 UI 图像所引用的图集布局组件。" }
+  class n10 node_system
   n1 e0@-->|"先于"| n0
   class e0 edge_order
   n2 e1@-->|"先于"| n0
   class e1 edge_order
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n5 e4@-->|"先于"| n0
-  class e4 edge_order
-  n6 e5@--> n0
-  class e5 edge_read
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n6 e5@-->|"先于"| n0
+  class e5 edge_order
   n7 e6@-->|"集合成员"| n0
   class e6 edge_set_membership
   n8 e7@--> n0
   class e7 edge_read
-  n0 e8@-->|"先于"| n9
-  class e8 edge_order
-  n0 e9@-->|"可变访问"| n10
-  class e9 edge_write
-  n4 layout_output_0@~~~ n9
-  n9 layout_output_1@~~~ n10
+  n9 e8@-->|"调用"| n0
+  class e8 edge_registration
+  n0 e9@-->|"先于"| n10
+  class e9 edge_order
+  n3 layout_output_0@~~~ n5
+  n5 layout_output_1@~~~ n10
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e5@{ curve: basis }
+  e4@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

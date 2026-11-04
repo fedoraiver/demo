@@ -42,12 +42,16 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**late​_​sweep​_​material​_​instances**<br/>清扫失效网格材质实例并推进本帧刻度。" }
   class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: cyl, label: "**RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
   class n1 node_resource
-  n2@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
-  class n2 node_plugin
+  n2@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n2 node_resource
+  class n2 external_node
   n3@{ shape: notch-rect, label: "**Local · removed​_​meshes​_​query.0.0.1**<br/>跟踪 Mesh3d 移除记录的读取进度。" }
   class n3 node_local
   n4@{ shape: notch-rect, label: "**Local · removed​_​meshes​_​**<br/>**query.0.0.0.0.0**<br/>保存 Mesh3d 移除参数的组件 ID。" }
@@ -56,14 +60,13 @@ flowchart LR
   class n5 node_system
   n6@{ shape: rounded, label: "**early​_​sweep​_​material​_​instances**<br/>按材质移除消息清扫未被本帧替换的实例。" }
   class n6 node_system
-  n7@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
-  class n7 node_resource
-  class n7 external_node
+  n7@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
+  class n7 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n0 e2@-->|"可变访问"| n3
+  n2 e1@--> n0
+  class e1 edge_read
+  n0 e2@--->|"可变访问"| n3
   class e2 edge_write
   n0 e3@-->|"可变访问"| n4
   class e3 edge_write
@@ -71,14 +74,11 @@ flowchart LR
   class e4 edge_order
   n6 e5@-->|"先于"| n0
   class e5 edge_order
-  n7 e6@--> n0
-  class e6 edge_read
-  n1 layout_output_0@~~~ n3
-  n3 layout_output_1@~~~ n4
+  n7 e6@-->|"调用"| n0
+  class e6 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

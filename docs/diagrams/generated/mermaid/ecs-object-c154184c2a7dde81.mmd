@@ -1,0 +1,83 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: button_input::ButtonInput#lt;keyboard::KeyCode#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**ButtonInput#lt;KeyCode#gt;**<br/>保存指定按钮类型当前按下、本帧刚按下和刚<br/>释放的集合" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**keyboard​_​input​_​system**<br/>把键盘事件汇总为物理和逻辑按键状态。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**sync​_​mouse​_​capture**<br/>来自first​_​person ↗：在输入转发前确定<br/>归属；切换前约定其他按键已松开，检查器没<br/>有进行中的交互。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
+  class n3 node_observer
+  class n3 external_node
+  n4@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>来自crate:bevy​_​enhanced​_​input ↗：求<br/>值上下文输入并更新动作状态。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
+  class n5 node_observer
+  class n5 external_node
+  n6@{ shape: rounded, label: "**update​_​pending**<br/>来自crate:bevy​_​enhanced​_​input ↗：更<br/>新输入读取器中等待重置的绑定。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**absorb​_​bevy​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：在 Egui 使用<br/>输入时吸收对应 Bevy 输入。" }
+  class n7 node_system
+  class n7 external_node
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n7 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

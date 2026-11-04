@@ -45,45 +45,45 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>分层复制场景颜色并绘制三维透射物体。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  n1@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n1 node_component
   class n1 external_node
   n2@{ shape: lin-rect, label: "**MainPass**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: rounded, label: "**MainPassResolutionOverride**<br/>来自crate:bevy​_​camera ↗：覆盖三维主通<br/>道的渲染分辨率。" }
-  class n3 node_component
+  n3@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**ViewTransmissionTexture**<br/>保存透射通道读取的视图颜色纹理。" }
+  n4@{ shape: rounded, label: "**ScreenSpaceTransmission**<br/>配置屏幕空间透射的层数与质量。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n5@{ shape: rounded, label: "**ViewTransmissionTexture**<br/>保存透射通道读取的视图颜色纹理。" }
   class n5 node_component
-  class n5 external_node
-  n6@{ shape: rounded, label: "**ScreenSpaceTransmission**<br/>配置屏幕空间透射的层数与质量。" }
+  n6@{ shape: rounded, label: "**MainPassResolutionOverride**<br/>来自crate:bevy​_​camera ↗：覆盖三维主通<br/>道的渲染分辨率。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n7 node_resource
+  class n6 external_node
+  n7@{ shape: rounded, label: "**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
+  class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**ViewDepthStencilTexture**<br/>来自crate:bevy​_​render ↗：提供视图绘制<br/>的深度模板附件。" }
-  class n8 node_component
+  n8@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transmissive3**<br/>**d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transmissive3**<br/>**d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
-  class n9 node_resource
+  n9@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
+  class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
-  class n10 node_component
+  n10@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n10 node_resource
   class n10 external_node
-  n11@{ shape: fr-rect, label: "**ScreenSpaceTransmissionPlugin**<br/>提供相机屏幕空间透射。" }
-  class n11 node_plugin
-  n12@{ shape: rounded, label: "**main​_​opaque​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维不透明、AlphaMask 与天空盒。" }
-  class n12 node_system
+  n11@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  class n12 node_component
   class n12 external_node
-  n13@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
-  class n13 node_resource
+  n13@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  class n13 node_component
   class n13 external_node
-  n14@{ shape: rounded, label: "**main​_​transparent​_​pass​_​3d**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>三维透明物体并保护 OIT 链表状态。" }
-  class n14 node_system
-  class n14 external_node
+  n14@{ shape: fr-rect, label: "**ScreenSpaceTransmissionPlugin**<br/>提供相机屏幕空间透射。" }
+  class n14 node_plugin
   n1 e0@--> n0
   class e0 edge_read
   n2 e1@-->|"集合成员"| n0
@@ -100,18 +100,18 @@ flowchart LR
   class e6 edge_read
   n8 e7@--> n0
   class e7 edge_read
-  n9 e8@--> n0
-  class e8 edge_read
+  n9 e8@-->|"先于"| n0
+  class e8 edge_order
   n10 e9@--> n0
   class e9 edge_read
-  n11 e10@-->|"调用"| n0
-  class e10 edge_registration
-  n12 e11@-->|"先于"| n0
-  class e11 edge_order
+  n0 e10@-->|"先于"| n11
+  class e10 edge_order
+  n12 e11@--> n0
+  class e11 edge_read
   n13 e12@--> n0
   class e12 edge_read
-  n0 e13@-->|"先于"| n14
-  class e13 edge_order
+  n14 e13@-->|"调用"| n0
+  class e13 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -121,6 +121,6 @@ flowchart LR
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
-  e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
+  e13@{ curve: basis }

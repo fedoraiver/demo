@@ -44,16 +44,16 @@ flowchart LR
   class n0 node_system
   n1@{ shape: cyl, label: "**UiTextureSlicePipeline**<br/>提供 UI 纹理切片的资源布局和着色器。" }
   class n1 node_resource
-  n2@{ shape: fr-rect, label: "**UiTextureSlicerPlugin**<br/>提取并绘制界面纹理切片。" }
-  class n2 node_plugin
-  n3@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
-  class n3 node_resource
-  class n3 external_node
+  n2@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: fr-rect, label: "**UiTextureSlicerPlugin**<br/>提取并绘制界面纹理切片。" }
+  class n3 node_plugin
   n0 e0@-->|"插入"| n1
   class e0 edge_write
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n3 e2@--> n0
-  class e2 edge_read
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
   e1@{ curve: basis }
   e2@{ curve: basis }

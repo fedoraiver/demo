@@ -40,11 +40,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**message​_​update​_​condition**<br/>判断本次是否允许轮换消息缓冲。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**message​_​update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
-  class n1 node_system
-  n2@{ shape: cyl, label: "**MessageRegistry**<br/>登记 World 中各消息缓冲的更新函数及是否<br/>需要轮换的状态" }
-  class n2 node_resource
-  n0 e0@-->|"运行条件"| n1
-  class e0 edge_reference
-  n2 e1@--> n0
-  class e1 edge_read
+  n1@{ shape: cyl, label: "**MessageRegistry**<br/>登记 World 中各消息缓冲的更新函数及是否<br/>需要轮换的状态" }
+  class n1 node_resource
+  n2@{ shape: rounded, label: "**message​_​update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
+  class n2 node_system
+  n1 e0@--> n0
+  class e0 edge_read
+  n0 e1@-->|"运行条件"| n2
+  class e1 edge_reference

@@ -46,52 +46,52 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>按目标格式选择 Egui 渲染管线。" }
   class n0 node_system
-  n1@{ shape: lin-rect, label: "**Queue**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n1 node_system_set
-  class n1 external_node
-  n2@{ shape: cyl, label: "**EguiPipelines**<br/>索引每个Egui视图的专用化绘制管线。" }
-  class n2 node_resource
-  n3@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
-  class n3 node_resource
+  n1@{ shape: cyl, label: "**EguiPipelines**<br/>索引每个Egui视图的专用化绘制管线。" }
+  class n1 node_resource
+  n2@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
+  class n2 node_plugin
+  n3@{ shape: lin-rect, label: "**Queue**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n4@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**EguiViewTarget**<br/>在 Egui 渲染视图上保存对应的主目标视图<br/>实体" }
+  n5@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**EguiPipeline**<br/>描述 Egui 渲染管线的变换与纹理绑定布局" }
-  class n6 node_resource
-  n7@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;EguiPipel**<br/>**ine#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
-  class n7 node_resource
+  class n5 external_node
+  n6@{ shape: rounded, label: "**EguiViewTarget**<br/>在 Egui 渲染视图上保存对应的主目标视图<br/>实体" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  class n7 node_component
   class n7 external_node
-  n8@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
-  class n8 node_plugin
-  n9@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
-  class n9 node_component
+  n8@{ shape: cyl, label: "**EguiPipeline**<br/>描述 Egui 渲染管线的变换与纹理绑定布局" }
+  class n8 node_resource
+  n9@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  class n9 node_resource
   class n9 external_node
-  n10@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
-  class n10 node_component
+  n10@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;EguiPipel**<br/>**ine#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  class n10 node_resource
   class n10 external_node
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
-  n0 e1@-->|"插入"| n2
-  class e1 edge_write
-  n3 e2@--> n0
-  class e2 edge_read
-  n4 e3@-->|"存在性约束"| n0
-  class e3 edge_reference
+  n0 e0@-->|"插入"| n1
+  class e0 edge_write
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
+  n4 e3@--> n0
+  class e3 edge_read
   n5 e4@--> n0
   class e4 edge_read
   n6 e5@--> n0
   class e5 edge_read
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
-  n8 e7@-->|"调用"| n0
-  class e7 edge_registration
+  n7 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
+  n8 e7@--> n0
+  class e7 edge_read
   n9 e8@--> n0
   class e8 edge_read
-  n10 e9@--> n0
-  class e9 edge_read
+  n0 e9@-->|"可变访问"| n10
+  class e9 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

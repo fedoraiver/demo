@@ -46,58 +46,58 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​smaa​_​bind​_​groups**<br/>为视图绑定 SMAA 中间纹理与查找表。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**SmaaLuts**<br/>提供 SMAA 面积与搜索查找纹理。" }
   class n1 node_resource
-  class n1 external_node
-  n2@{ shape: fr-rect, label: "**SmaaPlugin**<br/>提供亚像素形态抗锯齿。" }
-  class n2 node_plugin
-  n3@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
-  class n3 node_component
+  n2@{ shape: rounded, label: "**SmaaBindGroups**<br/>保存视图三个 SMAA 阶段的资源绑定。" }
+  class n2 node_component
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**SmaaBindGroups**<br/>保存视图三个 SMAA 阶段的资源绑定。" }
+  n4@{ shape: rounded, label: "**SmaaTextures**<br/>保存 SMAA 的边缘、模板与混合中间纹理。" }
   class n4 node_component
-  n5@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n5 node_system_set
-  class n5 external_node
-  n6@{ shape: cyl, label: "**SmaaLuts**<br/>提供 SMAA 面积与搜索查找纹理。" }
+  n5@{ shape: rounded, label: "**Smaa**<br/>为视图选择 SMAA 质量预设。" }
+  class n5 node_component
+  n6@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  class n6 external_node
+  n7@{ shape: cyl, label: "**SmaaPipelines**<br/>保存 SMAA 三个阶段的基础管线。" }
   class n7 node_resource
-  class n7 external_node
-  n8@{ shape: rounded, label: "**SmaaTextures**<br/>保存 SMAA 的边缘、模板与混合中间纹理。" }
-  class n8 node_component
-  n9@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
-  class n9 node_resource
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  class n8 node_resource
+  class n8 external_node
+  n9@{ shape: lin-rect, label: "**PrepareBindGroups**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n9 node_system_set
   class n9 external_node
-  n10@{ shape: rounded, label: "**Smaa**<br/>为视图选择 SMAA 质量预设。" }
+  n10@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n10 node_component
-  n11@{ shape: cyl, label: "**SmaaPipelines**<br/>保存 SMAA 三个阶段的基础管线。" }
-  class n11 node_resource
+  class n10 external_node
+  n11@{ shape: fr-rect, label: "**SmaaPlugin**<br/>提供亚像素形态抗锯齿。" }
+  class n11 node_plugin
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n3 e2@-->|"存在性约束"| n0
-  class e2 edge_reference
-  n0 e3@-->|"插入"| n4
-  class e3 edge_write
-  n5 e4@-->|"集合成员"| n0
-  class e4 edge_set_membership
+  n0 e1@-->|"插入"| n2
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
   n6 e5@--> n0
   class e5 edge_read
   n7 e6@--> n0
   class e6 edge_read
   n8 e7@--> n0
   class e7 edge_read
-  n9 e8@--> n0
-  class e8 edge_read
+  n9 e8@-->|"集合成员"| n0
+  class e8 edge_set_membership
   n10 e9@-->|"存在性约束"| n0
   class e9 edge_reference
-  n11 e10@--> n0
-  class e10 edge_read
+  n11 e10@-->|"调用"| n0
+  class e10 edge_registration
   e0@{ curve: basis }
-  e1@{ curve: basis }
   e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

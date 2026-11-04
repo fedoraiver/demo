@@ -49,24 +49,24 @@ flowchart LR
   class n1 node_resource
   n2@{ shape: cyl, label: "**MeshMetadataFallbackBuffer**<br/>为无元数据网格提供可绑定的缺省缓冲。" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**MeshRenderAssetPlugin**<br/>提取并准备 GPU 网格资产。" }
-  class n3 node_plugin
-  n4@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
-  class n4 node_system
-  n5@{ shape: cyl, label: "**MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
-  class n5 node_resource
+  n3@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
+  class n3 node_system
+  n4@{ shape: cyl, label: "**MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
+  class n4 node_resource
+  n5@{ shape: fr-rect, label: "**MeshRenderAssetPlugin**<br/>提取并准备 GPU 网格资产。" }
+  class n5 node_plugin
   n6@{ shape: lin-rect, label: "**PrepareAssets**<br/>组织渲染数据准备与绘制排队。" }
   class n6 node_system_set
   n1 e0@--> n0
   class e0 edge_read
   n0 e1@-->|"插入"| n2
   class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n4 e3@-->|"先于"| n0
-  class e3 edge_order
-  n5 e4@--> n0
-  class e4 edge_read
+  n3 e2@-->|"先于"| n0
+  class e2 edge_order
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
   n6 e5@-->|"集合成员"| n0
   class e5 edge_set_membership
   e0@{ curve: basis }

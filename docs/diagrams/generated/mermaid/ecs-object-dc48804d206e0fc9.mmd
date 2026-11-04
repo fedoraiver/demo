@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-dc48804d206e0fc9-e0{marker-start:url(#object-dc48804d206e0fc9_flowchart-v2-pointStart)!important}\n#object-dc48804d206e0fc9-e3{marker-start:url(#object-dc48804d206e0fc9_flowchart-v2-pointStart)!important}\n#object-dc48804d206e0fc9_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-dc48804d206e0fc9-e1{marker-start:url(#object-dc48804d206e0fc9_flowchart-v2-pointStart)!important}\n#object-dc48804d206e0fc9-e3{marker-start:url(#object-dc48804d206e0fc9_flowchart-v2-pointStart)!important}\n#object-dc48804d206e0fc9_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -43,26 +43,26 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**update​_​local​_​frames**<br/>将固定关节参考框架换算到两端局部空间。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**FixedJoint**<br/>锁定两刚体的相对位姿。" }
+  n1@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  n2@{ shape: rounded, label: "**FixedJoint**<br/>锁定两刚体的相对位姿。" }
   class n2 node_component
   n3@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n3 node_component
   n4@{ shape: lin-rect, label: "**PrepareLocalFrames**<br/>组织关节局部框架准备。" }
   class n4 node_system_set
-  n1 e0@---|"可变访问"| n0
-  class e0 edge_write
-  n2 e1@--> n0
-  class e1 edge_read
-  n3 e2@--> n0
-  class e2 edge_read
-  n1 e3@---|"赋值"| n0
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@---|"可变访问"| n0
+  class e1 edge_write
+  n2 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n2 e3@---|"赋值"| n0
   class e3 edge_write
-  n4 e4@-->|"集合成员"| n0
-  class e4 edge_set_membership
-  n1 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
+  n3 e4@--> n0
+  class e4 edge_read
+  n4 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

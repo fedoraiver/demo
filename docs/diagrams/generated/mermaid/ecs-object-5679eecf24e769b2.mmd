@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-5679eecf24e769b2-e1{marker-start:url(#object-5679eecf24e769b2_flowchart-v2-pointStart)!important}\n#object-5679eecf24e769b2_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-5679eecf24e769b2-e3{marker-start:url(#object-5679eecf24e769b2_flowchart-v2-pointStart)!important}\n#object-5679eecf24e769b2_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -57,12 +57,12 @@ flowchart LR
   class n5 external_node
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@---|"移除"| n0
-  class e1 edge_write
-  n2 e2@--> n0
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@--> n0
   class e2 edge_read
-  n3 e3@--> n0
-  class e3 edge_read
+  n2 e3@---|"移除"| n0
+  class e3 edge_write
   n0 e4@-->|"可变访问"| n4
   class e4 edge_write
   n5 e5@-->|"存在性约束"| n0

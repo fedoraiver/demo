@@ -1,0 +1,722 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: extract_plugin::MainWorld · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**extract​_​shadow​_​filtering​_​method**<br/>来自crate:bevy​_​pbr ↗：批量同步实体的<br/>阴影过滤方式。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**extract​_​frame​_​count**<br/>来自crate:bevy​_​render ↗：将主世界帧计<br/>数同步到渲染世界。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**extract​_​2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：增量<br/>同步二维网格变换和渲染实例信息。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>来自crate:bevy​_​sprite​_​render ↗：同步<br/>可见二维网格使用的材质资产身份。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**extract​_​resource**<br/>把存在的主世界资源转换到子世界。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​pbr ↗：提取需要移除材<br/>质管线专用化的实体。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**extract​_​uinode​_​borders**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>各边颜色边框与外轮廓。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**extract​_​text2d​_​sprite**<br/>来自crate:bevy​_​sprite​_​render ↗：把可<br/>见二维文字及装饰提取为精灵切片。" }
+  class n10 node_system
+  class n10 external_node
+  n11@{ shape: rounded, label: "**extract​_​atmosphere**<br/>来自crate:bevy​_​pbr ↗：为三维相机选择<br/>并提取最近的大气。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**extract​_​ui​_​texture​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：增量提取<br/>九宫格或平铺 UI 图像切片。" }
+  class n12 node_system
+  class n12 external_node
+  n13@{ shape: rounded, label: "**extract​_​shadow​_​lod​_​origin**<br/>来自crate:bevy​_​pbr ↗：解析点光与聚光<br/>阴影 LOD 的距离参考位置。" }
+  class n13 node_system
+  class n13 external_node
+  n14@{ shape: rounded, label: "**extract​_​preedit​_​underlines**<br/>来自crate:bevy​_​ui​_​render ↗：把输入法<br/>预编辑下划线提取为 UI 矩形。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**extract​_​clusters​_​for​_​cpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：把 CPU 聚簇结<br/>果转换为渲染侧对象列表。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**extract​_​ambient​_​light​_​resource**<br/>来自crate:bevy​_​pbr ↗：在源存在时同步<br/>全局环境光资源。" }
+  class n16 node_system
+  class n16 external_node
+  n17@{ shape: rounded, label: "**late​_​sweep​_​material​_​instances**<br/>来自crate:bevy​_​pbr ↗：清扫失效网格材<br/>质实例并推进本帧刻度。" }
+  class n17 node_system
+  class n17 external_node
+  n18@{ shape: rounded, label: "**extract​_​entities​_​needs​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：把主世界待刷新<br/>材质管线的实体身份提取到渲染侧。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n19 node_system
+  n20@{ shape: rounded, label: "**extract​_​windows**<br/>来自crate:bevy​_​render ↗：向渲染世界同<br/>步窗口配置与原生句柄。" }
+  class n20 node_system
+  class n20 external_node
+  n21@{ shape: rounded, label: "**extract​_​entities​_​needs​_​**<br/>**specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质变化实体标为渲染专用化脏项。" }
+  class n21 node_system
+  class n21 external_node
+  n22@{ shape: rounded, label: "**extract​_​clustered​_​decal**<br/>来自crate:bevy​_​pbr ↗：批量复制主世界<br/>的聚簇贴花组件。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  class n23 node_system
+  class n23 external_node
+  n24@{ shape: rounded, label: "**extract​_​resource**<br/>把存在的主世界资源转换到子世界。" }
+  class n24 node_system
+  n25@{ shape: rounded, label: "**extract​_​taa​_​settings**<br/>来自crate:bevy​_​anti​_​alias ↗：提取有<br/>效相机的 TAA 设置并消费历史重置信号。" }
+  class n25 node_system
+  class n25 external_node
+  n26@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n26 node_system
+  n27@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n27 node_system
+  n28@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n28 node_system
+  n29@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
+  class n29 node_system
+  class n29 external_node
+  n30@{ shape: rounded, label: "**extract​_​volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：从主世界提取体<br/>积雾、雾体积及体积光配置。" }
+  class n30 node_system
+  class n30 external_node
+  n31@{ shape: rounded, label: "**extract​_​resource**<br/>把存在的主世界资源转换到子世界。" }
+  class n31 node_system
+  n32@{ shape: rounded, label: "**extract​_​generated​_​environment​_​map​_​**<br/>**entities**<br/>来自crate:bevy​_​pbr ↗：提取环境图生成<br/>所需的三张 GPU 图像。" }
+  class n32 node_system
+  class n32 external_node
+  n33@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }
+  class n33 node_system
+  class n33 external_node
+  n34@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  class n34 node_system
+  class n34 external_node
+  n35@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n35 node_system
+  n36@{ shape: rounded, label: "**extract​_​uinode​_​images**<br/>来自crate:bevy​_​ui​_​render ↗：按节点视<br/>觉盒与图集区域提取普通 UI 图像。" }
+  class n36 node_system
+  class n36 external_node
+  n37@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n37 node_system
+  n38@{ shape: rounded, label: "**extract​_​viewport​_​nodes**<br/>来自crate:bevy​_​ui​_​render ↗：把视口节<br/>点所引用相机的输出图像嵌入 UI。" }
+  class n38 node_system
+  class n38 external_node
+  n39@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n39 node_system
+  n40@{ shape: rounded, label: "**extract​_​core​_​2d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动二维相机准备渲染阶段并清理失效视图。" }
+  class n40 node_system
+  class n40 external_node
+  n41@{ shape: rounded, label: "**extract​_​decals**<br/>来自crate:bevy​_​pbr ↗：从主世界提取可<br/>见聚簇贴花及点光、聚光和平行光的光照纹<br/>理，重建渲染贴花缓冲，并记录真正参与聚簇<br/>计算的贴花数量。" }
+  class n41 node_system
+  class n41 external_node
+  n42@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n42 node_system
+  n43@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n43 node_system
+  n44@{ shape: rounded, label: "**early​_​sweep​_​material​_​instances**<br/>来自crate:bevy​_​pbr ↗：按材质移除消息<br/>清扫未被本帧替换的实例。" }
+  class n44 node_system
+  class n44 external_node
+  n45@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  class n45 node_system
+  class n45 external_node
+  n46@{ shape: rounded, label: "**extract​_​render​_​asset​_​bytes​_​per​_​frame**<br/>来自crate:bevy​_​render ↗：同步主世界设<br/>定的每帧渲染资产上传上限。" }
+  class n46 node_system
+  class n46 external_node
+  n47@{ shape: rounded, label: "**extract​_​depth​_​of​_​field​_​settings**<br/>来自crate:bevy​_​post​_​process ↗：把透<br/>视相机景深设置转换为 GPU 参数。" }
+  class n47 node_system
+  class n47 external_node
+  n48@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>来自crate:bevy​_​sprite​_​render ↗：同步<br/>可见二维网格使用的材质资产身份。" }
+  class n48 node_system
+  class n48 external_node
+  n49@{ shape: rounded, label: "**extract​_​all**<br/>重新提取并索引主世界的实例数据。" }
+  class n49 node_system
+  n50@{ shape: rounded, label: "**extract​_​shaders**<br/>来自crate:bevy​_​render ↗：向渲染管线缓<br/>存同步着色器变化。" }
+  class n50 node_system
+  class n50 external_node
+  n51@{ shape: rounded, label: "**extract​_​entities​_​needs​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：把主世界待刷新<br/>材质管线的实体身份提取到渲染侧。" }
+  class n51 node_system
+  class n51 external_node
+  n52@{ shape: rounded, label: "**extract​_​meshes​_​for​_​gpu​_​building**<br/>来自crate:bevy​_​pbr ↗：增量提取变化或<br/>需重试网格到线程队列。" }
+  class n52 node_system
+  class n52 external_node
+  n53@{ shape: rounded, label: "**extract​_​text​_​cursor**<br/>来自crate:bevy​_​ui​_​render ↗：提取文字<br/>光标和带圆角的选区背景。" }
+  class n53 node_system
+  class n53 external_node
+  n54@{ shape: rounded, label: "**extract​_​debug​_​overlay**<br/>来自crate:bevy​_​ui​_​render ↗：为变化<br/>的 UI 节点提取调试轮廓。" }
+  class n54 node_system
+  class n54 external_node
+  n55@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n55 node_system
+  n56@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n56 node_system
+  n57@{ shape: rounded, label: "**extract​_​camera​_​prepass​_​phase**<br/>来自crate:bevy​_​core​_​pipeline ↗：同步<br/>三维相机的预通道标记与渲染阶段。" }
+  class n57 node_system
+  class n57 external_node
+  n58@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  class n58 node_system
+  class n58 external_node
+  n59@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>来自crate:bevy​_​ui​_​render ↗：为活动二<br/>维或三维相机维护独立 UI 视图。" }
+  class n59 node_system
+  class n59 external_node
+  n60@{ shape: rounded, label: "**extract​_​screenshots**<br/>来自crate:bevy​_​render ↗：收集并去重本<br/>帧尚未捕获的截图请求。" }
+  class n60 node_system
+  class n60 external_node
+  n61@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  class n61 node_system
+  class n61 external_node
+  n62@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  class n62 node_system
+  class n62 external_node
+  n63@{ shape: rounded, label: "**extract​_​skins**<br/>来自crate:bevy​_​pbr ↗：按蒙皮可见性和<br/>资产变化分配或回收骨骼缓冲区域，提取关节<br/>全局变换与逆绑定姿势到暂存数据，并清理移<br/>除的蒙皮记录。" }
+  class n63 node_system
+  class n63 external_node
+  n64@{ shape: rounded, label: "**extract​_​inline​_​images**<br/>来自crate:bevy​_​ui​_​render ↗：把文字行<br/>内图像提取为 UI 绘制项。" }
+  class n64 node_system
+  class n64 external_node
+  n65@{ shape: rounded, label: "**extract​_​entities​_​needs​_​**<br/>**specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质变化实体标为渲染专用化脏项。" }
+  class n65 node_system
+  class n65 external_node
+  n66@{ shape: rounded, label: "**extract​_​morphs**<br/>来自crate:bevy​_​pbr ↗：提取可见网格的<br/>当前与历史形变权重。" }
+  class n66 node_system
+  class n66 external_node
+  n67@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  class n67 node_system
+  class n67 external_node
+  n68@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n68 node_system
+  n69@{ shape: rounded, label: "**extract​_​camera​_​previous​_​view​_​data**<br/>来自crate:bevy​_​pbr ↗：把活动三维相机<br/>的前帧视图数据提取到渲染侧。" }
+  class n69 node_system
+  class n69 external_node
+  n70@{ shape: rounded, label: "**extract​_​mesh​_​materials**<br/>来自crate:bevy​_​pbr ↗：根据可见性和材<br/>质变化更新渲染实例映射。" }
+  class n70 node_system
+  class n70 external_node
+  n71@{ shape: rounded, label: "**extract​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 阴影并替换失效渲染项。" }
+  class n71 node_system
+  class n71 external_node
+  n72@{ shape: rounded, label: "**extract​_​resource**<br/>把存在的主世界资源转换到子世界。" }
+  class n72 node_system
+  n73@{ shape: rounded, label: "**extract​_​lightmaps**<br/>来自crate:bevy​_​pbr ↗：维护可见光照贴<br/>图的渲染槽位与纹理。" }
+  class n73 node_system
+  class n73 external_node
+  n74@{ shape: rounded, label: "**extract​_​gizmo​_​data**<br/>来自crate:bevy​_​gizmos​_​render ↗：把启<br/>用的即时 Gizmo 数据提取为渲染实体。" }
+  class n74 node_system
+  class n74 external_node
+  n75@{ shape: rounded, label: "**extract​_​egui​_​camera​_​view​_​system**<br/>来自crate:bevy​_​egui ↗：为活动相机提取<br/>独立 Egui 渲染视图。" }
+  class n75 node_system
+  class n75 external_node
+  n76@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
+  class n76 node_system
+  class n76 external_node
+  n77@{ shape: rounded, label: "**extract​_​uinode​_​background​_​colors**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>节点背景与外侧填充色。" }
+  class n77 node_system
+  class n77 external_node
+  n78@{ shape: rounded, label: "**early​_​sweep​_​material​_​instances**<br/>来自crate:bevy​_​pbr ↗：按材质移除消息<br/>清扫未被本帧替换的实例。" }
+  class n78 node_system
+  class n78 external_node
+  n79@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  class n79 node_system
+  class n79 external_node
+  n80@{ shape: rounded, label: "**extract​_​clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：提取视图聚簇配<br/>置并回传上帧 GPU 统计。" }
+  class n80 node_system
+  class n80 external_node
+  n81@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  class n81 node_system
+  class n81 external_node
+  n82@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n82 node_system
+  n83@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n83 node_system
+  n84@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n84 node_system
+  n85@{ shape: rounded, label: "**extract​_​text​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字及装饰线的偏移阴影。" }
+  class n85 node_system
+  class n85 external_node
+  n86@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n86 node_system
+  n87@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n87 node_system
+  n88@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  class n88 node_system
+  class n88 external_node
+  n89@{ shape: rounded, label: "**extract​_​lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
+  class n89 node_system
+  class n89 external_node
+  n90@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  class n90 node_system
+  class n90 external_node
+  n91@{ shape: rounded, label: "**sync​_​readbacks**<br/>来自crate:bevy​_​render ↗：派发 GPU 回<br/>读结果并归还暂存缓冲。" }
+  class n91 node_system
+  class n91 external_node
+  n92@{ shape: rounded, label: "**extract​_​mesh​_​materials**<br/>来自crate:bevy​_​pbr ↗：根据可见性和材<br/>质变化更新渲染实例映射。" }
+  class n92 node_system
+  class n92 external_node
+  n93@{ shape: rounded, label: "**extract​_​resource**<br/>把存在的主世界资源转换到子世界。" }
+  class n93 node_system
+  n94@{ shape: rounded, label: "**extract​_​transmissive​_​camera​_​phases**<br/>来自crate:bevy​_​pbr ↗：为活动三维相机<br/>准备本帧透射阶段并清理失效视图。" }
+  class n94 node_system
+  class n94 external_node
+  n95@{ shape: rounded, label: "**extract​_​entities​_​needs​_​**<br/>**specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质变化实体标为渲染专用化脏项。" }
+  class n95 node_system
+  class n95 external_node
+  n96@{ shape: rounded, label: "**extract​_​text​_​sections**<br/>来自crate:bevy​_​ui​_​render ↗：按图集提<br/>取 UI 字形并处理选中文字颜色。" }
+  class n96 node_system
+  class n96 external_node
+  n97@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​pbr ↗：提取需要移除材<br/>质管线专用化的实体。" }
+  class n97 node_system
+  class n97 external_node
+  n98@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n98 node_system
+  n99@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>来自crate:bevy​_​sprite​_​render ↗：同步<br/>可见二维网格使用的材质资产身份。" }
+  class n99 node_system
+  class n99 external_node
+  n100@{ shape: rounded, label: "**extract​_​resource**<br/>把存在的主世界资源转换到子世界。" }
+  class n100 node_system
+  n101@{ shape: rounded, label: "**extract​_​ssao​_​settings**<br/>来自crate:bevy​_​pbr ↗：向渲染相机提取<br/>屏幕空间环境光遮蔽配置。" }
+  class n101 node_system
+  class n101 external_node
+  n102@{ shape: rounded, label: "**extract​_​core​_​3d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动三维相机准备主渲染阶段。" }
+  class n102 node_system
+  class n102 external_node
+  n103@{ shape: rounded, label: "**extract​_​skybox**<br/>来自crate:bevy​_​core​_​pipeline ↗：提取<br/>天空盒并计算曝光及旋转参数。" }
+  class n103 node_system
+  class n103 external_node
+  n104@{ shape: rounded, label: "**extract​_​ambient​_​light**<br/>来自crate:bevy​_​pbr ↗：批量复制主世界<br/>实体的环境光设置。" }
+  class n104 node_system
+  class n104 external_node
+  n105@{ shape: rounded, label: "**extract​_​time**<br/>来自crate:bevy​_​render ↗：将主世界当<br/>前 Time 值复制并插入渲染世界，供渲染侧<br/>全局时间参数使用。" }
+  class n105 node_system
+  class n105 external_node
+  n106@{ shape: rounded, label: "**extract​_​entities​_​that​_​need​_​**<br/>**specializations​_​removed**<br/>来自crate:bevy​_​sprite​_​render ↗：把二<br/>维材质移除实体登记到专用化清理表。" }
+  class n106 node_system
+  class n106 external_node
+  n107@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  class n107 node_system
+  class n107 external_node
+  n108@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n108 node_system
+  n109@{ shape: rounded, label: "**extract​_​resource**<br/>把存在的主世界资源转换到子世界。" }
+  class n109 node_system
+  n110@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  class n110 node_system
+  class n110 external_node
+  n111@{ shape: rounded, label: "**extract​_​gradients**<br/>来自crate:bevy​_​ui​_​render ↗：提取可<br/>见 UI 渐变并替换失效渲染项。" }
+  class n111 node_system
+  class n111 external_node
+  n112@{ shape: rounded, label: "**extract​_​linegizmos**<br/>来自crate:bevy​_​gizmos​_​render ↗：从保<br/>留式 Gizmo 实体提取线条渲染数据。" }
+  class n112 node_system
+  class n112 external_node
+  n113@{ shape: rounded, label: "**extract​_​text​_​decorations**<br/>来自crate:bevy​_​ui​_​render ↗：提取 UI<br/>文字背景、删除线和下划线。" }
+  class n113 node_system
+  class n113 external_node
+  n114@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n114 node_system
+  n115@{ shape: rounded, label: "**extract​_​sprite​_​events**<br/>来自crate:bevy​_​sprite​_​render ↗：把主<br/>世界图像资产事件复制给精灵渲染。" }
+  class n115 node_system
+  class n115 external_node
+  n116@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n116 node_system
+  n117@{ shape: rounded, label: "**extract​_​resource**<br/>把存在的主世界资源转换到子世界。" }
+  class n117 node_system
+  n118@{ shape: rounded, label: "**extract​_​visibility​_​ranges**<br/>来自crate:bevy​_​render ↗：在可见距离变<br/>化后重建渲染侧范围表。" }
+  class n118 node_system
+  class n118 external_node
+  n119@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
+  class n119 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n0 e7@--> n8
+  class e7 edge_read
+  n0 e8@--> n9
+  class e8 edge_read
+  n0 e9@--> n10
+  class e9 edge_read
+  n0 e10@--> n11
+  class e10 edge_read
+  n0 e11@--> n12
+  class e11 edge_read
+  n0 e12@--> n13
+  class e12 edge_read
+  n0 e13@--> n14
+  class e13 edge_read
+  n0 e14@--> n15
+  class e14 edge_read
+  n0 e15@--> n16
+  class e15 edge_read
+  n0 e16@--> n17
+  class e16 edge_read
+  n0 e17@--> n18
+  class e17 edge_read
+  n0 e18@--> n19
+  class e18 edge_read
+  n0 e19@--> n20
+  class e19 edge_read
+  n0 e20@--> n21
+  class e20 edge_read
+  n0 e21@--> n22
+  class e21 edge_read
+  n23 e22@-->|"可变访问"| n0
+  class e22 edge_write
+  n0 e23@--> n24
+  class e23 edge_read
+  n25 e24@-->|"可变访问"| n0
+  class e24 edge_write
+  n0 e25@--> n26
+  class e25 edge_read
+  n0 e26@--> n27
+  class e26 edge_read
+  n0 e27@--> n28
+  class e27 edge_read
+  n0 e28@--> n29
+  class e28 edge_read
+  n0 e29@--> n30
+  class e29 edge_read
+  n0 e30@--> n31
+  class e30 edge_read
+  n0 e31@--> n32
+  class e31 edge_read
+  n0 e32@--> n33
+  class e32 edge_read
+  n34 e33@-->|"可变访问"| n0
+  class e33 edge_write
+  n0 e34@--> n35
+  class e34 edge_read
+  n0 e35@--> n36
+  class e35 edge_read
+  n0 e36@--> n37
+  class e36 edge_read
+  n0 e37@--> n38
+  class e37 edge_read
+  n0 e38@--> n39
+  class e38 edge_read
+  n0 e39@--> n40
+  class e39 edge_read
+  n0 e40@--> n41
+  class e40 edge_read
+  n0 e41@--> n42
+  class e41 edge_read
+  n0 e42@--> n43
+  class e42 edge_read
+  n0 e43@--> n44
+  class e43 edge_read
+  n45 e44@-->|"可变访问"| n0
+  class e44 edge_write
+  n0 e45@--> n46
+  class e45 edge_read
+  n0 e46@--> n47
+  class e46 edge_read
+  n0 e47@--> n48
+  class e47 edge_read
+  n0 e48@--> n49
+  class e48 edge_read
+  n0 e49@--> n50
+  class e49 edge_read
+  n0 e50@--> n51
+  class e50 edge_read
+  n0 e51@--> n52
+  class e51 edge_read
+  n0 e52@--> n53
+  class e52 edge_read
+  n0 e53@--> n54
+  class e53 edge_read
+  n0 e54@--> n55
+  class e54 edge_read
+  n0 e55@--> n56
+  class e55 edge_read
+  n0 e56@--> n57
+  class e56 edge_read
+  n58 e57@-->|"可变访问"| n0
+  class e57 edge_write
+  n0 e58@--> n59
+  class e58 edge_read
+  n60 e59@-->|"可变访问"| n0
+  class e59 edge_write
+  n61 e60@-->|"可变访问"| n0
+  class e60 edge_write
+  n0 e61@--> n62
+  class e61 edge_read
+  n0 e62@--> n63
+  class e62 edge_read
+  n0 e63@--> n64
+  class e63 edge_read
+  n0 e64@--> n65
+  class e64 edge_read
+  n0 e65@--> n66
+  class e65 edge_read
+  n67 e66@-->|"可变访问"| n0
+  class e66 edge_write
+  n0 e67@--> n68
+  class e67 edge_read
+  n0 e68@--> n69
+  class e68 edge_read
+  n0 e69@--> n70
+  class e69 edge_read
+  n0 e70@--> n71
+  class e70 edge_read
+  n0 e71@--> n72
+  class e71 edge_read
+  n0 e72@--> n73
+  class e72 edge_read
+  n0 e73@--> n74
+  class e73 edge_read
+  n75 e74@-->|"可变访问"| n0
+  class e74 edge_write
+  n0 e75@--> n76
+  class e75 edge_read
+  n0 e76@--> n77
+  class e76 edge_read
+  n0 e77@--> n78
+  class e77 edge_read
+  n0 e78@--> n79
+  class e78 edge_read
+  n80 e79@-->|"可变访问"| n0
+  class e79 edge_write
+  n81 e80@-->|"可变访问"| n0
+  class e80 edge_write
+  n0 e81@--> n82
+  class e81 edge_read
+  n0 e82@--> n83
+  class e82 edge_read
+  n0 e83@--> n84
+  class e83 edge_read
+  n0 e84@--> n85
+  class e84 edge_read
+  n0 e85@--> n86
+  class e85 edge_read
+  n0 e86@--> n87
+  class e86 edge_read
+  n88 e87@-->|"可变访问"| n0
+  class e87 edge_write
+  n0 e88@--> n89
+  class e88 edge_read
+  n90 e89@-->|"可变访问"| n0
+  class e89 edge_write
+  n91 e90@-->|"可变访问"| n0
+  class e90 edge_write
+  n0 e91@--> n92
+  class e91 edge_read
+  n0 e92@--> n93
+  class e92 edge_read
+  n0 e93@--> n94
+  class e93 edge_read
+  n0 e94@--> n95
+  class e94 edge_read
+  n0 e95@--> n96
+  class e95 edge_read
+  n0 e96@--> n97
+  class e96 edge_read
+  n0 e97@--> n98
+  class e97 edge_read
+  n0 e98@--> n99
+  class e98 edge_read
+  n0 e99@--> n100
+  class e99 edge_read
+  n0 e100@--> n101
+  class e100 edge_read
+  n0 e101@--> n102
+  class e101 edge_read
+  n0 e102@--> n103
+  class e102 edge_read
+  n0 e103@--> n104
+  class e103 edge_read
+  n0 e104@--> n105
+  class e104 edge_read
+  n0 e105@--> n106
+  class e105 edge_read
+  n0 e106@--> n107
+  class e106 edge_read
+  n0 e107@--> n108
+  class e107 edge_read
+  n0 e108@--> n109
+  class e108 edge_read
+  n110 e109@-->|"可变访问"| n0
+  class e109 edge_write
+  n0 e110@--> n111
+  class e110 edge_read
+  n0 e111@--> n112
+  class e111 edge_read
+  n0 e112@--> n113
+  class e112 edge_read
+  n0 e113@--> n114
+  class e113 edge_read
+  n0 e114@--> n115
+  class e114 edge_read
+  n0 e115@--> n116
+  class e115 edge_read
+  n0 e116@--> n117
+  class e116 edge_read
+  n0 e117@--> n118
+  class e117 edge_read
+  n0 e118@--> n119
+  class e118 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }
+  e65@{ curve: basis }
+  e67@{ curve: basis }
+  e68@{ curve: basis }
+  e69@{ curve: basis }
+  e70@{ curve: basis }
+  e71@{ curve: basis }
+  e72@{ curve: basis }
+  e73@{ curve: basis }
+  e74@{ curve: basis }
+  e75@{ curve: basis }
+  e76@{ curve: basis }
+  e77@{ curve: basis }
+  e78@{ curve: basis }
+  e79@{ curve: basis }
+  e80@{ curve: basis }
+  e81@{ curve: basis }
+  e82@{ curve: basis }
+  e83@{ curve: basis }
+  e84@{ curve: basis }
+  e85@{ curve: basis }
+  e86@{ curve: basis }
+  e87@{ curve: basis }
+  e88@{ curve: basis }
+  e89@{ curve: basis }
+  e90@{ curve: basis }
+  e91@{ curve: basis }
+  e92@{ curve: basis }
+  e93@{ curve: basis }
+  e94@{ curve: basis }
+  e95@{ curve: basis }
+  e96@{ curve: basis }
+  e97@{ curve: basis }
+  e98@{ curve: basis }
+  e99@{ curve: basis }
+  e100@{ curve: basis }
+  e101@{ curve: basis }
+  e102@{ curve: basis }
+  e103@{ curve: basis }
+  e104@{ curve: basis }
+  e105@{ curve: basis }
+  e106@{ curve: basis }
+  e107@{ curve: basis }
+  e108@{ curve: basis }
+  e109@{ curve: basis }
+  e110@{ curve: basis }
+  e111@{ curve: basis }
+  e112@{ curve: basis }
+  e113@{ curve: basis }
+  e114@{ curve: basis }
+  e115@{ curve: basis }
+  e116@{ curve: basis }
+  e117@{ curve: basis }
+  e118@{ curve: basis }

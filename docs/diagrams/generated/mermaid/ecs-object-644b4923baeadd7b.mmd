@@ -46,95 +46,95 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>同步设置滚动条的有效范围和交互状态。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n1@{ shape: rounded, label: "**MenuScroll**<br/>可滚动区域的标记；用于键盘导航时把当前按<br/>钮滚入视野。" }
   class n1 node_component
-  class n1 external_node
-  n2@{ shape: rounded, label: "**Hovered**<br/>来自crate:bevy​_​picking ↗：记录实体当<br/>前是否被任一指针悬停。" }
+  n2@{ shape: rounded, label: "**ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**Visibility**<br/>来自crate:bevy​_​camera ↗：声明实体可见<br/>意图及层级继承方式。" }
+  n3@{ shape: rounded, label: "**ScrollbarDragState**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条滑块拖动状态。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**MenuScroll**<br/>可滚动区域的标记；用于键盘导航时把当前按<br/>钮滚入视野。" }
+  n4@{ shape: rounded, label: "**BackgroundColor**<br/>来自crate:bevy​_​ui ↗：设置 UI 节点背景<br/>填充色。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**SettingsScrollbar**<br/>轨道和滚动区域为同一 BSN 容器的子实体，<br/>绑定系统只为设置控件建立原生 target。" }
-  class n5 node_component
-  n6@{ shape: rounded, label: "**BackgroundColor**<br/>来自crate:bevy​_​ui ↗：设置 UI 节点背景<br/>填充色。" }
+  class n4 external_node
+  n5@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
+  class n5 node_resource
+  n6@{ shape: rounded, label: "**Visibility**<br/>来自crate:bevy​_​camera ↗：声明实体可见<br/>意图及层级继承方式。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
-  class n7 node_plugin
-  n8@{ shape: cyl, label: "**MenuInputSource**<br/>输入来源单独决定焦点是否可见；鼠标离开后<br/>仍保留序号供后续导航使用。" }
-  class n8 node_resource
-  n9@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  n7@{ shape: rounded, label: "**SettingsScrollbarThumb**<br/>滑块无按钮动作或导航序号，拖拽生命周期<br/>由 Bevy 原生 ScrollbarPlugin 管理。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**Pickable**<br/>来自crate:bevy​_​picking ↗：配置实体是<br/>否可被拾取及是否阻挡深度更低的命中目标" }
   class n9 node_component
   class n9 external_node
   n10@{ shape: rounded, label: "**Scrollbar**<br/>来自crate:bevy​_​ui​_​widgets ↗：指定滚<br/>动条目标、方向和最小滑块长度。" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
-  class n11 node_component
+  n11@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n11 node_system_set
   class n11 external_node
-  n12@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
-  class n12 node_system_set
-  class n12 external_node
-  n13@{ shape: rounded, label: "**Pickable**<br/>来自crate:bevy​_​picking ↗：配置实体是<br/>否可被拾取及是否阻挡深度更低的命中目标" }
+  n12@{ shape: rounded, label: "**SettingsScrollbar**<br/>轨道和滚动区域为同一 BSN 容器的子实体，<br/>绑定系统只为设置控件建立原生 target。" }
+  class n12 node_component
+  n13@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n13 node_component
   class n13 external_node
-  n14@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
-  class n14 node_resource
-  n15@{ shape: rounded, label: "**SettingsScrollbarThumb**<br/>滑块无按钮动作或导航序号，拖拽生命周期<br/>由 Bevy 原生 ScrollbarPlugin 管理。" }
-  class n15 node_component
-  n16@{ shape: rounded, label: "**ScrollbarDragState**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滚<br/>动条滑块拖动状态。" }
+  n14@{ shape: lin-rect, label: "**Layout**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
+  class n14 node_system_set
+  class n14 external_node
+  n15@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  class n15 node_plugin
+  n16@{ shape: rounded, label: "**Hovered**<br/>来自crate:bevy​_​picking ↗：记录实体当<br/>前是否被任一指针悬停。" }
   class n16 node_component
   class n16 external_node
-  n17@{ shape: lin-rect, label: "**Layout**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
-  class n17 node_system_set
-  class n17 external_node
-  n1 e0@--> n0
-  class e0 edge_read
-  n2 e1@--> n0
-  class e1 edge_read
-  n0 e2@-->|"可变访问"| n3
+  n17@{ shape: cyl, label: "**MenuInputSource**<br/>输入来源单独决定焦点是否可见；鼠标离开后<br/>仍保留序号供后续导航使用。" }
+  class n17 node_resource
+  n1 e0@-->|"存在性约束"| n0
+  class e0 edge_reference
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n0 e2@-->|"赋值"| n3
   class e2 edge_write
-  n4 e3@-->|"存在性约束"| n0
-  class e3 edge_reference
-  n5 e4@-->|"存在性约束"| n0
-  class e4 edge_reference
-  n0 e5@-->|"可变访问"| n6
-  class e5 edge_write
-  n7 e6@-->|"调用"| n0
-  class e6 edge_registration
-  n8 e7@--> n0
-  class e7 edge_read
-  n0 e8@-->|"赋值"| n3
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n0 e4@-->|"赋值"| n4
+  class e4 edge_write
+  n5 e5@--> n0
+  class e5 edge_read
+  n0 e6@-->|"赋值"| n6
+  class e6 edge_write
+  n0 e7@-->|"可变访问"| n6
+  class e7 edge_write
+  n0 e8@-->|"可变访问"| n3
   class e8 edge_write
-  n9 e9@--> n0
-  class e9 edge_read
-  n0 e10@-->|"赋值"| n6
-  class e10 edge_write
-  n10 e11@--> n0
-  class e11 edge_read
-  n0 e12@-->|"可变访问"| n11
-  class e12 edge_write
-  n0 e13@-->|"先于"| n12
+  n7 e9@-->|"存在性约束"| n0
+  class e9 edge_reference
+  n8 e10@--> n0
+  class e10 edge_read
+  n0 e11@-->|"可变访问"| n9
+  class e11 edge_write
+  n10 e12@--> n0
+  class e12 edge_read
+  n0 e13@-->|"先于"| n11
   class e13 edge_order
-  n0 e14@-->|"赋值"| n13
-  class e14 edge_write
-  n14 e15@--> n0
-  class e15 edge_read
-  n0 e16@-->|"赋值"| n11
-  class e16 edge_write
-  n15 e17@-->|"存在性约束"| n0
-  class e17 edge_reference
-  n0 e18@-->|"赋值"| n16
-  class e18 edge_write
-  n0 e19@-->|"可变访问"| n13
-  class e19 edge_write
-  n0 e20@-->|"可变访问"| n16
-  class e20 edge_write
-  n17 e21@-->|"先于"| n0
-  class e21 edge_order
+  n12 e14@-->|"存在性约束"| n0
+  class e14 edge_reference
+  n0 e15@-->|"赋值"| n2
+  class e15 edge_write
+  n13 e16@--> n0
+  class e16 edge_read
+  n14 e17@-->|"先于"| n0
+  class e17 edge_order
+  n15 e18@-->|"调用"| n0
+  class e18 edge_registration
+  n16 e19@--> n0
+  class e19 edge_read
+  n17 e20@--> n0
+  class e20 edge_read
+  n0 e21@-->|"赋值"| n9
+  class e21 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -142,13 +142,13 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
+  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
-  e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }
   e17@{ curve: basis }

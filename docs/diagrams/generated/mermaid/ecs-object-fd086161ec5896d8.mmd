@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-fd086161ec5896d8-e1{marker-start:url(#object-fd086161ec5896d8_flowchart-v2-pointStart)!important}\n#object-fd086161ec5896d8-e3{marker-start:url(#object-fd086161ec5896d8_flowchart-v2-pointStart)!important}\n#object-fd086161ec5896d8-e4{marker-start:url(#object-fd086161ec5896d8_flowchart-v2-pointStart)!important}\n#object-fd086161ec5896d8-e6{marker-start:url(#object-fd086161ec5896d8_flowchart-v2-pointStart)!important}\n#object-fd086161ec5896d8_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-fd086161ec5896d8-e6{marker-start:url(#object-fd086161ec5896d8_flowchart-v2-pointStart)!important}\n#object-fd086161ec5896d8-e16{marker-start:url(#object-fd086161ec5896d8_flowchart-v2-pointStart)!important}\n#object-fd086161ec5896d8-e17{marker-start:url(#object-fd086161ec5896d8_flowchart-v2-pointStart)!important}\n#object-fd086161ec5896d8-e20{marker-start:url(#object-fd086161ec5896d8_flowchart-v2-pointStart)!important}\n#object-fd086161ec5896d8_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -52,79 +52,79 @@ flowchart LR
   n2@{ shape: rounded, label: "**Propagate#lt;ComputedUiRenderTargetInfo**<br/>**#gt;**<br/>来自crate:bevy​_​app ↗：从当前实体向直<br/>接及间接关系目标传播内部组件值" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
+  n3@{ shape: rounded, label: "**Propagate#lt;ComputedUiTargetCamera#gt;**<br/>来自crate:bevy​_​app ↗：从当前实体向直<br/>接及间接关系目标传播内部组件值" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**Propagate#lt;ComputedUiTargetCamera#gt;**<br/>来自crate:bevy​_​app ↗：从当前实体向直<br/>接及间接关系目标传播内部组件值" }
+  n4@{ shape: rounded, label: "**RenderTarget**<br/>来自crate:bevy​_​camera ↗：指定相机输出<br/>的窗口、图像或纹理。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**UiTargetCamera**<br/>为 UI 根指定渲染目标相机。" }
+  n5@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  class n5 external_node
+  n6@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
-  class n7 node_plugin
-  n8@{ shape: lin-rect, label: "**Prepare**<br/>组织界面交互、布局与堆叠更新。" }
-  class n8 node_system_set
-  n9@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
-  class n9 node_component
-  class n9 external_node
-  n10@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n7@{ shape: rounded, label: "**IsDefaultUiCamera**<br/>优先选择一台默认 UI 相机。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: lin-rect, label: "**Prepare**<br/>组织界面交互、布局与堆叠更新。" }
+  class n9 node_system_set
+  n10@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n10 node_component
   class n10 external_node
-  n11@{ shape: rounded, label: "**Node**<br/>声明 UI 节点的布局规则。" }
-  class n11 node_component
-  n12@{ shape: rounded, label: "**IsDefaultUiCamera**<br/>优先选择一台默认 UI 相机。" }
+  n11@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  class n11 node_plugin
+  n12@{ shape: rounded, label: "**UiTargetCamera**<br/>为 UI 根指定渲染目标相机。" }
   class n12 node_component
-  n13@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n13@{ shape: rounded, label: "**Node**<br/>声明 UI 节点的布局规则。" }
   class n13 node_component
-  class n13 external_node
   n14@{ shape: lin-rect, label: "**TransformGizmoRenderStep**<br/>来自crate:bevy​_​app ↗：准备变换操纵器<br/>的网格和显示变换。" }
   class n14 node_system_set
   class n14 external_node
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@---|"移除"| n0
-  class e1 edge_write
-  n3 e2@--> n0
-  class e2 edge_read
-  n4 e3@---|"插入"| n0
-  class e3 edge_write
-  n2 e4@---|"插入"| n0
-  class e4 edge_write
-  n2 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
-  n4 e6@---|"移除"| n0
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
+  n6 e5@--> n0
+  class e5 edge_read
+  n2 e6@---|"插入"| n0
   class e6 edge_write
-  n5 e7@--> n0
-  class e7 edge_read
-  n6 e8@-->|"存在性约束"| n0
+  n7 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
+  n8 e8@-->|"存在性约束"| n0
   class e8 edge_reference
-  n7 e9@-->|"调用"| n0
-  class e9 edge_registration
-  n8 e10@-->|"集合成员"| n0
-  class e10 edge_set_membership
-  n9 e11@--> n0
-  class e11 edge_read
-  n10 e12@--> n0
+  n9 e9@-->|"集合成员"| n0
+  class e9 edge_set_membership
+  n10 e10@--> n0
+  class e10 edge_read
+  n11 e11@-->|"调用"| n0
+  class e11 edge_registration
+  n12 e12@--> n0
   class e12 edge_read
-  n11 e13@-->|"存在性约束"| n0
+  n10 e13@-->|"存在性约束"| n0
   class e13 edge_reference
-  n12 e14@-->|"存在性约束"| n0
+  n6 e14@-->|"存在性约束"| n0
   class e14 edge_reference
   n13 e15@-->|"存在性约束"| n0
   class e15 edge_reference
-  n10 e16@-->|"存在性约束"| n0
-  class e16 edge_reference
-  n13 e17@--> n0
-  class e17 edge_read
-  n9 e18@-->|"存在性约束"| n0
-  class e18 edge_reference
-  n4 e19@-->|"存在性约束"| n0
-  class e19 edge_reference
-  n0 e20@-->|"先于"| n14
-  class e20 edge_order
+  n3 e16@---|"插入"| n0
+  class e16 edge_write
+  n2 e17@---|"移除"| n0
+  class e17 edge_write
+  n8 e18@--> n0
+  class e18 edge_read
+  n0 e19@-->|"先于"| n14
+  class e19 edge_order
+  n3 e20@---|"移除"| n0
+  class e20 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -136,7 +136,7 @@ flowchart LR
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e11@{ curve: basis }
+  e11@{ curve: bumpX }
   e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }
@@ -144,4 +144,4 @@ flowchart LR
   e16@{ curve: basis }
   e17@{ curve: basis }
   e18@{ curve: basis }
-  e19@{ curve: basis }
+  e20@{ curve: basis }

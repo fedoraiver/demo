@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-8d604a2485ff179f-e1{marker-start:url(#object-8d604a2485ff179f_flowchart-v2-pointStart)!important}\n#object-8d604a2485ff179f-e4{marker-start:url(#object-8d604a2485ff179f_flowchart-v2-pointStart)!important}\n#object-8d604a2485ff179f_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-8d604a2485ff179f-e0{marker-start:url(#object-8d604a2485ff179f_flowchart-v2-pointStart)!important}\n#object-8d604a2485ff179f-e2{marker-start:url(#object-8d604a2485ff179f_flowchart-v2-pointStart)!important}\n#object-8d604a2485ff179f_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -45,24 +45,24 @@ flowchart LR
   class n0 node_system
   n1@{ shape: rounded, label: "**DistanceJoint**<br/>限制两刚体锚点之间的距离。" }
   class n1 node_component
-  n2@{ shape: lin-rect, label: "**PrepareLocalFrames**<br/>组织关节局部框架准备。" }
-  class n2 node_system_set
-  n3@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n2@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  class n2 node_component
+  n3@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
-  class n4 node_component
-  n1 e0@-->|"存在性约束"| n0
-  class e0 edge_reference
-  n1 e1@---|"赋值"| n0
-  class e1 edge_write
-  n2 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
+  n4@{ shape: lin-rect, label: "**PrepareLocalFrames**<br/>组织关节局部框架准备。" }
+  class n4 node_system_set
+  n1 e0@---|"赋值"| n0
+  class e0 edge_write
+  n2 e1@--> n0
+  class e1 edge_read
+  n1 e2@---|"可变访问"| n0
+  class e2 edge_write
   n3 e3@--> n0
   class e3 edge_read
-  n1 e4@---|"可变访问"| n0
-  class e4 edge_write
-  n4 e5@--> n0
-  class e5 edge_read
+  n4 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
+  n1 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

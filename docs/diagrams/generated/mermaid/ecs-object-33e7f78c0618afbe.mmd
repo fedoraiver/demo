@@ -45,34 +45,34 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**extract​_​transmissive​_​camera​_​phases**<br/>为活动三维相机准备本帧透射阶段并清理失效<br/>视图。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transmissive3**<br/>**d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
-  class n1 node_resource
+  n1@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
-  class n2 node_component
-  class n2 external_node
-  n3@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n2@{ shape: fr-rect, label: "**ScreenSpaceTransmissionPlugin**<br/>提供相机屏幕空间透射。" }
+  class n2 node_plugin
+  n3@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transmissive3**<br/>**d#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: notch-rect, label: "**Local · live​_​entities**<br/>记录本帧仍活动的透射相机阶段。" }
-  class n5 node_local
-  n6@{ shape: fr-rect, label: "**ScreenSpaceTransmissionPlugin**<br/>提供相机屏幕空间透射。" }
-  class n6 node_plugin
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
-  n3 e2@--> n0
-  class e2 edge_read
+  n5@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: notch-rect, label: "**Local · live​_​entities**<br/>记录本帧仍活动的透射相机阶段。" }
+  class n6 node_local
+  n1 e0@-->|"存在性约束"| n0
+  class e0 edge_reference
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
   n4 e3@--> n0
   class e3 edge_read
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
-  n6 e5@-->|"调用"| n0
-  class e5 edge_registration
+  n5 e4@--> n0
+  class e4 edge_read
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

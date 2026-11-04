@@ -1,0 +1,81 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-7d854da9dd3325a4-e2{marker-start:url(#object-7d854da9dd3325a4_flowchart-v2-pointStart)!important}\n#object-7d854da9dd3325a4_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: components::Camera2d · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**Camera2d**<br/>标记使用二维渲染流程的相机。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**resolve​_​composition​_​spaces**<br/>来自crate:bevy​_​render ↗：协调共享纹理<br/>相机的合成色彩空间。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**extract​_​core​_​2d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动二维相机准备渲染阶段并清理失效视图。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>来自crate:bevy​_​ui​_​render ↗：为活动二<br/>维或三维相机维护独立 UI 视图。" }
+  class n6 node_system
+  class n6 external_node
+  n0 e0@-->|"存在性约束"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在性约束"| n2
+  class e1 edge_reference
+  n3 e2@--- n0
+  class e2 edge_read
+  n0 e3@-->|"存在性约束"| n4
+  class e3 edge_reference
+  n0 e4@-->|"存在性约束"| n5
+  class e4 edge_reference
+  n3 e5@-->|"移除"| n0
+  class e5 edge_write
+  n0 e6@-->|"存在性约束"| n6
+  class e6 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

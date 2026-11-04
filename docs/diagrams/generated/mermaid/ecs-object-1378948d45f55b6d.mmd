@@ -45,40 +45,40 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​downsampling​_​pipeline**<br/>按预过滤和缩放设置准备 Bloom 降采样变<br/>体。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
-  class n1 node_resource
-  class n1 external_node
+  n1@{ shape: rounded, label: "**BloomDownsamplingPipelineIds**<br/>记录 Bloom 首级和后续降采样管线。" }
+  class n1 node_component
   n2@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;BloomDown**<br/>**samplingPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: rounded, label: "**Bloom**<br/>为 HDR 相机配置亮部扩散光晕。" }
-  class n4 node_component
-  n5@{ shape: fr-rect, label: "**BloomPlugin**<br/>准备并合成画面辉光。" }
-  class n5 node_plugin
-  n6@{ shape: rounded, label: "**BloomDownsamplingPipelineIds**<br/>记录 Bloom 首级和后续降采样管线。" }
-  class n6 node_component
-  n7@{ shape: cyl, label: "**BloomDownsamplingPipeline**<br/>提供 Bloom 降采样的着色器和资源布局。" }
-  class n7 node_resource
-  n1 e0@--> n0
-  class e0 edge_read
+  n4@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: cyl, label: "**BloomDownsamplingPipeline**<br/>提供 Bloom 降采样的着色器和资源布局。" }
+  class n5 node_resource
+  n6@{ shape: fr-rect, label: "**BloomPlugin**<br/>准备并合成画面辉光。" }
+  class n6 node_plugin
+  n7@{ shape: rounded, label: "**Bloom**<br/>为 HDR 相机配置亮部扩散光晕。" }
+  class n7 node_component
+  n0 e0@-->|"插入"| n1
+  class e0 edge_write
   n0 e1@-->|"可变访问"| n2
   class e1 edge_write
   n3 e2@-->|"集合成员"| n0
   class e2 edge_set_membership
   n4 e3@--> n0
   class e3 edge_read
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
-  n0 e5@-->|"插入"| n6
-  class e5 edge_write
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@-->|"调用"| n0
+  class e5 edge_registration
   n7 e6@--> n0
   class e6 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e4@{ curve: basis }
+  e3@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

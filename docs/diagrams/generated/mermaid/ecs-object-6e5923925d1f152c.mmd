@@ -1,0 +1,80 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: UiCameraView · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**UiCameraView**<br/>从主渲染目标视图定位对应的 UI 视图。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**queue​_​ui​_​slices**<br/>将 UI 图像切片排入对应相机透明阶段。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**queue​_​gradient**<br/>按目标视图与堆叠顺序排队 UI 渐变。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**queue​_​shadows**<br/>为提取的 UI 阴影选择匹配目标格式和阴影<br/>采样数的管线，按节点堆叠顺序及阴影层偏移<br/>加入透明 UI 绘制阶段。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**queue​_​uinodes**<br/>按目标相机和堆叠顺序排队 UI 节点。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
+  class n7 node_system
+  n1 e0@-->|"移除"| n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n1 e5@-->|"插入"| n0
+  class e5 edge_write
+  n0 e6@--> n6
+  class e6 edge_read
+  n0 e7@--> n7
+  class e7 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }

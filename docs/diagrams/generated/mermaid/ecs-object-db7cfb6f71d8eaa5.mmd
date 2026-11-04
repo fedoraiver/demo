@@ -42,28 +42,28 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​blit​_​pipeline**<br/>建立全屏颜色复制与缩放的 Blit 资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n1@{ shape: cyl, label: "**FullscreenShader**<br/>提供覆盖整个屏幕的顶点着色器。" }
   class n1 node_resource
-  class n1 external_node
-  n2@{ shape: fr-rect, label: "**BlitPlugin**<br/>提供纹理之间的绘制拷贝管线。" }
-  class n2 node_plugin
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n2 node_resource
+  class n2 external_node
   n3@{ shape: cyl, label: "**BlitPipeline**<br/>提供全屏纹理复制与缩放管线。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**FullscreenShader**<br/>提供覆盖整个屏幕的顶点着色器。" }
+  n4@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n5 node_resource
-  class n5 external_node
+  class n4 external_node
+  n5@{ shape: fr-rect, label: "**BlitPlugin**<br/>提供纹理之间的绘制拷贝管线。" }
+  class n5 node_plugin
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
+  n2 e1@--> n0
+  class e1 edge_read
   n0 e2@-->|"插入"| n3
   class e2 edge_write
   n4 e3@--> n0
   class e3 edge_read
-  n5 e4@--> n0
-  class e4 edge_read
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e3@{ curve: basis }

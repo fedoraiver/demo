@@ -46,53 +46,53 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​skybox​_​pipelines**<br/>按目标格式与采样数准备天空盒管线。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**SkyboxPipeline**<br/>提供天空盒绘制的资源布局和着色器。" }
+  n1@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**Skybox**<br/>来自crate:bevy​_​light ↗：为三维相机绘<br/>制立方体纹理天空盒。" }
+  class n1 external_node
+  n2@{ shape: rounded, label: "**Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;SkyboxPip**<br/>**eline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n4@{ shape: rounded, label: "**SkyboxPipelineId**<br/>保存当前视图的天空盒管线标识。" }
   class n4 node_component
-  class n4 external_node
-  n5@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n5 node_system_set
+  n5@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  class n5 node_component
   class n5 external_node
-  n6@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
-  class n6 node_resource
+  n6@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n6 node_system_set
   class n6 external_node
-  n7@{ shape: rounded, label: "**Msaa**<br/>来自crate:bevy​_​render ↗：选择视图的多<br/>重采样抗锯齿样本数。" }
-  class n7 node_component
-  class n7 external_node
-  n8@{ shape: fr-rect, label: "**SkyboxPlugin**<br/>准备天空盒的渲染数据与管线。" }
-  class n8 node_plugin
-  n9@{ shape: rounded, label: "**SkyboxPipelineId**<br/>保存当前视图的天空盒管线标识。" }
+  n7@{ shape: fr-rect, label: "**SkyboxPlugin**<br/>准备天空盒的渲染数据与管线。" }
+  class n7 node_plugin
+  n8@{ shape: cyl, label: "**SkyboxPipeline**<br/>提供天空盒绘制的资源布局和着色器。" }
+  class n8 node_resource
+  n9@{ shape: rounded, label: "**Skybox**<br/>来自crate:bevy​_​light ↗：为三维相机绘<br/>制立方体纹理天空盒。" }
   class n9 node_component
+  class n9 external_node
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
+  n2 e1@--> n0
+  class e1 edge_read
   n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"集合成员"| n0
-  class e4 edge_set_membership
-  n6 e5@--> n0
-  class e5 edge_read
-  n7 e6@--> n0
-  class e6 edge_read
-  n8 e7@-->|"调用"| n0
-  class e7 edge_registration
-  n0 e8@-->|"插入"| n9
-  class e8 edge_write
+  n0 e3@-->|"插入"| n4
+  class e3 edge_write
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
+  n7 e6@-->|"调用"| n0
+  class e6 edge_registration
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e5@{ curve: basis }
+  e4@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

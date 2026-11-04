@@ -43,28 +43,28 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**finish​_​optimize​_​trees**<br/>合并完成的碰撞体树优化结果。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**OptimizationTasks**<br/>追踪后台碰撞体树优化任务。" }
-  class n1 node_resource
-  n2@{ shape: fr-rect, label: "**ColliderTreeOptimizationPlugin**<br/>优化动态碰撞体树。" }
-  class n2 node_plugin
+  n1@{ shape: fr-rect, label: "**ColliderTreeOptimizationPlugin**<br/>优化动态碰撞体树。" }
+  class n1 node_plugin
+  n2@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  class n2 node_resource
   n3@{ shape: cyl, label: "**ColliderTreeDiagnostics**<br/>记录碰撞体树维护耗时。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  n4@{ shape: cyl, label: "**OptimizationTasks**<br/>追踪后台碰撞体树优化任务。" }
   class n4 node_resource
   n5@{ shape: lin-rect, label: "**EndOptimize**<br/>划分碰撞体树更新与优化阶段。" }
   class n5 node_system_set
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n0 e2@-->|"赋值"| n3
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n0 e3@-->|"可变访问"| n4
+  n0 e3@-->|"赋值"| n3
   class e3 edge_write
-  n5 e4@-->|"集合成员"| n0
-  class e4 edge_set_membership
-  n0 e5@-->|"可变访问"| n3
-  class e5 edge_write
+  n0 e4@-->|"可变访问"| n4
+  class e4 edge_write
+  n5 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

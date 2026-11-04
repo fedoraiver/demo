@@ -1,0 +1,61 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: NoScaleEasing · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**NoScaleEasing**<br/>显式禁止当前实体的缩放插值和外推" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​start**<br/>把当前缩放记录为插值起点。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**complete​_​scale​_​easing**<br/>在新一轮插值前完成上一段缩放。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​end**<br/>把当前缩放记录为插值终点。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**ease​_​scale​_​lerp**<br/>按固定步剩余比例线性插值显示缩放。" }
+  class n4 node_system
+  n0 e0@-->|"存在性约束"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在性约束"| n2
+  class e1 edge_reference
+  n0 e2@-->|"存在性约束"| n3
+  class e2 edge_reference
+  n0 e3@-->|"存在性约束"| n4
+  class e3 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }

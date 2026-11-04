@@ -1,0 +1,99 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ui_widgets::text_input::on_pointer_drag · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
+  classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: hex, label: "**on​_​pointer​_​drag**<br/>随指针拖动扩展文本选择。" }
+  class n0 node_observer
+  n1@{ shape: rounded, label: "**EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: stadium, label: "**PointerDrag**<br/>来自crate:bevy​_​picking ↗：通知正在拖<br/>拽的目标及累计和本次位移。" }
+  class n2 node_event
+  class n2 external_node
+  n3@{ shape: rounded, label: "**TextReadWriteMode**<br/>来自crate:bevy​_​text ↗：控制文字输入的<br/>编辑模式" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: fr-rect, label: "**TextInputPlugin**<br/>处理文本编辑、选择与输入法接入。" }
+  class n4 node_plugin
+  n5@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: rounded, label: "**TextInput**<br/>标识可编辑文本控件" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  class n7 node_component
+  class n7 external_node
+  n8@{ shape: cyl, label: "**UiScale**<br/>来自crate:bevy​_​ui ↗：统一缩放 UI 的固<br/>定尺寸值。" }
+  class n8 node_resource
+  class n8 external_node
+  n9@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>来自crate:bevy​_​ui ↗：缓存 UI 目标的尺<br/>寸与缩放。" }
+  class n9 node_component
+  class n9 external_node
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@-->|"接收事件"| n0
+  class e1 edge_observe
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }

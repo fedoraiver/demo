@@ -45,85 +45,55 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**prepare​_​oit​_​buffers**<br/>调整共享 OIT 存储并上传逐相机设置。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
   n1@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n1 node_component
   class n1 external_node
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n2 node_system_set
-  class n2 external_node
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: fr-rect, label: "**OrderIndependentTransparencyPlugin**<br/>提供顺序无关透明渲染。" }
-  class n3 node_plugin
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**OrderIndependentTransparencySettings**<br/>**Offset**<br/>定位视图的顺序无关透明参数。" }
-  class n4 node_component
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**OrderIndependentTransparencySettings**<br/>配置透明片元排序容量和混合阈值。" }
+  n2@{ shape: cyl, label: "**OitBuffers**<br/>保存顺序无关透明的片元链表与参数。" }
+  class n2 node_resource
+  n3@{ shape: rounded, label: "**OrderIndependentTransparencySettings**<br/>配置透明片元排序容量和混合阈值。" }
+  class n3 node_component
+  n4@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n4 node_system_set
+  class n4 external_node
+  n5@{ shape: rounded, label: "**OrderIndependentTransparencySettings**<br/>**Offset**<br/>定位视图的顺序无关透明参数。" }
   class n5 node_component
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: cyl, label: "**OitBuffers**<br/>保存顺序无关透明的片元链表与参数。" }
-  class n6 node_resource
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
-  class n7 node_resource
+  n6@{ shape: fr-rect, label: "**OrderIndependentTransparencyPlugin**<br/>提供顺序无关透明渲染。" }
+  class n6 node_plugin
+  n7@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
+  class n7 node_system
   class n7 external_node
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
-  class n8 node_system
+  n8@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  class n8 node_resource
   class n8 external_node
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
   n9@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n9 node_resource
   class n9 external_node
-  end
-  style layout_card_n9 fill:none,stroke:none
-  n1 e0@--> n0
-  class e0 edge_read
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n0 e3@-->|"插入"| n4
-  class e3 edge_write
-  n5 e4@-->|"存在性约束"| n0
-  class e4 edge_reference
-  n0 e5@-->|"赋值"| n6
-  class e5 edge_write
-  n7 e6@--> n0
-  class e6 edge_read
-  n5 e7@--> n0
-  class e7 edge_read
-  n0 e8@-->|"先于"| n8
-  class e8 edge_order
-  n0 e9@-->|"可变访问"| n6
-  class e9 edge_write
-  n9 e10@--> n0
+  n1 e0@-->|"存在性约束"| n0
+  class e0 edge_reference
+  n0 e1@-->|"赋值"| n2
+  class e1 edge_write
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n0 e4@-->|"插入"| n5
+  class e4 edge_write
+  n3 e5@--> n0
+  class e5 edge_read
+  n6 e6@-->|"调用"| n0
+  class e6 edge_registration
+  n0 e7@-->|"先于"| n7
+  class e7 edge_order
+  n0 e8@-->|"可变访问"| n2
+  class e8 edge_write
+  n1 e9@--> n0
+  class e9 edge_read
+  n8 e10@--> n0
   class e10 edge_read
-  n1 e11@-->|"存在性约束"| n0
-  class e11 edge_reference
+  n9 e11@--> n0
+  class e11 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -131,7 +101,7 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
+  e7@{ curve: bumpY }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

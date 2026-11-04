@@ -46,26 +46,26 @@ flowchart LR
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PostProcessOutput**<br/>组织 Egui 轮次结束与输出处理。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n2@{ shape: cyl, label: "**EguiManagedTextures**<br/>保存 Egui 分配并绘制的纹理及其 Bevy 图<br/>像句柄" }
   class n2 node_resource
-  class n2 external_node
-  n3@{ shape: rounded, label: "**EguiRenderOutput**<br/>保存 Egui 绘制图元和纹理增量" }
-  class n3 node_component
-  n4@{ shape: cyl, label: "**EguiManagedTextures**<br/>保存 Egui 分配并绘制的纹理及其 Bevy 图<br/>像句柄" }
+  n3@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
+  class n3 node_plugin
+  n4@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n4 node_resource
-  n5@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
-  class n5 node_plugin
+  class n4 external_node
+  n5@{ shape: rounded, label: "**EguiRenderOutput**<br/>保存 Egui 绘制图元和纹理增量" }
+  class n5 node_component
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
   n0 e1@-->|"可变访问"| n2
   class e1 edge_write
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
   n0 e3@-->|"可变访问"| n4
   class e3 edge_write
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e3@{ curve: basis }
+  e2@{ curve: basis }
   e4@{ curve: basis }

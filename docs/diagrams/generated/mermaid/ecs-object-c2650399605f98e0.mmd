@@ -46,22 +46,22 @@ flowchart LR
   class n0 node_system
   n1@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
   class n1 node_resource
-  n2@{ shape: lin-rect, label: "**Render**<br/>组织渲染数据准备与绘制排队。" }
-  class n2 node_system_set
-  n3@{ shape: rounded, label: "**render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
-  class n3 node_system
-  n4@{ shape: fr-rect, label: "**RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
-  class n4 node_plugin
-  n0 e0@-->|"可变访问"| n1
+  n2@{ shape: fr-rect, label: "**RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
+  class n2 node_plugin
+  n3@{ shape: lin-rect, label: "**Render**<br/>组织渲染数据准备与绘制排队。" }
+  class n3 node_system_set
+  n4@{ shape: rounded, label: "**render​_​system**<br/>运行渲染图调度并完成回读和窗口呈现。" }
+  class n4 node_system
+  n0 e0@-->|"赋值"| n1
   class e0 edge_write
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
-  n0 e2@-->|"先于"| n3
-  class e2 edge_order
-  n0 e3@-->|"赋值"| n1
-  class e3 edge_write
-  n4 e4@-->|"调用"| n0
-  class e4 edge_registration
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
+  n0 e3@-->|"先于"| n4
+  class e3 edge_order
+  n0 e4@-->|"可变访问"| n1
+  class e4 edge_write
   e0@{ curve: basis }
   e1@{ curve: bumpX }
   e2@{ curve: basis }

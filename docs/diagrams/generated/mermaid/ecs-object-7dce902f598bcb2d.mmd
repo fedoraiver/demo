@@ -40,13 +40,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**resource​_​exists**<br/>判断指定资源是否存在。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**BatchedInstanceBuffers#lt;MeshUniform,**<br/>**MeshInputUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存批次绘制<br/>的 GPU 输入与实例缓冲。" }
-  class n1 node_resource
+  n1@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：按已有绘制顺<br/>序合并 GPU 预处理阶段批次。" }
+  class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>来自crate:bevy​_​render ↗：按已有绘制顺<br/>序合并 GPU 预处理阶段批次。" }
-  class n2 node_system
+  n2@{ shape: cyl, label: "**BatchedInstanceBuffers#lt;MeshUniform,**<br/>**MeshInputUniform#gt;**<br/>来自crate:bevy​_​render ↗：保存批次绘制<br/>的 GPU 输入与实例缓冲。" }
+  class n2 node_resource
   class n2 external_node
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"运行条件"| n2
-  class e1 edge_reference
+  n0 e0@-->|"运行条件"| n1
+  class e0 edge_reference
+  n2 e1@--> n0
+  class e1 edge_read

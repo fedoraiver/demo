@@ -42,18 +42,18 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​dof​_​global​_​bind​_​group​_​layout**<br/>建立景深共享参数布局和线性采样器。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
-  class n1 node_plugin
-  n2@{ shape: cyl, label: "**DepthOfFieldGlobalBindGroupLayout**<br/>定义景深共享参数布局与颜色采样器。" }
-  class n2 node_resource
+  n1@{ shape: cyl, label: "**DepthOfFieldGlobalBindGroupLayout**<br/>定义景深共享参数布局与颜色采样器。" }
+  class n1 node_resource
+  n2@{ shape: fr-rect, label: "**DepthOfFieldPlugin**<br/>提供相机景深后处理。" }
+  class n2 node_plugin
   n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n3 node_resource
   class n3 external_node
-  n1 e0@-->|"调用"| n0
-  class e0 edge_registration
-  n0 e1@-->|"插入"| n2
-  class e1 edge_write
+  n0 e0@-->|"插入"| n1
+  class e0 edge_write
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
   n3 e2@--> n0
   class e2 edge_read
-  e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }

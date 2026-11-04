@@ -56,45 +56,45 @@ flowchart LR
   class n2 node_component
   n3@{ shape: cyl, label: "**QueuedSelectAll**<br/>暂存由指针按下触发焦点的编辑实体" }
   class n3 node_resource
-  n4@{ shape: rounded, label: "**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
-  class n4 node_system
+  n4@{ shape: rounded, label: "**EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
+  class n4 node_component
   class n4 external_node
-  n5@{ shape: cyl, label: "**Messages#lt;PointerRelease#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n5 node_resource
+  n5@{ shape: rounded, label: "**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
+  class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
-  class n6 node_component
+  n6@{ shape: cyl, label: "**Messages#lt;PointerRelease#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n6 node_resource
   class n6 external_node
-  n7@{ shape: lean-r, label: "**PointerRelease**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮释放。" }
-  class n7 node_message
-  class n7 external_node
-  n8@{ shape: fr-rect, label: "**TextInputPlugin**<br/>处理文本编辑、选择与输入法接入。" }
-  class n8 node_plugin
+  n7@{ shape: fr-rect, label: "**TextInputPlugin**<br/>处理文本编辑、选择与输入法接入。" }
+  class n7 node_plugin
+  n8@{ shape: lean-r, label: "**PointerRelease**<br/>来自crate:bevy​_​picking ↗：通知目标上<br/>的指针按钮释放。" }
+  class n8 node_message
+  class n8 external_node
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
   n2 e1@-->|"存在性约束"| n0
   class e1 edge_reference
-  n0 e2@-->|"赋值"| n3
+  n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n0 e3@-->|"先于"| n4
-  class e3 edge_order
-  n5 e4@--> n0
-  class e4 edge_read
-  n0 e5@-->|"可变访问"| n6
-  class e5 edge_write
-  n7 e6@--> n0
-  class e6 edge_consume
-  n8 e7@-->|"调用"| n0
-  class e7 edge_registration
-  n0 e8@-->|"可变访问"| n3
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n0 e4@-->|"先于"| n5
+  class e4 edge_order
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@-->|"调用"| n0
+  class e6 edge_registration
+  n8 e7@--> n0
+  class e7 edge_consume
+  n0 e8@-->|"赋值"| n3
   class e8 edge_write
   n3 layout_output_0@~~~ n4
-  n4 layout_output_1@~~~ n6
+  n4 layout_output_1@~~~ n5
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e5@{ curve: basis }
+  e4@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

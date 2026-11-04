@@ -45,22 +45,22 @@ flowchart LR
   class n1 node_resource
   n2@{ shape: cyl, label: "**SparseBufferUpdateJobs**<br/>暂存待执行的稀疏缓冲更新任务。" }
   class n2 node_resource
-  n3@{ shape: lin-rect, label: "**Begin**<br/>组织绘制执行、提交与收尾。" }
-  class n3 node_system_set
-  n4@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>记录渲染诊断区间与 GPU 查询索引的对应。" }
-  class n4 node_resource
-  n5@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n3@{ shape: cyl, label: "**SparseBufferUpdateBindGroups**<br/>追踪各稀疏缓冲更新的资源绑定。" }
+  class n3 node_resource
+  n4@{ shape: lin-rect, label: "**Begin**<br/>组织绘制执行、提交与收尾。" }
+  class n4 node_system_set
+  n5@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>记录渲染诊断区间与 GPU 查询索引的对应。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**SparseBufferUpdateBindGroups**<br/>追踪各稀疏缓冲更新的资源绑定。" }
+  n6@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n6 node_resource
   n1 e0@--> n0
   class e0 edge_read
   n2 e1@--> n0
   class e1 edge_read
-  n3 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
-  n4 e3@--> n0
-  class e3 edge_read
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
   n5 e4@--> n0
   class e4 edge_read
   n6 e5@--> n0

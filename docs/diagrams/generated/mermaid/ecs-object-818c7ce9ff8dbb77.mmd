@@ -42,13 +42,13 @@ flowchart LR
   n1@{ shape: rounded, label: "**PreprocessBindGroups**<br/>来自crate:bevy​_​pbr ↗：为视图各绘制阶<br/>段保存网格预处理绑定。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**SkipGpuPreprocess**<br/>来自crate:bevy​_​pbr ↗：避免视图重复执<br/>行 GPU 网格预处理。" }
+  n2@{ shape: rounded, label: "**NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
   class n2 node_component
   class n2 external_node
   n3@{ shape: rounded, label: "**main​_​build​_​indirect​_​parameters**<br/>来自crate:bevy​_​pbr ↗：为主不透明及透<br/>明通道构建间接绘制参数。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**NoIndirectDrawing**<br/>来自crate:bevy​_​render ↗：关闭相机的间<br/>接绘制模式。" }
+  n4@{ shape: rounded, label: "**SkipGpuPreprocess**<br/>来自crate:bevy​_​pbr ↗：避免视图重复执<br/>行 GPU 网格预处理。" }
   class n4 node_component
   class n4 external_node
   n1 e0@-->|"存在性约束"| n0

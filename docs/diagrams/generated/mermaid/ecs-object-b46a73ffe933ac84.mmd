@@ -51,121 +51,121 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
   class n0 node_system
-  n1@{ shape: lin-rect, label: "**FocusContext**<br/>组织 Egui 输入读取与事件写入。" }
-  class n1 node_system_set
-  n2@{ shape: cyl, label: "**WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
-  class n2 node_resource
-  n3@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
-  class n3 node_system_set
-  n4@{ shape: rounded, label: "**EguiContextSettings**<br/>保存单个 Egui 上下文的运行、输入、指针<br/>捕获、光标和 IME 集成选项" }
-  class n4 node_component
-  n5@{ shape: rounded, label: "**write​_​keyboard​_​input​_​messages​_​system**<br/>把键盘文本与按键转换为 Egui 输入。" }
-  class n5 node_system
-  n6@{ shape: cyl, label: "**Messages#lt;EguiInputEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n6 node_resource
-  class n6 external_node
-  n7@{ shape: rounded, label: "**EguiContextPointerPosition**<br/>缓存当前 Egui 指针坐标" }
+  n1@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
+  class n1 node_plugin
+  n2@{ shape: lin-rect, label: "**FocusContext**<br/>组织 Egui 输入读取与事件写入。" }
+  class n2 node_system_set
+  n3@{ shape: cyl, label: "**FocusedNonWindowEguiContext**<br/>保存当前获得键盘焦点的非窗口 Egui 上下<br/>文实体" }
+  class n3 node_resource
+  n4@{ shape: cyl, label: "**Messages#lt;EguiInputEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
+  class n5 node_system_set
+  n6@{ shape: rounded, label: "**write​_​keyboard​_​input​_​messages​_​system**<br/>把键盘文本与按键转换为 Egui 输入。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**EguiZoomFactor**<br/>在主世界保存 Egui 上下文的缩放因子" }
   class n7 node_component
-  n8@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
-  class n8 node_plugin
-  n9@{ shape: cyl, label: "**FocusedNonWindowEguiContext**<br/>保存当前获得键盘焦点的非窗口 Egui 上下<br/>文实体" }
+  n8@{ shape: cyl, label: "**WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
+  class n8 node_resource
+  n9@{ shape: cyl, label: "**EguiGlobalSettings**<br/>配置 Egui 上下文创建和全局输入集成。" }
   class n9 node_resource
-  n10@{ shape: lean-r, label: "**WindowEvent**<br/>来自crate:bevy​_​window ↗：按顺序汇集窗<br/>口与输入消息。" }
-  class n10 node_message
-  class n10 external_node
+  n10@{ shape: cyl, label: "**HoveredNonWindowEguiContext**<br/>保存指针当前悬停的非窗口 Egui 上下文实<br/>体" }
+  class n10 node_resource
   n11@{ shape: rounded, label: "**write​_​pinch​_​gesture​_​messages​_​system**<br/>把捏合手势转换为 Egui 缩放。" }
   class n11 node_system
-  n12@{ shape: lean-r, label: "**EguiInputEvent**<br/>传递供 Egui 消费的输入事件。" }
-  class n12 node_message
-  n13@{ shape: rounded, label: "**write​_​modifiers​_​keys​_​state​_​system**<br/>更新 Egui 修饰键并清除失焦残留。" }
+  n12@{ shape: rounded, label: "**write​_​modifiers​_​keys​_​state​_​system**<br/>更新 Egui 修饰键并清除失焦残留。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**read​_​egui​_​zoom​_​factor​_​system**<br/>记录 Egui 当前界面缩放因子。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**read​_​egui​_​zoom​_​factor​_​system**<br/>记录 Egui 当前界面缩放因子。" }
-  class n14 node_system
-  n15@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否处理窗口指针移动或按钮。" }
-  class n15 node_system_group
-  n16@{ shape: rounded, label: "**write​_​ime​_​messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
-  class n16 node_system
-  n17@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
-  class n17 node_component
-  n18@{ shape: cyl, label: "**EguiGlobalSettings**<br/>配置 Egui 上下文创建和全局输入集成。" }
+  n14@{ shape: rounded, label: "**EguiContextPointerPosition**<br/>缓存当前 Egui 指针坐标" }
+  class n14 node_component
+  n15@{ shape: lean-r, label: "**EguiInputEvent**<br/>传递供 Egui 消费的输入事件。" }
+  class n15 node_message
+  n16@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否处理窗口指针移动或按钮。" }
+  class n16 node_system_group
+  n17@{ shape: rounded, label: "**write​_​ime​_​messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
+  class n17 node_system
+  n18@{ shape: cyl, label: "**Messages#lt;WindowEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n18 node_resource
-  n19@{ shape: cyl, label: "**ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
-  class n19 node_resource
+  class n18 external_node
+  n19@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
+  class n19 node_component
   n20@{ shape: rounded, label: "**write​_​non​_​window​_​touch​_​messages​_​**<br/>**system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
   class n20 node_system
-  n21@{ shape: cyl, label: "**HoveredNonWindowEguiContext**<br/>保存指针当前悬停的非窗口 Egui 上下文实<br/>体" }
-  class n21 node_resource
-  n22@{ shape: rounded, label: "**EguiZoomFactor**<br/>在主世界保存 Egui 上下文的缩放因子" }
-  class n22 node_component
-  n23@{ shape: cyl, label: "**Messages#lt;WindowEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n23 node_resource
-  class n23 external_node
-  n24@{ shape: rounded, label: "**write​_​file​_​dnd​_​messages​_​system**<br/>把文件拖放路由到对应 Egui 上下文。" }
-  class n24 node_system
-  n25@{ shape: rounded, label: "**write​_​non​_​window​_​pointer​_​moved​_​**<br/>**messages​_​system**<br/>刷新非窗口 Egui 界面的指针位置。" }
+  n21@{ shape: lean-r, label: "**WindowEvent**<br/>来自crate:bevy​_​window ↗：按顺序汇集窗<br/>口与输入消息。" }
+  class n21 node_message
+  class n21 external_node
+  n22@{ shape: rounded, label: "**write​_​file​_​dnd​_​messages​_​system**<br/>把文件拖放路由到对应 Egui 上下文。" }
+  class n22 node_system
+  n23@{ shape: rounded, label: "**write​_​non​_​window​_​pointer​_​moved​_​**<br/>**messages​_​system**<br/>刷新非窗口 Egui 界面的指针位置。" }
+  class n23 node_system
+  n24@{ shape: cyl, label: "**ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
+  class n24 node_resource
+  n25@{ shape: rounded, label: "**write​_​mouse​_​wheel​_​messages​_​system**<br/>向悬停 Egui 上下文传递滚轮输入。" }
   class n25 node_system
-  n26@{ shape: rounded, label: "**write​_​mouse​_​wheel​_​messages​_​system**<br/>向悬停 Egui 上下文传递滚轮输入。" }
-  class n26 node_system
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
-  n2 e1@--> n0
-  class e1 edge_read
-  n3 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
-  n4 e3@--> n0
-  class e3 edge_read
-  n0 e4@-->|"先于"| n5
-  class e4 edge_order
-  n0 e5@-->|"可变访问"| n6
-  class e5 edge_write
-  n0 e6@-->|"可变访问"| n7
+  n26@{ shape: rounded, label: "**EguiContextSettings**<br/>保存单个 Egui 上下文的运行、输入、指针<br/>捕获、光标和 IME 集成选项" }
+  class n26 node_component
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n0 e2@-->|"移除"| n3
+  class e2 edge_write
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n5 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
+  n0 e5@-->|"先于"| n6
+  class e5 edge_order
+  n0 e6@-->|"插入"| n3
   class e6 edge_write
-  n8 e7@-->|"调用"| n0
-  class e7 edge_registration
-  n0 e8@-->|"移除"| n9
-  class e8 edge_write
-  n10 e9@--> n0
-  class e9 edge_consume
-  n0 e10@-->|"先于"| n11
-  class e10 edge_order
-  n0 e11@-->|"可变访问"| n12
-  class e11 edge_publish
-  n13 e12@-->|"先于"| n0
+  n7 e7@--> n0
+  class e7 edge_read
+  n8 e8@--> n0
+  class e8 edge_read
+  n9 e9@--> n0
+  class e9 edge_read
+  n10 e10@--> n0
+  class e10 edge_read
+  n0 e11@-->|"赋值"| n4
+  class e11 edge_write
+  n0 e12@-->|"先于"| n11
   class e12 edge_order
-  n14 e13@-->|"先于"| n0
+  n12 e13@-->|"先于"| n0
   class e13 edge_order
-  n0 e14@-->|"插入"| n9
-  class e14 edge_write
-  n0 e15@-->|"赋值"| n6
+  n13 e14@-->|"先于"| n0
+  class e14 edge_order
+  n0 e15@-->|"赋值"| n14
   class e15 edge_write
-  n15 e16@-->|"运行条件"| n0
-  class e16 edge_reference
-  n0 e17@-->|"先于"| n16
-  class e17 edge_order
-  n17 e18@-->|"存在性约束"| n0
-  class e18 edge_reference
+  n0 e16@-->|"可变访问"| n15
+  class e16 edge_publish
+  n16 e17@-->|"运行条件"| n0
+  class e17 edge_reference
+  n0 e18@-->|"先于"| n17
+  class e18 edge_order
   n18 e19@--> n0
   class e19 edge_read
-  n0 e20@-->|"消息"| n12
-  class e20 edge_publish
-  n19 e21@--> n0
-  class e21 edge_read
-  n0 e22@-->|"先于"| n20
-  class e22 edge_order
-  n21 e23@--> n0
-  class e23 edge_read
-  n22 e24@--> n0
-  class e24 edge_read
-  n23 e25@--> n0
-  class e25 edge_read
-  n0 e26@-->|"先于"| n24
+  n19 e20@-->|"存在性约束"| n0
+  class e20 edge_reference
+  n0 e21@-->|"先于"| n20
+  class e21 edge_order
+  n0 e22@-->|"可变访问"| n14
+  class e22 edge_write
+  n0 e23@-->|"消息"| n15
+  class e23 edge_publish
+  n21 e24@--> n0
+  class e24 edge_consume
+  n0 e25@-->|"先于"| n22
+  class e25 edge_order
+  n0 e26@-->|"先于"| n23
   class e26 edge_order
-  n0 e27@-->|"先于"| n25
-  class e27 edge_order
-  n0 e28@-->|"赋值"| n7
-  class e28 edge_write
-  n0 e29@-->|"先于"| n26
-  class e29 edge_order
+  n24 e27@--> n0
+  class e27 edge_read
+  n0 e28@-->|"先于"| n25
+  class e28 edge_order
+  n26 e29@--> n0
+  class e29 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -176,7 +176,7 @@ flowchart LR
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
-  e10@{ curve: bumpX }
+  e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
   e14@{ curve: basis }

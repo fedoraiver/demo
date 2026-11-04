@@ -45,18 +45,18 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**expire​_​wireframe​_​specializations​_​**<br/>**for​_​views**<br/>移除已失效视图的线框专用化脏标记。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**CameraPlugin**<br/>维护相机渲染状态与排序。" }
-  class n1 node_plugin
-  n2@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
-  class n2 node_component
+  n1@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
+  class n1 node_component
+  n2@{ shape: fr-rect, label: "**CameraPlugin**<br/>维护相机渲染状态与排序。" }
+  class n2 node_plugin
   n3@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }
   class n3 node_system_set
   n4@{ shape: cyl, label: "**DirtyWireframeSpecializations**<br/>单独记录需要刷新管线的线框对象。" }
   class n4 node_resource
-  n1 e0@-->|"调用"| n0
-  class e0 edge_registration
-  n2 e1@--> n0
-  class e1 edge_read
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
   n3 e2@-->|"集合成员"| n0
   class e2 edge_set_membership
   n0 e3@-->|"可变访问"| n4

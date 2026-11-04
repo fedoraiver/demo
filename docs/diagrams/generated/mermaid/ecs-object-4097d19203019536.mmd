@@ -41,15 +41,15 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**reset**<br/>重置物理诊断测量。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**CollisionDiagnostics**<br/>汇总碰撞检测耗时与接触数量。" }
-  class n1 node_resource
-  n2@{ shape: lin-rect, label: "**Reset**<br/>划分物理诊断重置与写入。" }
-  class n2 node_system_set
-  n0 e0@-->|"赋值"| n1
-  class e0 edge_write
-  n0 e1@-->|"可变访问"| n1
+  n1@{ shape: lin-rect, label: "**Reset**<br/>划分物理诊断重置与写入。" }
+  class n1 node_system_set
+  n2@{ shape: cyl, label: "**CollisionDiagnostics**<br/>汇总碰撞检测耗时与接触数量。" }
+  class n2 node_resource
+  n1 e0@-->|"集合成员"| n0
+  class e0 edge_set_membership
+  n0 e1@-->|"赋值"| n2
   class e1 edge_write
-  n2 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
-  e0@{ curve: basis }
+  n0 e2@-->|"可变访问"| n2
+  class e2 edge_write
   e1@{ curve: basis }
+  e2@{ curve: basis }

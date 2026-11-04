@@ -51,103 +51,103 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**spawn​_​queued**<br/>应用已就绪的场景补丁并推进排队装配。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**Messages#lt;AssetEvent#lt;ScenePatch#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n1 node_component
+  n1@{ shape: lin-rect, label: "**WorldInstanceSpawn**<br/>来自crate:bevy​_​app ↗：划分世界实例与<br/>场景生成阶段。" }
+  class n1 node_system_set
   class n1 external_node
   n2@{ shape: cyl, label: "**WaitingScenes**<br/>保存等待场景资产加载的实体与场景列表生成<br/>请求" }
   class n2 node_resource
-  n3@{ shape: lin-rect, label: "**WorldInstanceSpawn**<br/>来自crate:bevy​_​app ↗：划分世界实例与<br/>场景生成阶段。" }
-  class n3 node_system_set
+  n3@{ shape: rounded, label: "**Assets#lt;SceneListPatch#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n3 node_component
   class n3 external_node
-  n4@{ shape: fr-rect, label: "**ScenePlugin**<br/>实例化场景与声明式实体内容。" }
-  class n4 node_plugin
-  n5@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n5 node_resource
-  class n5 external_node
-  n6@{ shape: notch-rect, label: "**Local · list​_​reader**<br/>保留场景列表补丁资产消息的独立读取游标。" }
-  class n6 node_local
-  n7@{ shape: notch-rect, label: "**Local · bundle​_​scratch**<br/>复用场景补丁应用和实体生成的 Bundle 临<br/>时区。" }
-  class n7 node_local
-  n8@{ shape: lin-rect, label: "**SceneSpawn**<br/>来自crate:bevy​_​app ↗：划分世界实例与<br/>场景生成阶段。" }
-  class n8 node_system_set
+  n4@{ shape: lin-rect, label: "**SceneSpawn**<br/>来自crate:bevy​_​app ↗：划分世界实例与<br/>场景生成阶段。" }
+  class n4 node_system_set
+  class n4 external_node
+  n5@{ shape: rounded, label: "**resolve​_​scene​_​patches**<br/>解析已完成依赖加载的场景补丁。" }
+  class n5 node_system
+  n6@{ shape: fr-rect, label: "**ScenePlugin**<br/>实例化场景与声明式实体内容。" }
+  class n6 node_plugin
+  n7@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;ScenePatch#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  class n8 node_message
   class n8 external_node
-  n9@{ shape: rounded, label: "**resolve​_​scene​_​patches**<br/>解析已完成依赖加载的场景补丁。" }
-  class n9 node_system
-  n10@{ shape: rounded, label: "**ScenePatchInstance**<br/>等待场景就绪后应用场景补丁。" }
-  class n10 node_component
-  n11@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;ScenePatch#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n11 node_resource
-  class n11 external_node
-  n12@{ shape: rounded, label: "**Assets#lt;SceneListPatch#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n12 node_component
+  n9@{ shape: cyl, label: "**QueuedScenes**<br/>暂存等待创建的场景及关联场景列表。" }
+  class n9 node_resource
+  n10@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n10 node_resource
+  class n10 external_node
+  n11@{ shape: rounded, label: "**ScenePatchInstance**<br/>等待场景就绪后应用场景补丁。" }
+  class n11 node_component
+  n12@{ shape: cyl, label: "**Assets#lt;SceneListPatch#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n12 node_resource
   class n12 external_node
-  n13@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
-  class n13 node_message
-  class n13 external_node
+  n13@{ shape: rounded, label: "**WaitingScenes**<br/>保存等待场景资产加载的实体与场景列表生成<br/>请求" }
+  class n13 node_component
   n14@{ shape: notch-rect, label: "**Local · reader**<br/>保留场景补丁资产消息的独立读取游标。" }
   class n14 node_local
   n15@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;SceneListPatch#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n15 node_resource
   class n15 external_node
-  n16@{ shape: cyl, label: "**QueuedScenes**<br/>暂存等待创建的场景及关联场景列表。" }
-  class n16 node_resource
-  n17@{ shape: notch-rect, label: "**Local · queued**<br/>暂存从世界队列交换出的待生成场景。" }
-  class n17 node_local
-  n18@{ shape: rounded, label: "**Messages#lt;AssetEvent#lt;SceneListPatch#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n18 node_component
-  class n18 external_node
-  n19@{ shape: cyl, label: "**Assets#lt;SceneListPatch#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n19 node_resource
+  n16@{ shape: notch-rect, label: "**Local · list​_​reader**<br/>保留场景列表补丁资产消息的独立读取游标。" }
+  class n16 node_local
+  n17@{ shape: cyl, label: "**Assets#lt;ScenePatch#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n17 node_resource
+  class n17 external_node
+  n18@{ shape: stadium, label: "**Ready**<br/>通知场景实体完成装配。" }
+  class n18 node_event
+  n19@{ shape: rounded, label: "**Messages#lt;AssetEvent#lt;SceneListPatch#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n19 node_component
   class n19 external_node
-  n20@{ shape: stadium, label: "**Ready**<br/>通知场景实体完成装配。" }
-  class n20 node_event
-  n21@{ shape: cyl, label: "**Assets#lt;ScenePatch#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n21 node_resource
-  class n21 external_node
-  n22@{ shape: rounded, label: "**WaitingScenes**<br/>保存等待场景资产加载的实体与场景列表生成<br/>请求" }
+  n20@{ shape: notch-rect, label: "**Local · queued**<br/>暂存从世界队列交换出的待生成场景。" }
+  class n20 node_local
+  n21@{ shape: notch-rect, label: "**Local · bundle​_​scratch**<br/>复用场景补丁应用和实体生成的 Bundle 临<br/>时区。" }
+  class n21 node_local
+  n22@{ shape: rounded, label: "**Messages#lt;AssetEvent#lt;ScenePatch#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n22 node_component
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
+  class n22 external_node
+  n1 e0@-->|"先于"| n0
+  class e0 edge_order
   n0 e1@-->|"移除"| n2
   class e1 edge_write
-  n3 e2@-->|"先于"| n0
-  class e2 edge_order
-  n4 e3@-->|"调用"| n0
-  class e3 edge_registration
-  n0 e4@-->|"赋值"| n5
-  class e4 edge_write
-  n0 e5@-->|"可变访问"| n6
-  class e5 edge_write
-  n0 e6@-->|"可变访问"| n7
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n5 e4@-->|"先于"| n0
+  class e4 edge_order
+  n6 e5@-->|"调用"| n0
+  class e5 edge_registration
+  n0 e6@-->|"移除"| n7
   class e6 edge_write
-  n8 e7@-->|"集合成员"| n0
-  class e7 edge_set_membership
-  n9 e8@-->|"先于"| n0
-  class e8 edge_order
-  n10 e9@--> n0
-  class e9 edge_read
-  n0 e10@-->|"移除"| n11
-  class e10 edge_write
-  n0 e11@-->|"可变访问"| n12
+  n0 e7@-->|"消息"| n8
+  class e7 edge_publish
+  n0 e8@-->|"可变访问"| n9
+  class e8 edge_write
+  n0 e9@-->|"赋值"| n10
+  class e9 edge_write
+  n11 e10@--> n0
+  class e10 edge_read
+  n0 e11@-->|"移除"| n12
   class e11 edge_write
-  n0 e12@-->|"消息"| n13
-  class e12 edge_publish
+  n0 e12@-->|"可变访问"| n13
+  class e12 edge_write
   n0 e13@-->|"可变访问"| n14
   class e13 edge_write
   n0 e14@-->|"移除"| n15
   class e14 edge_write
   n0 e15@-->|"可变访问"| n16
   class e15 edge_write
-  n0 e16@-->|"可变访问"| n17
-  class e16 edge_write
-  n0 e17@-->|"可变访问"| n18
-  class e17 edge_write
-  n0 e18@-->|"移除"| n19
+  n17 e16@--> n0
+  class e16 edge_read
+  n0 e17@-->|"触发事件"| n18
+  class e17 edge_emit
+  n0 e18@-->|"可变访问"| n19
   class e18 edge_write
-  n0 e19@-->|"触发事件"| n20
-  class e19 edge_emit
-  n21 e20@--> n0
-  class e20 edge_read
+  n0 e19@-->|"可变访问"| n20
+  class e19 edge_write
+  n0 e20@-->|"可变访问"| n21
+  class e20 edge_write
   n0 e21@-->|"可变访问"| n22
   class e21 edge_write
   e0@{ curve: basis }

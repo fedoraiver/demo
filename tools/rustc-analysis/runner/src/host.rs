@@ -68,11 +68,25 @@ fn package_origins(metadata: &serde_json::Value) -> Result<Vec<PackageOrigin>> {
             }
         });
         let identity = serde_json::to_string(&serde_json::json!({"source":source,"name":package["name"],"version":package["version"]}))?;
-        let targets = package["targets"].as_array().context("Missing Cargo targets")?.iter().map(|target| Ok(PackageTargetOrigin {
-            source: normalized(Path::new(target["src_path"].as_str().context("Missing Cargo target source")?))?,
-            name: target["name"].as_str().context("Missing Cargo target name")?.into(),
-            kind: serde_json::from_value(target["kind"].clone())?,
-        })).collect::<Result<Vec<_>>>()?;
+        let mut targets = Vec::new();
+        for target in package["targets"].as_array().context("Missing Cargo targets")? {
+            let path = Path::new(target["src_path"].as_str().context("Missing Cargo target source")?);
+            let kind: Vec<String> = serde_json::from_value(target["kind"].clone())?;
+            let source = match normalized(path) {
+                Ok(source) => source,
+                // 发布包可省略测试、示例和基准源码；缺失文件不进入声明身份候选。
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound
+                    && path.is_absolute()
+                    && !kind.is_empty()
+                    && kind.iter().all(|kind| matches!(kind.as_str(), "example" | "test" | "bench")) => continue,
+                Err(error) => return Err(error).with_context(|| format!("Cannot resolve Cargo target source {}", path.display())),
+            };
+            targets.push(PackageTargetOrigin {
+                source,
+                name: target["name"].as_str().context("Missing Cargo target name")?.into(),
+                kind,
+            });
+        }
         Ok(PackageOrigin { root: normalized(&root)?, identity, targets })
     }).collect()
 }
@@ -822,6 +836,51 @@ fn select_reports(
 mod tests {
     use super::*;
     use analysis_contract::facts::{SourceFile, UnitFacts};
+
+    #[test]
+    fn package_origins_exclude_unpublished_auxiliary_targets() {
+        let directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../../../tmp/ra/tests/package-origins")
+            .join(format!(
+                "{}-{}",
+                std::process::id(),
+                SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .unwrap()
+                    .as_nanos()
+            ));
+        fs::create_dir_all(&directory).unwrap();
+        let directory = directory.canonicalize().unwrap();
+        let library = directory.join("lib.rs");
+        fs::write(&library, b"pub struct Published;").unwrap();
+        let example = directory.join("benches/benchmark.rs");
+        let test = directory.join("tests/serde.rs");
+        let metadata = serde_json::json!({
+            "workspace_root": directory,
+            "packages": [{
+                "name": "published",
+                "version": "1.0.0",
+                "manifest_path": directory.join("Cargo.toml"),
+                "targets": [
+                    {"src_path": library, "name": "published", "kind": ["lib"]},
+                    {"src_path": example, "name": "benchmark", "kind": ["example"]},
+                    {"src_path": test, "name": "serde", "kind": ["test"]}
+                ]
+            }]
+        });
+        let origins = package_origins(&metadata).unwrap();
+        assert_eq!(origins.len(), 1);
+        assert_eq!(origins[0].targets.len(), 1);
+        assert_eq!(origins[0].targets[0].source, normalized(&library).unwrap());
+        let mut missing_library = metadata.clone();
+        missing_library["packages"][0]["targets"][0]["src_path"] =
+            serde_json::json!(directory.join("missing.rs"));
+        assert!(package_origins(&missing_library).is_err());
+        let mut relative_example = metadata;
+        relative_example["packages"][0]["targets"][1]["src_path"] =
+            serde_json::json!("benches/benchmark.rs");
+        assert!(package_origins(&relative_example).is_err());
+    }
 
     fn selection_fixture() -> (UnitReport, Artifact, Request) {
         let report = UnitReport {

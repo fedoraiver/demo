@@ -41,11 +41,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**sort​_​binned​_​render​_​phase**<br/>按分桶键对各视图阶段的多绘制、可批处理、<br/>不可批处理网格及非网格项分别排序，使后续<br/>批次准备使用确定的键顺序。" }
   class n0 node_system
-  n1@{ shape: lin-rect, label: "**PhaseSort**<br/>组织渲染数据准备与绘制排队。" }
-  class n1 node_system_set
-  n2@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3dPr**<br/>**epass#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
-  class n2 node_resource
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
+  n1@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;AlphaMask3dPr**<br/>**epass#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
+  class n1 node_resource
+  n2@{ shape: lin-rect, label: "**PhaseSort**<br/>组织渲染数据准备与绘制排队。" }
+  class n2 node_system_set
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership

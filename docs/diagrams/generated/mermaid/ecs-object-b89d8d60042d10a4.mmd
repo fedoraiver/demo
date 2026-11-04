@@ -46,50 +46,50 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**run​_​egui​_​context​_​pass​_​loop​_​system**<br/>运行每个自动 Egui 上下文的专属调度。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
-  class n1 node_resource
-  class n1 external_node
-  n2@{ shape: lin-rect, label: "**EndPass**<br/>组织 Egui 轮次结束与输出处理。" }
-  class n2 node_system_set
-  n3@{ shape: rounded, label: "**EguiInput**<br/>保存送入当前 Egui 上下文的 RawInput" }
-  class n3 node_component
+  n1@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
+  class n1 node_component
+  n2@{ shape: rounded, label: "**EguiContextSettings**<br/>保存单个 Egui 上下文的运行、输入、指针<br/>捕获、光标和 IME 集成选项" }
+  class n2 node_component
+  n3@{ shape: lin-rect, label: "**EndPass**<br/>组织 Egui 轮次结束与输出处理。" }
+  class n3 node_system_set
   n4@{ shape: rounded, label: "**end​_​pass​_​system**<br/>结束 Egui 界面帧并保存完整输出。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**EguiContextSettings**<br/>保存单个 Egui 上下文的运行、输入、指针<br/>捕获、光标和 IME 集成选项" }
+  n5@{ shape: rounded, label: "**EguiFullOutput**<br/>暂存 Egui pass 结束时产生的完整输出" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
+  n6@{ shape: rounded, label: "**EguiSchedule**<br/>为额外 Egui 上下文指定执行 UI pass 的<br/>调度" }
   class n6 node_component
-  n7@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
-  class n7 node_plugin
-  n8@{ shape: rounded, label: "**EguiFullOutput**<br/>暂存 Egui pass 结束时产生的完整输出" }
-  class n8 node_component
-  n9@{ shape: rounded, label: "**EguiSchedule**<br/>为额外 Egui 上下文指定执行 UI pass 的<br/>调度" }
-  class n9 node_component
-  n1 e0@--> n0
-  class e0 edge_read
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
+  n7@{ shape: rounded, label: "**EguiInput**<br/>保存送入当前 Egui 上下文的 RawInput" }
+  class n7 node_component
+  n8@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
+  class n8 node_plugin
+  n9@{ shape: cyl, label: "**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
+  class n9 node_resource
+  class n9 external_node
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
   n0 e3@-->|"先于"| n4
   class e3 edge_order
-  n5 e4@--> n0
-  class e4 edge_read
-  n0 e5@-->|"可变访问"| n6
-  class e5 edge_write
-  n7 e6@-->|"调用"| n0
-  class e6 edge_registration
-  n0 e7@-->|"赋值"| n8
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_read
+  n0 e6@-->|"赋值"| n5
+  class e6 edge_write
+  n0 e7@-->|"可变访问"| n7
   class e7 edge_write
-  n0 e8@-->|"可变访问"| n8
-  class e8 edge_write
+  n8 e8@-->|"调用"| n0
+  class e8 edge_registration
   n9 e9@--> n0
   class e9 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e5@{ curve: basis }
+  e4@{ curve: bumpX }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

@@ -80,3 +80,53 @@ test('a verified compiler sidecar uses the same bounded replacement path while p
   assert.equal(calls, 2); assert.deepEqual(waits, [20]);
   assert.deepEqual(fs.readFileSync(files.target), newContent); assert.deepEqual(fs.readFileSync(files.source), newContent);
 });
+
+test('an identical verified target is reused without copying or trying a locked rename', t => {
+  const files = fixture(t), expected = digest(newContent), staging = Buffer.from('untouched staging bytes');
+  fs.writeFileSync(files.target, newContent); fs.writeFileSync(files.staged, staging);
+  copyVerifiedArtifactSync(files.source, files.staged, files.target, expected, {
+    platform: 'win32', rename: () => { throw failure('EPERM'); }, wait: () => assert.fail('An identical target must not wait'),
+  });
+  assert.deepEqual(fs.readFileSync(files.target), newContent);
+  assert.deepEqual(fs.readFileSync(files.staged), staging);
+  assert.deepEqual(fs.readFileSync(files.source), newContent);
+});
+
+test('an identical target cannot hide a changed or missing compiler source', t => {
+  for (const missing of [false, true]) {
+    const files = fixture(t), expected = digest(newContent);
+    fs.writeFileSync(files.target, newContent);
+    if (missing) fs.unlinkSync(files.source);
+    else fs.writeFileSync(files.source, 'changed compiler source');
+    assert.throws(() => copyVerifiedArtifactSync(files.source, files.staged, files.target, expected, {
+      platform: 'win32', rename: () => assert.fail('Invalid source must not reach replacement'), wait: () => assert.fail('Invalid source must not wait'),
+    }), missing ? { code: 'ENOENT' } : /Compiler call graph changed during artifact copy/);
+    assert.deepEqual(fs.readFileSync(files.target), newContent);
+    assert.deepEqual(fs.readFileSync(files.staged), newContent);
+  }
+});
+
+test('a compiler source changed during copying still fails staged SHA verification and preserves the target', t => {
+  const files = fixture(t), expected = digest(newContent), changed = Buffer.from('changed during copy');
+  const copyFile = fs.copyFileSync;
+  t.mock.method(fs, 'copyFileSync', (source, staged) => {
+    fs.writeFileSync(source, changed);
+    copyFile(source, staged);
+  });
+  assert.throws(() => copyVerifiedArtifactSync(files.source, files.staged, files.target, expected, {
+    platform: 'win32', rename: () => assert.fail('Changed staged bytes must not reach replacement'), wait: () => assert.fail('Changed staged bytes must not wait'),
+  }), /Compiler call graph changed during artifact copy/);
+  assert.deepEqual(fs.readFileSync(files.target), oldContent);
+  assert.deepEqual(fs.readFileSync(files.staged), changed);
+});
+
+test('a missing target is created through the verified atomic replacement path', t => {
+  const files = fixture(t), expected = digest(newContent); let calls = 0;
+  fs.unlinkSync(files.target);
+  copyVerifiedArtifactSync(files.source, files.staged, files.target, expected, {
+    rename: (staged, target) => { calls++; fs.renameSync(staged, target); },
+  });
+  assert.equal(calls, 1);
+  assert.deepEqual(fs.readFileSync(files.target), newContent);
+  assert.equal(fs.existsSync(files.staged), false);
+});

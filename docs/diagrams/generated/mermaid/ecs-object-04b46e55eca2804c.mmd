@@ -44,32 +44,32 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>按绘制顺序在 CPU 路径上合并兼容批次。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent2d**<br/>**#gt;**<br/>汇集各视图需要排序的绘制指令。" }
-  class n1 node_resource
-  n2@{ shape: lin-rect, label: "**PrepareResources**<br/>组织渲染数据准备与绘制排队。" }
-  class n2 node_system_set
-  n3@{ shape: cyl, label: "**BatchedInstanceBuffer#lt;Mesh2dUniform#gt;**<br/>保存 CPU 准备路径的批次绘制数据。" }
+  n1@{ shape: lin-rect, label: "**PrepareResources**<br/>组织渲染数据准备与绘制排队。" }
+  class n1 node_system_set
+  n2@{ shape: cyl, label: "**BatchedInstanceBuffer#lt;Mesh2dUniform#gt;**<br/>保存 CPU 准备路径的批次绘制数据。" }
+  class n2 node_resource
+  n3@{ shape: cyl, label: "**RenderMesh2dInstances**<br/>来自crate:bevy​_​sprite​_​render ↗：按主<br/>世界实体保存提取后的二维网格实例。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
+  class n3 external_node
+  n4@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent2d**<br/>**#gt;**<br/>汇集各视图需要排序的绘制指令。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**RenderMesh2dInstances**<br/>来自crate:bevy​_​sprite​_​render ↗：按主<br/>世界实体保存提取后的二维网格实例。" }
-  class n5 node_resource
+  n5@{ shape: fr-rect, label: "**Mesh2dRenderPlugin**<br/>来自crate:bevy​_​sprite​_​render ↗：准备<br/>二维网格实例和批处理管线。" }
+  class n5 node_plugin
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**Mesh2dRenderPlugin**<br/>来自crate:bevy​_​sprite​_​render ↗：准备<br/>二维网格实例和批处理管线。" }
-  class n6 node_plugin
-  class n6 external_node
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@--> n0
-  class e4 edge_read
-  n6 e5@-->|"调用"| n0
-  class e5 edge_registration
+  n6@{ shape: cyl, label: "**MeshAllocator**<br/>分配并管理网格顶点和索引 GPU 缓冲。" }
+  class n6 node_resource
+  n1 e0@-->|"集合成员"| n0
+  class e0 edge_set_membership
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n6 e5@--> n0
+  class e5 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

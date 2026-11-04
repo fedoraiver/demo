@@ -45,78 +45,78 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
-  class n1 node_resource
-  class n1 external_node
-  n2@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
-  class n2 node_system
-  n3@{ shape: fr-rect, label: "**BloomPlugin**<br/>准备并合成画面辉光。" }
-  class n3 node_plugin
-  n4@{ shape: lin-rect, label: "**PostProcess**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>二维相机绘制与后处理阶段。" }
-  class n4 node_system_set
-  class n4 external_node
-  n5@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  n1@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
+  class n1 node_system
+  n2@{ shape: lin-rect, label: "**PostProcess**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>二维相机绘制与后处理阶段。" }
+  class n2 node_system_set
+  class n2 external_node
+  n3@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: rounded, label: "**UpsamplingPipelineIds**<br/>记录 Bloom 主上采样及最终合成管线。" }
+  class n4 node_component
+  n5@{ shape: cyl, label: "**ComponentUniforms#lt;BloomUniforms#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**BloomBindGroups**<br/>缓存视图 Bloom 各级降采样和上采样绑定。" }
+  n6@{ shape: rounded, label: "**Bloom**<br/>为 HDR 相机配置亮部扩散光晕。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n7@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**DynamicUniformIndex#lt;BloomUniforms#gt;**<br/>来自crate:bevy​_​render ↗：定位组件参数<br/>在共享 Uniform 缓冲中的位置。" }
-  class n8 node_component
-  class n8 external_node
-  n9@{ shape: rounded, label: "**BloomDownsamplingPipelineIds**<br/>记录 Bloom 首级和后续降采样管线。" }
-  class n9 node_component
-  n10@{ shape: rounded, label: "**BloomTexture**<br/>保存 Bloom 逐级缩小的中间纹理。" }
+  n8@{ shape: fr-rect, label: "**BloomPlugin**<br/>准备并合成画面辉光。" }
+  class n8 node_plugin
+  n9@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n9 node_resource
+  class n9 external_node
+  n10@{ shape: rounded, label: "**BloomDownsamplingPipelineIds**<br/>记录 Bloom 首级和后续降采样管线。" }
   class n10 node_component
-  n11@{ shape: cyl, label: "**BloomDownsamplingPipeline**<br/>提供 Bloom 降采样的着色器和资源布局。" }
-  class n11 node_resource
-  n12@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
-  class n12 node_system
-  class n12 external_node
-  n13@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
-  class n13 node_component
+  n11@{ shape: rounded, label: "**BloomBindGroups**<br/>缓存视图 Bloom 各级降采样和上采样绑定。" }
+  class n11 node_component
+  n12@{ shape: rounded, label: "**BloomTexture**<br/>保存 Bloom 逐级缩小的中间纹理。" }
+  class n12 node_component
+  n13@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**UpsamplingPipelineIds**<br/>记录 Bloom 主上采样及最终合成管线。" }
+  n14@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n14 node_component
-  n15@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n15 node_resource
+  class n14 external_node
+  n15@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
+  class n15 node_component
   class n15 external_node
-  n16@{ shape: rounded, label: "**Bloom**<br/>为 HDR 相机配置亮部扩散光晕。" }
-  class n16 node_component
-  n17@{ shape: cyl, label: "**ComponentUniforms#lt;BloomUniforms#gt;**<br/>来自crate:bevy​_​render ↗：汇集同类组件<br/>的动态 Uniform 数据。" }
-  class n17 node_resource
+  n16@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
+  class n16 node_resource
+  class n16 external_node
+  n17@{ shape: rounded, label: "**DynamicUniformIndex#lt;BloomUniforms#gt;**<br/>来自crate:bevy​_​render ↗：定位组件参数<br/>在共享 Uniform 缓冲中的位置。" }
+  class n17 node_component
   class n17 external_node
-  n18@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
-  class n18 node_component
-  class n18 external_node
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"先于"| n2
-  class e1 edge_order
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n4 e3@-->|"集合成员"| n0
-  class e3 edge_set_membership
+  n18@{ shape: cyl, label: "**BloomDownsamplingPipeline**<br/>提供 Bloom 降采样的着色器和资源布局。" }
+  class n18 node_resource
+  n0 e0@-->|"先于"| n1
+  class e0 edge_order
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
   n5 e4@--> n0
   class e4 edge_read
   n6 e5@--> n0
   class e5 edge_read
   n7 e6@--> n0
   class e6 edge_read
-  n8 e7@--> n0
-  class e7 edge_read
+  n8 e7@-->|"调用"| n0
+  class e7 edge_registration
   n9 e8@--> n0
   class e8 edge_read
   n10 e9@--> n0
   class e9 edge_read
   n11 e10@--> n0
   class e10 edge_read
-  n0 e11@-->|"先于"| n12
-  class e11 edge_order
-  n13 e12@--> n0
-  class e12 edge_read
+  n12 e11@--> n0
+  class e11 edge_read
+  n0 e12@-->|"先于"| n13
+  class e12 edge_order
   n14 e13@--> n0
   class e13 edge_read
   n15 e14@--> n0

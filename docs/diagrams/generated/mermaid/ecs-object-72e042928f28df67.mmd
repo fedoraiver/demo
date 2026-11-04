@@ -47,27 +47,27 @@ flowchart LR
   n1@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
   class n1 node_message
   class n1 external_node
-  n2@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
-  class n2 node_component
+  n2@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  class n2 node_resource
   class n2 external_node
   n3@{ shape: lin-rect, label: "**ExtractCommands**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n3 node_system_set
   class n3 external_node
-  n4@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n4 node_resource
+  n4@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  class n4 node_component
   class n4 external_node
-  n5@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  n5@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n5 node_resource
   class n5 external_node
   n0 e0@-->|"消息"| n1
   class e0 edge_publish
-  n0 e1@-->|"可变访问"| n2
+  n0 e1@-->|"移除"| n2
   class e1 edge_write
   n3 e2@-->|"集合成员"| n0
   class e2 edge_set_membership
-  n0 e3@-->|"赋值"| n4
+  n0 e3@-->|"可变访问"| n4
   class e3 edge_write
-  n0 e4@-->|"移除"| n5
+  n0 e4@-->|"赋值"| n5
   class e4 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

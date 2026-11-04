@@ -1,0 +1,112 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: ExtractedUiNodes · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**ExtractedUiNodes**<br/>保存提取后的 UI 节点及本帧变化集合。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**extract​_​text​_​decorations**<br/>提取 UI 文字背景、删除线和下划线。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>使变化或移除的 UI 数据失效并清理旧渲染<br/>实体。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**extract​_​text​_​shadows**<br/>提取 UI 文字及装饰线的偏移阴影。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**extract​_​uinode​_​borders**<br/>提取 UI 各边颜色边框与外轮廓。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**extract​_​text​_​cursor**<br/>提取文字光标和带圆角的选区背景。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**queue​_​uinodes**<br/>按目标相机和堆叠顺序排队 UI 节点。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**prepare​_​uinodes**<br/>生成裁剪后的 UI 几何并合并图像批次。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**extract​_​viewport​_​nodes**<br/>把视口节点所引用相机的输出图像嵌入 UI。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**extract​_​uinode​_​background​_​colors**<br/>提取 UI 节点背景与外侧填充色。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**extract​_​preedit​_​underlines**<br/>把输入法预编辑下划线提取为 UI 矩形。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**extract​_​text​_​sections**<br/>按图集提取 UI 字形并处理选中文字颜色。" }
+  class n11 node_system
+  n12@{ shape: rounded, label: "**extract​_​uinode​_​images**<br/>按节点视觉盒与图集区域提取普通 UI 图<br/>像。" }
+  class n12 node_system
+  n13@{ shape: rounded, label: "**extract​_​debug​_​overlay**<br/>为变化的 UI 节点提取调试轮廓。" }
+  class n13 node_system
+  n14@{ shape: rounded, label: "**extract​_​inline​_​images**<br/>把文字行内图像提取为 UI 绘制项。" }
+  class n14 node_system
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n5 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n8 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n9 e8@-->|"可变访问"| n0
+  class e8 edge_write
+  n10 e9@-->|"可变访问"| n0
+  class e9 edge_write
+  n11 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n12 e11@-->|"可变访问"| n0
+  class e11 edge_write
+  n13 e12@-->|"可变访问"| n0
+  class e12 edge_write
+  n14 e13@-->|"可变访问"| n0
+  class e13 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }

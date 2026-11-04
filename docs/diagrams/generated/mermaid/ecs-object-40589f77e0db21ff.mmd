@@ -49,30 +49,30 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**Queue**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: cyl, label: "**DrawFunctions#lt;TransparentUi#gt;**<br/>来自crate:bevy​_​render ↗：注册并查询指<br/>定绘制项的绘制函数。" }
+  n2@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;TransparentUi**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n3@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;GradientP**<br/>**ipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**GradientPipeline**<br/>提供 UI 渐变的视图布局与着色器。" }
-  class n4 node_resource
-  n5@{ shape: fr-rect, label: "**GradientPlugin**<br/>提取并绘制界面渐变。" }
-  class n5 node_plugin
-  n6@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;GradientP**<br/>**ipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
-  class n6 node_resource
-  class n6 external_node
-  n7@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
-  class n7 node_component
+  n4@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: cyl, label: "**ExtractedGradients**<br/>保存已提取的 UI 背景与边框渐变。" }
+  class n5 node_resource
+  n6@{ shape: rounded, label: "**UiCameraView**<br/>从主渲染目标视图定位对应的 UI 视图。" }
+  class n6 node_component
+  n7@{ shape: cyl, label: "**DrawFunctions#lt;TransparentUi#gt;**<br/>来自crate:bevy​_​render ↗：注册并查询指<br/>定绘制项的绘制函数。" }
+  class n7 node_resource
   class n7 external_node
-  n8@{ shape: rounded, label: "**UiAntiAlias**<br/>控制相机中的 UI 几何抗锯齿。" }
-  class n8 node_component
-  n9@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n8@{ shape: cyl, label: "**GradientPipeline**<br/>提供 UI 渐变的视图布局与着色器。" }
+  class n8 node_resource
+  n9@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;TransparentUi**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**ExtractedGradients**<br/>保存已提取的 UI 背景与边框渐变。" }
-  class n10 node_resource
-  n11@{ shape: rounded, label: "**UiCameraView**<br/>从主渲染目标视图定位对应的 UI 视图。" }
+  n10@{ shape: fr-rect, label: "**GradientPlugin**<br/>提取并绘制界面渐变。" }
+  class n10 node_plugin
+  n11@{ shape: rounded, label: "**UiAntiAlias**<br/>控制相机中的 UI 几何抗锯齿。" }
   class n11 node_component
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
@@ -80,30 +80,29 @@ flowchart LR
   class e1 edge_read
   n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
-  n0 e5@-->|"可变访问"| n6
-  class e5 edge_write
-  n7 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
   n8 e7@--> n0
   class e7 edge_read
-  n7 e8@--> n0
+  n4 e8@--> n0
   class e8 edge_read
-  n9 e9@--> n0
-  class e9 edge_read
-  n0 e10@-->|"可变访问"| n10
-  class e10 edge_write
+  n0 e9@-->|"可变访问"| n9
+  class e9 edge_write
+  n10 e10@-->|"调用"| n0
+  class e10 edge_registration
   n11 e11@--> n0
   class e11 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }
-  e5@{ curve: bumpX }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

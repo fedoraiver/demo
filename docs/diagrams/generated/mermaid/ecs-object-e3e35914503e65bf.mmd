@@ -1,0 +1,73 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: view::window::SurfaceData · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**create​_​surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**extract​_​windows**<br/>向渲染世界同步窗口配置与原生句柄。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**need​_​surface​_​configuration**<br/>判断窗口渲染表面是否需要重配。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**prepare​_​windows**<br/>为有相机输出或需要首次呈现的窗口取得交换<br/>链纹理，保留可复用的未呈现帧，并处理尺<br/>寸、模式变化及表面获取错误。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
+  class n5 node_system
+  n1 e0@-->|"赋值"| n0
+  class e0 edge_write
+  n2 e1@-->|"移除"| n0
+  class e1 edge_write
+  n1 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n0 e3@-->|"存在性约束"| n3
+  class e3 edge_reference
+  n1 e4@-->|"插入"| n0
+  class e4 edge_write
+  n0 e5@--> n4
+  class e5 edge_read
+  n0 e6@--> n5
+  class e6 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e6@{ curve: basis }

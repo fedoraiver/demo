@@ -42,7 +42,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​tonemapping​_​pipeline**<br/>建立色调映射的颜色、视图与 LUT 输入布<br/>局。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n1 node_resource
   class n1 external_node
   n2@{ shape: fr-rect, label: "**TonemappingPlugin**<br/>准备相机色调映射与查找表。" }
@@ -51,7 +51,7 @@ flowchart LR
   class n3 node_resource
   n4@{ shape: cyl, label: "**TonemappingPipeline**<br/>提供 HDR 色调映射的全屏管线资源。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n5@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n5 node_resource
   class n5 external_node
   n1 e0@--> n0

@@ -47,36 +47,36 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**exit#lt;AppState#gt;)**<br/>执行旧状态的退出调度。；从当前消息批次取<br/>得最后一次状态转换。" }
   class n0 node_system_group
-  n1@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
-  class n1 node_resource
+  n1@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  class n1 node_component
   class n1 external_node
   n2@{ shape: stadium, label: "**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
   class n2 node_event
   class n2 external_node
-  n3@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
-  class n3 node_component
+  n3@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  n4@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
   class n4 node_resource
   class n4 external_node
   n5@{ shape: lean-r, label: "**StateTransitionEvent#lt;AppState#gt;**<br/>通知状态离开和进入的变化。" }
   class n5 node_message
   n6@{ shape: lin-rect, label: "**ExitSchedules(PhantomData#lt;AppState#gt;)**<br/>执行旧状态的退出调度和退出生命周期。" }
   class n6 node_system_set
-  n1 e0@--> n0
-  class e0 edge_read
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
   n0 e1@-->|"触发事件"| n2
   class e1 edge_emit
   n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
   n5 e4@--> n0
   class e4 edge_consume
   n6 e5@-->|"集合成员"| n0
   class e5 edge_set_membership
-  n2 layout_output_0@~~~ n3
-  n3 layout_output_1@~~~ n4
+  n1 layout_output_0@~~~ n2
+  n2 layout_output_1@~~~ n3
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

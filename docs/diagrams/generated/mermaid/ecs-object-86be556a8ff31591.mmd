@@ -1,0 +1,837 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ui::InteractionDisabled · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**InteractionDisabled**<br/>标记禁止交互的 UI 控件。" }
+  class n0 node_component
+  n1@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
+  class n1 node_observer
+  class n1 external_node
+  n2@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过方<br/>向键请求打开菜单。" }
+  class n2 node_observer
+  class n2 external_node
+  n3@{ shape: hex, label: "**tablist​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
+  class n3 node_observer
+  class n3 external_node
+  n4@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>步进或跳转滑条数值。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: hex, label: "**listbox​_​on​_​set​_​selected**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表程序化选行与重选。" }
+  class n5 node_observer
+  class n5 external_node
+  n6@{ shape: hex, label: "**checkbox​_​on​_​set​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框设值请求转为勾选变化。" }
+  class n6 node_observer
+  class n6 external_node
+  n7@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
+  class n7 node_observer
+  class n7 external_node
+  n8@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消复<br/>选框的指针按压状态。" }
+  class n8 node_observer
+  class n8 external_node
+  n9@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  class n9 node_observer
+  class n9 external_node
+  n10@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  class n10 node_observer
+  class n10 external_node
+  n11@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
+  class n11 node_observer
+  class n11 external_node
+  n12@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消菜<br/>单项的指针按压状态。" }
+  class n12 node_observer
+  class n12 external_node
+  n13@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  class n13 node_observer
+  class n13 external_node
+  n14@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
+  class n14 node_observer
+  class n14 external_node
+  n15@{ shape: hex, label: "**menubutton​_​on​_​activate**<br/>来自crate:bevy​_​ui​_​widgets ↗：把菜单<br/>按钮激活转为菜单切换请求。" }
+  class n15 node_observer
+  class n15 external_node
+  n16@{ shape: hex, label: "**checkbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
+  class n16 node_observer
+  class n16 external_node
+  n17@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除菜单项按压。" }
+  class n17 node_observer
+  class n17 external_node
+  n18@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  class n18 node_observer
+  class n18 external_node
+  n19@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
+  class n19 node_observer
+  class n19 external_node
+  n20@{ shape: hex, label: "**checkbox​_​on​_​toggle​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框切换请求转为勾选变化。" }
+  class n20 node_observer
+  class n20 external_node
+  n21@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
+  class n21 node_observer
+  class n21 external_node
+  n22@{ shape: hex, label: "**button​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过有<br/>效指针点击激活按钮。" }
+  class n22 node_observer
+  class n22 external_node
+  n23@{ shape: hex, label: "**slider​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：释放滑<br/>条的按下状态。" }
+  class n23 node_observer
+  class n23 external_node
+  n24@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
+  class n24 node_observer
+  class n24 external_node
+  n25@{ shape: hex, label: "**slider​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消滑<br/>条的按下状态。" }
+  class n25 node_observer
+  class n25 external_node
+  n26@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  class n26 node_observer
+  class n26 external_node
+  n27@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  class n27 node_observer
+  class n27 external_node
+  n28@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
+  class n28 node_observer
+  class n28 external_node
+  n29@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
+  class n29 node_observer
+  class n29 external_node
+  n30@{ shape: hex, label: "**slider​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
+  class n30 node_observer
+  class n30 external_node
+  n31@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  class n31 node_observer
+  class n31 external_node
+  n32@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
+  class n32 node_observer
+  class n32 external_node
+  n33@{ shape: hex, label: "**slider​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：释放滑<br/>条的按下状态。" }
+  class n33 node_observer
+  class n33 external_node
+  n34@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
+  class n34 node_observer
+  class n34 external_node
+  n35@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除单选按钮按压。" }
+  class n35 node_observer
+  class n35 external_node
+  n36@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
+  class n36 node_observer
+  class n36 external_node
+  n37@{ shape: hex, label: "**checkbox​_​on​_​toggle​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框切换请求转为勾选变化。" }
+  class n37 node_observer
+  class n37 external_node
+  n38@{ shape: hex, label: "**button​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键激活焦点按钮。" }
+  class n38 node_observer
+  class n38 external_node
+  n39@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消单<br/>选按钮的指针按压状态。" }
+  class n39 node_observer
+  class n39 external_node
+  n40@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  class n40 node_observer
+  class n40 external_node
+  n41@{ shape: hex, label: "**slider​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：释放滑<br/>条的按下状态。" }
+  class n41 node_observer
+  class n41 external_node
+  n42@{ shape: rounded, label: "**on​_​ime​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法组合和提交转换为文字编辑操作。" }
+  class n42 node_system
+  class n42 external_node
+  n43@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除菜单项按压。" }
+  class n43 node_observer
+  class n43 external_node
+  n44@{ shape: hex, label: "**slider​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消滑<br/>条的按下状态。" }
+  class n44 node_observer
+  class n44 external_node
+  n45@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除单选按钮按压。" }
+  class n45 node_observer
+  class n45 external_node
+  n46@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过方<br/>向键请求打开菜单。" }
+  class n46 node_observer
+  class n46 external_node
+  n47@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录菜<br/>单项的指针按压。" }
+  class n47 node_observer
+  class n47 external_node
+  n48@{ shape: hex, label: "**listbox​_​focus​_​gained**<br/>来自crate:bevy​_​ui​_​widgets ↗：在列表<br/>获焦时初始化活动行。" }
+  class n48 node_observer
+  class n48 external_node
+  n49@{ shape: hex, label: "**tablist​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
+  class n49 node_observer
+  class n49 external_node
+  n50@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除菜单项按压。" }
+  class n50 node_observer
+  class n50 external_node
+  n51@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除菜单项按压。" }
+  class n51 node_observer
+  class n51 external_node
+  n52@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
+  class n52 node_observer
+  class n52 external_node
+  n53@{ shape: hex, label: "**checkbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
+  class n53 node_observer
+  class n53 external_node
+  n54@{ shape: hex, label: "**listbox​_​on​_​row​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：将列表<br/>行点击转为选择或重选请求。" }
+  class n54 node_observer
+  class n54 external_node
+  n55@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  class n55 node_observer
+  class n55 external_node
+  n56@{ shape: hex, label: "**tablist​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
+  class n56 node_observer
+  class n56 external_node
+  n57@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
+  class n57 node_observer
+  class n57 external_node
+  n58@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  class n58 node_observer
+  class n58 external_node
+  n59@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消菜<br/>单项的指针按压状态。" }
+  class n59 node_observer
+  class n59 external_node
+  n60@{ shape: hex, label: "**checkbox​_​on​_​toggle​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框切换请求转为勾选变化。" }
+  class n60 node_observer
+  class n60 external_node
+  n61@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除复选框按压。" }
+  class n61 node_observer
+  class n61 external_node
+  n62@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除复选框按压。" }
+  class n62 node_observer
+  class n62 external_node
+  n63@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
+  class n63 node_observer
+  class n63 external_node
+  n64@{ shape: hex, label: "**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录按<br/>钮按压并按配置立即激活。" }
+  class n64 node_observer
+  class n64 external_node
+  n65@{ shape: hex, label: "**listbox​_​focus​_​gained**<br/>来自crate:bevy​_​ui​_​widgets ↗：在列表<br/>获焦时初始化活动行。" }
+  class n65 node_observer
+  class n65 external_node
+  n66@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
+  class n66 node_observer
+  class n66 external_node
+  n67@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求切换复选框勾选。" }
+  class n67 node_observer
+  class n67 external_node
+  n68@{ shape: hex, label: "**slider​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
+  class n68 node_observer
+  class n68 external_node
+  n69@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
+  class n69 node_observer
+  class n69 external_node
+  n70@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：激活点<br/>击菜单项并请求关闭菜单。" }
+  class n70 node_observer
+  class n70 external_node
+  n71@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除菜单项按压。" }
+  class n71 node_observer
+  class n71 external_node
+  n72@{ shape: hex, label: "**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录按<br/>钮按压并按配置立即激活。" }
+  class n72 node_observer
+  class n72 external_node
+  n73@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录菜<br/>单项的指针按压。" }
+  class n73 node_observer
+  class n73 external_node
+  n74@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消单<br/>选按钮的指针按压状态。" }
+  class n74 node_observer
+  class n74 external_node
+  n75@{ shape: hex, label: "**menubutton​_​on​_​activate**<br/>来自crate:bevy​_​ui​_​widgets ↗：把菜单<br/>按钮激活转为菜单切换请求。" }
+  class n75 node_observer
+  class n75 external_node
+  n76@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
+  class n76 node_observer
+  class n76 external_node
+  n77@{ shape: rounded, label: "**update​_​tablist​_​derived​_​state**<br/>来自crate:bevy​_​ui​_​widgets ↗：从标签<br/>选择和焦点派生每个标签的状态。" }
+  class n77 node_system
+  class n77 external_node
+  n78@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
+  class n78 node_observer
+  class n78 external_node
+  n79@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除复选框按压。" }
+  class n79 node_observer
+  class n79 external_node
+  n80@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除单选按钮按压。" }
+  class n80 node_observer
+  class n80 external_node
+  n81@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除复选框按压。" }
+  class n81 node_observer
+  class n81 external_node
+  n82@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除复选框按压。" }
+  class n82 node_observer
+  class n82 external_node
+  n83@{ shape: hex, label: "**radio​_​button​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求选中单选按钮。" }
+  class n83 node_observer
+  class n83 external_node
+  n84@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
+  class n84 node_observer
+  class n84 external_node
+  n85@{ shape: rounded, label: "**update​_​ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
+  class n85 node_system
+  class n85 external_node
+  n86@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求切换复选框勾选。" }
+  class n86 node_observer
+  class n86 external_node
+  n87@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除单选按钮按压。" }
+  class n87 node_observer
+  class n87 external_node
+  n88@{ shape: hex, label: "**checkbox​_​on​_​set​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框设值请求转为勾选变化。" }
+  class n88 node_observer
+  class n88 external_node
+  n89@{ shape: hex, label: "**slider​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消滑<br/>条的按下状态。" }
+  class n89 node_observer
+  class n89 external_node
+  n90@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：激活点<br/>击菜单项并请求关闭菜单。" }
+  class n90 node_observer
+  class n90 external_node
+  n91@{ shape: hex, label: "**button​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键激活焦点按钮。" }
+  class n91 node_observer
+  class n91 external_node
+  n92@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过点<br/>击请求切换复选框勾选。" }
+  class n92 node_observer
+  class n92 external_node
+  n93@{ shape: hex, label: "**listbox​_​on​_​set​_​selected**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表程序化选行与重选。" }
+  class n93 node_observer
+  class n93 external_node
+  n94@{ shape: hex, label: "**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录按<br/>钮按压并按配置立即激活。" }
+  class n94 node_observer
+  class n94 external_node
+  n95@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消单<br/>选按钮的指针按压状态。" }
+  class n95 node_observer
+  class n95 external_node
+  n96@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>步进或跳转滑条数值。" }
+  class n96 node_observer
+  class n96 external_node
+  n97@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
+  class n97 node_observer
+  class n97 external_node
+  n98@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>步进或跳转滑条数值。" }
+  class n98 node_observer
+  class n98 external_node
+  n99@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
+  class n99 node_observer
+  class n99 external_node
+  n100@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录菜<br/>单项的指针按压。" }
+  class n100 node_observer
+  class n100 external_node
+  n101@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：激活点<br/>击菜单项并请求关闭菜单。" }
+  class n101 node_observer
+  class n101 external_node
+  n102@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除菜单项按压。" }
+  class n102 node_observer
+  class n102 external_node
+  n103@{ shape: hex, label: "**menubutton​_​on​_​activate**<br/>来自crate:bevy​_​ui​_​widgets ↗：把菜单<br/>按钮激活转为菜单切换请求。" }
+  class n103 node_observer
+  class n103 external_node
+  n104@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除单选按钮按压。" }
+  class n104 node_observer
+  class n104 external_node
+  n105@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  class n105 node_observer
+  class n105 external_node
+  n106@{ shape: hex, label: "**slider​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
+  class n106 node_observer
+  class n106 external_node
+  n107@{ shape: hex, label: "**button​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键激活焦点按钮。" }
+  class n107 node_observer
+  class n107 external_node
+  n108@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滑<br/>条拖动起点并捕获指针。" }
+  class n108 node_observer
+  class n108 external_node
+  n109@{ shape: hex, label: "**listbox​_​on​_​set​_​selected**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表程序化选行与重选。" }
+  class n109 node_observer
+  class n109 external_node
+  n110@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过方<br/>向键请求打开菜单。" }
+  class n110 node_observer
+  class n110 external_node
+  n111@{ shape: hex, label: "**listbox​_​focus​_​gained**<br/>来自crate:bevy​_​ui​_​widgets ↗：在列表<br/>获焦时初始化活动行。" }
+  class n111 node_observer
+  class n111 external_node
+  n112@{ shape: hex, label: "**checkbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求切换复选框勾选。" }
+  class n112 node_observer
+  class n112 external_node
+  n113@{ shape: hex, label: "**checkbox​_​on​_​set​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框设值请求转为勾选变化。" }
+  class n113 node_observer
+  class n113 external_node
+  n114@{ shape: hex, label: "**button​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过有<br/>效指针点击激活按钮。" }
+  class n114 node_observer
+  class n114 external_node
+  n115@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除复选框按压。" }
+  class n115 node_observer
+  class n115 external_node
+  n116@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
+  class n116 node_observer
+  class n116 external_node
+  n117@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消复<br/>选框的指针按压状态。" }
+  class n117 node_observer
+  class n117 external_node
+  n118@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  class n118 node_observer
+  class n118 external_node
+  n119@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }
+  class n119 node_observer
+  class n119 external_node
+  n120@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  class n120 node_observer
+  class n120 external_node
+  n121@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  class n121 node_observer
+  class n121 external_node
+  n122@{ shape: hex, label: "**button​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过有<br/>效指针点击激活按钮。" }
+  class n122 node_observer
+  class n122 external_node
+  n123@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除单选按钮按压。" }
+  class n123 node_observer
+  class n123 external_node
+  n124@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滑<br/>条拖动起点并捕获指针。" }
+  class n124 node_observer
+  class n124 external_node
+  n125@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  class n125 node_observer
+  class n125 external_node
+  n126@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
+  class n126 node_observer
+  class n126 external_node
+  n127@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滑<br/>条拖动起点并捕获指针。" }
+  class n127 node_observer
+  class n127 external_node
+  n128@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消复<br/>选框的指针按压状态。" }
+  class n128 node_observer
+  class n128 external_node
+  n129@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消菜<br/>单项的指针按压状态。" }
+  class n129 node_observer
+  class n129 external_node
+  n130@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
+  class n130 node_observer
+  class n130 external_node
+  n131@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
+  class n131 node_observer
+  class n131 external_node
+  n132@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  class n132 node_observer
+  class n132 external_node
+  n0 e0@-->|"存在性约束"| n1
+  class e0 edge_reference
+  n0 e1@-->|"存在性约束"| n2
+  class e1 edge_reference
+  n0 e2@-->|"存在性约束"| n3
+  class e2 edge_reference
+  n0 e3@-->|"存在性约束"| n4
+  class e3 edge_reference
+  n0 e4@-->|"存在性约束"| n5
+  class e4 edge_reference
+  n0 e5@-->|"存在性约束"| n6
+  class e5 edge_reference
+  n0 e6@-->|"存在性约束"| n7
+  class e6 edge_reference
+  n0 e7@-->|"存在性约束"| n8
+  class e7 edge_reference
+  n0 e8@-->|"存在性约束"| n9
+  class e8 edge_reference
+  n0 e9@-->|"存在性约束"| n10
+  class e9 edge_reference
+  n0 e10@-->|"存在性约束"| n11
+  class e10 edge_reference
+  n0 e11@-->|"存在性约束"| n12
+  class e11 edge_reference
+  n0 e12@-->|"存在性约束"| n13
+  class e12 edge_reference
+  n0 e13@-->|"存在性约束"| n14
+  class e13 edge_reference
+  n0 e14@-->|"存在性约束"| n15
+  class e14 edge_reference
+  n0 e15@-->|"存在性约束"| n16
+  class e15 edge_reference
+  n0 e16@-->|"存在性约束"| n17
+  class e16 edge_reference
+  n0 e17@-->|"存在性约束"| n18
+  class e17 edge_reference
+  n0 e18@-->|"存在性约束"| n19
+  class e18 edge_reference
+  n0 e19@-->|"存在性约束"| n20
+  class e19 edge_reference
+  n0 e20@-->|"存在性约束"| n21
+  class e20 edge_reference
+  n0 e21@-->|"存在性约束"| n22
+  class e21 edge_reference
+  n0 e22@-->|"存在性约束"| n23
+  class e22 edge_reference
+  n0 e23@-->|"存在性约束"| n24
+  class e23 edge_reference
+  n0 e24@-->|"存在性约束"| n25
+  class e24 edge_reference
+  n0 e25@-->|"存在性约束"| n26
+  class e25 edge_reference
+  n0 e26@-->|"存在性约束"| n27
+  class e26 edge_reference
+  n0 e27@-->|"存在性约束"| n28
+  class e27 edge_reference
+  n0 e28@-->|"存在性约束"| n29
+  class e28 edge_reference
+  n0 e29@-->|"存在性约束"| n30
+  class e29 edge_reference
+  n0 e30@-->|"存在性约束"| n31
+  class e30 edge_reference
+  n0 e31@-->|"存在性约束"| n32
+  class e31 edge_reference
+  n0 e32@-->|"存在性约束"| n33
+  class e32 edge_reference
+  n0 e33@-->|"存在性约束"| n34
+  class e33 edge_reference
+  n0 e34@-->|"存在性约束"| n35
+  class e34 edge_reference
+  n0 e35@-->|"存在性约束"| n36
+  class e35 edge_reference
+  n0 e36@-->|"存在性约束"| n37
+  class e36 edge_reference
+  n0 e37@-->|"存在性约束"| n38
+  class e37 edge_reference
+  n0 e38@-->|"存在性约束"| n39
+  class e38 edge_reference
+  n0 e39@-->|"存在性约束"| n40
+  class e39 edge_reference
+  n0 e40@-->|"存在性约束"| n41
+  class e40 edge_reference
+  n0 e41@-->|"存在性约束"| n42
+  class e41 edge_reference
+  n0 e42@-->|"存在性约束"| n43
+  class e42 edge_reference
+  n0 e43@-->|"存在性约束"| n44
+  class e43 edge_reference
+  n0 e44@-->|"存在性约束"| n45
+  class e44 edge_reference
+  n0 e45@-->|"存在性约束"| n46
+  class e45 edge_reference
+  n0 e46@-->|"存在性约束"| n47
+  class e46 edge_reference
+  n0 e47@-->|"存在性约束"| n48
+  class e47 edge_reference
+  n0 e48@-->|"存在性约束"| n49
+  class e48 edge_reference
+  n0 e49@-->|"存在性约束"| n50
+  class e49 edge_reference
+  n0 e50@-->|"存在性约束"| n51
+  class e50 edge_reference
+  n0 e51@-->|"存在性约束"| n52
+  class e51 edge_reference
+  n0 e52@-->|"存在性约束"| n53
+  class e52 edge_reference
+  n0 e53@-->|"存在性约束"| n54
+  class e53 edge_reference
+  n0 e54@-->|"存在性约束"| n55
+  class e54 edge_reference
+  n0 e55@-->|"存在性约束"| n56
+  class e55 edge_reference
+  n0 e56@-->|"存在性约束"| n57
+  class e56 edge_reference
+  n0 e57@-->|"存在性约束"| n58
+  class e57 edge_reference
+  n0 e58@-->|"存在性约束"| n59
+  class e58 edge_reference
+  n0 e59@-->|"存在性约束"| n60
+  class e59 edge_reference
+  n0 e60@-->|"存在性约束"| n61
+  class e60 edge_reference
+  n0 e61@-->|"存在性约束"| n62
+  class e61 edge_reference
+  n0 e62@-->|"存在性约束"| n63
+  class e62 edge_reference
+  n0 e63@-->|"存在性约束"| n64
+  class e63 edge_reference
+  n0 e64@-->|"存在性约束"| n65
+  class e64 edge_reference
+  n0 e65@-->|"存在性约束"| n66
+  class e65 edge_reference
+  n0 e66@-->|"存在性约束"| n67
+  class e66 edge_reference
+  n0 e67@-->|"存在性约束"| n68
+  class e67 edge_reference
+  n0 e68@-->|"存在性约束"| n69
+  class e68 edge_reference
+  n0 e69@-->|"存在性约束"| n70
+  class e69 edge_reference
+  n0 e70@-->|"存在性约束"| n71
+  class e70 edge_reference
+  n0 e71@-->|"存在性约束"| n72
+  class e71 edge_reference
+  n0 e72@-->|"存在性约束"| n73
+  class e72 edge_reference
+  n0 e73@-->|"存在性约束"| n74
+  class e73 edge_reference
+  n0 e74@-->|"存在性约束"| n75
+  class e74 edge_reference
+  n0 e75@-->|"存在性约束"| n76
+  class e75 edge_reference
+  n0 e76@--> n77
+  class e76 edge_read
+  n0 e77@-->|"存在性约束"| n78
+  class e77 edge_reference
+  n0 e78@-->|"存在性约束"| n79
+  class e78 edge_reference
+  n0 e79@-->|"存在性约束"| n80
+  class e79 edge_reference
+  n0 e80@-->|"存在性约束"| n81
+  class e80 edge_reference
+  n0 e81@-->|"存在性约束"| n77
+  class e81 edge_reference
+  n0 e82@-->|"存在性约束"| n82
+  class e82 edge_reference
+  n0 e83@-->|"存在性约束"| n83
+  class e83 edge_reference
+  n0 e84@-->|"存在性约束"| n84
+  class e84 edge_reference
+  n0 e85@-->|"存在性约束"| n85
+  class e85 edge_reference
+  n0 e86@-->|"存在性约束"| n86
+  class e86 edge_reference
+  n0 e87@-->|"存在性约束"| n87
+  class e87 edge_reference
+  n0 e88@-->|"存在性约束"| n88
+  class e88 edge_reference
+  n0 e89@-->|"存在性约束"| n89
+  class e89 edge_reference
+  n0 e90@-->|"存在性约束"| n90
+  class e90 edge_reference
+  n0 e91@-->|"存在性约束"| n91
+  class e91 edge_reference
+  n0 e92@-->|"存在性约束"| n92
+  class e92 edge_reference
+  n0 e93@-->|"存在性约束"| n93
+  class e93 edge_reference
+  n0 e94@-->|"存在性约束"| n94
+  class e94 edge_reference
+  n0 e95@-->|"存在性约束"| n95
+  class e95 edge_reference
+  n0 e96@-->|"存在性约束"| n96
+  class e96 edge_reference
+  n0 e97@-->|"存在性约束"| n97
+  class e97 edge_reference
+  n0 e98@-->|"存在性约束"| n98
+  class e98 edge_reference
+  n0 e99@-->|"存在性约束"| n99
+  class e99 edge_reference
+  n0 e100@-->|"存在性约束"| n100
+  class e100 edge_reference
+  n0 e101@-->|"存在性约束"| n101
+  class e101 edge_reference
+  n0 e102@-->|"存在性约束"| n102
+  class e102 edge_reference
+  n0 e103@-->|"存在性约束"| n103
+  class e103 edge_reference
+  n0 e104@-->|"存在性约束"| n104
+  class e104 edge_reference
+  n0 e105@-->|"存在性约束"| n105
+  class e105 edge_reference
+  n0 e106@-->|"存在性约束"| n106
+  class e106 edge_reference
+  n0 e107@-->|"存在性约束"| n107
+  class e107 edge_reference
+  n0 e108@-->|"存在性约束"| n108
+  class e108 edge_reference
+  n0 e109@-->|"存在性约束"| n109
+  class e109 edge_reference
+  n0 e110@-->|"存在性约束"| n110
+  class e110 edge_reference
+  n0 e111@-->|"存在性约束"| n111
+  class e111 edge_reference
+  n0 e112@-->|"存在性约束"| n112
+  class e112 edge_reference
+  n0 e113@-->|"存在性约束"| n113
+  class e113 edge_reference
+  n0 e114@-->|"存在性约束"| n114
+  class e114 edge_reference
+  n0 e115@-->|"存在性约束"| n115
+  class e115 edge_reference
+  n0 e116@-->|"存在性约束"| n116
+  class e116 edge_reference
+  n0 e117@-->|"存在性约束"| n117
+  class e117 edge_reference
+  n0 e118@-->|"存在性约束"| n118
+  class e118 edge_reference
+  n0 e119@-->|"存在性约束"| n119
+  class e119 edge_reference
+  n0 e120@-->|"存在性约束"| n120
+  class e120 edge_reference
+  n0 e121@-->|"存在性约束"| n121
+  class e121 edge_reference
+  n0 e122@-->|"存在性约束"| n122
+  class e122 edge_reference
+  n0 e123@-->|"存在性约束"| n123
+  class e123 edge_reference
+  n0 e124@-->|"存在性约束"| n124
+  class e124 edge_reference
+  n0 e125@-->|"存在性约束"| n125
+  class e125 edge_reference
+  n0 e126@-->|"存在性约束"| n126
+  class e126 edge_reference
+  n0 e127@-->|"存在性约束"| n127
+  class e127 edge_reference
+  n0 e128@-->|"存在性约束"| n128
+  class e128 edge_reference
+  n0 e129@-->|"存在性约束"| n129
+  class e129 edge_reference
+  n0 e130@-->|"存在性约束"| n130
+  class e130 edge_reference
+  n0 e131@-->|"存在性约束"| n131
+  class e131 edge_reference
+  n0 e132@-->|"存在性约束"| n132
+  class e132 edge_reference
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }
+  e65@{ curve: basis }
+  e67@{ curve: basis }
+  e68@{ curve: basis }
+  e69@{ curve: basis }
+  e70@{ curve: basis }
+  e71@{ curve: basis }
+  e72@{ curve: basis }
+  e73@{ curve: basis }
+  e74@{ curve: basis }
+  e75@{ curve: basis }
+  e76@{ curve: basis }
+  e77@{ curve: basis }
+  e78@{ curve: basis }
+  e79@{ curve: basis }
+  e80@{ curve: basis }
+  e81@{ curve: basis }
+  e82@{ curve: basis }
+  e83@{ curve: basis }
+  e84@{ curve: basis }
+  e85@{ curve: basis }
+  e86@{ curve: basis }
+  e87@{ curve: basis }
+  e88@{ curve: basis }
+  e89@{ curve: basis }
+  e90@{ curve: basis }
+  e91@{ curve: basis }
+  e92@{ curve: basis }
+  e93@{ curve: basis }
+  e94@{ curve: basis }
+  e95@{ curve: basis }
+  e96@{ curve: basis }
+  e97@{ curve: basis }
+  e98@{ curve: basis }
+  e99@{ curve: basis }
+  e100@{ curve: basis }
+  e101@{ curve: basis }
+  e102@{ curve: basis }
+  e103@{ curve: basis }
+  e104@{ curve: basis }
+  e105@{ curve: basis }
+  e106@{ curve: basis }
+  e107@{ curve: basis }
+  e108@{ curve: basis }
+  e109@{ curve: basis }
+  e110@{ curve: basis }
+  e111@{ curve: basis }
+  e112@{ curve: basis }
+  e113@{ curve: basis }
+  e114@{ curve: basis }
+  e115@{ curve: basis }
+  e116@{ curve: basis }
+  e117@{ curve: basis }
+  e118@{ curve: basis }
+  e119@{ curve: basis }
+  e120@{ curve: basis }
+  e121@{ curve: basis }
+  e122@{ curve: basis }
+  e123@{ curve: basis }
+  e124@{ curve: basis }
+  e125@{ curve: basis }
+  e126@{ curve: basis }
+  e127@{ curve: basis }
+  e128@{ curve: basis }
+  e129@{ curve: basis }
+  e130@{ curve: basis }
+  e131@{ curve: basis }
+  e132@{ curve: basis }

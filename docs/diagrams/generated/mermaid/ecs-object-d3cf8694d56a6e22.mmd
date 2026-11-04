@@ -48,71 +48,73 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>清除本帧没有相机覆盖的窗口交换链。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**CorePipelinePlugin**<br/>装配核心渲染管线与相机驱动。" }
-  class n1 node_plugin
-  n2@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
-  class n2 node_component
+  n1@{ shape: cyl, label: "**CameraWindows**<br/>记录相机输出所覆盖的窗口集合。" }
+  class n1 node_resource
+  n2@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  class n2 node_resource
   class n2 external_node
-  n3@{ shape: rounded, label: "**ExtractedWindow**<br/>来自crate:bevy​_​render ↗：保存渲染侧窗<br/>口尺寸、呈现模式和交换链状态。" }
-  class n3 node_component
+  n3@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  class n3 node_message
   class n3 external_node
-  n4@{ shape: cyl, label: "**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
-  class n4 node_resource
-  class n4 external_node
-  n5@{ shape: cyl, label: "**CameraWindows**<br/>记录相机输出所覆盖的窗口集合。" }
+  n4@{ shape: fr-rect, label: "**CorePipelinePlugin**<br/>装配核心渲染管线与相机驱动。" }
+  class n4 node_plugin
+  n5@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n6 node_resource
+  class n5 external_node
+  n6@{ shape: lin-rect, label: "**Submit**<br/>来自crate:bevy​_​render ↗：组织绘制执<br/>行、提交与收尾。" }
+  class n6 node_system_set
   class n6 external_node
-  n7@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
-  class n7 node_resource
+  n7@{ shape: rounded, label: "**ExtractedWindow**<br/>来自crate:bevy​_​render ↗：保存渲染侧窗<br/>口尺寸、呈现模式和交换链状态。" }
+  class n7 node_component
   class n7 external_node
-  n8@{ shape: lin-rect, label: "**Submit**<br/>来自crate:bevy​_​render ↗：组织绘制执<br/>行、提交与收尾。" }
-  class n8 node_system_set
+  n8@{ shape: cyl, label: "**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
+  class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n9 node_resource
-  class n9 external_node
+  n9@{ shape: rounded, label: "**submit​_​pending​_​command​_​buffers**<br/>将排队完成的渲染命令缓冲提交到 GPU。" }
+  class n9 node_system
   n10@{ shape: cyl, label: "**ClearColor**<br/>来自crate:bevy​_​camera ↗：提供相机默认<br/>的清屏颜色。" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: rounded, label: "**submit​_​pending​_​command​_​buffers**<br/>将排队完成的渲染命令缓冲提交到 GPU。" }
-  class n11 node_system
-  n12@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
-  class n12 node_message
+  n11@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n12 node_resource
   class n12 external_node
-  n1 e0@-->|"调用"| n0
-  class e0 edge_registration
+  n0 e0@-->|"移除"| n1
+  class e0 edge_write
   n2 e1@--> n0
   class e1 edge_read
-  n3 e2@--> n0
-  class e2 edge_read
-  n4 e3@--> n0
-  class e3 edge_read
-  n0 e4@-->|"移除"| n5
+  n0 e2@-->|"消息"| n3
+  class e2 edge_publish
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n0 e4@-->|"赋值"| n5
   class e4 edge_write
-  n6 e5@--> n0
-  class e5 edge_read
+  n6 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
   n7 e6@--> n0
   class e6 edge_read
-  n8 e7@-->|"集合成员"| n0
-  class e7 edge_set_membership
-  n0 e8@-->|"赋值"| n9
-  class e8 edge_write
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@-->|"先于"| n0
+  class e8 edge_order
   n10 e9@--> n0
   class e9 edge_read
-  n11 e10@-->|"先于"| n0
-  class e10 edge_order
-  n0 e11@-->|"消息"| n12
-  class e11 edge_publish
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@--> n0
+  class e11 edge_read
+  n1 layout_output_0@~~~ n3
+  n3 layout_output_1@~~~ n5
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
-  e8@{ curve: bumpX }
+  e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }

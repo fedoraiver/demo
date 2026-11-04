@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-faa9b1153b167378-e5{marker-start:url(#object-faa9b1153b167378_flowchart-v2-pointStart)!important}\n#object-faa9b1153b167378_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-faa9b1153b167378-e3{marker-start:url(#object-faa9b1153b167378_flowchart-v2-pointStart)!important}\n#object-faa9b1153b167378_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -43,13 +43,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
-  class n1 node_component
+  n1@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  class n1 node_resource
   n2@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
-  class n3 node_resource
+  n3@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
+  class n3 node_component
   n4@{ shape: rounded, label: "**DebandDither**<br/>来自crate:bevy​_​render ↗：控制颜色输出<br/>的去色带抖动。" }
   class n4 node_component
   class n4 external_node
@@ -61,13 +61,13 @@ flowchart LR
   class e1 edge_reference
   n3 e2@--> n0
   class e2 edge_read
-  n4 e3@--> n0
-  class e3 edge_read
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
-  n4 e5@---|"移除"| n0
+  n4 e3@---|"移除"| n0
+  class e3 edge_write
+  n4 e4@--> n0
+  class e4 edge_read
+  n0 e5@-->|"可变访问"| n5
   class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e3@{ curve: basis }
-  e5@{ curve: basis }
+  e4@{ curve: basis }

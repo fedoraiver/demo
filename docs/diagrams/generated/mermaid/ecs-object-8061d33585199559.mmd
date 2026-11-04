@@ -44,69 +44,69 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**extract​_​atmosphere**<br/>为三维相机选择并提取最近的大气。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**AtmosphereTransformsOffset**<br/>定位当前视图的大气变换参数。" }
+  n1@{ shape: rounded, label: "**ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
   class n1 node_component
-  n2@{ shape: rounded, label: "**AtmosphereTextures**<br/>保存大气渲染的四类缓存查找纹理。" }
+  n2@{ shape: rounded, label: "**AtmosphereTransformsOffset**<br/>定位当前视图的大气变换参数。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**RenderSkyPipelineId**<br/>定位当前天空绘制的缓存管线。" }
-  class n3 node_component
-  n4@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n3@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: rounded, label: "**GpuAtmosphereSettings**<br/>向 GPU 提供大气采样和查找表设置。" }
   class n4 node_component
-  class n4 external_node
-  n5@{ shape: rounded, label: "**GpuAtmosphereSettings**<br/>向 GPU 提供大气采样和查找表设置。" }
+  n5@{ shape: rounded, label: "**Atmosphere**<br/>来自crate:bevy​_​light ↗：描述行星半<br/>径、地表反照率与大气介质。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  class n5 external_node
+  n6@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
-  class n7 node_resource
+  n7@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  class n7 node_component
   class n7 external_node
-  n8@{ shape: rounded, label: "**ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
+  n8@{ shape: rounded, label: "**AtmosphereBindGroups**<br/>保存大气查找表及天空绘制的绑定组。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**GpuAtmosphere**<br/>以 Uniform 格式描述大气几何与地面。" }
+  n9@{ shape: rounded, label: "**AtmosphereSettings**<br/>配置大气查找表尺寸和积分采样。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**AtmosphereBindGroups**<br/>保存大气查找表及天空绘制的绑定组。" }
+  n10@{ shape: rounded, label: "**RenderSkyPipelineId**<br/>定位当前天空绘制的缓存管线。" }
   class n10 node_component
-  n11@{ shape: fr-rect, label: "**AtmospherePlugin**<br/>准备大气散射与环境光渲染数据。" }
-  class n11 node_plugin
-  n12@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
+  n11@{ shape: rounded, label: "**AtmosphereTextures**<br/>保存大气渲染的四类缓存查找纹理。" }
+  class n11 node_component
+  n12@{ shape: rounded, label: "**GpuAtmosphere**<br/>以 Uniform 格式描述大气几何与地面。" }
   class n12 node_component
-  class n12 external_node
-  n13@{ shape: rounded, label: "**AtmosphereSettings**<br/>配置大气查找表尺寸和积分采样。" }
-  class n13 node_component
-  n14@{ shape: rounded, label: "**Atmosphere**<br/>来自crate:bevy​_​light ↗：描述行星半<br/>径、地表反照率与大气介质。" }
+  n13@{ shape: fr-rect, label: "**AtmospherePlugin**<br/>准备大气散射与环境光渲染数据。" }
+  class n13 node_plugin
+  n14@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n14 node_component
   class n14 external_node
   n0 e0@-->|"移除"| n1
   class e0 edge_write
   n0 e1@-->|"移除"| n2
   class e1 edge_write
-  n0 e2@-->|"移除"| n3
-  class e2 edge_write
-  n4 e3@--> n0
-  class e3 edge_read
-  n0 e4@-->|"插入"| n5
+  n3 e2@--> n0
+  class e2 edge_read
+  n0 e3@-->|"插入"| n4
+  class e3 edge_write
+  n0 e4@-->|"插入"| n1
   class e4 edge_write
-  n6 e5@--> n0
-  class e5 edge_read
-  n7 e6@--> n0
+  n0 e5@-->|"移除"| n4
+  class e5 edge_write
+  n5 e6@--> n0
   class e6 edge_read
-  n0 e7@-->|"插入"| n8
-  class e7 edge_write
-  n0 e8@-->|"移除"| n9
-  class e8 edge_write
-  n0 e9@-->|"移除"| n10
+  n6 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
+  n7 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"移除"| n8
   class e9 edge_write
-  n11 e10@-->|"调用"| n0
-  class e10 edge_registration
-  n12 e11@-->|"存在性约束"| n0
-  class e11 edge_reference
-  n0 e12@-->|"移除"| n5
+  n9 e10@--> n0
+  class e10 edge_read
+  n0 e11@-->|"移除"| n10
+  class e11 edge_write
+  n0 e12@-->|"移除"| n11
   class e12 edge_write
-  n13 e13@--> n0
-  class e13 edge_read
-  n0 e14@-->|"移除"| n8
-  class e14 edge_write
+  n0 e13@-->|"移除"| n12
+  class e13 edge_write
+  n13 e14@-->|"调用"| n0
+  class e14 edge_registration
   n14 e15@--> n0
   class e15 edge_read
   e0@{ curve: basis }
@@ -116,11 +116,12 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: bumpX }
+  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
+  e10@{ curve: basis }
   e11@{ curve: basis }
-  e12@{ curve: bumpX }
+  e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }

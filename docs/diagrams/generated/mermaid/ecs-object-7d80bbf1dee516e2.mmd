@@ -46,40 +46,40 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**keyboard​_​input​_​system**<br/>把键盘事件汇总为物理和逻辑按键状态。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**ButtonInput#lt;Key#gt;**<br/>保存指定按钮类型当前按下、本帧刚按下和刚<br/>释放的集合" }
   class n1 node_resource
-  class n1 external_node
-  n2@{ shape: lin-rect, label: "**InputSystems**<br/>把原始设备消息汇总为本帧输入状态。" }
-  class n2 node_system_set
-  n3@{ shape: lean-r, label: "**KeyboardFocusLost**<br/>请求清除失焦后的缓存按键状态。" }
-  class n3 node_message
-  n4@{ shape: cyl, label: "**Messages#lt;KeyboardFocusLost#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n4 node_resource
-  class n4 external_node
-  n5@{ shape: cyl, label: "**ButtonInput#lt;KeyCode#gt;**<br/>保存指定按钮类型当前按下、本帧刚按下和刚<br/>释放的集合" }
+  n2@{ shape: cyl, label: "**ButtonInput#lt;KeyCode#gt;**<br/>保存指定按钮类型当前按下、本帧刚按下和刚<br/>释放的集合" }
+  class n2 node_resource
+  n3@{ shape: fr-rect, label: "**InputPlugin**<br/>汇集设备输入并维护输入状态。" }
+  class n3 node_plugin
+  n4@{ shape: lean-r, label: "**KeyboardInput**<br/>传递窗口键盘输入。" }
+  class n4 node_message
+  n5@{ shape: cyl, label: "**Messages#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n5 node_resource
-  n6@{ shape: lean-r, label: "**KeyboardInput**<br/>传递窗口键盘输入。" }
-  class n6 node_message
-  n7@{ shape: cyl, label: "**ButtonInput#lt;Key#gt;**<br/>保存指定按钮类型当前按下、本帧刚按下和刚<br/>释放的集合" }
+  class n5 external_node
+  n6@{ shape: lin-rect, label: "**InputSystems**<br/>把原始设备消息汇总为本帧输入状态。" }
+  class n6 node_system_set
+  n7@{ shape: cyl, label: "**Messages#lt;KeyboardFocusLost#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n7 node_resource
-  n8@{ shape: fr-rect, label: "**InputPlugin**<br/>汇集设备输入并维护输入状态。" }
-  class n8 node_plugin
-  n1 e0@--> n0
-  class e0 edge_read
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
-  n3 e2@--> n0
-  class e2 edge_consume
+  class n7 external_node
+  n8@{ shape: lean-r, label: "**KeyboardFocusLost**<br/>请求清除失焦后的缓存按键状态。" }
+  class n8 node_message
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
   n4 e3@--> n0
-  class e3 edge_read
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
-  n6 e5@--> n0
-  class e5 edge_consume
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
-  n8 e7@-->|"调用"| n0
-  class e7 edge_registration
+  class e3 edge_consume
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_consume
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

@@ -44,35 +44,35 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n1@{ shape: rounded, label: "**JointDamping**<br/>衰减关节两端的相对速度。" }
   class n1 node_component
-  n2@{ shape: lin-rect, label: "**Damping**<br/>组织约束子步的求解与松弛。" }
-  class n2 node_system_set
-  n3@{ shape: rounded, label: "**JointDamping**<br/>衰减关节两端的相对速度。" }
-  class n3 node_component
-  n4@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
-  class n4 node_system
-  n5@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
-  class n5 node_resource
-  class n5 external_node
+  n2@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  class n2 node_resource
+  class n2 external_node
+  n3@{ shape: lin-rect, label: "**Damping**<br/>组织约束子步的求解与松弛。" }
+  class n3 node_system_set
+  n4@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  class n4 node_resource
+  n5@{ shape: rounded, label: "**joint​_​damping**<br/>衰减关节两端刚体的相对速度。" }
+  class n5 node_system
   n6@{ shape: rounded, label: "**FixedJoint**<br/>锁定两刚体的相对位姿。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
-  class n7 node_resource
+  n7@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  class n7 node_component
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
-  n3 e2@--> n0
-  class e2 edge_read
-  n0 e3@-->|"先于"| n4
-  class e3 edge_order
-  n5 e4@--> n0
-  class e4 edge_read
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n0 e4@-->|"先于"| n5
+  class e4 edge_order
   n6 e5@--> n0
   class e5 edge_read
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
+  n7 e6@--> n0
+  class e6 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e3@{ curve: basis }

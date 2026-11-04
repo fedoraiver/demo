@@ -50,23 +50,23 @@ flowchart LR
   class n1 external_node
   n2@{ shape: lean-r, label: "**StateTransitionEvent#lt;AppState#gt;**<br/>通知状态离开和进入的变化。" }
   class n2 node_message
-  n3@{ shape: rounded, label: "**DespawnWhen#lt;AppState#gt;**<br/>保存状态转换谓词" }
-  class n3 node_component
-  n4@{ shape: rounded, label: "**Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
+  n3@{ shape: lin-rect, label: "**TransitionSchedules**<br/>组织状态转换及进入退出调度。" }
+  class n3 node_system_set
+  n4@{ shape: rounded, label: "**DespawnWhen#lt;AppState#gt;**<br/>保存状态转换谓词" }
   class n4 node_component
-  class n4 external_node
-  n5@{ shape: lin-rect, label: "**TransitionSchedules**<br/>组织状态转换及进入退出调度。" }
-  class n5 node_system_set
+  n5@{ shape: rounded, label: "**Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
+  class n5 node_component
+  class n5 external_node
   n1 e0@--> n0
   class e0 edge_read
   n2 e1@--> n0
   class e1 edge_consume
-  n3 e2@--> n0
-  class e2 edge_read
-  n4 e3@-->|"存在性约束"| n0
-  class e3 edge_reference
-  n5 e4@-->|"集合成员"| n0
-  class e4 edge_set_membership
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e3@{ curve: basis }

@@ -46,106 +46,175 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**Transform**<br/>保存实体相对父实体的平移、旋转和缩放" }
-  class n1 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: notch-rect, label: "**Local · arg1.0.0.0.0**<br/>保存 ChildOf 移除参数的组件 ID。" }
+  class n1 node_local
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
   n2@{ shape: notch-rect, label: "**Local · arg1.0.1**<br/>跟踪 ChildOf 移除记录的读取进度。" }
   class n2 node_local
-  n3@{ shape: notch-rect, label: "**Local · arg6**<br/>为变换树祖先遍历复用线程位图。" }
-  class n3 node_local
-  n4@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
-  class n4 node_component
-  class n4 external_node
-  n5@{ shape: notch-rect, label: "**Local · traversal​_​channels**<br/>分发变换树祖先遍历的起始节点。" }
-  class n5 node_local
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  class n3 node_component
+  class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: notch-rect, label: "**Local · orphaned.0.0.0.0**<br/>保存 ChildOf 移除参数的组件 ID。" }
+  class n4 node_local
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**Transform**<br/>保存实体相对父实体的平移、旋转和缩放" }
+  class n5 node_component
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
   n6@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:avian3d ↗：组织实体变换与物<br/>理姿态同步。" }
   class n6 node_system_set
   class n6 external_node
-  n7@{ shape: notch-rect, label: "**Local · arg8**<br/>向并行变换树遍历任务分发变化实体。" }
-  class n7 node_local
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: fr-rect, label: "**PhysicsTransformPlugin**<br/>来自crate:avian3d ↗：同步物理姿态与实<br/>体变换。" }
+  class n7 node_plugin
+  class n7 external_node
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
   n8@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
   class n8 node_system
-  n9@{ shape: fr-rect, label: "**PhysicsTransformPlugin**<br/>来自crate:avian3d ↗：同步物理姿态与实<br/>体变换。" }
-  class n9 node_plugin
-  class n9 external_node
-  n10@{ shape: notch-rect, label: "**Local · shared​_​bitset**<br/>用共享原子位图去重祖先遍历。" }
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: rounded, label: "**GlobalTransform**<br/>保存实体合并祖先变换后的世界空间仿射变换" }
+  class n9 node_component
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: notch-rect, label: "**Local · arg6**<br/>为变换树祖先遍历复用线程位图。" }
   class n10 node_local
-  n11@{ shape: notch-rect, label: "**Local · arg5**<br/>用共享原子位集去重变换树祖先遍历。" }
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: notch-rect, label: "**Local · local​_​bitset**<br/>复用变换树遍历的线程位图。" }
   class n11 node_local
-  n12@{ shape: rounded, label: "**GlobalTransform**<br/>保存实体合并祖先变换后的世界空间仿射变换" }
-  class n12 node_component
-  n13@{ shape: rounded, label: "**TransformTreeChanged**<br/>以变化检测标记存在变换变化的层级分支" }
-  class n13 node_component
-  n14@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
-  class n14 node_system_set
-  class n14 external_node
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: cyl, label: "**StaticTransformOptimizations**<br/>控制变换传播是否追踪并跳过静态子树" }
+  class n12 node_resource
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: notch-rect, label: "**Local · arg8**<br/>向并行变换树遍历任务分发变化实体。" }
+  class n13 node_local
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
+  n14@{ shape: rounded, label: "**TransformTreeChanged**<br/>以变化检测标记存在变换变化的层级分支" }
+  class n14 node_component
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
   n15@{ shape: notch-rect, label: "**Local · consumer​_​channels**<br/>传递变换树脏标记的待写入实体。" }
   class n15 node_local
-  n16@{ shape: fr-rect, label: "**TransformPlugin**<br/>更新并传播实体变换。" }
-  class n16 node_plugin
-  n17@{ shape: notch-rect, label: "**Local · orphaned.0.0.0.0**<br/>保存 ChildOf 移除参数的组件 ID。" }
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
+  n16@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
+  class n16 node_system_set
+  class n16 external_node
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
+  n17@{ shape: notch-rect, label: "**Local · shared​_​bitset**<br/>用共享原子位图去重祖先遍历。" }
   class n17 node_local
-  n18@{ shape: notch-rect, label: "**Local · orphaned.0.1**<br/>跟踪 ChildOf 移除记录的读取进度。" }
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
+  n18@{ shape: notch-rect, label: "**Local · arg5**<br/>用共享原子位集去重变换树祖先遍历。" }
   class n18 node_local
-  n19@{ shape: notch-rect, label: "**Local · local​_​bitset**<br/>复用变换树遍历的线程位图。" }
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
+  n19@{ shape: notch-rect, label: "**Local · orphaned.0.1**<br/>跟踪 ChildOf 移除记录的读取进度。" }
   class n19 node_local
-  n20@{ shape: cyl, label: "**StaticTransformOptimizations**<br/>控制变换传播是否追踪并跳过静态子树" }
-  class n20 node_resource
-  n21@{ shape: notch-rect, label: "**Local · arg7**<br/>传递需要标记变换树变化的实体批次。" }
-  class n21 node_local
-  n22@{ shape: notch-rect, label: "**Local · arg1.0.0.0.0**<br/>保存 ChildOf 移除参数的组件 ID。" }
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
+  n20@{ shape: notch-rect, label: "**Local · traversal​_​channels**<br/>分发变换树祖先遍历的起始节点。" }
+  class n20 node_local
+  end
+  style layout_card_n20 fill:none,stroke:none
+  subgraph layout_card_n21[" "]
+  n21@{ shape: fr-rect, label: "**TransformPlugin**<br/>更新并传播实体变换。" }
+  class n21 node_plugin
+  end
+  style layout_card_n21 fill:none,stroke:none
+  subgraph layout_card_n22[" "]
+  n22@{ shape: notch-rect, label: "**Local · arg7**<br/>传递需要标记变换树变化的实体批次。" }
   class n22 node_local
-  n1 e0@--> n0
-  class e0 edge_read
+  end
+  style layout_card_n22 fill:none,stroke:none
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
   n0 e1@-->|"可变访问"| n2
   class e1 edge_write
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  n4 e3@--> n0
-  class e3 edge_read
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n5 e4@--> n0
+  class e4 edge_read
   n6 e5@-->|"集合成员"| n0
   class e5 edge_set_membership
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
+  n7 e6@-->|"调用"| n0
+  class e6 edge_registration
   n0 e7@-->|"先于"| n8
   class e7 edge_order
-  n9 e8@-->|"调用"| n0
-  class e8 edge_registration
+  n9 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
   n0 e9@-->|"可变访问"| n10
   class e9 edge_write
   n0 e10@-->|"可变访问"| n11
   class e10 edge_write
-  n1 e11@-->|"存在性约束"| n0
-  class e11 edge_reference
-  n12 e12@--> n0
-  class e12 edge_read
-  n0 e13@-->|"可变访问"| n13
+  n12 e11@--> n0
+  class e11 edge_read
+  n0 e12@-->|"可变访问"| n13
+  class e12 edge_write
+  n0 e13@-->|"可变访问"| n14
   class e13 edge_write
-  n14 e14@-->|"集合成员"| n0
-  class e14 edge_set_membership
-  n4 e15@-->|"存在性约束"| n0
-  class e15 edge_reference
-  n0 e16@-->|"可变访问"| n15
+  n0 e14@-->|"可变访问"| n15
+  class e14 edge_write
+  n16 e15@-->|"集合成员"| n0
+  class e15 edge_set_membership
+  n0 e16@-->|"可变访问"| n17
   class e16 edge_write
-  n16 e17@-->|"调用"| n0
-  class e17 edge_registration
-  n0 e18@-->|"可变访问"| n17
+  n9 e17@--> n0
+  class e17 edge_read
+  n0 e18@-->|"可变访问"| n18
   class e18 edge_write
-  n0 e19@-->|"可变访问"| n18
+  n0 e19@-->|"可变访问"| n19
   class e19 edge_write
-  n0 e20@-->|"可变访问"| n19
+  n0 e20@-->|"可变访问"| n20
   class e20 edge_write
-  n20 e21@--> n0
-  class e21 edge_read
-  n0 e22@-->|"可变访问"| n21
-  class e22 edge_write
-  n12 e23@-->|"存在性约束"| n0
-  class e23 edge_reference
-  n0 e24@-->|"可变访问"| n22
-  class e24 edge_write
+  n21 e21@-->|"调用"| n0
+  class e21 edge_registration
+  n5 e22@-->|"存在性约束"| n0
+  class e22 edge_reference
+  n0 e23@-->|"可变访问"| n22
+  class e23 edge_write
+  n3 e24@--> n0
+  class e24 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

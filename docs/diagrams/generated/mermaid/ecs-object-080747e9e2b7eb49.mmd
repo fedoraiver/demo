@@ -47,53 +47,53 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**run​_​fixed​_​main**<br/>运行一个固定时间步的调度阶段。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
-  class n1 node_component
+  n1@{ shape: stadium, label: "**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
+  class n1 node_event
   class n1 external_node
-  n2@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
-  class n2 node_message
-  class n2 external_node
-  n3@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
-  class n3 node_resource
-  class n3 external_node
-  n4@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n2@{ shape: rounded, label: "**FixedMainScheduleOrder**<br/>规定每次固定步内各子调度的顺序。" }
+  class n2 node_component
+  n3@{ shape: fr-rect, label: "**MainSchedulePlugin**<br/>建立应用主调度与执行阶段。" }
+  class n3 node_plugin
+  n4@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n4 node_resource
   class n4 external_node
-  n5@{ shape: fr-rect, label: "**MainSchedulePlugin**<br/>建立应用主调度与执行阶段。" }
-  class n5 node_plugin
-  n6@{ shape: rounded, label: "**FixedMainScheduleOrder**<br/>规定每次固定步内各子调度的顺序。" }
+  n5@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n6 node_component
+  class n6 external_node
   n7@{ shape: cyl, label: "**FixedMainScheduleOrder**<br/>规定每次固定步内各子调度的顺序。" }
   class n7 node_resource
-  n8@{ shape: stadium, label: "**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
-  class n8 node_event
+  n8@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
-  class n9 node_resource
+  n9@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  class n9 node_message
   class n9 external_node
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n0 e1@-->|"消息"| n2
-  class e1 edge_publish
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  n0 e3@-->|"赋值"| n4
+  n0 e0@-->|"触发事件"| n1
+  class e0 edge_emit
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n0 e3@-->|"可变访问"| n4
   class e3 edge_write
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
+  n5 e4@--> n0
+  class e4 edge_read
   n0 e5@-->|"可变访问"| n6
   class e5 edge_write
   n0 e6@-->|"移除"| n7
   class e6 edge_write
-  n0 e7@-->|"触发事件"| n8
-  class e7 edge_emit
-  n9 e8@--> n0
-  class e8 edge_read
+  n0 e7@-->|"赋值"| n8
+  class e7 edge_write
+  n0 e8@-->|"消息"| n9
+  class e8 edge_publish
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

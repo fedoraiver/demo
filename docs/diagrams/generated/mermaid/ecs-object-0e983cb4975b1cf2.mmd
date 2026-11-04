@@ -43,21 +43,21 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​assets**<br/>在上传预算内准备资产并保留重试项。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n2@{ shape: cyl, label: "**ExtractedAssets#lt;GpuImage#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n3@{ shape: cyl, label: "**DefaultImageSampler**<br/>保存渲染器初始化时建立的默认图像采样器。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**DefaultImageSampler**<br/>保存渲染器初始化时建立的默认图像采样器。" }
-  class n4 node_resource
-  n5@{ shape: lin-rect, label: "**PrepareAssets**<br/>组织渲染数据准备与绘制排队。" }
-  class n5 node_system_set
-  n6@{ shape: cyl, label: "**ExtractedAssets#lt;GpuImage#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
+  n4@{ shape: lin-rect, label: "**PrepareAssets**<br/>组织渲染数据准备与绘制排队。" }
+  class n4 node_system_set
+  n5@{ shape: cyl, label: "**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
+  class n5 node_resource
+  n6@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;GpuImage#gt;**<br/>保留下一帧待准备的渲染源资产。" }
+  n7@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n8@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;GpuImage#gt;**<br/>保留下一帧待准备的渲染源资产。" }
   class n8 node_resource
   n9@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
   class n9 node_system
@@ -65,16 +65,16 @@ flowchart LR
   class n10 node_system
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@--> n0
-  class e1 edge_read
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
   n3 e2@--> n0
   class e2 edge_read
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"集合成员"| n0
-  class e4 edge_set_membership
-  n0 e5@-->|"可变访问"| n6
-  class e5 edge_write
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
   n0 e6@-->|"可变访问"| n7
   class e6 edge_write
   n0 e7@-->|"可变访问"| n8
@@ -85,7 +85,8 @@ flowchart LR
   class e9 edge_order
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e3@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

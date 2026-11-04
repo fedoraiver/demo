@@ -339,13 +339,13 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
   if (dagre && view.aspect === 'object') profiles.splice(2, 0, { spacing: 0, span: 0, cardContainers: 'related' });
   // 复合节点可能遮住 Dagre 的原生曲线；最后尝试同一网络的另一声明顺序，不改变任何关系或排版链。
   if (dagre && view.aspect === 'data') profiles.push({ spacing: 0, span: 0, reverseRelationEdges: true });
-  let final, inspection, layoutError, inputContext, outputContext, wrappingWidth, contextualLabelProfiles = false, entityWrapperCandidates = false, componentCurveProfiles = false, endpointClearanceAdded = false;
+  let final, inspection, layoutError, inputContext, outputContext, loneInputOutputContext, wrappingWidth, contextualLabelProfiles = false, entityWrapperCandidates = false, componentCurveProfiles = false, endpointClearanceAdded = false;
   const labelVariants = new Set();
-  for (const [attempt, { spacing, span, labelEdges, labelSpan, reverseRelationEdges, cardContainers, headerContext, entityContainers, entityOrder, padding, incomingContext, outgoingContext }] of profiles.entries()) {
+  for (const [attempt, { spacing, span, labelEdges, labelSpan, reverseRelationEdges, cardContainers, headerContext, entityContainers, entityOrder, padding, incomingContext, outgoingContext, loneInputOutput }] of profiles.entries()) {
     try {
       const spans = new Map(span ? [...view.links, ...view.scheduleLinks].map(edge => [edge.mermaidId, span]) : []);
       for (const id of labelEdges ?? []) spans.set(id, labelSpan);
-      const base = outgoingContext ? outputContext : incomingContext ? inputContext : headerContext ? context : view;
+      const base = loneInputOutput ? loneInputOutputContext : outgoingContext ? outputContext : incomingContext ? inputContext : headerContext ? context : view;
       const route = curves => ({ ...base, mermaid: routedMermaid(base, { spacing, spans, curves, reverseRelationEdges, cardContainers, entityContainers, entityOrder, padding, wrappingWidth }) });
       const candidate = route();
       let probe = await compileNative(candidate, registry);
@@ -485,11 +485,23 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
           profiles.splice(attempt + 1, 0, ...endpoints.map(id => ({ ...profiles[attempt], cardContainers: [id] })));
         }
       }
-      if (dagre && view.aspect === 'object' && !outputContext && !layoutError && invalid.length
-        && invalid.every(edge => !edge.axis && !edge.curved && !edge.collisions.length && !edge.arrowIssues.length)
-        && view.links.some(link => !link.nativeReverse && (link.displayFrom ?? link.from) === (view.centerNodeId || view.objectId) && invalid.some(edge => edge.id === link.id))) {
-        outputContext = objectNeighborContext(view, 'output');
-        if (outputContext !== view) profiles.splice(attempt + 1, 0, { spacing: 0, span: 0, outgoingContext: true });
+      if (dagre && view.aspect === 'object' && !layoutError && invalid.length
+        && invalid.every(edge => !edge.axis && !edge.curved && !edge.collisions.length && !edge.arrowIssues.length)) {
+        const center = view.centerNodeId || view.objectId;
+        const failedOutput = view.links.some(link => !link.nativeReverse && (link.displayFrom ?? link.from) === center && invalid.some(edge => edge.id === link.id));
+        if (!outputContext && failedOutput) {
+          outputContext = objectNeighborContext(view, 'output');
+          if (outputContext !== view) profiles.splice(attempt + 1, 0, { spacing: 0, span: 0, outgoingContext: true });
+        }
+        const failedLoneInput = inputContext === view && view.links.some(link => (link.displayTo ?? link.to) === center
+          && (link.displayFrom ?? link.from) !== center && invalid.some(edge => edge.id === link.id));
+        if (!loneInputOutputContext && !failedOutput && failedLoneInput) {
+          loneInputOutputContext = objectNeighborContext(view, 'output');
+          // 先保留既有原生候选的优先顺序；唯一输入的输出链及容器间距只作最后的有界回退。
+          if (loneInputOutputContext !== view) profiles.push(
+            { spacing: 0, span: 0, loneInputOutput: true },
+            ...[16, 32, 64].map(spacing => ({ spacing, span: 0, cardContainers: true, loneInputOutput: true })));
+        }
       }
       // 透明复合容器可能使原生源端裁切停在外框；缩小原生内边距后重新编译并完整复核，不修补路径。
       if (dagre && padding === undefined && !layoutError && invalid.length && invalid.every(edge => !edge.collisions.length

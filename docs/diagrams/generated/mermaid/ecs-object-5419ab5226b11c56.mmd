@@ -46,52 +46,52 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**handle​_​internal​_​asset​_​events**<br/>处理资产加载、依赖就绪及失败通知。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**AssetPlugin**<br/>建立资产加载与处理流程。" }
-  class n1 node_plugin
-  n2@{ shape: cyl, label: "**AssetServer**<br/>加载资产并追踪加载状态。" }
-  class n2 node_resource
-  n3@{ shape: lin-rect, label: "**AssetTrackingSystems**<br/>追踪资产句柄生命周期并处理待释放资产。" }
-  class n3 node_system_set
-  n4@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**Messages#lt;UntypedAssetLoadFailedEvent**<br/>**#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: lin-rect, label: "**AssetTrackingSystems**<br/>追踪资产句柄生命周期并处理待释放资产。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**publish​_​asset​_​server​_​diagnostics**<br/>发布资产加载任务的启动计数。" }
+  class n3 node_system
+  n4@{ shape: cyl, label: "**AssetServer**<br/>加载资产并追踪加载状态。" }
   class n4 node_resource
-  class n4 external_node
-  n5@{ shape: rounded, label: "**publish​_​asset​_​server​_​diagnostics**<br/>发布资产加载任务的启动计数。" }
-  class n5 node_system
-  n6@{ shape: lean-r, label: "**UntypedAssetLoadFailedEvent**<br/>传递跨资产类型的加载失败。" }
-  class n6 node_message
-  n7@{ shape: rounded, label: "**AssetServer**<br/>加载资产并追踪加载状态。" }
-  class n7 node_component
+  n5@{ shape: lean-r, label: "**UntypedAssetLoadFailedEvent**<br/>传递跨资产类型的加载失败。" }
+  class n5 node_message
+  n6@{ shape: rounded, label: "**AssetServer**<br/>加载资产并追踪加载状态。" }
+  class n6 node_component
+  n7@{ shape: fr-rect, label: "**AssetPlugin**<br/>建立资产加载与处理流程。" }
+  class n7 node_plugin
   n8@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
   class n8 node_message
   class n8 external_node
-  n9@{ shape: cyl, label: "**Messages#lt;UntypedAssetLoadFailedEvent**<br/>**#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n9@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n9 node_resource
   class n9 external_node
-  n1 e0@-->|"调用"| n0
-  class e0 edge_registration
-  n0 e1@-->|"移除"| n2
-  class e1 edge_write
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n0 e1@-->|"先于"| n2
+  class e1 edge_order
   n0 e2@-->|"先于"| n3
   class e2 edge_order
-  n0 e3@-->|"赋值"| n4
+  n0 e3@-->|"移除"| n4
   class e3 edge_write
-  n0 e4@-->|"先于"| n5
-  class e4 edge_order
-  n0 e5@-->|"消息"| n6
-  class e5 edge_publish
-  n0 e6@-->|"可变访问"| n7
+  n0 e4@-->|"消息"| n5
+  class e4 edge_publish
+  n0 e5@-->|"赋值"| n1
+  class e5 edge_write
+  n0 e6@-->|"可变访问"| n6
   class e6 edge_write
-  n0 e7@-->|"消息"| n8
-  class e7 edge_publish
-  n0 e8@-->|"赋值"| n9
-  class e8 edge_write
-  n0 e9@-->|"可变访问"| n9
+  n7 e7@-->|"调用"| n0
+  class e7 edge_registration
+  n0 e8@-->|"消息"| n8
+  class e8 edge_publish
+  n0 e9@-->|"赋值"| n9
   class e9 edge_write
+  e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

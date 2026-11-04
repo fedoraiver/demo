@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-ffa7f60e37bcc355-e4{marker-start:url(#object-ffa7f60e37bcc355_flowchart-v2-pointStart)!important}\n#object-ffa7f60e37bcc355_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-ffa7f60e37bcc355-e3{marker-start:url(#object-ffa7f60e37bcc355_flowchart-v2-pointStart)!important}\n#object-ffa7f60e37bcc355_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -44,7 +44,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**no​_​automatic​_​morph​_​batching**<br/>在 Uniform 限制路径上禁止形变网格自动合<br/>批。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**MeshMorphWeights**<br/>来自crate:bevy​_​mesh ↗：为单个网格提供<br/>或引用形变权重。" }
+  n1@{ shape: rounded, label: "**NoAutomaticBatching**<br/>来自crate:bevy​_​render ↗：禁止网格实体<br/>参与自动合批。" }
   class n1 node_component
   class n1 external_node
   n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
@@ -52,7 +52,7 @@ flowchart LR
   class n2 external_node
   n3@{ shape: fr-rect, label: "**MeshRenderPlugin**<br/>建立三维网格绘制支持。" }
   class n3 node_plugin
-  n4@{ shape: rounded, label: "**NoAutomaticBatching**<br/>来自crate:bevy​_​render ↗：禁止网格实体<br/>参与自动合批。" }
+  n4@{ shape: rounded, label: "**MeshMorphWeights**<br/>来自crate:bevy​_​mesh ↗：为单个网格提供<br/>或引用形变权重。" }
   class n4 node_component
   class n4 external_node
   n1 e0@-->|"存在性约束"| n0
@@ -61,11 +61,12 @@ flowchart LR
   class e1 edge_read
   n3 e2@-->|"调用"| n0
   class e2 edge_registration
-  n4 e3@-->|"存在性约束"| n0
-  class e3 edge_reference
-  n4 e4@---|"插入"| n0
-  class e4 edge_write
+  n1 e3@---|"插入"| n0
+  class e3 edge_write
+  n4 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
+  e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

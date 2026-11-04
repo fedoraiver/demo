@@ -41,28 +41,28 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​sparse​_​buffer​_​update​_​bind​_​**<br/>**groups**<br/>准备稀疏更新管线标识与弱键绑定缓存。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**SparseBufferUpdateBindGroups**<br/>追踪各稀疏缓冲更新的资源绑定。" }
+  n1@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**SpecializedComputePipelines#lt;SparseBu**<br/>**fferUpdatePipelines#gt;**<br/>按配置键缓存计算管线变体。" }
+  n2@{ shape: cyl, label: "**SparseBufferUpdateBindGroups**<br/>追踪各稀疏缓冲更新的资源绑定。" }
   class n2 node_resource
   n3@{ shape: cyl, label: "**SparseBufferUpdatePipelines**<br/>提供稀疏缓冲散射写入的计算接口。" }
   class n3 node_resource
   n4@{ shape: rounded, label: "**init​_​sparse​_​buffer​_​update​_​pipelines**<br/>按设备存储绑定能力建立稀疏更新计算资源。" }
   class n4 node_system
-  n5@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
+  n5@{ shape: cyl, label: "**SpecializedComputePipelines#lt;SparseBu**<br/>**fferUpdatePipelines#gt;**<br/>按配置键缓存计算管线变体。" }
   class n5 node_resource
   n6@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n6 node_system
-  n0 e0@-->|"插入"| n1
-  class e0 edge_write
-  n0 e1@-->|"可变访问"| n2
+  n1 e0@--> n0
+  class e0 edge_read
+  n0 e1@-->|"插入"| n2
   class e1 edge_write
   n3 e2@--> n0
   class e2 edge_read
   n4 e3@-->|"先于"| n0
   class e3 edge_order
-  n5 e4@--> n0
-  class e4 edge_read
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
   n6 e5@-->|"先于"| n0
   class e5 edge_order
   e0@{ curve: basis }

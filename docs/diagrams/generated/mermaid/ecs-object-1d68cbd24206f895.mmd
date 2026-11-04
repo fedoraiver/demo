@@ -45,15 +45,15 @@ flowchart LR
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**IndirectParametersBuffers**<br/>保存间接绘制命令与裁剪计数缓冲。" }
-  class n2 node_resource
-  n3@{ shape: fr-rect, label: "**BatchingPlugin**<br/>维护间接绘制参数和构建任务。" }
-  class n3 node_plugin
+  n2@{ shape: fr-rect, label: "**BatchingPlugin**<br/>维护间接绘制参数和构建任务。" }
+  class n2 node_plugin
+  n3@{ shape: cyl, label: "**IndirectParametersBuffers**<br/>保存间接绘制命令与裁剪计数缓冲。" }
+  class n3 node_resource
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }

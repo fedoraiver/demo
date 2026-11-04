@@ -47,57 +47,57 @@ flowchart LR
   class n0 node_system
   n1@{ shape: lin-rect, label: "**PositionToTransform**<br/>组织实体变换与物理姿态同步。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  n2@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n2 node_component
-  class n2 external_node
-  n3@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否把物理姿态写回实体变换。" }
-  class n3 node_system
-  n4@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
+  n3@{ shape: fr-rect, label: "**PhysicsTransformPlugin**<br/>同步物理姿态与实体变换。" }
+  class n3 node_plugin
+  n4@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
   class n4 node_component
-  class n4 external_node
-  n5@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n5@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**ApplyPosToTransform**<br/>请求将物理姿态同步到实体变换。" }
+  class n5 external_node
+  n6@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
-  class n7 node_component
-  n8@{ shape: fr-rect, label: "**PhysicsTransformPlugin**<br/>同步物理姿态与实体变换。" }
-  class n8 node_plugin
-  n9@{ shape: rounded, label: "**RigidBody**<br/>选择动态、静态或运动学刚体行为。" }
+  class n6 external_node
+  n7@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否把物理姿态写回实体变换。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  n10@{ shape: rounded, label: "**ApplyPosToTransform**<br/>请求将物理姿态同步到实体变换。" }
   class n10 node_component
-  class n10 external_node
   n11@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n11 node_component
   class n11 external_node
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
-  n3 e2@-->|"运行条件"| n0
-  class e2 edge_reference
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"存在性约束"| n0
-  class e4 edge_reference
-  n6 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
-  n5 e6@--> n0
-  class e6 edge_read
-  n7 e7@-->|"存在性约束"| n0
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n5 e4@--> n0
+  class e4 edge_read
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
+  n7 e6@-->|"运行条件"| n0
+  class e6 edge_reference
+  n8 e7@-->|"存在性约束"| n0
   class e7 edge_reference
-  n8 e8@-->|"调用"| n0
-  class e8 edge_registration
-  n9 e9@-->|"存在性约束"| n0
-  class e9 edge_reference
-  n7 e10@--> n0
-  class e10 edge_read
-  n0 e11@-->|"赋值"| n10
-  class e11 edge_write
-  n0 e12@-->|"可变访问"| n10
-  class e12 edge_write
-  n11 e13@--> n0
+  n9 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
+  n0 e9@-->|"赋值"| n6
+  class e9 edge_write
+  n2 e10@-->|"存在性约束"| n0
+  class e10 edge_reference
+  n10 e11@-->|"存在性约束"| n0
+  class e11 edge_reference
+  n11 e12@--> n0
+  class e12 edge_read
+  n9 e13@--> n0
   class e13 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }

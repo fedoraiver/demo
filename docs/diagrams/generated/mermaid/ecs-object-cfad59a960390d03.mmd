@@ -47,39 +47,35 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**enter#lt;AppState#gt;)**<br/>从当前消息批次取得最后一次状态转换。；执<br/>行新状态的进入调度。" }
   class n0 node_system_group
-  n1@{ shape: lin-rect, label: "**EnterSchedules(PhantomData#lt;AppState#gt;**<br/>**)**<br/>执行新状态的进入调度和进入生命周期。" }
-  class n1 node_system_set
-  n2@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
-  class n2 node_component
-  class n2 external_node
+  n1@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: lin-rect, label: "**EnterSchedules(PhantomData#lt;AppState#gt;**<br/>**)**<br/>执行新状态的进入调度和进入生命周期。" }
+  class n2 node_system_set
   n3@{ shape: stadium, label: "**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
   class n3 node_event
   class n3 external_node
-  n4@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
-  class n4 node_resource
-  class n4 external_node
-  subgraph layout_card_n5[" "]
-  n5@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
+  n4@{ shape: lean-r, label: "**StateTransitionEvent#lt;AppState#gt;**<br/>通知状态离开和进入的变化。" }
+  class n4 node_message
+  n5@{ shape: cyl, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n5 node_resource
   class n5 external_node
-  end
-  style layout_card_n5 fill:none,stroke:none
-  n6@{ shape: lean-r, label: "**StateTransitionEvent#lt;AppState#gt;**<br/>通知状态离开和进入的变化。" }
-  class n6 node_message
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
+  n6@{ shape: cyl, label: "**FallbackErrorHandler**<br/>来自crate:bevy​_​ecs ↗：处理未被接管的<br/>错误与 panic。" }
+  class n6 node_resource
+  class n6 external_node
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
   n0 e2@-->|"触发事件"| n3
   class e2 edge_emit
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n5 e4@--> n0
-  class e4 edge_read
+  n4 e3@--> n0
+  class e3 edge_consume
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
   n6 e5@--> n0
-  class e5 edge_consume
+  class e5 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: bumpX }
-  e3@{ curve: basis }
+  e4@{ curve: basis }
   e5@{ curve: basis }

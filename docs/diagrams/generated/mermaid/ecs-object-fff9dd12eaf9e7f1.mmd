@@ -40,11 +40,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**ViewUniforms**<br/>汇集全部视图的动态 Uniform 数据。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**ViewUniforms**<br/>汇集全部视图的动态 Uniform 数据。" }
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n2 node_resource
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"插入"| n2
-  class e1 edge_write
+  n0 e0@-->|"插入"| n1
+  class e0 edge_write
+  n2 e1@--> n0
+  class e1 edge_read

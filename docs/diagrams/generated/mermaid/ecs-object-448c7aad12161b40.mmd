@@ -42,28 +42,28 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**sync​_​readbacks**<br/>派发 GPU 回读结果并归还暂存缓冲。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**GpuReadbackMaxUnusedFrames**<br/>限定闲置 GPU 回读缓冲的保留帧数。" }
+  n1@{ shape: cyl, label: "**GpuReadbackBufferPool**<br/>按缓冲尺寸复用 GPU 回读暂存空间。" }
   class n1 node_resource
-  n2@{ shape: fr-rect, label: "**GpuReadbackPlugin**<br/>将 GPU 缓冲与纹理回读到 CPU。" }
-  class n2 node_plugin
-  n3@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
-  class n3 node_resource
-  class n3 external_node
-  n4@{ shape: cyl, label: "**GpuReadbacks**<br/>追踪已请求及已映射的 GPU 回读任务。" }
+  n2@{ shape: cyl, label: "**GpuReadbacks**<br/>追踪已请求及已映射的 GPU 回读任务。" }
+  class n2 node_resource
+  n3@{ shape: fr-rect, label: "**GpuReadbackPlugin**<br/>将 GPU 缓冲与纹理回读到 CPU。" }
+  class n3 node_plugin
+  n4@{ shape: cyl, label: "**GpuReadbackMaxUnusedFrames**<br/>限定闲置 GPU 回读缓冲的保留帧数。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**GpuReadbackBufferPool**<br/>按缓冲尺寸复用 GPU 回读暂存空间。" }
+  n5@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n5 node_resource
-  n1 e0@--> n0
-  class e0 edge_read
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
+  class n5 external_node
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n4 e3@--> n0
+  class e3 edge_read
   n0 e4@-->|"可变访问"| n5
   class e4 edge_write
   e0@{ curve: basis }
-  e1@{ curve: basis }
   e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: basis }

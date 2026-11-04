@@ -49,27 +49,27 @@ flowchart LR
   class n1 node_component
   n2@{ shape: lin-rect, label: "**ClearVelocityIncrements**<br/>组织速度与位置积分阶段。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
-  class n3 node_component
-  n4@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
-  class n4 node_resource
+  n3@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
+  class n3 node_resource
+  n4@{ shape: rounded, label: "**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
+  class n4 node_component
   n5@{ shape: fr-rect, label: "**IntegratorPlugin**<br/>积分运动并预测刚体姿态。" }
   class n5 node_plugin
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference
   n2 e1@-->|"集合成员"| n0
   class e1 edge_set_membership
-  n0 e2@-->|"可变访问"| n3
+  n0 e2@-->|"赋值"| n3
   class e2 edge_write
-  n0 e3@-->|"赋值"| n4
+  n0 e3@-->|"可变访问"| n4
   class e3 edge_write
-  n0 e4@-->|"可变访问"| n4
-  class e4 edge_write
-  n5 e5@-->|"调用"| n0
-  class e5 edge_registration
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n0 e5@-->|"可变访问"| n3
+  class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: bumpX }
   e2@{ curve: basis }
-  e3@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
+  e5@{ curve: bumpX }

@@ -48,112 +48,112 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
   class n0 node_system
-  n1@{ shape: notch-rect, label: "**Local · cluster​_​aabb​_​spheres**<br/>按需缓存聚簇包围盒的包围球。" }
-  class n1 node_local
-  n2@{ shape: rounded, label: "**SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
+  n1@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: rounded, label: "**RectLight**<br/>配置朝局部负 Z 发光的矩形区域光。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**Clusters**<br/>保存视图的聚簇几何与簇内对象。" }
+  n3@{ shape: rounded, label: "**Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**ClusteredDecal**<br/>在立方体范围内向表面投射材质贴花。" }
+  class n3 external_node
+  n4@{ shape: rounded, label: "**VolumetricLight**<br/>让带阴影的方向光参与体积雾照明。" }
   class n4 node_component
-  n5@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
-  class n5 node_plugin
-  n6@{ shape: rounded, label: "**PointLight**<br/>配置向四周发光的点光源。" }
+  n5@{ shape: rounded, label: "**LightProbe**<br/>定义局部间接光照的长方体影响区域。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**ClusteredDecal**<br/>在立方体范围内向表面投射材质贴花。" }
   class n6 node_component
   n7@{ shape: rounded, label: "**EnvironmentMapLight**<br/>用漫反射与镜面反射立方体贴图提供环境光。" }
   class n7 node_component
-  n8@{ shape: lin-rect, label: "**CameraUpdateSystems**<br/>来自crate:bevy​_​camera ↗：统一更新相机<br/>目标、视口与投影计算结果。" }
-  class n8 node_system_set
-  class n8 external_node
-  n9@{ shape: rounded, label: "**LightProbe**<br/>定义局部间接光照的长方体影响区域。" }
+  n8@{ shape: rounded, label: "**Clusters**<br/>保存视图的聚簇几何与簇内对象。" }
+  class n8 node_component
+  n9@{ shape: rounded, label: "**SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**ClusterConfig**<br/>选择视图的聚簇划分策略。" }
-  class n10 node_component
-  n11@{ shape: rounded, label: "**VolumetricLight**<br/>让带阴影的方向光参与体积雾照明。" }
-  class n11 node_component
-  n12@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
+  n10@{ shape: notch-rect, label: "**Local · cluster​_​aabb​_​spheres**<br/>按需缓存聚簇包围盒的包围球。" }
+  class n10 node_local
+  n11@{ shape: notch-rect, label: "**Local · clusterable​_​objects**<br/>汇总等待 CPU 聚簇分配的可见光源和体积对<br/>象。" }
+  class n11 node_local
+  n12@{ shape: lin-rect, label: "**CameraUpdateSystems**<br/>来自crate:bevy​_​camera ↗：统一更新相机<br/>目标、视口与投影计算结果。" }
   class n12 node_system_set
   class n12 external_node
-  n13@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n13@{ shape: rounded, label: "**PointLight**<br/>配置向四周发光的点光源。" }
   class n13 node_component
-  class n13 external_node
-  n14@{ shape: notch-rect, label: "**Local · max​_​clusterable​_​objects​_​**<br/>**warning​_​emitted**<br/>避免聚簇对象数量超限警告重复输出。" }
-  class n14 node_local
-  n15@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
-  class n15 node_component
-  class n15 external_node
-  n16@{ shape: rounded, label: "**Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
+  n14@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
+  class n14 node_system_set
+  class n14 external_node
+  n15@{ shape: notch-rect, label: "**Local · max​_​clusterable​_​objects​_​**<br/>**warning​_​emitted**<br/>避免聚簇对象数量超限警告重复输出。" }
+  class n15 node_local
+  n16@{ shape: rounded, label: "**ClusterConfig**<br/>选择视图的聚簇划分策略。" }
   class n16 node_component
-  class n16 external_node
-  n17@{ shape: cyl, label: "**GlobalClusterSettings**<br/>描述设备支持的聚簇功能和索引上限。" }
-  class n17 node_resource
-  n18@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
-  class n18 node_component
-  class n18 external_node
-  n19@{ shape: lin-rect, label: "**CheckVisibility**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
-  class n19 node_system_set
+  n17@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n17 node_component
+  class n17 external_node
+  n18@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
+  class n18 node_plugin
+  n19@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  class n19 node_component
   class n19 external_node
-  n20@{ shape: notch-rect, label: "**Local · clusterable​_​objects**<br/>汇总等待 CPU 聚簇分配的可见光源和体积对<br/>象。" }
-  class n20 node_local
-  n21@{ shape: rounded, label: "**RectLight**<br/>配置朝局部负 Z 发光的矩形区域光。" }
-  class n21 node_component
-  n22@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
-  class n22 node_component
-  class n22 external_node
-  n23@{ shape: lin-rect, label: "**AssignLightsToClusters**<br/>组织灯光聚簇与可见性准备。" }
-  class n23 node_system_set
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
+  n20@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  class n20 node_component
+  class n20 external_node
+  n21@{ shape: lin-rect, label: "**CheckVisibility**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n21 node_system_set
+  class n21 external_node
+  n22@{ shape: lin-rect, label: "**AssignLightsToClusters**<br/>组织灯光聚簇与可见性准备。" }
+  class n22 node_system_set
+  n23@{ shape: cyl, label: "**GlobalClusterSettings**<br/>描述设备支持的聚簇功能和索引上限。" }
+  class n23 node_resource
+  n1 e0@--> n0
+  class e0 edge_read
   n2 e1@--> n0
   class e1 edge_read
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  n0 e3@-->|"赋值"| n3
-  class e3 edge_write
-  n4 e4@-->|"存在性约束"| n0
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"存在性约束"| n0
   class e4 edge_reference
-  n5 e5@-->|"调用"| n0
-  class e5 edge_registration
-  n6 e6@--> n0
-  class e6 edge_read
-  n7 e7@-->|"存在性约束"| n0
-  class e7 edge_reference
-  n8 e8@-->|"先于"| n0
-  class e8 edge_order
-  n9 e9@-->|"存在性约束"| n0
-  class e9 edge_reference
-  n10 e10@--> n0
-  class e10 edge_read
-  n11 e11@--> n0
-  class e11 edge_read
-  n12 e12@-->|"先于"| n0
-  class e12 edge_order
-  n13 e13@--> n0
-  class e13 edge_read
-  n0 e14@-->|"可变访问"| n14
+  n6 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
+  n7 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
+  n0 e7@-->|"赋值"| n8
+  class e7 edge_write
+  n9 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"可变访问"| n10
+  class e9 edge_write
+  n0 e10@-->|"可变访问"| n11
+  class e10 edge_write
+  n12 e11@-->|"先于"| n0
+  class e11 edge_order
+  n13 e12@--> n0
+  class e12 edge_read
+  n14 e13@-->|"先于"| n0
+  class e13 edge_order
+  n0 e14@-->|"可变访问"| n15
   class e14 edge_write
-  n15 e15@--> n0
+  n16 e15@--> n0
   class e15 edge_read
-  n16 e16@--> n0
-  class e16 edge_read
+  n0 e16@-->|"可变访问"| n8
+  class e16 edge_write
   n17 e17@--> n0
   class e17 edge_read
-  n18 e18@--> n0
-  class e18 edge_read
-  n19 e19@-->|"先于"| n0
-  class e19 edge_order
-  n0 e20@-->|"可变访问"| n20
-  class e20 edge_write
-  n21 e21@--> n0
-  class e21 edge_read
-  n22 e22@--> n0
-  class e22 edge_read
-  n23 e23@-->|"集合成员"| n0
-  class e23 edge_set_membership
+  n18 e18@-->|"调用"| n0
+  class e18 edge_registration
+  n19 e19@--> n0
+  class e19 edge_read
+  n20 e20@--> n0
+  class e20 edge_read
+  n21 e21@-->|"先于"| n0
+  class e21 edge_order
+  n22 e22@-->|"集合成员"| n0
+  class e22 edge_set_membership
+  n23 e23@--> n0
+  class e23 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

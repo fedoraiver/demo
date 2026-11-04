@@ -46,46 +46,46 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**queue​_​line​_​joint​_​gizmos​_​3d**<br/>将三维 Gizmo 折线接头加入透明阶段。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**ViewKeyCache**<br/>来自crate:bevy​_​pbr ↗：缓存各视图预启<br/>用特性的网格管线键。" }
-  class n1 node_resource
+  n1@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  n2@{ shape: rounded, label: "**GizmoMeshConfig**<br/>来自crate:bevy​_​gizmos ↗：配置调试线条<br/>的样式、接头和渲染层。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: cyl, label: "**LineJointGizmoPipeline**<br/>提供三维调试线接头的渲染管线资源。" }
-  class n3 node_resource
-  n4@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
-  class n4 node_resource
-  class n4 external_node
-  n5@{ shape: fr-rect, label: "**LineGizmo3dPlugin**<br/>准备三维调试线条和接头绘制。" }
-  class n5 node_plugin
-  n6@{ shape: cyl, label: "**DrawFunctions#lt;Transparent3d#gt;**<br/>来自crate:bevy​_​render ↗：注册并查询指<br/>定绘制项的绘制函数。" }
-  class n6 node_resource
+  n3@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: fr-rect, label: "**LineGizmo3dPlugin**<br/>准备三维调试线条和接头绘制。" }
+  class n4 node_plugin
+  n5@{ shape: cyl, label: "**DrawFunctions#lt;Transparent3d#gt;**<br/>来自crate:bevy​_​render ↗：注册并查询指<br/>定绘制项的绘制函数。" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: rounded, label: "**prepare​_​assets**<br/>来自crate:bevy​_​render ↗：在上传预算内<br/>准备资产并保留重试项。" }
+  class n6 node_system
   class n6 external_node
-  n7@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent3d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  n7@{ shape: cyl, label: "**LineGizmoEntities**<br/>为即时调试线的渲染项提供主世界实体身份。" }
   class n7 node_resource
-  class n7 external_node
-  n8@{ shape: rounded, label: "**prepare​_​assets**<br/>来自crate:bevy​_​render ↗：在上传预算内<br/>准备资产并保留重试项。" }
-  class n8 node_system
+  n8@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  class n8 node_resource
   class n8 external_node
-  n9@{ shape: cyl, label: "**RenderAssets#lt;GpuLineGizmo#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n9@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;LineJoint**<br/>**GizmoPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
   class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**LineGizmoEntities**<br/>为即时调试线的渲染项提供主世界实体身份。" }
-  class n10 node_resource
-  n11@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
-  class n11 node_component
+  n10@{ shape: lin-rect, label: "**QueueLineGizmos3d**<br/>组织二维和三维调试线条排队。" }
+  class n10 node_system_set
+  n11@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transparent3d**<br/>**#gt;**<br/>来自crate:bevy​_​render ↗：汇集各视图需<br/>要排序的绘制指令。" }
+  class n11 node_resource
   class n11 external_node
-  n12@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;LineJoint**<br/>**GizmoPipeline#gt;**<br/>来自crate:bevy​_​render ↗：按配置键缓存<br/>渲染管线变体。" }
+  n12@{ shape: cyl, label: "**ViewKeyCache**<br/>来自crate:bevy​_​pbr ↗：缓存各视图预启<br/>用特性的网格管线键。" }
   class n12 node_resource
   class n12 external_node
-  n13@{ shape: lin-rect, label: "**QueueLineGizmos3d**<br/>组织二维和三维调试线条排队。" }
-  class n13 node_system_set
+  n13@{ shape: cyl, label: "**LineJointGizmoPipeline**<br/>提供三维调试线接头的渲染管线资源。" }
+  class n13 node_resource
   n14@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n14 node_component
   class n14 external_node
-  n15@{ shape: rounded, label: "**GizmoMeshConfig**<br/>来自crate:bevy​_​gizmos ↗：配置调试线条<br/>的样式、接头和渲染层。" }
-  class n15 node_component
+  n15@{ shape: cyl, label: "**RenderAssets#lt;GpuLineGizmo#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  class n15 node_resource
   class n15 external_node
   n1 e0@--> n0
   class e0 edge_read
@@ -93,26 +93,26 @@ flowchart LR
   class e1 edge_read
   n3 e2@--> n0
   class e2 edge_read
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
-  n6 e5@--> n0
-  class e5 edge_read
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
-  n8 e7@-->|"先于"| n0
-  class e7 edge_order
-  n9 e8@--> n0
-  class e8 edge_read
-  n10 e9@--> n0
-  class e9 edge_read
-  n11 e10@--> n0
-  class e10 edge_read
-  n0 e11@-->|"可变访问"| n12
-  class e11 edge_write
-  n13 e12@-->|"集合成员"| n0
-  class e12 edge_set_membership
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@-->|"先于"| n0
+  class e5 edge_order
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@--> n0
+  class e7 edge_read
+  n0 e8@-->|"可变访问"| n9
+  class e8 edge_write
+  n10 e9@-->|"集合成员"| n0
+  class e9 edge_set_membership
+  n0 e10@-->|"可变访问"| n11
+  class e10 edge_write
+  n12 e11@--> n0
+  class e11 edge_read
+  n13 e12@--> n0
+  class e12 edge_read
   n14 e13@--> n0
   class e13 edge_read
   n15 e14@--> n0
@@ -123,7 +123,7 @@ flowchart LR
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: basis }
+  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

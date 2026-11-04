@@ -52,29 +52,29 @@ flowchart LR
   class n2 node_system
   n3@{ shape: rounded, label: "**sleep​_​islands**<br/>按物理岛活动状态提交休眠与唤醒。" }
   class n3 node_system
-  n4@{ shape: lin-rect, label: "**Sleeping**<br/>组织一次物理模拟步的主要阶段。" }
-  class n4 node_system_set
-  n5@{ shape: fr-rect, label: "**IslandSleepingPlugin**<br/>管理物理岛休眠与唤醒。" }
-  class n5 node_plugin
-  n6@{ shape: rounded, label: "**resource​_​changed**<br/>来自crate:bevy​_​ecs ↗：判断资源是否被<br/>标记为变化。" }
-  class n6 node_system
-  class n6 external_node
-  n7@{ shape: cyl, label: "**PhysicsIslands**<br/>管理模拟岛及接触和关节连接。" }
-  class n7 node_resource
+  n4@{ shape: fr-rect, label: "**IslandSleepingPlugin**<br/>管理物理岛休眠与唤醒。" }
+  class n4 node_plugin
+  n5@{ shape: lin-rect, label: "**Sleeping**<br/>组织一次物理模拟步的主要阶段。" }
+  class n5 node_system_set
+  n6@{ shape: cyl, label: "**PhysicsIslands**<br/>管理模拟岛及接触和关节连接。" }
+  class n6 node_resource
+  n7@{ shape: rounded, label: "**resource​_​changed**<br/>来自crate:bevy​_​ecs ↗：判断资源是否被<br/>标记为变化。" }
+  class n7 node_system
+  class n7 external_node
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
   n2 e1@-->|"先于"| n0
   class e1 edge_order
   n0 e2@-->|"先于"| n3
   class e2 edge_order
-  n4 e3@-->|"集合成员"| n0
-  class e3 edge_set_membership
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
-  n6 e5@-->|"运行条件"| n0
-  class e5 edge_reference
-  n7 e6@--> n0
-  class e6 edge_read
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n5 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@-->|"运行条件"| n0
+  class e6 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e3@{ curve: basis }

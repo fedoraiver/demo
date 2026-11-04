@@ -46,37 +46,37 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​start**<br/>把当前缩放记录为插值起点。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**TransformInterpolationPlugin**<br/>插值固定步之间的显示变换。" }
-  class n1 node_plugin
-  n2@{ shape: rounded, label: "**ScaleEasingState**<br/>保存固定步缩放插值的起点与终点" }
+  n1@{ shape: lin-rect, label: "**UpdateStart**<br/>组织变换缓动端点与帧间应用。" }
+  class n1 node_system_set
+  n2@{ shape: rounded, label: "**NoScaleEasing**<br/>显式禁止当前实体的缩放插值和外推" }
   class n2 node_component
   n3@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: lin-rect, label: "**UpdateStart**<br/>组织变换缓动端点与帧间应用。" }
-  class n4 node_system_set
-  n5@{ shape: rounded, label: "**NoScaleEasing**<br/>显式禁止当前实体的缩放插值和外推" }
+  n4@{ shape: rounded, label: "**ScaleInterpolation**<br/>启用缩放插值" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**ScaleEasingState**<br/>保存固定步缩放插值的起点与终点" }
   class n5 node_component
   n6@{ shape: rounded, label: "**update​_​rotation​_​interpolation​_​start**<br/>把当前旋转记录为插值起点。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**ScaleInterpolation**<br/>启用缩放插值" }
-  class n7 node_component
-  n1 e0@-->|"调用"| n0
-  class e0 edge_registration
-  n0 e1@-->|"赋值"| n2
-  class e1 edge_write
+  n7@{ shape: fr-rect, label: "**TransformInterpolationPlugin**<br/>插值固定步之间的显示变换。" }
+  class n7 node_plugin
+  n1 e0@-->|"集合成员"| n0
+  class e0 edge_set_membership
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
   n3 e2@--> n0
   class e2 edge_read
-  n4 e3@-->|"集合成员"| n0
-  class e3 edge_set_membership
-  n0 e4@-->|"可变访问"| n2
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n0 e4@-->|"可变访问"| n5
   class e4 edge_write
-  n5 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
-  n6 e6@-->|"先于"| n0
-  class e6 edge_order
-  n7 e7@-->|"存在性约束"| n0
-  class e7 edge_reference
+  n6 e5@-->|"先于"| n0
+  class e5 edge_order
+  n0 e6@-->|"赋值"| n5
+  class e6 edge_write
+  n7 e7@-->|"调用"| n0
+  class e7 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

@@ -1,0 +1,98 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: EguiOutput · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**EguiOutput**<br/>保存上一轮 Egui 的平台输出和像素点比例" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**update​_​ui​_​screen​_​rect**<br/>把相机视口换算为 Egui 逻辑屏幕区域。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**process​_​output​_​system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**update​_​ui​_​screen​_​rect**<br/>把相机视口换算为 Egui 逻辑屏幕区域。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**extract​_​egui​_​camera​_​view​_​system**<br/>为活动相机提取独立 Egui 渲染视图。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**write​_​ime​_​messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
+  class n6 node_system
+  n7@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  class n7 node_entity
+  class n7 external_node
+  n8@{ shape: rounded, label: "**write​_​non​_​window​_​touch​_​messages​_​**<br/>**system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
+  class n9 node_entity
+  class n9 external_node
+  n10@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  class n10 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n7 e6@-->|"可能包含"| n0
+  class e6 edge_reference
+  n0 e7@--> n8
+  class e7 edge_read
+  n9 e8@-->|"可能包含"| n0
+  class e8 edge_reference
+  n3 e9@-->|"赋值"| n0
+  class e9 edge_write
+  n0 e10@--> n10
+  class e10 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }

@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-15d85bfad11573bf-e3{marker-start:url(#object-15d85bfad11573bf_flowchart-v2-pointStart)!important}\n#object-15d85bfad11573bf_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-15d85bfad11573bf-e14{marker-start:url(#object-15d85bfad11573bf_flowchart-v2-pointStart)!important}\n#object-15d85bfad11573bf_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -43,68 +43,107 @@ flowchart LR
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**extract​_​clusters​_​for​_​gpu​_​clustering**<br/>提取视图聚簇配置并回传上帧 GPU 统计。" }
   class n0 node_system
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
   n1@{ shape: cyl, label: "**DefaultQueryFilters**<br/>来自crate:bevy​_​ecs ↗：保存默认禁用实<br/>体查询过滤规则。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: rounded, label: "**Clusters**<br/>来自crate:bevy​_​light ↗：保存视图的聚<br/>簇几何与簇内对象。" }
-  class n2 node_component
-  class n2 external_node
-  n3@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
-  class n3 node_component
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled​_​during​_​**<br/>**extraction**<br/>判断提取阶段是否使用 GPU 聚簇。" }
+  class n2 node_system
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: cyl, label: "**GlobalClusterSettings**<br/>来自crate:bevy​_​light ↗：描述设备支持<br/>的聚簇功能和索引上限。" }
+  class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**GlobalClusterSettings**<br/>来自crate:bevy​_​light ↗：描述设备支持<br/>的聚簇功能和索引上限。" }
-  class n4 node_resource
-  class n4 external_node
-  n5@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled​_​during​_​**<br/>**extraction**<br/>判断提取阶段是否使用 GPU 聚簇。" }
-  class n5 node_system
-  n6@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
-  class n6 node_plugin
-  n7@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>按相机可见集合和距离分配已就绪光照探针。" }
-  class n7 node_system
-  n8@{ shape: cyl, label: "**RenderViewClusteringReadbackData**<br/>管理各视图的 GPU 聚簇统计回读。" }
-  class n8 node_resource
-  n9@{ shape: rounded, label: "**ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
-  class n9 node_component
-  n10@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>按相机可见集合和距离分配已就绪光照探针。" }
-  class n10 node_system
-  n11@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
-  class n11 node_resource
-  class n11 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
+  class n4 node_plugin
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
+  class n5 node_component
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: cyl, label: "**RenderViewClusteringReadbackData**<br/>管理各视图的 GPU 聚簇统计回读。" }
+  class n6 node_resource
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**Clusters**<br/>来自crate:bevy​_​light ↗：保存视图的聚<br/>簇几何与簇内对象。" }
+  class n7 node_component
+  class n7 external_node
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  class n8 node_system
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
+  n9@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n9 node_resource
+  class n9 external_node
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n10 node_component
+  class n10 external_node
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>按相机可见集合和距离分配已就绪光照探针。" }
+  class n11 node_system
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
   n12@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
   class n12 node_component
   class n12 external_node
+  end
+  style layout_card_n12 fill:none,stroke:none
   n1 e0@--> n0
   class e0 edge_read
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
+  n2 e1@-->|"运行条件"| n0
+  class e1 edge_reference
   n3 e2@--> n0
   class e2 edge_read
-  n4 e3@---|"插入"| n0
-  class e3 edge_write
-  n0 e4@-->|"赋值"| n2
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n0 e4@-->|"移除"| n5
   class e4 edge_write
-  n5 e5@-->|"运行条件"| n0
-  class e5 edge_reference
-  n6 e6@-->|"调用"| n0
-  class e6 edge_registration
-  n7 e7@-->|"先于"| n0
+  n6 e5@--> n0
+  class e5 edge_read
+  n0 e6@-->|"赋值"| n7
+  class e6 edge_write
+  n8 e7@-->|"先于"| n0
   class e7 edge_order
-  n4 e8@--> n0
-  class e8 edge_read
-  n8 e9@--> n0
-  class e9 edge_read
-  n0 e10@-->|"移除"| n9
+  n0 e8@-->|"可变访问"| n9
+  class e8 edge_write
+  n0 e9@-->|"可变访问"| n7
+  class e9 edge_write
+  n0 e10@-->|"插入"| n5
   class e10 edge_write
-  n10 e11@-->|"先于"| n0
-  class e11 edge_order
-  n0 e12@-->|"插入"| n9
-  class e12 edge_write
-  n0 e13@-->|"可变访问"| n11
-  class e13 edge_write
-  n12 e14@--> n0
-  class e14 edge_read
+  n10 e11@--> n0
+  class e11 edge_read
+  n11 e12@-->|"先于"| n0
+  class e12 edge_order
+  n12 e13@--> n0
+  class e13 edge_read
+  n3 e14@---|"插入"| n0
+  class e14 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

@@ -46,34 +46,34 @@ flowchart LR
   class n0 node_system
   n1@{ shape: rounded, label: "**trigger​_​untargeted​_​animation​_​events**<br/>派发动画片段的根目标事件。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**AnimationPlayer**<br/>保存当前激活动画及其播放控制状态" }
+  n2@{ shape: rounded, label: "**AnimationTransitions**<br/>管理动画混合权重的淡出过程" }
   class n2 node_component
-  n3@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自crate:bevy​_​app ↗：更新动画图、播<br/>放时间和目标姿态。" }
-  class n3 node_system_set
-  class n3 external_node
-  n4@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
+  n3@{ shape: rounded, label: "**AnimationPlayer**<br/>保存当前激活动画及其播放控制状态" }
+  class n3 node_component
+  n4@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自crate:bevy​_​app ↗：更新动画图、播<br/>放时间和目标姿态。" }
   class n4 node_system_set
   class n4 external_node
   n5@{ shape: fr-rect, label: "**AnimationPlugin**<br/>安装动画播放与更新支持。" }
   class n5 node_plugin
-  n6@{ shape: rounded, label: "**AnimationTransitions**<br/>管理动画混合权重的淡出过程" }
-  class n6 node_component
+  n6@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
+  class n6 node_system_set
+  class n6 external_node
   n1 e0@-->|"先于"| n0
   class e0 edge_order
   n0 e1@-->|"可变访问"| n2
   class e1 edge_write
-  n3 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
-  n0 e3@-->|"先于"| n4
-  class e3 edge_order
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
   n5 e4@-->|"调用"| n0
   class e4 edge_registration
-  n0 e5@-->|"可变访问"| n6
-  class e5 edge_write
-  n2 layout_output_0@~~~ n4
-  n4 layout_output_1@~~~ n6
+  n0 e5@-->|"先于"| n6
+  class e5 edge_order
+  n2 layout_output_0@~~~ n3
+  n3 layout_output_1@~~~ n6
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e3@{ curve: basis }
+  e2@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }

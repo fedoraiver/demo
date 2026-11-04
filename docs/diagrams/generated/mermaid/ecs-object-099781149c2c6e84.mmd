@@ -50,71 +50,71 @@ flowchart LR
   class n0 node_system
   n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载当前菜单正文、页脚和暂停遮罩。" }
   class n1 node_entity
-  n2@{ shape: cyl, label: "**SettingsDraft**<br/>来自settings ↗：菜单独立编辑的草稿；音<br/>量可以临时预览，只有应用成功才替换已保存<br/>设置。" }
-  class n2 node_resource
-  class n2 external_node
-  n3@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
-  class n3 node_component
-  class n3 external_node
+  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载当前菜单正文、页脚和暂停遮罩。" }
+  class n2 node_entity
+  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载当前菜单正文、页脚和暂停遮罩。" }
+  class n3 node_entity
   n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载当前菜单正文、页脚和暂停遮罩。" }
   class n4 node_entity
-  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载当前菜单正文、页脚和暂停遮罩。" }
-  class n5 node_entity
-  n6@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
-  class n6 node_plugin
-  n7@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
-  class n7 node_component
-  class n7 external_node
-  n8@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载当前菜单正文、页脚和暂停遮罩。" }
-  class n8 node_entity
-  n9@{ shape: lin-rect, label: "**Build**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
-  class n9 node_system_set
-  n10@{ shape: cyl, label: "**UiTheme**<br/>字体只加载一次；页面 BSN 直接引用句柄，<br/>不启动异步场景任务。" }
-  class n10 node_resource
+  n5@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  class n5 node_plugin
+  n6@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载当前菜单正文、页脚和暂停遮罩。" }
+  class n7 node_entity
+  n8@{ shape: cyl, label: "**UiTheme**<br/>字体只加载一次；页面 BSN 直接引用句柄，<br/>不启动异步场景任务。" }
+  class n8 node_resource
+  n9@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
+  class n9 node_resource
+  n10@{ shape: lin-rect, label: "**Build**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
+  class n10 node_system_set
   n11@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载当前菜单正文、页脚和暂停遮罩。" }
   class n11 node_entity
   n12@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载当前菜单正文、页脚和暂停遮罩。" }
   class n12 node_entity
-  n13@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载当前菜单正文、页脚和暂停遮罩。" }
-  class n13 node_entity
-  n14@{ shape: rounded, label: "**MenuRoot**<br/>页面根实体；页面更换时连同视觉子树一起销<br/>毁。" }
-  class n14 node_component
-  n15@{ shape: notch-rect, label: "**Local · previous​_​layout**<br/>识别需要重建菜单树的布局变化。" }
-  class n15 node_local
-  n16@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
-  class n16 node_resource
+  n13@{ shape: notch-rect, label: "**Local · previous​_​layout**<br/>识别需要重建菜单树的布局变化。" }
+  class n13 node_local
+  n14@{ shape: cyl, label: "**SettingsDraft**<br/>来自settings ↗：菜单独立编辑的草稿；音<br/>量可以临时预览，只有应用成功才替换已保存<br/>设置。" }
+  class n14 node_resource
+  class n14 external_node
+  n15@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  class n15 node_component
+  class n15 external_node
+  n16@{ shape: rounded, label: "**MenuRoot**<br/>页面根实体；页面更换时连同视觉子树一起销<br/>毁。" }
+  class n16 node_component
   n0 e0@-->|"创建模板"| n1
   class e0 edge_write
-  n2 e1@--> n0
-  class e1 edge_read
-  n3 e2@-->|"存在性约束"| n0
-  class e2 edge_reference
+  n0 e1@-->|"创建模板"| n2
+  class e1 edge_write
+  n0 e2@-->|"创建模板"| n3
+  class e2 edge_write
   n0 e3@-->|"创建模板"| n4
   class e3 edge_write
-  n0 e4@-->|"创建模板"| n5
-  class e4 edge_write
-  n6 e5@-->|"调用"| n0
-  class e5 edge_registration
-  n7 e6@--> n0
-  class e6 edge_read
-  n0 e7@-->|"创建模板"| n8
-  class e7 edge_write
-  n9 e8@-->|"集合成员"| n0
-  class e8 edge_set_membership
-  n10 e9@--> n0
-  class e9 edge_read
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n6 e5@--> n0
+  class e5 edge_read
+  n0 e6@-->|"创建模板"| n7
+  class e6 edge_write
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@-->|"集合成员"| n0
+  class e9 edge_set_membership
   n0 e10@-->|"创建模板"| n11
   class e10 edge_write
   n0 e11@-->|"创建模板"| n12
   class e11 edge_write
-  n0 e12@-->|"创建模板"| n13
+  n0 e12@-->|"可变访问"| n13
   class e12 edge_write
-  n14 e13@-->|"存在性约束"| n0
-  class e13 edge_reference
-  n0 e14@-->|"可变访问"| n15
-  class e14 edge_write
-  n16 e15@--> n0
-  class e15 edge_read
+  n14 e13@--> n0
+  class e13 edge_read
+  n15 e14@-->|"存在性约束"| n0
+  class e14 edge_reference
+  n16 e15@-->|"存在性约束"| n0
+  class e15 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

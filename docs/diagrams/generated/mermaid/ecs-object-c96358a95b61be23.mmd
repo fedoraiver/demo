@@ -40,13 +40,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**SpecializedComputePipelines#lt;SparseBu**<br/>**fferUpdatePipelines#gt;**<br/>按配置键缓存计算管线变体。" }
-  class n1 node_resource
-  n2@{ shape: rounded, label: "**init​_​sparse​_​buffer​_​update​_​bind​_​**<br/>**groups**<br/>准备稀疏更新管线标识与弱键绑定缓存。" }
-  class n2 node_system
-  n0 e0@-->|"插入"| n1
-  class e0 edge_write
-  n0 e1@-->|"先于"| n2
-  class e1 edge_order
+  n1@{ shape: rounded, label: "**init​_​sparse​_​buffer​_​update​_​bind​_​**<br/>**groups**<br/>准备稀疏更新管线标识与弱键绑定缓存。" }
+  class n1 node_system
+  n2@{ shape: cyl, label: "**SpecializedComputePipelines#lt;SparseBu**<br/>**fferUpdatePipelines#gt;**<br/>按配置键缓存计算管线变体。" }
+  class n2 node_resource
+  n0 e0@-->|"先于"| n1
+  class e0 edge_order
+  n0 e1@-->|"插入"| n2
+  class e1 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

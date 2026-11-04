@@ -46,40 +46,40 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**end​_​pass​_​system**<br/>结束 Egui 界面帧并保存完整输出。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
-  class n1 node_component
+  n1@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
+  class n1 node_plugin
   n2@{ shape: rounded, label: "**run​_​egui​_​context​_​pass​_​loop​_​system**<br/>运行每个自动 Egui 上下文的专属调度。" }
   class n2 node_system
   n3@{ shape: rounded, label: "**EguiFullOutput**<br/>暂存 Egui pass 结束时产生的完整输出" }
   class n3 node_component
-  n4@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
-  class n4 node_plugin
+  n4@{ shape: rounded, label: "**EguiContextSettings**<br/>保存单个 Egui 上下文的运行、输入、指针<br/>捕获、光标和 IME 集成选项" }
+  class n4 node_component
   n5@{ shape: lin-rect, label: "**EndPass**<br/>组织 Egui 轮次结束与输出处理。" }
   class n5 node_system_set
-  n6@{ shape: rounded, label: "**EguiContextSettings**<br/>保存单个 Egui 上下文的运行、输入、指针<br/>捕获、光标和 IME 集成选项" }
+  n6@{ shape: rounded, label: "**EguiSchedule**<br/>为额外 Egui 上下文指定执行 UI pass 的<br/>调度" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**EguiSchedule**<br/>为额外 Egui 上下文指定执行 UI pass 的<br/>调度" }
+  n7@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
   class n7 node_component
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
   n2 e1@-->|"先于"| n0
   class e1 edge_order
-  n0 e2@-->|"可变访问"| n3
+  n0 e2@-->|"赋值"| n3
   class e2 edge_write
-  n4 e3@-->|"调用"| n0
-  class e3 edge_registration
-  n0 e4@-->|"赋值"| n3
-  class e4 edge_write
+  n0 e3@-->|"可变访问"| n3
+  class e3 edge_write
+  n4 e4@--> n0
+  class e4 edge_read
   n5 e5@-->|"集合成员"| n0
   class e5 edge_set_membership
-  n6 e6@--> n0
-  class e6 edge_read
-  n7 e7@-->|"存在性约束"| n0
-  class e7 edge_reference
+  n6 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
+  n0 e7@-->|"可变访问"| n7
+  class e7 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: bumpX }
-  e3@{ curve: basis }
-  e4@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }

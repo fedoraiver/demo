@@ -51,85 +51,85 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**write​_​mouse​_​wheel​_​messages​_​system**<br/>向悬停 Egui 上下文传递滚轮输入。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**Messages#lt;EguiInputEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n1@{ shape: cyl, label: "**ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
   class n1 node_resource
-  class n1 external_node
-  n2@{ shape: cyl, label: "**FocusedNonWindowEguiContext**<br/>保存当前获得键盘焦点的非窗口 Egui 上下<br/>文实体" }
+  n2@{ shape: cyl, label: "**WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**absorb​_​bevy​_​input​_​system**<br/>在 Egui 使用输入时吸收对应 Bevy 输入。" }
-  class n3 node_system
-  n4@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
-  class n4 node_plugin
-  n5@{ shape: cyl, label: "**ModifierKeysState**<br/>缓存 Shift、Control、Alt 和平台主修饰<br/>键的按下状态" }
-  class n5 node_resource
+  n3@{ shape: lean-r, label: "**EguiInputEvent**<br/>传递供 Egui 消费的输入事件。" }
+  class n3 node_message
+  n4@{ shape: rounded, label: "**absorb​_​bevy​_​input​_​system**<br/>在 Egui 使用输入时吸收对应 Bevy 输入。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**EguiContextSettings**<br/>保存单个 Egui 上下文的运行、输入、指针<br/>捕获、光标和 IME 集成选项" }
+  class n5 node_component
   n6@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
-  class n7 node_component
-  n8@{ shape: cyl, label: "**WindowToEguiContextMap**<br/>维护窗口实体与 Egui 上下文实体的双向索<br/>引" }
-  class n8 node_resource
-  n9@{ shape: cyl, label: "**HoveredNonWindowEguiContext**<br/>保存指针当前悬停的非窗口 Egui 上下文实<br/>体" }
+  n7@{ shape: cyl, label: "**Messages#lt;MouseWheel#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: lean-r, label: "**MouseWheel**<br/>来自crate:bevy​_​input ↗：传递鼠标滚轮<br/>位移。" }
+  class n8 node_message
+  class n8 external_node
+  n9@{ shape: cyl, label: "**FocusedNonWindowEguiContext**<br/>保存当前获得键盘焦点的非窗口 Egui 上下<br/>文实体" }
   class n9 node_resource
-  n10@{ shape: cyl, label: "**Messages#lt;MouseWheel#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n10@{ shape: cyl, label: "**Messages#lt;EguiInputEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n10 node_resource
   class n10 external_node
-  n11@{ shape: lean-r, label: "**EguiInputEvent**<br/>传递供 Egui 消费的输入事件。" }
-  class n11 node_message
-  n12@{ shape: lin-rect, label: "**ReadBevyMessages**<br/>组织 Egui 输入读取与事件写入。" }
+  n11@{ shape: lin-rect, label: "**ReadBevyMessages**<br/>组织 Egui 输入读取与事件写入。" }
+  class n11 node_system_set
+  n12@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
   class n12 node_system_set
-  n13@{ shape: lean-r, label: "**MouseWheel**<br/>来自crate:bevy​_​input ↗：传递鼠标滚轮<br/>位移。" }
-  class n13 node_message
-  class n13 external_node
-  n14@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
-  class n14 node_system_set
-  n15@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>判断是否向 Egui 转换滚轮消息。；按<br/>Egui 全局配置判断输入处理是否启用。" }
-  class n15 node_system_group
-  n16@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n13@{ shape: cyl, label: "**HoveredNonWindowEguiContext**<br/>保存指针当前悬停的非窗口 Egui 上下文实<br/>体" }
+  class n13 node_resource
+  n14@{ shape: fr-rect, label: "**input​_​system​_​is​_​enabled::{{closure}}**<br/>按 Egui 全局配置判断输入处理是否启<br/>用。；判断是否向 Egui 转换滚轮消息。" }
+  class n14 node_system_group
+  n15@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**EguiContextSettings**<br/>保存单个 Egui 上下文的运行、输入、指针<br/>捕获、光标和 IME 集成选项" }
-  class n17 node_component
-  n18@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
-  class n18 node_system
-  n0 e0@-->|"赋值"| n1
-  class e0 edge_write
+  n17@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
+  class n17 node_plugin
+  n18@{ shape: rounded, label: "**EguiContext**<br/>包装一个 egui::Context" }
+  class n18 node_component
+  n1 e0@--> n0
+  class e0 edge_read
   n2 e1@--> n0
   class e1 edge_read
-  n0 e2@-->|"先于"| n3
-  class e2 edge_order
-  n4 e3@-->|"调用"| n0
-  class e3 edge_registration
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_publish
+  n0 e3@-->|"先于"| n4
+  class e3 edge_order
   n5 e4@--> n0
   class e4 edge_read
   n6 e5@-->|"先于"| n0
   class e5 edge_order
-  n7 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
+  n7 e6@--> n0
+  class e6 edge_read
   n8 e7@--> n0
-  class e7 edge_read
-  n0 e8@-->|"可变访问"| n1
-  class e8 edge_write
-  n9 e9@--> n0
-  class e9 edge_read
-  n10 e10@--> n0
-  class e10 edge_read
-  n0 e11@-->|"消息"| n11
-  class e11 edge_publish
+  class e7 edge_consume
+  n9 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"消息"| n3
+  class e9 edge_publish
+  n0 e10@-->|"赋值"| n10
+  class e10 edge_write
+  n11 e11@-->|"集合成员"| n0
+  class e11 edge_set_membership
   n12 e12@-->|"集合成员"| n0
   class e12 edge_set_membership
-  n0 e13@-->|"可变访问"| n11
-  class e13 edge_publish
-  n13 e14@--> n0
-  class e14 edge_consume
-  n14 e15@-->|"集合成员"| n0
-  class e15 edge_set_membership
-  n15 e16@-->|"运行条件"| n0
-  class e16 edge_reference
-  n0 e17@-->|"先于"| n16
+  n13 e13@--> n0
+  class e13 edge_read
+  n14 e14@-->|"运行条件"| n0
+  class e14 edge_reference
+  n0 e15@-->|"先于"| n15
+  class e15 edge_order
+  n0 e16@-->|"可变访问"| n10
+  class e16 edge_write
+  n16 e17@-->|"先于"| n0
   class e17 edge_order
-  n17 e18@--> n0
-  class e18 edge_read
-  n18 e19@-->|"先于"| n0
-  class e19 edge_order
+  n17 e18@-->|"调用"| n0
+  class e18 edge_registration
+  n18 e19@-->|"存在性约束"| n0
+  class e19 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -141,7 +141,7 @@ flowchart LR
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e11@{ curve: bumpX }
+  e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }

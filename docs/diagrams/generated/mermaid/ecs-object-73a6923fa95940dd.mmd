@@ -49,55 +49,56 @@ flowchart LR
   class n0 node_system
   n1@{ shape: notch-rect, label: "**Local · removed​_​lightmaps​_​**<br/>**query.0.0.0.0.0**<br/>保存 Lightmap 移除参数的组件 ID。" }
   class n1 node_local
-  n2@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
-  class n2 node_resource
+  n2@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
-  class n3 node_component
-  class n3 external_node
-  n4@{ shape: cyl, label: "**RenderLightmaps**<br/>管理渲染侧光照贴图的槽位和纹理。" }
-  class n4 node_resource
-  n5@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  n3@{ shape: notch-rect, label: "**Local · removed​_​lightmaps​_​**<br/>**query.0.0.1**<br/>跟踪 Lightmap 移除记录的读取进度。" }
+  class n3 node_local
+  n4@{ shape: rounded, label: "**Lightmap**<br/>为网格应用烘焙的间接漫反射光照。" }
+  class n4 node_component
+  n5@{ shape: cyl, label: "**FallbackImage**<br/>来自crate:bevy​_​render ↗：为未指定图像<br/>的绑定提供不透明白纹理。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: fr-rect, label: "**LightmapPlugin**<br/>接入表面烘焙光照贴图。" }
-  class n6 node_plugin
-  n7@{ shape: rounded, label: "**Lightmap**<br/>为网格应用烘焙的间接漫反射光照。" }
-  class n7 node_component
-  n8@{ shape: lin-rect, label: "**MeshExtractionSystems**<br/>向渲染世界提取三维网格的实例数据。" }
-  class n8 node_system_set
-  n9@{ shape: cyl, label: "**FallbackImage**<br/>来自crate:bevy​_​render ↗：为未指定图像<br/>的绑定提供不透明白纹理。" }
-  class n9 node_resource
-  class n9 external_node
-  n10@{ shape: notch-rect, label: "**Local · removed​_​lightmaps​_​**<br/>**query.0.0.1**<br/>跟踪 Lightmap 移除记录的读取进度。" }
-  class n10 node_local
+  n6@{ shape: cyl, label: "**RenderLightmaps**<br/>管理渲染侧光照贴图的槽位和纹理。" }
+  class n6 node_resource
+  n7@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n7 node_resource
+  class n7 external_node
+  n8@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>来自crate:bevy​_​render ↗：按源资产身份<br/>保存 GPU 渲染表示。" }
+  class n8 node_resource
+  class n8 external_node
+  n9@{ shape: fr-rect, label: "**LightmapPlugin**<br/>接入表面烘焙光照贴图。" }
+  class n9 node_plugin
+  n10@{ shape: lin-rect, label: "**MeshExtractionSystems**<br/>向渲染世界提取三维网格的实例数据。" }
+  class n10 node_system_set
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
   n2 e1@--> n0
   class e1 edge_read
-  n3 e2@--> n0
-  class e2 edge_read
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n5 e4@--> n0
-  class e4 edge_read
-  n6 e5@-->|"调用"| n0
-  class e5 edge_registration
-  n7 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
+  n4 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
+  n5 e5@--> n0
+  class e5 edge_read
+  n0 e6@-->|"可变访问"| n6
+  class e6 edge_write
   n7 e7@--> n0
   class e7 edge_read
-  n8 e8@-->|"先于"| n0
-  class e8 edge_order
-  n9 e9@--> n0
-  class e9 edge_read
-  n0 e10@-->|"可变访问"| n10
-  class e10 edge_write
-  n3 e11@-->|"存在性约束"| n0
+  n8 e8@--> n0
+  class e8 edge_read
+  n9 e9@-->|"调用"| n0
+  class e9 edge_registration
+  n10 e10@-->|"先于"| n0
+  class e10 edge_order
+  n2 e11@-->|"存在性约束"| n0
   class e11 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e2@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

@@ -42,12 +42,12 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​oit​_​buffers**<br/>创建可立即绑定的 OIT 初始缓冲。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  n1@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
   class n1 node_resource
   class n1 external_node
   n2@{ shape: cyl, label: "**OitBuffers**<br/>保存顺序无关透明的片元链表与参数。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**RenderQueue**<br/>来自crate:bevy​_​render ↗：将资源写入和<br/>命令异步提交给 GPU。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n3 node_resource
   class n3 external_node
   n4@{ shape: fr-rect, label: "**OrderIndependentTransparencyPlugin**<br/>提供顺序无关透明渲染。" }

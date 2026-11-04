@@ -48,23 +48,23 @@ flowchart LR
   class n1 external_node
   n2@{ shape: rounded, label: "**handle​_​internal​_​asset​_​events**<br/>处理资产加载、依赖就绪及失败通知。" }
   class n2 node_system
-  n3@{ shape: cyl, label: "**AssetServer**<br/>加载资产并追踪加载状态。" }
+  n3@{ shape: cyl, label: "**DiagnosticsStore**<br/>来自crate:bevy​_​diagnostic ↗：按<br/>DiagnosticPath 保存诊断项、测量历史和<br/>统计结果" }
   class n3 node_resource
-  n4@{ shape: fr-rect, label: "**AssetPlugin**<br/>建立资产加载与处理流程。" }
-  class n4 node_plugin
-  n5@{ shape: cyl, label: "**DiagnosticsStore**<br/>来自crate:bevy​_​diagnostic ↗：按<br/>DiagnosticPath 保存诊断项、测量历史和<br/>统计结果" }
-  class n5 node_resource
-  class n5 external_node
+  class n3 external_node
+  n4@{ shape: cyl, label: "**AssetServer**<br/>加载资产并追踪加载状态。" }
+  class n4 node_resource
+  n5@{ shape: fr-rect, label: "**AssetPlugin**<br/>建立资产加载与处理流程。" }
+  class n5 node_plugin
   n1 e0@-->|"运行条件"| n0
   class e0 edge_reference
   n2 e1@-->|"先于"| n0
   class e1 edge_order
   n3 e2@--> n0
   class e2 edge_read
-  n4 e3@-->|"调用"| n0
-  class e3 edge_registration
-  n5 e4@--> n0
-  class e4 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e3@{ curve: basis }

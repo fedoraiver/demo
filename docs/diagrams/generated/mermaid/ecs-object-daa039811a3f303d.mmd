@@ -40,14 +40,14 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**initialize​_​generated​_​environment​_​**<br/>**map​_​resources**<br/>来自crate:bevy​_​pbr ↗：初始化环境图降<br/>采样、复制和卷积的 GPU 接口。" }
-  class n1 node_system
-  class n1 external_node
-  n2@{ shape: cyl, label: "**SpecializedComputePipelines#lt;Downsamp**<br/>**lePipeline#gt;**<br/>按配置键缓存计算管线变体。" }
-  class n2 node_resource
-  n0 e0@-->|"先于"| n1
-  class e0 edge_order
-  n0 e1@-->|"插入"| n2
-  class e1 edge_write
+  n1@{ shape: cyl, label: "**SpecializedComputePipelines#lt;Downsamp**<br/>**lePipeline#gt;**<br/>按配置键缓存计算管线变体。" }
+  class n1 node_resource
+  n2@{ shape: rounded, label: "**initialize​_​generated​_​environment​_​**<br/>**map​_​resources**<br/>来自crate:bevy​_​pbr ↗：初始化环境图降<br/>采样、复制和卷积的 GPU 接口。" }
+  class n2 node_system
+  class n2 external_node
+  n0 e0@-->|"插入"| n1
+  class e0 edge_write
+  n0 e1@-->|"先于"| n2
+  class e1 edge_order
   e0@{ curve: basis }
   e1@{ curve: basis }

@@ -44,44 +44,43 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>同步可见二维网格使用的材质资产身份。" }
   class n0 node_system
-  n1@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.0.0.0**<br/>保存 MeshMaterial2d#lt;M#gt; 移除参数的组<br/>件 ID。" }
-  class n1 node_local
-  n2@{ shape: cyl, label: "**RenderMaterial2dInstances**<br/>映射可渲染主世界实体到二维材质资产。" }
-  class n2 node_resource
-  n3@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
-  class n3 node_component
+  n1@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.1**<br/>跟踪 MeshMaterial2d#lt;M#gt; 移除记录的读取<br/>进度。" }
+  class n2 node_local
+  n3@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**MeshMaterial2d#lt;ColorMaterial#gt;**<br/>为二维网格指定材质资产。" }
-  class n4 node_component
-  n5@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.1**<br/>跟踪 MeshMaterial2d#lt;M#gt; 移除记录的读取<br/>进度。" }
-  class n5 node_local
-  n6@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n4@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.0.0.0**<br/>保存 MeshMaterial2d#lt;M#gt; 移除参数的组<br/>件 ID。" }
+  class n4 node_local
+  n5@{ shape: rounded, label: "**MeshMaterial2d#lt;ColorMaterial#gt;**<br/>为二维网格指定材质资产。" }
+  class n5 node_component
+  n6@{ shape: cyl, label: "**RenderMaterial2dInstances**<br/>映射可渲染主世界实体到二维材质资产。" }
   class n6 node_resource
-  class n6 external_node
   n7@{ shape: rounded, label: "**extract​_​2d​_​meshes**<br/>增量同步二维网格变换和渲染实例信息。" }
   class n7 node_system
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
-  n3 e2@-->|"存在性约束"| n0
-  class e2 edge_reference
-  n4 e3@--> n0
+  n1 e0@--> n0
+  class e0 edge_read
+  n1 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n0 e2@-->|"可变访问"| n2
+  class e2 edge_write
+  n3 e3@--> n0
   class e3 edge_read
-  n0 e4@-->|"可变访问"| n5
+  n0 e4@-->|"可变访问"| n4
   class e4 edge_write
-  n6 e5@--> n0
+  n5 e5@--> n0
   class e5 edge_read
-  n4 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
-  n3 e7@--> n0
-  class e7 edge_read
+  n0 e6@-->|"可变访问"| n6
+  class e6 edge_write
+  n5 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
   n0 e8@-->|"先于"| n7
   class e8 edge_order
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

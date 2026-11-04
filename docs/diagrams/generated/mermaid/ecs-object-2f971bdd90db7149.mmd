@@ -1,0 +1,116 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-2f971bdd90db7149-e8{marker-start:url(#object-2f971bdd90db7149_flowchart-v2-pointStart)!important}\n#object-2f971bdd90db7149_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: time::Time#lt;fixed::Fixed#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**ease​_​translation​_​lerp**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：按固定步剩余比例线性<br/>插值显示位置。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**log​_​simulation​_​timestep**<br/>来自settings ↗：记录模拟频率，直接读取<br/>应用配置的固定时间步，不初始化或覆盖它。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**run​_​fixed​_​main​_​schedule**<br/>按累计时间推进固定主调度。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**ease​_​scale​_​lerp**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：按固定步剩余比例线性<br/>插值显示缩放。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**log​_​character​_​velocity**<br/>来自character ↗：采样物理解算后的实际<br/>速度，便于检查加速度、刹车和碰撞反馈。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**warn​_​hold​_​strain**<br/>来自item​_​interaction ↗：持续偏离实际<br/>握点时提示一次，误差恢复后允许下一次告<br/>警。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
+  class n8 node_system
+  class n8 external_node
+  n9@{ shape: rounded, label: "**ease​_​translation​_​hermite**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：用两端线速度做<br/>Hermite 位置平滑。" }
+  class n9 node_system
+  class n9 external_node
+  n10@{ shape: rounded, label: "**time​_​system**<br/>按时间更新策略推进真实与虚拟时钟。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**ease​_​rotation​_​hermite**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：用两端角速度做<br/>Hermite 旋转平滑。" }
+  class n11 node_system
+  class n11 external_node
+  n12@{ shape: rounded, label: "**ease​_​rotation​_​slerp**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：按固定步剩余比例球面<br/>插值显示旋转。" }
+  class n12 node_system
+  class n12 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"赋值"| n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n0 e7@--> n8
+  class e7 edge_read
+  n3 e8@--- n0
+  class e8 edge_read
+  n0 e9@--> n9
+  class e9 edge_read
+  n3 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n0 e11@--> n10
+  class e11 edge_read
+  n0 e12@--> n11
+  class e12 edge_read
+  n0 e13@--> n12
+  class e13 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e7@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }

@@ -45,115 +45,73 @@ flowchart LR
   classDef edge_consume stroke:#247B91,stroke-width:1.8px,stroke-dasharray:2 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>按资产变化和设备恢复请求提取渲染资产。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: lin-rect, label: "**AssetExtractionSystems**<br/>提取各 RenderAsset 类型的资产变化。" }
-  class n1 node_system_set
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: cyl, label: "**RenderAssetsToReExtract#lt;GpuShaderBuf**<br/>**fer#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
-  class n2 node_resource
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: cyl, label: "**RenderAssets#lt;GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n1@{ shape: notch-rect, label: "**Local · needs​_​extracting**<br/>去重收集本轮需要提取的渲染资产标识。" }
+  class n1 node_local
+  n2@{ shape: lin-rect, label: "**AssetExtractionSystems**<br/>提取各 RenderAsset 类型的资产变化。" }
+  class n2 node_system_set
+  n3@{ shape: cyl, label: "**Assets#lt;ShaderBuffer#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n3 node_resource
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: lean-r, label: "**AssetEvent#lt;ShaderBuffer#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
-  class n4 node_message
-  class n4 external_node
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n5 node_resource
+  class n3 external_node
+  n4@{ shape: rounded, label: "**CachedExtractRenderAssetSystemState#lt;**<br/>**GpuShaderBuffer#gt;**<br/>缓存渲染资产提取的参数状态。" }
+  class n4 node_component
+  n5@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
+  class n5 node_message
   class n5 external_node
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**CachedExtractRenderAssetSystemState#lt;**<br/>**GpuShaderBuffer#gt;**<br/>缓存渲染资产提取的参数状态。" }
-  class n6 node_component
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n6@{ shape: cyl, label: "**Messages#lt;RemovedComponentEntity#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: cyl, label: "**ExtractedAssets#lt;GpuShaderBuffer#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
   class n7 node_resource
-  class n7 external_node
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: notch-rect, label: "**Local · needs​_​extracting**<br/>去重收集本轮需要提取的渲染资产标识。" }
-  class n8 node_local
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
-  n9@{ shape: cyl, label: "**CachedExtractRenderAssetSystemState#lt;**<br/>**GpuShaderBuffer#gt;**<br/>缓存渲染资产提取的参数状态。" }
+  n8@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;ShaderBuffer#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n8 node_resource
+  class n8 external_node
+  n9@{ shape: cyl, label: "**RenderAssets#lt;GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n9 node_resource
-  end
-  style layout_card_n9 fill:none,stroke:none
-  subgraph layout_card_n10[" "]
-  n10@{ shape: lean-r, label: "**RemovedComponentEntity**<br/>来自crate:bevy​_​ecs ↗：记录发生组件移<br/>除的实体。" }
-  class n10 node_message
+  n10@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n10 node_resource
   class n10 external_node
-  end
-  style layout_card_n10 fill:none,stroke:none
-  subgraph layout_card_n11[" "]
-  n11@{ shape: cyl, label: "**Assets#lt;ShaderBuffer#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n11 node_resource
+  n11@{ shape: lean-r, label: "**AssetEvent#lt;ShaderBuffer#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
+  class n11 node_message
   class n11 external_node
-  end
-  style layout_card_n11 fill:none,stroke:none
-  subgraph layout_card_n12[" "]
-  n12@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;ShaderBuffer#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  n12@{ shape: cyl, label: "**RenderAssetsToReExtract#lt;GpuShaderBuf**<br/>**fer#gt;**<br/>记录设备恢复后需重建的渲染资产。" }
   class n12 node_resource
-  class n12 external_node
-  end
-  style layout_card_n12 fill:none,stroke:none
-  subgraph layout_card_n13[" "]
-  n13@{ shape: cyl, label: "**ExtractedAssets#lt;GpuShaderBuffer#gt;**<br/>暂存本帧渲染资产的提取与增删记录。" }
+  n13@{ shape: cyl, label: "**CachedExtractRenderAssetSystemState#lt;**<br/>**GpuShaderBuffer#gt;**<br/>缓存渲染资产提取的参数状态。" }
   class n13 node_resource
-  end
-  style layout_card_n13 fill:none,stroke:none
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
-  n3 e2@--> n0
-  class e2 edge_read
-  n4 e3@--> n0
-  class e3 edge_consume
-  n0 e4@-->|"赋值"| n5
-  class e4 edge_write
-  n0 e5@-->|"可变访问"| n6
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n0 e4@-->|"消息"| n5
+  class e4 edge_publish
+  n0 e5@-->|"赋值"| n6
   class e5 edge_write
   n0 e6@-->|"可变访问"| n7
   class e6 edge_write
-  n0 e7@-->|"可变访问"| n8
-  class e7 edge_write
-  n0 e8@-->|"移除"| n9
-  class e8 edge_write
-  n0 e9@-->|"消息"| n10
-  class e9 edge_publish
-  n0 e10@-->|"可变访问"| n11
-  class e10 edge_write
-  n12 e11@--> n0
-  class e11 edge_read
-  n0 e12@-->|"可变访问"| n13
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"可变访问"| n10
+  class e9 edge_write
+  n11 e10@--> n0
+  class e10 edge_consume
+  n0 e11@-->|"可变访问"| n12
+  class e11 edge_write
+  n0 e12@-->|"移除"| n13
   class e12 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
   e6@{ curve: basis }
+  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

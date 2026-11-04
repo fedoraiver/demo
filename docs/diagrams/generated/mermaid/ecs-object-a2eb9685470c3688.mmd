@@ -41,15 +41,15 @@ flowchart LR
   class n0 node_system
   n1@{ shape: cyl, label: "**ErasedRenderAssets#lt;PreparedMaterial#gt;**<br/>存储源资产对应的类型擦除 GPU 表示。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**ErasedRenderAssetsToReExtract#lt;MeshMa**<br/>**terial3d#lt;StandardMaterial#gt;#gt;**<br/>记录设备恢复后需重新提取的资产身份。" }
+  n2@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;MeshMaterial3**<br/>**d#lt;StandardMaterial#gt;#gt;**<br/>保留下一帧需要继续准备的资产。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;MeshMaterial3**<br/>**d#lt;StandardMaterial#gt;#gt;**<br/>保留下一帧需要继续准备的资产。" }
+  n3@{ shape: cyl, label: "**ErasedRenderAssetsToReExtract#lt;MeshMa**<br/>**terial3d#lt;StandardMaterial#gt;#gt;**<br/>记录设备恢复后需重新提取的资产身份。" }
   class n3 node_resource
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
-  n0 e1@-->|"插入"| n2
+  n0 e1@-->|"可变访问"| n2
   class e1 edge_write
-  n0 e2@-->|"可变访问"| n3
+  n0 e2@-->|"插入"| n3
   class e2 edge_write
   e0@{ curve: basis }
   e2@{ curve: basis }

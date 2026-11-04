@@ -51,54 +51,54 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**PostLayout**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
-  class n2 node_resource
-  class n2 external_node
-  n3@{ shape: rounded, label: "**MenuFocusState**<br/>保存菜单弹出层的打开、获得焦点和关闭状态" }
+  n2@{ shape: fr-rect, label: "**MenuPlugin**<br/>处理菜单焦点与菜单项交互。" }
+  class n2 node_plugin
+  n3@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**text​_​input​_​autoscroll​_​system**<br/>在拖选越出文字视口时自动滚动。" }
-  class n4 node_system
-  n5@{ shape: stadium, label: "**MenuEvent**<br/>通过菜单层级传递开关和焦点操作。" }
-  class n5 node_event
-  n6@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
-  class n6 node_system_set
-  class n6 external_node
-  n7@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
-  class n7 node_component
-  class n7 external_node
-  n8@{ shape: lin-rect, label: "**FocusChangeEvents**<br/>来自crate:bevy​_​input​_​focus ↗：组织焦<br/>点输入派发与变化通知。" }
+  class n3 external_node
+  n4@{ shape: rounded, label: "**MenuPopup**<br/>定义弹出菜单的布局方向及模态焦点范围" }
+  class n4 node_component
+  n5@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
+  class n5 node_resource
+  class n5 external_node
+  n6@{ shape: rounded, label: "**MenuFocusState**<br/>保存菜单弹出层的打开、获得焦点和关闭状态" }
+  class n6 node_component
+  n7@{ shape: rounded, label: "**text​_​input​_​autoscroll​_​system**<br/>在拖选越出文字视口时自动滚动。" }
+  class n7 node_system
+  n8@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
   class n8 node_system_set
   class n8 external_node
-  n9@{ shape: rounded, label: "**MenuPopup**<br/>定义弹出菜单的布局方向及模态焦点范围" }
-  class n9 node_component
-  n10@{ shape: rounded, label: "**menu​_​acquire​_​focus**<br/>在菜单打开时为菜单项取得焦点。" }
-  class n10 node_system
-  n11@{ shape: fr-rect, label: "**MenuPlugin**<br/>处理菜单焦点与菜单项交互。" }
-  class n11 node_plugin
+  n9@{ shape: lin-rect, label: "**FocusChangeEvents**<br/>来自crate:bevy​_​input​_​focus ↗：组织焦<br/>点输入派发与变化通知。" }
+  class n9 node_system_set
+  class n9 external_node
+  n10@{ shape: stadium, label: "**MenuEvent**<br/>通过菜单层级传递开关和焦点操作。" }
+  class n10 node_event
+  n11@{ shape: rounded, label: "**menu​_​acquire​_​focus**<br/>在菜单打开时为菜单项取得焦点。" }
+  class n11 node_system
   n0 e0@-->|"先于"| n1
   class e0 edge_order
-  n2 e1@--> n0
-  class e1 edge_read
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  n0 e3@-->|"先于"| n4
-  class e3 edge_order
-  n0 e4@-->|"触发事件"| n5
-  class e4 edge_emit
-  n6 e5@-->|"先于"| n0
-  class e5 edge_order
-  n7 e6@--> n0
-  class e6 edge_read
-  n0 e7@-->|"先于"| n8
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n5 e4@--> n0
+  class e4 edge_read
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
+  n0 e6@-->|"先于"| n7
+  class e6 edge_order
+  n8 e7@-->|"先于"| n0
   class e7 edge_order
-  n0 e8@-->|"赋值"| n3
-  class e8 edge_write
-  n9 e9@-->|"存在性约束"| n0
-  class e9 edge_reference
-  n10 e10@-->|"先于"| n0
-  class e10 edge_order
-  n11 e11@-->|"调用"| n0
-  class e11 edge_registration
+  n0 e8@-->|"先于"| n9
+  class e8 edge_order
+  n0 e9@-->|"赋值"| n6
+  class e9 edge_write
+  n0 e10@-->|"触发事件"| n10
+  class e10 edge_emit
+  n11 e11@-->|"先于"| n0
+  class e11 edge_order
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

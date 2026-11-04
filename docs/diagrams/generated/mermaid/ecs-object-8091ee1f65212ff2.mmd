@@ -37,7 +37,7 @@ flowchart LR
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**log​_​policy**<br/>记录本项目窗口的目标宽高比、初始尺寸、最<br/>小尺寸及当前平台是否启用原生尺寸约束，供<br/>初始化诊断使用。" }
+  n0@{ shape: rounded, label: "**log​_​policy**<br/>记录窗口尺寸与原生约束的初始化配置。" }
   class n0 node_system
   n1@{ shape: fr-rect, label: "**WindowPolicyPlugin**<br/>在现有会话日志和原生窗口创建之后安装比例<br/>策略。" }
   class n1 node_plugin

@@ -42,18 +42,18 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​global​_​clusterable​_​object​_​meta**<br/>按设备缓冲能力初始化全局聚簇元数据。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n1 node_resource
-  class n1 external_node
-  n2@{ shape: cyl, label: "**GlobalClusterableObjectMeta**<br/>维护跨视图的聚簇光源缓冲与对象索引。" }
+  n1@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
+  class n1 node_plugin
+  n2@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
-  class n3 node_plugin
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"插入"| n2
-  class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  class n2 external_node
+  n3@{ shape: cyl, label: "**GlobalClusterableObjectMeta**<br/>维护跨视图的聚簇光源缓冲与对象索引。" }
+  class n3 node_resource
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_read
+  n0 e2@-->|"插入"| n3
+  class e2 edge_write
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }

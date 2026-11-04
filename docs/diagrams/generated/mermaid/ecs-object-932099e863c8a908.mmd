@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-932099e863c8a908-e2{marker-start:url(#object-932099e863c8a908_flowchart-v2-pointStart)!important}\n#object-932099e863c8a908-e7{marker-start:url(#object-932099e863c8a908_flowchart-v2-pointStart)!important}\n#object-932099e863c8a908_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-932099e863c8a908-e3{marker-start:url(#object-932099e863c8a908_flowchart-v2-pointStart)!important}\n#object-932099e863c8a908-e7{marker-start:url(#object-932099e863c8a908_flowchart-v2-pointStart)!important}\n#object-932099e863c8a908_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -44,41 +44,44 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**ConstraintGraph**<br/>为并行接触求解维护约束着色图。" }
+  n1@{ shape: cyl, label: "**ContactStatusChangeQueue**<br/>暂存窄相产生的接触状态变化。" }
   class n1 node_resource
   n2@{ shape: lin-rect, label: "**First**<br/>组织一次物理模拟步的主要阶段。" }
   class n2 node_system_set
-  n3@{ shape: rounded, label: "**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
+  n3@{ shape: rounded, label: "**Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**PhysicsIslands**<br/>管理模拟岛及接触和关节连接。" }
-  class n4 node_resource
-  n5@{ shape: cyl, label: "**ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
+  class n3 external_node
+  n4@{ shape: rounded, label: "**BodyIslandNode**<br/>记录刚体在物理岛中的连接位置。" }
+  class n4 node_component
+  n5@{ shape: cyl, label: "**PhysicsIslands**<br/>管理模拟岛及接触和关节连接。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**ContactStatusChangeQueue**<br/>暂存窄相产生的接触状态变化。" }
+  subgraph layout_card_n6[" "]
+  n6@{ shape: cyl, label: "**ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
   class n6 node_resource
-  n7@{ shape: rounded, label: "**Disabled**<br/>来自crate:bevy​_​ecs ↗：标记被禁用的实<br/>体" }
-  class n7 node_component
-  class n7 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  n7@{ shape: cyl, label: "**ConstraintGraph**<br/>为并行接触求解维护约束着色图。" }
+  class n7 node_resource
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
   n2 e1@-->|"集合成员"| n0
   class e1 edge_set_membership
-  n3 e2@---|"赋值"| n0
-  class e2 edge_write
-  n0 e3@-->|"可变访问"| n4
+  n3 e2@--->|"存在性约束"| n0
+  class e2 edge_reference
+  n4 e3@---|"可变访问"| n0
   class e3 edge_write
-  n3 e4@--> n0
-  class e4 edge_read
-  n5 e5@--> n0
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n6 e5@--> n0
   class e5 edge_read
-  n0 e6@-->|"可变访问"| n6
+  n0 e6@-->|"赋值"| n5
   class e6 edge_write
-  n3 e7@---|"可变访问"| n0
+  n4 e7@---|"赋值"| n0
   class e7 edge_write
-  n0 e8@-->|"赋值"| n4
-  class e8 edge_write
-  n7 e9@-->|"存在性约束"| n0
-  class e9 edge_reference
+  n4 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"可变访问"| n7
+  class e9 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

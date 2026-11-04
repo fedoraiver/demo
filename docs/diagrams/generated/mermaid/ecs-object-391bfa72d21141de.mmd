@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-391bfa72d21141de-e1{marker-start:url(#object-391bfa72d21141de_flowchart-v2-pointStart)!important}\n#object-391bfa72d21141de-e2{marker-start:url(#object-391bfa72d21141de_flowchart-v2-pointStart)!important}\n#object-391bfa72d21141de-e4{marker-start:url(#object-391bfa72d21141de_flowchart-v2-pointStart)!important}\n#object-391bfa72d21141de_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-391bfa72d21141de-e2{marker-start:url(#object-391bfa72d21141de_flowchart-v2-pointStart)!important}\n#object-391bfa72d21141de-e3{marker-start:url(#object-391bfa72d21141de_flowchart-v2-pointStart)!important}\n#object-391bfa72d21141de-e5{marker-start:url(#object-391bfa72d21141de_flowchart-v2-pointStart)!important}\n#object-391bfa72d21141de_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -41,27 +41,27 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**extract​_​resource**<br/>把存在的主世界资源转换到子世界。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
-  class n1 node_system
+  n1@{ shape: cyl, label: "**ManualTextureViews**<br/>来自crate:bevy​_​render ↗：注册供相机输<br/>出的手动管理纹理视图。" }
+  class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**ManualTextureViews**<br/>来自crate:bevy​_​render ↗：注册供相机输<br/>出的手动管理纹理视图。" }
-  class n2 node_resource
+  n2@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  class n2 node_system
   class n2 external_node
   n3@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
   class n3 node_resource
-  n0 e0@-->|"先于"| n1
-  class e0 edge_order
-  n2 e1@---|"赋值"| n0
-  class e1 edge_write
-  n2 e2@---|"可变访问"| n0
+  n1 e0@--> n0
+  class e0 edge_read
+  n0 e1@-->|"先于"| n2
+  class e1 edge_order
+  n1 e2@---|"插入"| n0
   class e2 edge_write
-  n3 e3@--> n0
-  class e3 edge_read
-  n2 e4@---|"插入"| n0
-  class e4 edge_write
-  n2 e5@--> n0
-  class e5 edge_read
-  e1@{ curve: basis }
+  n1 e3@---|"可变访问"| n0
+  class e3 edge_write
+  n3 e4@--> n0
+  class e4 edge_read
+  n1 e5@---|"赋值"| n0
+  class e5 edge_write
+  e0@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

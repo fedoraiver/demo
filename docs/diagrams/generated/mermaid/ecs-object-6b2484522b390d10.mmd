@@ -44,15 +44,15 @@ flowchart LR
   class n0 node_system
   n1@{ shape: cyl, label: "**GizmoStorage#lt;FrustumGizmoConfigGroup**<br/>**, Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**GizmoStorage#lt;FrustumGizmoConfigGroup**<br/>**, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
-  class n2 node_resource
-  n3@{ shape: lin-rect, label: "**GizmoMeshSystems**<br/>把调试绘制存储转换为渲染网格。" }
-  class n3 node_system_set
+  n2@{ shape: lin-rect, label: "**GizmoMeshSystems**<br/>把调试绘制存储转换为渲染网格。" }
+  class n2 node_system_set
+  n3@{ shape: cyl, label: "**GizmoStorage#lt;FrustumGizmoConfigGroup**<br/>**, ()#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  class n3 node_resource
   n1 e0@--> n0
   class e0 edge_read
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
-  n0 e2@-->|"先于"| n3
-  class e2 edge_order
+  n0 e1@-->|"先于"| n2
+  class e1 edge_order
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
   e1@{ curve: basis }
   e2@{ curve: basis }

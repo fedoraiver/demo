@@ -42,48 +42,48 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
-  class n1 node_resource
+  n1@{ shape: rounded, label: "**upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
+  class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
-  class n2 node_system
-  class n2 external_node
+  n2@{ shape: cyl, label: "**EguiTextureBindGroups**<br/>索引Egui纹理绑定组及数组偏移。" }
+  class n2 node_resource
   n3@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
-  class n4 node_component
+  n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n4 node_resource
   class n4 external_node
-  n5@{ shape: rounded, label: "**EguiCameraView**<br/>在主渲染目标视图上保存对应的 Egui 渲染<br/>视图实体" }
+  n5@{ shape: rounded, label: "**EguiViewTarget**<br/>在 Egui 渲染视图上保存对应的主目标视图<br/>实体" }
   class n5 node_component
-  n6@{ shape: cyl, label: "**EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
-  class n6 node_resource
-  n7@{ shape: cyl, label: "**EguiTextureBindGroups**<br/>索引Egui纹理绑定组及数组偏移。" }
-  class n7 node_resource
-  n8@{ shape: lin-rect, label: "**PostProcess**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
-  class n8 node_system_set
+  n6@{ shape: rounded, label: "**EguiCameraView**<br/>在主渲染目标视图上保存对应的 Egui 渲染<br/>视图实体" }
+  class n6 node_component
+  n7@{ shape: lin-rect, label: "**PostProcess**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
+  class n7 node_system_set
+  class n7 external_node
+  n8@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  class n8 node_component
   class n8 external_node
-  n9@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n9 node_resource
+  n9@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
+  class n9 node_component
   class n9 external_node
   n10@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
   class n10 node_system
   n11@{ shape: cyl, label: "**EguiTransforms**<br/>保存 Egui 变换的动态统一缓冲、主世界实<br/>体到缓冲偏移的映射及对应绑定组" }
   class n11 node_resource
-  n12@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
-  class n12 node_component
-  class n12 external_node
-  n13@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
-  class n13 node_component
-  class n13 external_node
-  n14@{ shape: cyl, label: "**EguiPipelines**<br/>索引每个Egui视图的专用化绘制管线。" }
+  n12@{ shape: cyl, label: "**EguiRenderData**<br/>按主世界视图缓存 Egui 几何与绘制状态。" }
+  class n12 node_resource
+  n13@{ shape: cyl, label: "**EguiPipelines**<br/>索引每个Egui视图的专用化绘制管线。" }
+  class n13 node_resource
+  n14@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
   class n14 node_resource
-  n15@{ shape: rounded, label: "**EguiViewTarget**<br/>在 Egui 渲染视图上保存对应的主目标视图<br/>实体" }
+  class n14 external_node
+  n15@{ shape: rounded, label: "**ViewTarget**<br/>来自crate:bevy​_​render ↗：管理视图主颜<br/>色纹理及最终输出附件。" }
   class n15 node_component
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"先于"| n2
-  class e1 edge_order
+  class n15 external_node
+  n0 e0@-->|"先于"| n1
+  class e0 edge_order
+  n2 e1@--> n0
+  class e1 edge_read
   n3 e2@--> n0
   class e2 edge_read
   n4 e3@--> n0
@@ -92,10 +92,10 @@ flowchart LR
   class e4 edge_read
   n6 e5@--> n0
   class e5 edge_read
-  n7 e6@--> n0
-  class e6 edge_read
-  n8 e7@-->|"先于"| n0
-  class e7 edge_order
+  n7 e6@-->|"先于"| n0
+  class e6 edge_order
+  n8 e7@--> n0
+  class e7 edge_read
   n9 e8@--> n0
   class e8 edge_read
   n10 e9@-->|"先于"| n0
@@ -110,7 +110,7 @@ flowchart LR
   class e13 edge_read
   n15 e14@--> n0
   class e14 edge_read
-  e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

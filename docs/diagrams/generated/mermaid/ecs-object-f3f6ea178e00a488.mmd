@@ -46,74 +46,74 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
-  class n1 node_component
+  n1@{ shape: cyl, label: "**RenderScreenshotsPrepared**<br/>保存本帧已准备好的截图渲染资源。" }
+  class n1 node_resource
   n2@{ shape: cyl, label: "**RenderScreenshotTargets**<br/>按截图请求实体保存本帧的规范化渲染目标。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;Screensho**<br/>**tToScreenPipeline#gt;**<br/>按配置键缓存渲染管线变体。" }
-  class n3 node_resource
-  n4@{ shape: cyl, label: "**RenderScreenshotsPrepared**<br/>保存本帧已准备好的截图渲染资源。" }
+  n3@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: cyl, label: "**ScreenshotToScreenPipeline**<br/>提供截图结果回写屏幕的着色接口。" }
   class n4 node_resource
-  n5@{ shape: cyl, label: "**ManualTextureViews**<br/>注册供相机输出的手动管理纹理视图。" }
-  class n5 node_resource
-  n6@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n5@{ shape: fr-rect, label: "**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
+  class n5 node_plugin
+  n6@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**ScreenshotToScreenPipeline**<br/>提供截图结果回写屏幕的着色接口。" }
+  n7@{ shape: cyl, label: "**ManualTextureViews**<br/>注册供相机输出的手动管理纹理视图。" }
   class n7 node_resource
-  n8@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
+  n8@{ shape: cyl, label: "**ViewTargetAttachments**<br/>按输出目标保存本帧颜色附件。" }
   class n8 node_resource
-  n9@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
-  class n9 node_system
-  n10@{ shape: cyl, label: "**ViewTargetAttachments**<br/>按输出目标保存本帧颜色附件。" }
-  class n10 node_resource
-  n11@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
-  class n11 node_system_set
-  n12@{ shape: fr-rect, label: "**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
-  class n12 node_plugin
-  n13@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
-  class n13 node_system
-  n14@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
-  class n14 node_component
-  class n14 external_node
-  n15@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
-  class n15 node_resource
-  n1 e0@--> n0
-  class e0 edge_read
+  n9@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  class n9 node_resource
+  n10@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
+  class n10 node_system
+  n11@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  class n11 node_resource
+  n12@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
+  class n12 node_component
+  n13@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
+  class n13 node_system_set
+  n14@{ shape: cyl, label: "**SpecializedRenderPipelines#lt;Screensho**<br/>**tToScreenPipeline#gt;**<br/>按配置键缓存渲染管线变体。" }
+  class n14 node_resource
+  n15@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  class n15 node_system
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
   n2 e1@--> n0
   class e1 edge_read
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n5 e4@--> n0
-  class e4 edge_read
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
   n6 e5@--> n0
   class e5 edge_read
   n7 e6@--> n0
   class e6 edge_read
-  n8 e7@--> n0
-  class e7 edge_read
-  n9 e8@-->|"先于"| n0
-  class e8 edge_order
-  n0 e9@-->|"可变访问"| n10
-  class e9 edge_write
-  n11 e10@-->|"集合成员"| n0
-  class e10 edge_set_membership
-  n12 e11@-->|"调用"| n0
-  class e11 edge_registration
-  n0 e12@-->|"先于"| n13
-  class e12 edge_order
-  n14 e13@--> n0
-  class e13 edge_read
-  n15 e14@--> n0
-  class e14 edge_read
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@-->|"先于"| n0
+  class e9 edge_order
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@--> n0
+  class e11 edge_read
+  n13 e12@-->|"集合成员"| n0
+  class e12 edge_set_membership
+  n0 e13@-->|"可变访问"| n14
+  class e13 edge_write
+  n0 e14@-->|"先于"| n15
+  class e14 edge_order
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: basis }
+  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

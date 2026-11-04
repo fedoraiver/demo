@@ -47,24 +47,24 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**sync​_​font​_​size​_​to​_​em​_​size**<br/>把文本字号解析为节点的 EmSize。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RemSize**<br/>来自crate:bevy​_​text ↗：保存全局根字号" }
-  class n1 node_resource
+  n1@{ shape: rounded, label: "**TextFont**<br/>来自crate:bevy​_​text ↗：保存文字段的字<br/>体来源、字号及抗锯齿方式等字体样式" }
+  class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**TextFont**<br/>来自crate:bevy​_​text ↗：保存文字段的字<br/>体来源、字号及抗锯齿方式等字体样式" }
-  class n2 node_component
+  n2@{ shape: cyl, label: "**RemSize**<br/>来自crate:bevy​_​text ↗：保存全局根字号" }
+  class n2 node_resource
   class n2 external_node
   n3@{ shape: rounded, label: "**load​_​font​_​assets​_​into​_​font​_​**<br/>**collection**<br/>来自crate:bevy​_​text ↗：把字体资产注册<br/>到排版字体数据库。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**EmSize**<br/>来自crate:bevy​_​text ↗：保存当前 UI<br/>节点用于解析 Em 单位的实际字体大小" }
+  n4@{ shape: rounded, label: "**Node**<br/>声明 UI 节点的布局规则。" }
   class n4 node_component
-  class n4 external_node
-  n5@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
-  class n5 node_plugin
-  n6@{ shape: lin-rect, label: "**Content**<br/>组织界面交互、布局与堆叠更新。" }
-  class n6 node_system_set
-  n7@{ shape: rounded, label: "**Node**<br/>声明 UI 节点的布局规则。" }
-  class n7 node_component
+  n5@{ shape: lin-rect, label: "**Content**<br/>组织界面交互、布局与堆叠更新。" }
+  class n5 node_system_set
+  n6@{ shape: rounded, label: "**EmSize**<br/>来自crate:bevy​_​text ↗：保存当前 UI<br/>节点用于解析 Em 单位的实际字体大小" }
+  class n6 node_component
+  class n6 external_node
+  n7@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  class n7 node_plugin
   n8@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>缓存 UI 目标的尺寸与缩放。" }
   class n8 node_component
   n1 e0@--> n0
@@ -73,22 +73,22 @@ flowchart LR
   class e1 edge_read
   n3 e2@-->|"先于"| n0
   class e2 edge_order
-  n0 e3@-->|"赋值"| n4
-  class e3 edge_write
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
-  n6 e5@-->|"集合成员"| n0
-  class e5 edge_set_membership
-  n0 e6@-->|"可变访问"| n4
-  class e6 edge_write
-  n7 e7@-->|"存在性约束"| n0
-  class e7 edge_reference
-  n8 e8@--> n0
-  class e8 edge_read
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n5 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
+  n0 e5@-->|"赋值"| n6
+  class e5 edge_write
+  n7 e6@-->|"调用"| n0
+  class e6 edge_registration
+  n8 e7@--> n0
+  class e7 edge_read
+  n0 e8@-->|"可变访问"| n6
+  class e8 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
+  e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }

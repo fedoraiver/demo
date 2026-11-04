@@ -42,18 +42,18 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​shadow​_​samplers**<br/>创建点光与平行光的深度比较采样器。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n1 node_resource
-  class n1 external_node
+  n1@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
+  class n1 node_plugin
   n2@{ shape: cyl, label: "**ShadowSamplers**<br/>提供点光与平行光阴影的采样器。" }
   class n2 node_resource
-  n3@{ shape: fr-rect, label: "**PbrPlugin**<br/>装配物理材质与三维光照渲染。" }
-  class n3 node_plugin
-  n1 e0@--> n0
-  class e0 edge_read
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n3 node_resource
+  class n3 external_node
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
   n0 e1@-->|"插入"| n2
   class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n3 e2@--> n0
+  class e2 edge_read
   e0@{ curve: basis }
   e2@{ curve: basis }

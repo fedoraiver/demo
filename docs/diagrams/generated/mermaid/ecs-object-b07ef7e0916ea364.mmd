@@ -53,24 +53,24 @@ flowchart LR
   style layout_card_n2 fill:none,stroke:none
   n3@{ shape: rounded, label: "**RotationEasingState**<br/>保存固定步旋转插值的起点与终点" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**reset​_​scale​_​easing**<br/>清除旧缩放平滑的起点和终点。" }
-  class n4 node_system
-  n5@{ shape: fr-rect, label: "**TransformEasingPlugin**<br/>在变换端点之间应用显示缓动。" }
-  class n5 node_plugin
+  n4@{ shape: fr-rect, label: "**TransformEasingPlugin**<br/>在变换端点之间应用显示缓动。" }
+  class n4 node_plugin
+  n5@{ shape: rounded, label: "**reset​_​scale​_​easing**<br/>清除旧缩放平滑的起点和终点。" }
+  class n5 node_system
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
   n2 e1@-->|"先于"| n0
   class e1 edge_order
-  n0 e2@-->|"赋值"| n3
+  n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n0 e3@-->|"可变访问"| n3
-  class e3 edge_write
-  n0 e4@-->|"先于"| n4
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n0 e4@-->|"先于"| n5
   class e4 edge_order
-  n5 e5@-->|"调用"| n0
-  class e5 edge_registration
+  n0 e5@-->|"赋值"| n3
+  class e5 edge_write
   e0@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
+  e5@{ curve: bumpX }

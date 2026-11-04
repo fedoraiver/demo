@@ -41,24 +41,24 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**clear​_​moved​_​proxies**<br/>清空本轮广相使用的移动代理目录。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
-  class n1 node_resource
-  n2@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
-  class n2 node_system
-  n3@{ shape: lin-rect, label: "**Last**<br/>组织一次物理模拟步的主要阶段。" }
-  class n3 node_system_set
-  n4@{ shape: cyl, label: "**MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
-  class n4 node_resource
+  n1@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  class n1 node_system
+  n2@{ shape: cyl, label: "**MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
+  class n2 node_resource
+  n3@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  class n3 node_resource
+  n4@{ shape: lin-rect, label: "**Last**<br/>组织一次物理模拟步的主要阶段。" }
+  class n4 node_system_set
   n5@{ shape: lin-rect, label: "**Finalize**<br/>组织一次物理模拟步的主要阶段。" }
   class n5 node_system_set
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n0 e1@-->|"先于"| n2
-  class e1 edge_order
-  n0 e2@-->|"先于"| n3
-  class e2 edge_order
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
+  n0 e0@-->|"先于"| n1
+  class e0 edge_order
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n0 e3@-->|"先于"| n4
+  class e3 edge_order
   n5 e4@-->|"先于"| n0
   class e4 edge_order
   e0@{ curve: basis }

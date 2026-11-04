@@ -42,20 +42,20 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**insert​_​deferred​_​lighting​_​pass​_​id​_​**<br/>**component**<br/>为延迟预通道视图补齐光照通道标识。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**PbrDeferredLightingDepthId**<br/>限定延迟光照通道处理的材质集合。" }
-  class n1 node_component
-  n2@{ shape: fr-rect, label: "**DeferredPbrLightingPlugin**<br/>提供延迟物理材质光照。" }
-  class n2 node_plugin
+  n1@{ shape: fr-rect, label: "**DeferredPbrLightingPlugin**<br/>提供延迟物理材质光照。" }
+  class n1 node_plugin
+  n2@{ shape: rounded, label: "**PbrDeferredLightingDepthId**<br/>限定延迟光照通道处理的材质集合。" }
+  class n2 node_component
   n3@{ shape: rounded, label: "**DeferredPrepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为三<br/>维相机启用延迟材质 G-buffer 预通道。" }
   class n3 node_component
   class n3 external_node
-  n1 e0@-->|"存在性约束"| n0
-  class e0 edge_reference
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
   n3 e2@-->|"存在性约束"| n0
   class e2 edge_reference
-  n1 e3@---|"插入"| n0
+  n2 e3@---|"插入"| n0
   class e3 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

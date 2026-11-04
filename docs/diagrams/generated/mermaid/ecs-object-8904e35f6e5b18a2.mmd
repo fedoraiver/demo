@@ -44,22 +44,22 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**clear​_​batched​_​cpu​_​instance​_​buffers**<br/>在 CPU 批处理使用实例缓冲之前清空其本帧<br/>内容；资源尚未创建时直接跳过。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**BatchedInstanceBuffer#lt;MeshUniform#gt;**<br/>保存 CPU 准备路径的批次绘制数据。" }
-  class n1 node_resource
-  n2@{ shape: lin-rect, label: "**Render**<br/>组织渲染数据准备与绘制排队。" }
-  class n2 node_system_set
+  n1@{ shape: lin-rect, label: "**Render**<br/>组织渲染数据准备与绘制排队。" }
+  class n1 node_system_set
+  n2@{ shape: fr-rect, label: "**MeshRenderPlugin**<br/>来自crate:bevy​_​pbr ↗：建立三维网格绘<br/>制支持。" }
+  class n2 node_plugin
+  class n2 external_node
   n3@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }
   class n3 node_system_set
-  n4@{ shape: fr-rect, label: "**MeshRenderPlugin**<br/>来自crate:bevy​_​pbr ↗：建立三维网格绘<br/>制支持。" }
-  class n4 node_plugin
-  class n4 external_node
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n2 e1@-->|"先于"| n0
-  class e1 edge_order
+  n4@{ shape: cyl, label: "**BatchedInstanceBuffer#lt;MeshUniform#gt;**<br/>保存 CPU 准备路径的批次绘制数据。" }
+  class n4 node_resource
+  n1 e0@-->|"先于"| n0
+  class e0 edge_order
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
   n3 e2@-->|"集合成员"| n0
   class e2 edge_set_membership
-  n4 e3@-->|"调用"| n0
-  class e3 edge_registration
-  e1@{ curve: basis }
-  e3@{ curve: basis }
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  e0@{ curve: basis }
+  e2@{ curve: basis }

@@ -44,20 +44,20 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**clear​_​view​_​attachments**<br/>清空上一帧的视图输出附件表。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**ViewPlugin**<br/>准备视图渲染目标与统一数据。" }
-  class n1 node_plugin
-  n2@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
-  class n2 node_system_set
-  n3@{ shape: cyl, label: "**ViewTargetAttachments**<br/>按输出目标保存本帧颜色附件。" }
-  class n3 node_resource
+  n1@{ shape: cyl, label: "**ViewTargetAttachments**<br/>按输出目标保存本帧颜色附件。" }
+  class n1 node_resource
+  n2@{ shape: fr-rect, label: "**ViewPlugin**<br/>准备视图渲染目标与统一数据。" }
+  class n2 node_plugin
+  n3@{ shape: lin-rect, label: "**PrepareViews**<br/>组织渲染数据准备与绘制排队。" }
+  class n3 node_system_set
   n4@{ shape: rounded, label: "**create​_​surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
   class n4 node_system
-  n1 e0@-->|"调用"| n0
-  class e0 edge_registration
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
   n0 e3@-->|"先于"| n4
   class e3 edge_order
   e0@{ curve: basis }

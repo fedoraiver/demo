@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-ebf3448b158551e2-e0{marker-start:url(#object-ebf3448b158551e2_flowchart-v2-pointStart)!important}\n#object-ebf3448b158551e2-e1{marker-start:url(#object-ebf3448b158551e2_flowchart-v2-pointStart)!important}\n#object-ebf3448b158551e2_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-ebf3448b158551e2-e1{marker-start:url(#object-ebf3448b158551e2_flowchart-v2-pointStart)!important}\n#object-ebf3448b158551e2-e4{marker-start:url(#object-ebf3448b158551e2_flowchart-v2-pointStart)!important}\n#object-ebf3448b158551e2_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -45,21 +45,21 @@ flowchart LR
   n1@{ shape: rounded, label: "**Camera3d**<br/>来自crate:bevy​_​camera ↗：启用三维相机<br/>主渲染流程。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: lin-rect, label: "**PrepareViews**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n2 node_system_set
-  class n2 external_node
-  n3@{ shape: rounded, label: "**ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
-  class n3 node_component
-  n1 e0@---|"赋值"| n0
-  class e0 edge_write
-  n1 e1@---|"可变访问"| n0
+  n2@{ shape: rounded, label: "**ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
+  class n2 node_component
+  n3@{ shape: lin-rect, label: "**PrepareViews**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n3 node_system_set
+  class n3 external_node
+  n1 e0@-->|"存在性约束"| n0
+  class e0 edge_reference
+  n1 e1@---|"赋值"| n0
   class e1 edge_write
-  n2 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
-  n3 e3@-->|"存在性约束"| n0
-  class e3 edge_reference
-  n1 e4@-->|"存在性约束"| n0
-  class e4 edge_reference
+  n2 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n3 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n1 e4@---|"可变访问"| n0
+  class e4 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

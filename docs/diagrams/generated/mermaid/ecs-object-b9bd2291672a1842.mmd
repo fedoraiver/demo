@@ -45,15 +45,15 @@ flowchart LR
   class n0 node_system
   n1@{ shape: fr-rect, label: "**GpuReadbackPlugin**<br/>将 GPU 缓冲与纹理回读到 CPU。" }
   class n1 node_plugin
-  n2@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }
-  class n2 node_system_set
-  n3@{ shape: cyl, label: "**GpuReadbacks**<br/>追踪已请求及已映射的 GPU 回读任务。" }
-  class n3 node_resource
+  n2@{ shape: cyl, label: "**GpuReadbacks**<br/>追踪已请求及已映射的 GPU 回读任务。" }
+  class n2 node_resource
+  n3@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }
+  class n3 node_system_set
   n1 e0@-->|"调用"| n0
   class e0 edge_registration
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e2@{ curve: basis }

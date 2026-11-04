@@ -1,0 +1,342 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: InputFocus · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**InputFocus**<br/>保存当前输入焦点实体、待派发的焦点变化及<br/>原焦点" }
+  class n0 node_resource
+  n1@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>在请求未命中焦点目标时清除焦点。" }
+  class n1 node_observer
+  n2@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>在请求未命中焦点目标时清除焦点。" }
+  class n2 node_observer
+  n3@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
+  class n3 node_observer
+  class n3 external_node
+  n4@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: rounded, label: "**process​_​recorded​_​focus​_​changes**<br/>按记录顺序派发焦点获得和失去事件。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
+  class n6 node_system
+  n7@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
+  class n7 node_observer
+  class n7 external_node
+  n8@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  class n8 node_observer
+  class n8 external_node
+  n9@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  class n9 node_observer
+  n10@{ shape: rounded, label: "**set​_​initial​_​focus**<br/>在没有焦点目标时使用主窗口。" }
+  class n10 node_system
+  n11@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  class n11 node_observer
+  n12@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  class n12 node_observer
+  class n12 external_node
+  n13@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  class n13 node_observer
+  class n13 external_node
+  n14@{ shape: rounded, label: "**menu​_​acquire​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：在菜单<br/>打开时为菜单项取得焦点。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: rounded, label: "**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
+  class n15 node_system
+  class n15 external_node
+  n16@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
+  class n16 node_system
+  n17@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
+  class n17 node_observer
+  n18@{ shape: rounded, label: "**menu​_​on​_​lose​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：关闭不<br/>再持有内部焦点的菜单。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }
+  class n19 node_observer
+  class n19 external_node
+  n20@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>处理正向和反向键盘焦点遍历。" }
+  class n20 node_observer
+  n21@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  class n21 node_observer
+  n22@{ shape: rounded, label: "**text​_​input​_​autoscroll​_​system**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖选<br/>越出文字视口时自动滚动。" }
+  class n22 node_system
+  class n22 external_node
+  n23@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  class n23 node_observer
+  class n23 external_node
+  n24@{ shape: rounded, label: "**update​_​tablist​_​derived​_​state**<br/>来自crate:bevy​_​ui​_​widgets ↗：从标签<br/>选择和焦点派生每个标签的状态。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>向有效焦点或主窗口派发输入。" }
+  class n25 node_system
+  n26@{ shape: hex, label: "**menu​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理菜<br/>单键盘导航、激活与关闭。" }
+  class n26 node_observer
+  class n26 external_node
+  n27@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  class n27 node_observer
+  class n27 external_node
+  n28@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理复<br/>选框按压、焦点与即时勾选请求。" }
+  class n28 node_observer
+  class n28 external_node
+  n29@{ shape: rounded, label: "**on​_​ime​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法组合和提交转换为文字编辑操作。" }
+  class n29 node_system
+  class n29 external_node
+  n30@{ shape: rounded, label: "**update​_​ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
+  class n30 node_system
+  class n30 external_node
+  n31@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  class n31 node_observer
+  n32@{ shape: rounded, label: "**listen​_​for​_​ime​_​input​_​when​_​text​_​**<br/>**input​_​focused**<br/>来自crate:bevy​_​ui​_​widgets ↗：按可编<br/>辑焦点控制主窗口输入法。" }
+  class n32 node_system
+  class n32 external_node
+  n33@{ shape: rounded, label: "**extract​_​text​_​cursor**<br/>来自crate:bevy​_​ui​_​render ↗：提取文字<br/>光标和带圆角的选区背景。" }
+  class n33 node_system
+  class n33 external_node
+  n34@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>让带导航索引的实体获得输入焦点。" }
+  class n34 node_observer
+  n35@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
+  class n35 node_observer
+  class n35 external_node
+  n36@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>在请求未命中焦点目标时清除焦点。" }
+  class n36 node_observer
+  n37@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
+  class n37 node_system
+  class n37 external_node
+  n1 e0@-->|"赋值"| n0
+  class e0 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n5 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n6 e5@-->|"赋值"| n0
+  class e5 edge_write
+  n7 e6@-->|"赋值"| n0
+  class e6 edge_write
+  n8 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n9 e8@-->|"赋值"| n0
+  class e8 edge_write
+  n10 e9@-->|"赋值"| n0
+  class e9 edge_write
+  n11 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n12 e11@-->|"可变访问"| n0
+  class e11 edge_write
+  n13 e12@-->|"可变访问"| n0
+  class e12 edge_write
+  n14 e13@-->|"可变访问"| n0
+  class e13 edge_write
+  n0 e14@--> n15
+  class e14 edge_read
+  n16 e15@-->|"赋值"| n0
+  class e15 edge_write
+  n17 e16@-->|"赋值"| n0
+  class e16 edge_write
+  n5 e17@-->|"可变访问"| n0
+  class e17 edge_write
+  n14 e18@-->|"赋值"| n0
+  class e18 edge_write
+  n8 e19@-->|"赋值"| n0
+  class e19 edge_write
+  n0 e20@--> n18
+  class e20 edge_read
+  n10 e21@-->|"可变访问"| n0
+  class e21 edge_write
+  n1 e22@-->|"可变访问"| n0
+  class e22 edge_write
+  n19 e23@-->|"可变访问"| n0
+  class e23 edge_write
+  n7 e24@-->|"可变访问"| n0
+  class e24 edge_write
+  n20 e25@-->|"可变访问"| n0
+  class e25 edge_write
+  n9 e26@-->|"可变访问"| n0
+  class e26 edge_write
+  n19 e27@-->|"赋值"| n0
+  class e27 edge_write
+  n21 e28@-->|"赋值"| n0
+  class e28 edge_write
+  n0 e29@--> n22
+  class e29 edge_read
+  n23 e30@-->|"赋值"| n0
+  class e30 edge_write
+  n0 e31@--> n24
+  class e31 edge_read
+  n25 e32@-->|"可变访问"| n0
+  class e32 edge_write
+  n20 e33@-->|"赋值"| n0
+  class e33 edge_write
+  n26 e34@-->|"可变访问"| n0
+  class e34 edge_write
+  n27 e35@-->|"可变访问"| n0
+  class e35 edge_write
+  n6 e36@-->|"可变访问"| n0
+  class e36 edge_write
+  n28 e37@-->|"赋值"| n0
+  class e37 edge_write
+  n0 e38@--> n29
+  class e38 edge_read
+  n0 e39@--> n30
+  class e39 edge_read
+  n31 e40@-->|"可变访问"| n0
+  class e40 edge_write
+  n11 e41@-->|"赋值"| n0
+  class e41 edge_write
+  n0 e42@--> n32
+  class e42 edge_read
+  n0 e43@--> n33
+  class e43 edge_read
+  n17 e44@-->|"可变访问"| n0
+  class e44 edge_write
+  n3 e45@-->|"赋值"| n0
+  class e45 edge_write
+  n34 e46@-->|"赋值"| n0
+  class e46 edge_write
+  n28 e47@-->|"可变访问"| n0
+  class e47 edge_write
+  n35 e48@-->|"可变访问"| n0
+  class e48 edge_write
+  n36 e49@-->|"可变访问"| n0
+  class e49 edge_write
+  n4 e50@-->|"赋值"| n0
+  class e50 edge_write
+  n36 e51@-->|"赋值"| n0
+  class e51 edge_write
+  n12 e52@-->|"赋值"| n0
+  class e52 edge_write
+  n2 e53@-->|"赋值"| n0
+  class e53 edge_write
+  n31 e54@-->|"赋值"| n0
+  class e54 edge_write
+  n34 e55@-->|"可变访问"| n0
+  class e55 edge_write
+  n35 e56@-->|"赋值"| n0
+  class e56 edge_write
+  n26 e57@-->|"赋值"| n0
+  class e57 edge_write
+  n27 e58@-->|"赋值"| n0
+  class e58 edge_write
+  n25 e59@-->|"赋值"| n0
+  class e59 edge_write
+  n13 e60@-->|"赋值"| n0
+  class e60 edge_write
+  n16 e61@-->|"可变访问"| n0
+  class e61 edge_write
+  n23 e62@-->|"可变访问"| n0
+  class e62 edge_write
+  n21 e63@-->|"可变访问"| n0
+  class e63 edge_write
+  n0 e64@--> n37
+  class e64 edge_read
+  n15 layout_output_0@~~~ n18
+  n18 layout_output_1@~~~ n22
+  n22 layout_output_2@~~~ n24
+  n24 layout_output_3@~~~ n29
+  n29 layout_output_4@~~~ n30
+  n30 layout_output_5@~~~ n32
+  n32 layout_output_6@~~~ n33
+  n33 layout_output_7@~~~ n37
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: bumpX }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: bumpX }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e59@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }

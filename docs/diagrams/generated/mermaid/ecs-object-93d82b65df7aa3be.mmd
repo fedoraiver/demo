@@ -48,120 +48,120 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>计算方向光各相机级联可见的投影网格。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**DirectionalLight**<br/>配置平行方向光的颜色、照度和阴影。" }
-  class n1 node_component
-  n2@{ shape: lin-rect, label: "**CheckVisibility**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
-  class n2 node_system_set
+  n1@{ shape: lin-rect, label: "**CheckVisibility**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n1 node_system_set
+  class n1 external_node
+  n2@{ shape: rounded, label: "**VisibilityRange**<br/>来自crate:bevy​_​camera ↗：按相机距离控<br/>制网格的细节层级。" }
+  class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**Aabb**<br/>来自crate:bevy​_​camera ↗：以局部轴对齐<br/>包围盒支持可见性裁剪。" }
+  n3@{ shape: rounded, label: "**Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**CascadesVisibleEntities**<br/>来自crate:bevy​_​camera ↗：记录每个视图<br/>及级联的可见网格。" }
-  class n4 node_component
+  n4@{ shape: cyl, label: "**VisibleEntityRanges**<br/>来自crate:bevy​_​camera ↗：记录各实体是<br/>否处于视图距离范围。" }
+  class n4 node_resource
   class n4 external_node
-  n5@{ shape: lin-rect, label: "**UpdateLightFrusta**<br/>组织灯光聚簇与可见性准备。" }
-  class n5 node_system_set
-  n6@{ shape: lin-rect, label: "**CalculateBounds**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
-  class n6 node_system_set
-  class n6 external_node
-  n7@{ shape: notch-rect, label: "**Local · defer​_​visible​_​entities​_​queue**<br/>暂存方向光阴影检测后需要标为可见的实体。" }
-  class n7 node_local
-  n8@{ shape: notch-rect, label: "**Local · view​_​visible​_​entities​_​queue**<br/>按线程和阴影级联收集方向光可见网格。" }
-  class n8 node_local
-  n9@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
+  n5@{ shape: rounded, label: "**Aabb**<br/>来自crate:bevy​_​camera ↗：以局部轴对齐<br/>包围盒支持可见性裁剪。" }
+  class n5 node_component
+  class n5 external_node
+  n6@{ shape: notch-rect, label: "**Local · view​_​visible​_​entities​_​queue**<br/>按线程和阴影级联收集方向光可见网格。" }
+  class n6 node_local
+  n7@{ shape: rounded, label: "**CascadesVisibleEntities**<br/>来自crate:bevy​_​camera ↗：记录每个视图<br/>及级联的可见网格。" }
+  class n7 node_component
+  class n7 external_node
+  n8@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  class n8 node_component
+  class n8 external_node
+  n9@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
-  class n10 node_plugin
-  n11@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n10@{ shape: lin-rect, label: "**UpdateLightFrusta**<br/>组织灯光聚簇与可见性准备。" }
+  class n10 node_system_set
+  n11@{ shape: rounded, label: "**NoFrustumCulling**<br/>来自crate:bevy​_​camera ↗：使实体退出内<br/>置视锥裁剪。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: lin-rect, label: "**MarkNewlyHiddenEntitiesInvisible**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  n12@{ shape: lin-rect, label: "**CalculateBounds**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
   class n12 node_system_set
   class n12 external_node
-  n13@{ shape: rounded, label: "**SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
+  n13@{ shape: rounded, label: "**RenderLayers**<br/>来自crate:bevy​_​camera ↗：限定相机与实<br/>体可相交的渲染层。" }
   class n13 node_component
-  n14@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
-  class n14 node_component
+  class n13 external_node
+  n14@{ shape: lin-rect, label: "**MarkNewlyHiddenEntitiesInvisible**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n14 node_system_set
   class n14 external_node
-  n15@{ shape: rounded, label: "**Mesh3d**<br/>来自crate:bevy​_​mesh ↗：为三维可绘制实<br/>体指定网格资产。" }
+  n15@{ shape: rounded, label: "**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: lin-rect, label: "**CheckLightVisibility**<br/>组织灯光聚簇与可见性准备。" }
-  class n16 node_system_set
-  n17@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
-  class n17 node_system_set
-  class n17 external_node
-  n18@{ shape: rounded, label: "**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
+  n16@{ shape: rounded, label: "**CascadesFrusta**<br/>来自crate:bevy​_​camera ↗：保存各视图的<br/>级联阴影视锥。" }
+  class n16 node_component
+  class n16 external_node
+  n17@{ shape: notch-rect, label: "**Local · defer​_​visible​_​entities​_​queue**<br/>暂存方向光阴影检测后需要标为可见的实体。" }
+  class n17 node_local
+  n18@{ shape: rounded, label: "**DirectionalLight**<br/>配置平行方向光的颜色、照度和阴影。" }
   class n18 node_component
-  class n18 external_node
-  n19@{ shape: rounded, label: "**NotShadowCaster**<br/>禁止三维网格投射阴影。" }
-  class n19 node_component
-  n20@{ shape: rounded, label: "**VisibilityRange**<br/>来自crate:bevy​_​camera ↗：按相机距离控<br/>制网格的细节层级。" }
-  class n20 node_component
+  n19@{ shape: lin-rect, label: "**CheckLightVisibility**<br/>组织灯光聚簇与可见性准备。" }
+  class n19 node_system_set
+  n20@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
+  class n20 node_system_set
   class n20 external_node
-  n21@{ shape: cyl, label: "**VisibleEntityRanges**<br/>来自crate:bevy​_​camera ↗：记录各实体是<br/>否处于视图距离范围。" }
-  class n21 node_resource
-  class n21 external_node
-  n22@{ shape: rounded, label: "**NoCpuCulling**<br/>来自crate:bevy​_​camera ↗：退出内置的<br/>CPU 视锥裁剪。" }
-  class n22 node_component
-  class n22 external_node
-  n23@{ shape: rounded, label: "**NoFrustumCulling**<br/>来自crate:bevy​_​camera ↗：使实体退出内<br/>置视锥裁剪。" }
+  n21@{ shape: rounded, label: "**SpotLight**<br/>配置沿指定方向照射的聚光灯。" }
+  class n21 node_component
+  n22@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
+  class n22 node_plugin
+  n23@{ shape: rounded, label: "**NoCpuCulling**<br/>来自crate:bevy​_​camera ↗：退出内置的<br/>CPU 视锥裁剪。" }
   class n23 node_component
   class n23 external_node
-  n24@{ shape: rounded, label: "**CascadesFrusta**<br/>来自crate:bevy​_​camera ↗：保存各视图的<br/>级联阴影视锥。" }
+  n24@{ shape: rounded, label: "**NotShadowCaster**<br/>禁止三维网格投射阴影。" }
   class n24 node_component
-  class n24 external_node
-  n1 e0@--> n0
-  class e0 edge_read
-  n2 e1@-->|"先于"| n0
-  class e1 edge_order
-  n3 e2@--> n0
-  class e2 edge_read
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n5 e4@-->|"先于"| n0
-  class e4 edge_order
-  n6 e5@-->|"先于"| n0
-  class e5 edge_order
+  n1 e0@-->|"先于"| n0
+  class e0 edge_order
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_read
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
   n0 e6@-->|"可变访问"| n7
   class e6 edge_write
-  n1 e7@-->|"存在性约束"| n0
-  class e7 edge_reference
-  n0 e8@-->|"可变访问"| n8
-  class e8 edge_write
-  n9 e9@--> n0
-  class e9 edge_read
-  n10 e10@-->|"调用"| n0
-  class e10 edge_registration
-  n11 e11@--> n0
-  class e11 edge_read
-  n0 e12@-->|"先于"| n12
-  class e12 edge_order
-  n13 e13@-->|"存在性约束"| n0
-  class e13 edge_reference
-  n14 e14@--> n0
+  n8 e7@--> n0
+  class e7 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@-->|"先于"| n0
+  class e9 edge_order
+  n11 e10@-->|"存在性约束"| n0
+  class e10 edge_reference
+  n12 e11@-->|"先于"| n0
+  class e11 edge_order
+  n13 e12@--> n0
+  class e12 edge_read
+  n0 e13@-->|"先于"| n14
+  class e13 edge_order
+  n15 e14@--> n0
   class e14 edge_read
-  n15 e15@-->|"存在性约束"| n0
-  class e15 edge_reference
-  n16 e16@-->|"集合成员"| n0
-  class e16 edge_set_membership
-  n17 e17@-->|"先于"| n0
-  class e17 edge_order
-  n18 e18@--> n0
-  class e18 edge_read
-  n19 e19@-->|"存在性约束"| n0
-  class e19 edge_reference
-  n20 e20@-->|"存在性约束"| n0
+  n16 e15@--> n0
+  class e15 edge_read
+  n0 e16@-->|"可变访问"| n17
+  class e16 edge_write
+  n18 e17@-->|"存在性约束"| n0
+  class e17 edge_reference
+  n19 e18@-->|"集合成员"| n0
+  class e18 edge_set_membership
+  n20 e19@-->|"先于"| n0
+  class e19 edge_order
+  n21 e20@-->|"存在性约束"| n0
   class e20 edge_reference
-  n21 e21@--> n0
-  class e21 edge_read
-  n22 e22@-->|"存在性约束"| n0
-  class e22 edge_reference
+  n22 e21@-->|"调用"| n0
+  class e21 edge_registration
+  n18 e22@--> n0
+  class e22 edge_read
   n23 e23@-->|"存在性约束"| n0
   class e23 edge_reference
-  n24 e24@--> n0
-  class e24 edge_read
+  n24 e24@-->|"存在性约束"| n0
+  class e24 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -174,8 +174,8 @@ flowchart LR
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
-  e12@{ curve: basis }
   e13@{ curve: basis }
+  e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }
   e17@{ curve: basis }

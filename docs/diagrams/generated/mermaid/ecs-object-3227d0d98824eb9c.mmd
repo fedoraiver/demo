@@ -44,35 +44,35 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
-  class n1 node_component
+  n1@{ shape: rounded, label: "**resource​_​exists**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
+  class n1 node_system
+  class n1 external_node
   n2@{ shape: cyl, label: "**ViewBinnedRenderPhases#lt;Shadow#gt;**<br/>汇集各视图按分桶组织的绘制指令。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**resource​_​exists**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
-  class n3 node_system
-  class n3 external_node
-  n4@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
-  class n4 node_resource
-  n5@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n3@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  class n3 node_resource
+  n4@{ shape: lin-rect, label: "**PrepareResourcesWritePhaseBuffers**<br/>组织渲染数据准备与绘制排队。" }
+  class n4 node_system_set
+  n5@{ shape: cyl, label: "**SceneUnpackingBuffers**<br/>汇集分桶解包与 Uniform 分配的工作缓冲。" }
   class n5 node_resource
-  n6@{ shape: lin-rect, label: "**PrepareResourcesWritePhaseBuffers**<br/>组织渲染数据准备与绘制排队。" }
-  class n6 node_system_set
-  n7@{ shape: cyl, label: "**SceneUnpackingBuffers**<br/>汇集分桶解包与 Uniform 分配的工作缓冲。" }
-  class n7 node_resource
-  n1 e0@--> n0
-  class e0 edge_read
+  n6@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  class n6 node_resource
+  n7@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
+  class n7 node_component
+  n1 e0@-->|"运行条件"| n0
+  class e0 edge_reference
   n0 e1@-->|"可变访问"| n2
   class e1 edge_write
-  n3 e2@-->|"运行条件"| n0
-  class e2 edge_reference
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@--> n0
-  class e4 edge_read
-  n6 e5@-->|"集合成员"| n0
-  class e5 edge_set_membership
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

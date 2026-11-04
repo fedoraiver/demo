@@ -42,21 +42,21 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​line​_​gizmo​_​uniform​_​bind​_​group​_​**<br/>**layout**<br/>建立 Gizmo 线条动态参数的 GPU 布局。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**LineGizmoUniformBindgroupLayout**<br/>定义调试线 GPU 参数的绑定布局。" }
-  class n1 node_resource
-  n2@{ shape: rounded, label: "**init​_​line​_​gizmo​_​pipelines**<br/>建立二维 Gizmo 线段和接头管线。" }
-  class n2 node_system
-  n3@{ shape: fr-rect, label: "**GizmoRenderPlugin**<br/>将即时调试形状接入渲染。" }
-  class n3 node_plugin
-  n4@{ shape: rounded, label: "**init​_​line​_​gizmo​_​pipelines**<br/>建立三维 Gizmo 线条深度管线和接头资源。" }
-  class n4 node_system
-  n0 e0@-->|"插入"| n1
-  class e0 edge_write
-  n0 e1@-->|"先于"| n2
-  class e1 edge_order
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n0 e3@-->|"先于"| n4
-  class e3 edge_order
+  n1@{ shape: rounded, label: "**init​_​line​_​gizmo​_​pipelines**<br/>建立二维 Gizmo 线段和接头管线。" }
+  class n1 node_system
+  n2@{ shape: cyl, label: "**LineGizmoUniformBindgroupLayout**<br/>定义调试线 GPU 参数的绑定布局。" }
+  class n2 node_resource
+  n3@{ shape: rounded, label: "**init​_​line​_​gizmo​_​pipelines**<br/>建立三维 Gizmo 线条深度管线和接头资源。" }
+  class n3 node_system
+  n4@{ shape: fr-rect, label: "**GizmoRenderPlugin**<br/>将即时调试形状接入渲染。" }
+  class n4 node_plugin
+  n0 e0@-->|"先于"| n1
+  class e0 edge_order
+  n0 e1@-->|"插入"| n2
+  class e1 edge_write
+  n0 e2@-->|"先于"| n3
+  class e2 edge_order
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
   e0@{ curve: basis }
-  e3@{ curve: basis }
+  e2@{ curve: basis }

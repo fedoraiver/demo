@@ -43,11 +43,11 @@ flowchart LR
   n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
+  n2@{ shape: cyl, label: "**AtmosphereBindGroupLayouts**<br/>来自crate:bevy​_​pbr ↗：描述四类大气查<br/>找表的资源布局。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**AtmosphereBindGroupLayouts**<br/>来自crate:bevy​_​pbr ↗：描述四类大气查<br/>找表的资源布局。" }
+  class n2 external_node
+  n3@{ shape: cyl, label: "**PipelineCache**<br/>缓存 GPU 渲染、计算管线与待创建队列。" }
   class n3 node_resource
-  class n3 external_node
   n4@{ shape: cyl, label: "**AtmosphereLutPipelines**<br/>来自crate:bevy​_​pbr ↗：保存四类大气查<br/>找表的计算管线。" }
   class n4 node_resource
   class n4 external_node

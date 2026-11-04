@@ -47,39 +47,39 @@ flowchart LR
   class n0 node_system
   n1@{ shape: cyl, label: "**GpuReadbackBufferPool**<br/>按缓冲尺寸复用 GPU 回读暂存空间。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**RenderAssets#lt;GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
-  class n2 node_resource
-  n3@{ shape: fr-rect, label: "**GpuReadbackPlugin**<br/>将 GPU 缓冲与纹理回读到 CPU。" }
-  class n3 node_plugin
-  n4@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
+  n2@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: rounded, label: "**Readback**<br/>请求异步读取 GPU 纹理或缓冲内容。" }
+  class n3 node_component
+  n4@{ shape: cyl, label: "**RenderAssets#lt;GpuShaderBuffer#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n4 node_resource
   n5@{ shape: lin-rect, label: "**PrepareResources**<br/>组织渲染数据准备与绘制排队。" }
   class n5 node_system_set
-  n6@{ shape: cyl, label: "**GpuReadbacks**<br/>追踪已请求及已映射的 GPU 回读任务。" }
-  class n6 node_resource
-  n7@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  n6@{ shape: fr-rect, label: "**GpuReadbackPlugin**<br/>将 GPU 缓冲与纹理回读到 CPU。" }
+  class n6 node_plugin
+  n7@{ shape: cyl, label: "**RenderAssets#lt;GpuImage#gt;**<br/>按源资产身份保存 GPU 渲染表示。" }
   class n7 node_resource
-  n8@{ shape: rounded, label: "**Readback**<br/>请求异步读取 GPU 纹理或缓冲内容。" }
-  class n8 node_component
-  n9@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
-  class n9 node_component
-  class n9 external_node
+  n8@{ shape: cyl, label: "**GpuReadbacks**<br/>追踪已请求及已映射的 GPU 回读任务。" }
+  class n8 node_resource
+  n9@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
+  class n9 node_resource
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
   n2 e1@--> n0
   class e1 edge_read
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n3 e2@--> n0
+  class e2 edge_read
   n4 e3@--> n0
   class e3 edge_read
   n5 e4@-->|"集合成员"| n0
   class e4 edge_set_membership
-  n0 e5@-->|"可变访问"| n6
-  class e5 edge_write
+  n6 e5@-->|"调用"| n0
+  class e5 edge_registration
   n7 e6@--> n0
   class e6 edge_read
-  n8 e7@--> n0
-  class e7 edge_read
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
   n9 e8@--> n0
   class e8 edge_read
   e0@{ curve: basis }

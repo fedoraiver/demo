@@ -1,0 +1,100 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    }
+  }
+}
+---
+flowchart LR
+  accTitle: slider::SliderStep · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**SliderStep**<br/>设置滑块键盘调节步长。" }
+  class n0 node_component
+  n1@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>用键盘步进或跳转滑条数值。" }
+  class n1 node_observer
+  n2@{ shape: hex, label: "**slider​_​on​_​set​_​value**<br/>将滑条设值请求转为最终值变化。" }
+  class n2 node_observer
+  n3@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>用键盘步进或跳转滑条数值。" }
+  class n3 node_observer
+  n4@{ shape: hex, label: "**slider​_​on​_​key​_​input**<br/>用键盘步进或跳转滑条数值。" }
+  class n4 node_observer
+  n5@{ shape: hex, label: "**slider​_​on​_​insert​_​step**<br/>同步滑条的无障碍步长。" }
+  class n5 node_observer
+  n6@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
+  class n6 node_observer
+  n7@{ shape: hex, label: "**slider​_​on​_​set​_​value**<br/>将滑条设值请求转为最终值变化。" }
+  class n7 node_observer
+  n8@{ shape: hex, label: "**slider​_​on​_​insert​_​step**<br/>同步滑条的无障碍步长。" }
+  class n8 node_observer
+  n9@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
+  class n9 node_observer
+  n10@{ shape: hex, label: "**slider​_​on​_​insert​_​step**<br/>同步滑条的无障碍步长。" }
+  class n10 node_observer
+  n11@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>按轨道点击策略发起滑条调整。" }
+  class n11 node_observer
+  n12@{ shape: hex, label: "**slider​_​on​_​set​_​value**<br/>将滑条设值请求转为最终值变化。" }
+  class n12 node_observer
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n0 e6@--> n7
+  class e6 edge_read
+  n0 e7@--> n8
+  class e7 edge_read
+  n0 e8@--> n9
+  class e8 edge_read
+  n0 e9@--> n10
+  class e9 edge_read
+  n0 e10@--> n11
+  class e10 edge_read
+  n0 e11@--> n12
+  class e11 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }

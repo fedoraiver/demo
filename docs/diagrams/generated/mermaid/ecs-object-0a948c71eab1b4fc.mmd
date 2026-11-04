@@ -1,0 +1,84 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": "#object-0a948c71eab1b4fc-e5{marker-start:url(#object-0a948c71eab1b4fc_flowchart-v2-pointStart)!important}\n#object-0a948c71eab1b4fc_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: view::composition::ResolvedCompositingSpace · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**ResolvedCompositingSpace**<br/>记录本帧相机堆栈实际采用的合成空间。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**queue​_​sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​sprite​_​render ↗：检测<br/>二维视图管线配置变化并标记重建。" }
+  class n2 node_system
+  class n2 external_node
+  n3@{ shape: rounded, label: "**extract​_​cameras**<br/>把活动相机及可见实体提取到渲染世界。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**resolve​_​composition​_​spaces**<br/>协调共享纹理相机的合成色彩空间。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**prepare​_​view​_​upscaling​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按相<br/>机合成方式准备输出缩放管线。" }
+  class n6 node_system
+  class n6 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"移除"| n0
+  class e2 edge_write
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n4 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n4 e5@--- n0
+  class e5 edge_read
+  n3 e6@-->|"插入"| n0
+  class e6 edge_write
+  n0 e7@--> n5
+  class e7 edge_read
+  n0 e8@--> n6
+  class e8 edge_read
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: bumpX }
+  e7@{ curve: basis }
+  e8@{ curve: basis }

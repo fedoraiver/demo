@@ -1,0 +1,67 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy::bevy_state::state_scoped::DespawnOnEnter#lt;game_flow::AppState#gt; · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**DespawnOnEnter#lt;AppState#gt;**<br/>指定进入某状态时自动销毁的实体。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：为玩法海岛提供<br/>随会话清理的日光照明。" }
+  class n1 node_entity
+  class n1 external_node
+  n2@{ shape: rounded, label: "**begin​_​island · 创建模板**<br/>来自scene​_​assembly ↗：挂载玩法海岛场<br/>景，作为地图准备和会话清理入口。" }
+  class n2 node_entity
+  class n2 external_node
+  n3@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
+  class n3 node_entity
+  class n3 external_node
+  n4@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  class n4 node_system
+  class n4 external_node
+  n1 e0@-->|"可能包含"| n0
+  class e0 edge_reference
+  n2 e1@-->|"可能包含"| n0
+  class e1 edge_reference
+  n3 e2@-->|"可能包含"| n0
+  class e2 edge_reference
+  n4 e3@-->|"插入"| n0
+  class e3 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }

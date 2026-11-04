@@ -46,34 +46,34 @@ flowchart LR
   class n0 node_system
   n1@{ shape: rounded, label: "**update​_​collider​_​scale**<br/>把根节点和附属碰撞体的缩放传给形状。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
+  n2@{ shape: rounded, label: "**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  n3@{ shape: rounded, label: "**ColliderDensity**<br/>以密度参与碰撞体质量计算。" }
   class n3 node_component
   n4@{ shape: lin-rect, label: "**UpdateColliderMassProperties**<br/>组织质量属性重算与写回。" }
   class n4 node_system_set
-  n5@{ shape: rounded, label: "**ColliderMassProperties**<br/>缓存由碰撞形状计算的质量属性。" }
+  n5@{ shape: rounded, label: "**Sensor**<br/>将碰撞体设为不阻挡运动的触发器。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**ColliderDensity**<br/>以密度参与碰撞体质量计算。" }
+  n6@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
   class n6 node_component
   n1 e0@-->|"先于"| n0
   class e0 edge_order
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
-  n3 e2@-->|"存在性约束"| n0
-  class e2 edge_reference
+  n0 e1@-->|"赋值"| n2
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
   n4 e3@-->|"集合成员"| n0
   class e3 edge_set_membership
-  n0 e4@-->|"赋值"| n5
+  n0 e4@-->|"可变访问"| n2
   class e4 edge_write
-  n0 e5@-->|"可变访问"| n5
-  class e5 edge_write
-  n6 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
-  n3 e7@--> n0
-  class e7 edge_read
-  n6 e8@--> n0
-  class e8 edge_read
+  n5 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
+  n6 e6@--> n0
+  class e6 edge_read
+  n3 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
+  n6 e8@-->|"存在性约束"| n0
+  class e8 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

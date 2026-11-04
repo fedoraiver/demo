@@ -41,11 +41,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**clear​_​gizmo​_​context**<br/>清空指定 Gizmo 配置组及清理上下文的存<br/>储，丢弃该上下文上一轮保存的线段和颜色数<br/>据。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**GizmoStorage#lt;FrustumGizmoConfigGroup**<br/>**, Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
-  class n1 node_resource
-  n2@{ shape: fr-rect, label: "**FrustumGizmoPlugin**<br/>绘制相机视锥调试形状。" }
-  class n2 node_plugin
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
+  n1@{ shape: fr-rect, label: "**FrustumGizmoPlugin**<br/>绘制相机视锥调试形状。" }
+  class n1 node_plugin
+  n2@{ shape: cyl, label: "**GizmoStorage#lt;FrustumGizmoConfigGroup**<br/>**, Fixed#gt;**<br/>按配置组和清理上下文存储调试图元。" }
+  class n2 node_resource
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write

@@ -49,36 +49,36 @@ flowchart LR
   class n1 node_system
   n2@{ shape: rounded, label: "**ExtractedAtmosphere**<br/>保存尚未转为 GPU 参数的大气数据。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**AtmosphereTextures**<br/>保存大气渲染的四类缓存查找纹理。" }
-  class n3 node_component
-  n4@{ shape: rounded, label: "**GpuAtmosphereSettings**<br/>向 GPU 提供大气采样和查找表设置。" }
+  n3@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: rounded, label: "**AtmosphereTextures**<br/>保存大气渲染的四类缓存查找纹理。" }
   class n4 node_component
   n5@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
-  class n6 node_system_set
-  class n6 external_node
-  n7@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n7 node_resource
+  n6@{ shape: rounded, label: "**GpuAtmosphereSettings**<br/>向 GPU 提供大气采样和查找表设置。" }
+  class n6 node_component
+  n7@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
+  class n7 node_system_set
   class n7 external_node
   n0 e0@-->|"先于"| n1
   class e0 edge_order
   n2 e1@-->|"存在性约束"| n0
   class e1 edge_reference
-  n0 e2@-->|"插入"| n3
-  class e2 edge_write
-  n4 e3@--> n0
-  class e3 edge_read
+  n3 e2@--> n0
+  class e2 edge_read
+  n0 e3@-->|"插入"| n4
+  class e3 edge_write
   n0 e4@-->|"可变访问"| n5
   class e4 edge_write
-  n6 e5@-->|"集合成员"| n0
-  class e5 edge_set_membership
-  n7 e6@--> n0
-  class e6 edge_read
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@-->|"集合成员"| n0
+  class e6 edge_set_membership
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e3@{ curve: basis }
+  e2@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

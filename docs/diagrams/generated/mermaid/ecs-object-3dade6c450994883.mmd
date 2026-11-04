@@ -46,53 +46,53 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**update​_​point​_​light​_​frusta**<br/>更新可见点光的六面阴影视锥。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
-  class n1 node_plugin
-  n2@{ shape: rounded, label: "**Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
-  class n2 node_component
-  class n2 external_node
-  n3@{ shape: rounded, label: "**CubemapFrusta**<br/>来自crate:bevy​_​camera ↗：保存立方体阴<br/>影六面的视锥。" }
+  n1@{ shape: rounded, label: "**Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
+  class n1 node_component
+  class n1 external_node
+  n2@{ shape: lin-rect, label: "**AssignLightsToClusters**<br/>组织灯光聚簇与可见性准备。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**PointLight**<br/>配置向四周发光的点光源。" }
   class n3 node_component
-  class n3 external_node
-  n4@{ shape: lin-rect, label: "**AssignLightsToClusters**<br/>组织灯光聚簇与可见性准备。" }
-  class n4 node_system_set
-  n5@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
-  class n5 node_system_set
+  n4@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
-  class n6 node_component
+  n6@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
+  class n6 node_system_set
   class n6 external_node
   n7@{ shape: lin-rect, label: "**UpdateLightFrusta**<br/>组织灯光聚簇与可见性准备。" }
   class n7 node_system_set
-  n8@{ shape: rounded, label: "**PointLight**<br/>配置向四周发光的点光源。" }
+  n8@{ shape: rounded, label: "**CubemapFrusta**<br/>来自crate:bevy​_​camera ↗：保存立方体阴<br/>影六面的视锥。" }
   class n8 node_component
-  n9@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
-  class n9 node_component
-  class n9 external_node
-  n1 e0@-->|"调用"| n0
-  class e0 edge_registration
-  n0 e1@-->|"赋值"| n2
-  class e1 edge_write
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  n4 e3@-->|"先于"| n0
-  class e3 edge_order
-  n5 e4@-->|"先于"| n0
-  class e4 edge_order
-  n6 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
+  class n8 external_node
+  n9@{ shape: fr-rect, label: "**LightPlugin**<br/>维护光源可见性与空间聚簇。" }
+  class n9 node_plugin
+  n0 e0@-->|"赋值"| n1
+  class e0 edge_write
+  n2 e1@-->|"先于"| n0
+  class e1 edge_order
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n4 e3@--> n0
+  class e3 edge_read
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@-->|"先于"| n0
+  class e5 edge_order
   n7 e6@-->|"集合成员"| n0
   class e6 edge_set_membership
-  n8 e7@-->|"存在性约束"| n0
-  class e7 edge_reference
-  n9 e8@--> n0
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n3 e8@--> n0
   class e8 edge_read
-  n9 e9@-->|"存在性约束"| n0
-  class e9 edge_reference
-  n8 e10@--> n0
-  class e10 edge_read
-  n6 e11@--> n0
-  class e11 edge_read
+  n9 e9@-->|"调用"| n0
+  class e9 edge_registration
+  n4 e10@-->|"存在性约束"| n0
+  class e10 edge_reference
+  n5 e11@-->|"存在性约束"| n0
+  class e11 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

@@ -45,15 +45,15 @@ flowchart LR
   n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**GradientPipeline**<br/>提供 UI 渐变的视图布局与着色器。" }
-  class n2 node_resource
-  n3@{ shape: fr-rect, label: "**GradientPlugin**<br/>提取并绘制界面渐变。" }
-  class n3 node_plugin
+  n2@{ shape: fr-rect, label: "**GradientPlugin**<br/>提取并绘制界面渐变。" }
+  class n2 node_plugin
+  n3@{ shape: cyl, label: "**GradientPipeline**<br/>提供 UI 渐变的视图布局与着色器。" }
+  class n3 node_resource
   n1 e0@--> n0
   class e0 edge_read
-  n0 e1@-->|"插入"| n2
-  class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n0 e2@-->|"插入"| n3
+  class e2 edge_write
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }

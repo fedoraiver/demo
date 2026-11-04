@@ -47,29 +47,29 @@ flowchart LR
   class n0 node_system
   n1@{ shape: rounded, label: "**prepare​_​indirect​_​parameters​_​build​_​**<br/>**jobs**<br/>按视图阶段的批范围登记间接参数构建任务。" }
   class n1 node_system
-  n2@{ shape: lin-rect, label: "**PrepareResourcesFlush**<br/>组织渲染数据准备与绘制排队。" }
-  class n2 node_system_set
+  n2@{ shape: fr-rect, label: "**BatchingPlugin**<br/>维护间接绘制参数和构建任务。" }
+  class n2 node_plugin
   n3@{ shape: cyl, label: "**RenderDevice**<br/>创建渲染和计算所需的 GPU 资源。" }
   class n3 node_resource
-  n4@{ shape: fr-rect, label: "**BatchingPlugin**<br/>维护间接绘制参数和构建任务。" }
-  class n4 node_plugin
-  n5@{ shape: cyl, label: "**IndirectParametersBuildJobs**<br/>按对齐要求存储间接绘制参数构建任务。" }
+  n4@{ shape: lin-rect, label: "**PrepareResourcesFlush**<br/>组织渲染数据准备与绘制排队。" }
+  class n4 node_system_set
+  n5@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
   class n5 node_resource
-  n6@{ shape: cyl, label: "**RenderQueue**<br/>将资源写入和命令异步提交给 GPU。" }
+  n6@{ shape: cyl, label: "**IndirectParametersBuildJobs**<br/>按对齐要求存储间接绘制参数构建任务。" }
   class n6 node_resource
   n1 e0@-->|"先于"| n0
   class e0 edge_order
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
   n3 e2@--> n0
   class e2 edge_read
-  n4 e3@-->|"调用"| n0
-  class e3 edge_registration
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
-  n6 e5@--> n0
-  class e5 edge_read
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
+  n5 e4@--> n0
+  class e4 edge_read
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e3@{ curve: basis }
-  e5@{ curve: basis }
+  e4@{ curve: basis }

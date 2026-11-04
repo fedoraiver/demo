@@ -48,34 +48,34 @@ flowchart LR
   class n0 node_system
   n1@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否绘制全部相机视锥。" }
   class n1 node_system
-  n2@{ shape: fr-rect, label: "**FrustumGizmoPlugin**<br/>绘制相机视锥调试形状。" }
-  class n2 node_plugin
+  n2@{ shape: rounded, label: "**ShowFrustumGizmo**<br/>为实体显示视锥调试线框。" }
+  class n2 node_component
   n3@{ shape: rounded, label: "**Frustum**<br/>来自crate:bevy​_​camera ↗：描述相机可见<br/>空间并参与视锥裁剪。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: lin-rect, label: "**UpdateFrusta**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
-  class n4 node_system_set
-  class n4 external_node
-  n5@{ shape: cyl, label: "**GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
-  class n5 node_resource
-  n6@{ shape: lin-rect, label: "**FrustumGizmoSystems**<br/>收集并绘制相机视锥调试线。" }
-  class n6 node_system_set
-  n7@{ shape: rounded, label: "**ShowFrustumGizmo**<br/>为实体显示视锥调试线框。" }
-  class n7 node_component
+  n4@{ shape: fr-rect, label: "**FrustumGizmoPlugin**<br/>绘制相机视锥调试形状。" }
+  class n4 node_plugin
+  n5@{ shape: lin-rect, label: "**UpdateFrusta**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n5 node_system_set
+  class n5 external_node
+  n6@{ shape: cyl, label: "**GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
+  class n6 node_resource
+  n7@{ shape: lin-rect, label: "**FrustumGizmoSystems**<br/>收集并绘制相机视锥调试线。" }
+  class n7 node_system_set
   n1 e0@-->|"运行条件"| n0
   class e0 edge_reference
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
   n3 e2@--> n0
   class e2 edge_read
-  n4 e3@-->|"先于"| n0
-  class e3 edge_order
-  n5 e4@--> n0
-  class e4 edge_read
-  n6 e5@-->|"集合成员"| n0
-  class e5 edge_set_membership
-  n7 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n5 e4@-->|"先于"| n0
+  class e4 edge_order
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@-->|"集合成员"| n0
+  class e6 edge_set_membership
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

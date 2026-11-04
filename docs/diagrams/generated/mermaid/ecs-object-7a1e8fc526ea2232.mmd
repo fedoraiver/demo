@@ -45,22 +45,22 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
-  class n1 node_component
-  n2@{ shape: lin-rect, label: "**PhaseSort**<br/>组织渲染数据准备与绘制排队。" }
-  class n2 node_system_set
-  n3@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transmissive3**<br/>**d#gt;**<br/>汇集各视图需要排序的绘制指令。" }
-  class n3 node_resource
-  n4@{ shape: fr-rect, label: "**ScreenSpaceTransmissionPlugin**<br/>来自crate:bevy​_​pbr ↗：提供相机屏幕空<br/>间透射。" }
-  class n4 node_plugin
-  class n4 external_node
-  n1 e0@--> n0
-  class e0 edge_read
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  n4 e3@-->|"调用"| n0
-  class e3 edge_registration
+  n1@{ shape: lin-rect, label: "**PhaseSort**<br/>组织渲染数据准备与绘制排队。" }
+  class n1 node_system_set
+  n2@{ shape: fr-rect, label: "**ScreenSpaceTransmissionPlugin**<br/>来自crate:bevy​_​pbr ↗：提供相机屏幕空<br/>间透射。" }
+  class n2 node_plugin
+  class n2 external_node
+  n3@{ shape: rounded, label: "**ExtractedView**<br/>描述渲染视图的身份、投影与空间状态。" }
+  class n3 node_component
+  n4@{ shape: cyl, label: "**ViewSortedRenderPhases#lt;Transmissive3**<br/>**d#gt;**<br/>汇集各视图需要排序的绘制指令。" }
+  class n4 node_resource
+  n1 e0@-->|"集合成员"| n0
+  class e0 edge_set_membership
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n3 e2@--> n0
+  class e2 edge_read
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
   e0@{ curve: basis }
-  e3@{ curve: basis }
+  e2@{ curve: basis }

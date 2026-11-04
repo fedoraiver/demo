@@ -51,9 +51,8 @@ flowchart LR
   n2@{ shape: lin-rect, label: "**PrepareResources**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
-  class n3 node_resource
-  class n3 external_node
+  n3@{ shape: rounded, label: "**DeferredLightingIdDepthTexture**<br/>保存延迟光照通道使用的标识深度纹理。" }
+  class n3 node_component
   n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n4 node_resource
   class n4 external_node
@@ -62,13 +61,14 @@ flowchart LR
   n6@{ shape: rounded, label: "**ExtractedCamera**<br/>来自crate:bevy​_​render ↗：保存渲染世界<br/>相机的目标和绘制配置。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**DeferredLightingIdDepthTexture**<br/>保存延迟光照通道使用的标识深度纹理。" }
-  class n7 node_component
+  n7@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
+  class n7 node_resource
+  class n7 external_node
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference
   n2 e1@-->|"集合成员"| n0
   class e1 edge_set_membership
-  n0 e2@-->|"可变访问"| n3
+  n0 e2@-->|"插入"| n3
   class e2 edge_write
   n4 e3@--> n0
   class e3 edge_read
@@ -76,7 +76,7 @@ flowchart LR
   class e4 edge_registration
   n6 e5@--> n0
   class e5 edge_read
-  n0 e6@-->|"插入"| n7
+  n0 e6@-->|"可变访问"| n7
   class e6 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

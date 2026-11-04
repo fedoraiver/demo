@@ -43,18 +43,18 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**spawn​_​backdrop**<br/>装配主菜单海岛展示舞台、相机与日光。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
-  class n1 node_resource
-  class n1 external_node
-  n2@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
-  class n2 node_plugin
-  n3@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>组织主菜单海岛展示舞台，并在退出主菜单时<br/>清理。" }
-  class n3 node_entity
-  n1 e0@--> n0
-  class e0 edge_read
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n0 e2@-->|"创建模板"| n3
-  class e2 edge_write
+  n1@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  class n1 node_plugin
+  n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>组织主菜单海岛展示舞台，并在退出主菜单时<br/>清理。" }
+  class n2 node_entity
+  n3@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
+  class n3 node_resource
+  class n3 external_node
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n0 e1@-->|"创建模板"| n2
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e2@{ curve: basis }

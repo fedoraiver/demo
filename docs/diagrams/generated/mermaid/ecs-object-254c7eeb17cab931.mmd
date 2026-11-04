@@ -44,35 +44,35 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**extract​_​mesh​_​materials**<br/>根据可见性和材质变化更新渲染实例映射。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**MeshMaterial3d#lt;ExtendedMaterial#lt;Stan**<br/>**dardMaterial,**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>为三维网格指定材质资产。" }
-  class n1 node_component
-  n2@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
-  class n2 node_resource
+  n1@{ shape: lin-rect, label: "**MaterialExtractionSystems**<br/>按材质类型提取三维网格材质实例。" }
+  class n1 node_system_set
+  n2@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  class n2 node_component
   class n2 external_node
-  n3@{ shape: lin-rect, label: "**MaterialExtractionSystems**<br/>按材质类型提取三维网格材质实例。" }
-  class n3 node_system_set
-  n4@{ shape: cyl, label: "**RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
+  n3@{ shape: cyl, label: "**RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
+  class n3 node_resource
+  n4@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
   class n4 node_resource
-  n5@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  class n4 external_node
+  n5@{ shape: rounded, label: "**MeshMaterial3d#lt;ExtendedMaterial#lt;Stan**<br/>**dardMaterial,**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>为三维网格指定材质资产。" }
   class n5 node_component
-  class n5 external_node
-  n1 e0@--> n0
-  class e0 edge_read
+  n1 e0@-->|"集合成员"| n0
+  class e0 edge_set_membership
   n2 e1@--> n0
   class e1 edge_read
-  n3 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
-  n5 e4@-->|"存在性约束"| n0
-  class e4 edge_reference
-  n5 e5@--> n0
-  class e5 edge_read
-  n1 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n2 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n4 e4@--> n0
+  class e4 edge_read
+  n5 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
+  n5 e6@--> n0
+  class e6 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

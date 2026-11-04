@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-8b750e2e248435a9-e2{marker-start:url(#object-8b750e2e248435a9_flowchart-v2-pointStart)!important}\n#object-8b750e2e248435a9-e6{marker-start:url(#object-8b750e2e248435a9_flowchart-v2-pointStart)!important}\n#object-8b750e2e248435a9_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-8b750e2e248435a9-e4{marker-start:url(#object-8b750e2e248435a9_flowchart-v2-pointStart)!important}\n#object-8b750e2e248435a9-e10{marker-start:url(#object-8b750e2e248435a9_flowchart-v2-pointStart)!important}\n#object-8b750e2e248435a9_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -46,51 +46,51 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**visibility​_​propagate​_​system**<br/>沿父子层级传播可见意图的变化。" }
   class n0 node_system
-  n1@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>组织相机与实体可见性更新。" }
-  class n1 node_system_set
-  n2@{ shape: rounded, label: "**Visibility**<br/>声明实体可见意图及层级继承方式。" }
+  n1@{ shape: rounded, label: "**Visibility**<br/>声明实体可见意图及层级继承方式。" }
+  class n1 node_component
+  n2@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**InheritedVisibility**<br/>保存从实体层级计算出的可见性。" }
-  class n3 node_component
-  n4@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  class n2 external_node
+  n3@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>组织相机与实体可见性更新。" }
+  class n3 node_system_set
+  n4@{ shape: rounded, label: "**InheritedVisibility**<br/>保存从实体层级计算出的可见性。" }
   class n4 node_component
-  class n4 external_node
-  n5@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
-  class n5 node_component
-  class n5 external_node
+  n5@{ shape: fr-rect, label: "**VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
+  class n5 node_plugin
   n6@{ shape: notch-rect, label: "**Local · removed​_​child​_​of.0.0.0.0**<br/>保存 ChildOf 移除参数的组件 ID。" }
   class n6 node_local
   n7@{ shape: notch-rect, label: "**Local · removed​_​child​_​of.0.1**<br/>跟踪 ChildOf 移除记录的读取进度。" }
   class n7 node_local
-  n8@{ shape: fr-rect, label: "**VisibilityPlugin**<br/>维护包围盒、层级可见性与视锥检查。" }
-  class n8 node_plugin
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
+  n8@{ shape: rounded, label: "**Children**<br/>来自crate:bevy​_​ecs ↗：保存以<br/>ChildOf 指向当前父实体的子实体集合" }
+  class n8 node_component
+  class n8 external_node
+  n1 e0@--> n0
+  class e0 edge_read
   n2 e1@--> n0
   class e1 edge_read
-  n3 e2@---|"赋值"| n0
-  class e2 edge_write
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"存在性约束"| n0
-  class e4 edge_reference
-  n5 e5@--> n0
-  class e5 edge_read
-  n3 e6@---|"可变访问"| n0
-  class e6 edge_write
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
+  n1 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n4 e4@---|"可变访问"| n0
+  class e4 edge_write
+  n5 e5@-->|"调用"| n0
+  class e5 edge_registration
+  n4 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
   n0 e7@-->|"可变访问"| n6
   class e7 edge_write
   n0 e8@-->|"可变访问"| n7
   class e8 edge_write
-  n2 e9@-->|"存在性约束"| n0
-  class e9 edge_reference
-  n3 e10@-->|"存在性约束"| n0
-  class e10 edge_reference
-  n8 e11@-->|"调用"| n0
-  class e11 edge_registration
+  n8 e9@--> n0
+  class e9 edge_read
+  n4 e10@---|"赋值"| n0
+  class e10 edge_write
+  n2 e11@-->|"存在性约束"| n0
+  class e11 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: bumpX }
+  e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
@@ -99,4 +99,4 @@ flowchart LR
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e11@{ curve: basis }
+  e11@{ curve: bumpX }

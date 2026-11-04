@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-bb85bc94c225655c-e3{marker-start:url(#object-bb85bc94c225655c_flowchart-v2-pointStart)!important}\n#object-bb85bc94c225655c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-bb85bc94c225655c-e2{marker-start:url(#object-bb85bc94c225655c_flowchart-v2-pointStart)!important}\n#object-bb85bc94c225655c_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -55,10 +55,10 @@ flowchart LR
   class e0 edge_read
   n2 e1@-->|"存在性约束"| n0
   class e1 edge_reference
-  n0 e2@-->|"可变访问"| n3
+  n2 e2@---|"插入"| n0
   class e2 edge_write
-  n2 e3@---|"插入"| n0
+  n0 e3@-->|"可变访问"| n3
   class e3 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e3@{ curve: basis }
+  e2@{ curve: basis }

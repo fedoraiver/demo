@@ -40,11 +40,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否绘制全部包围盒。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
-  class n1 node_resource
-  n2@{ shape: rounded, label: "**draw​_​all​_​aabbs**<br/>绘制未单独标记实体的可见 AABB 调试线<br/>框。" }
-  class n2 node_system
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"运行条件"| n2
-  class e1 edge_reference
+  n1@{ shape: rounded, label: "**draw​_​all​_​aabbs**<br/>绘制未单独标记实体的可见 AABB 调试线<br/>框。" }
+  class n1 node_system
+  n2@{ shape: cyl, label: "**GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
+  class n2 node_resource
+  n0 e0@-->|"运行条件"| n1
+  class e0 edge_reference
+  n2 e1@--> n0
+  class e1 edge_read

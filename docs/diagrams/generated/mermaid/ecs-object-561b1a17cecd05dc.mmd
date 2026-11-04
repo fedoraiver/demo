@@ -49,61 +49,61 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**on​_​ime​_​input**<br/>把输入法组合和提交转换为文字编辑操作。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**TextInput**<br/>标识可编辑文本控件" }
-  class n1 node_component
-  n2@{ shape: lean-r, label: "**Ime**<br/>来自crate:bevy​_​window ↗：传递窗口输入<br/>法编辑事件。" }
-  class n2 node_message
+  n1@{ shape: lin-rect, label: "**Dispatch**<br/>来自crate:bevy​_​input​_​focus ↗：组织焦<br/>点输入派发与变化通知。" }
+  class n1 node_system_set
+  class n1 external_node
+  n2@{ shape: cyl, label: "**Messages#lt;Ime#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n2 node_resource
   class n2 external_node
-  n3@{ shape: lin-rect, label: "**Dispatch**<br/>来自crate:bevy​_​input​_​focus ↗：组织焦<br/>点输入派发与变化通知。" }
-  class n3 node_system_set
-  class n3 external_node
-  n4@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
-  class n4 node_component
+  n3@{ shape: rounded, label: "**TextInput**<br/>标识可编辑文本控件" }
+  class n3 node_component
+  n4@{ shape: lin-rect, label: "**InputSystems**<br/>来自crate:bevy​_​input ↗：把原始设备消<br/>息汇总为本帧输入状态。" }
+  class n4 node_system_set
   class n4 external_node
-  n5@{ shape: cyl, label: "**Messages#lt;Ime#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n5 node_resource
+  n5@{ shape: rounded, label: "**InteractionDisabled**<br/>来自crate:bevy​_​ui ↗：标记禁止交互的<br/>UI 控件。" }
+  class n5 node_component
   class n5 external_node
-  n6@{ shape: lin-rect, label: "**InputSystems**<br/>来自crate:bevy​_​input ↗：把原始设备消<br/>息汇总为本帧输入状态。" }
-  class n6 node_system_set
+  n6@{ shape: rounded, label: "**EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
+  class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
-  class n7 node_component
-  class n7 external_node
-  n8@{ shape: fr-rect, label: "**TextInputPlugin**<br/>处理文本编辑、选择与输入法接入。" }
-  class n8 node_plugin
-  n9@{ shape: lin-rect, label: "**HandleEvents**<br/>组织文本输入法状态与事件处理。" }
-  class n9 node_system_set
-  n10@{ shape: lin-rect, label: "**Focus**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
-  class n10 node_system_set
+  n7@{ shape: lin-rect, label: "**HandleEvents**<br/>组织文本输入法状态与事件处理。" }
+  class n7 node_system_set
+  n8@{ shape: lin-rect, label: "**Focus**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
+  class n8 node_system_set
+  class n8 external_node
+  n9@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
+  class n9 node_resource
+  class n9 external_node
+  n10@{ shape: lean-r, label: "**Ime**<br/>来自crate:bevy​_​window ↗：传递窗口输入<br/>法编辑事件。" }
+  class n10 node_message
   class n10 external_node
-  n11@{ shape: rounded, label: "**TextReadWriteMode**<br/>来自crate:bevy​_​text ↗：控制文字输入的<br/>编辑模式" }
-  class n11 node_component
-  class n11 external_node
-  n12@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
-  class n12 node_resource
+  n11@{ shape: fr-rect, label: "**TextInputPlugin**<br/>处理文本编辑、选择与输入法接入。" }
+  class n11 node_plugin
+  n12@{ shape: rounded, label: "**TextReadWriteMode**<br/>来自crate:bevy​_​text ↗：控制文字输入的<br/>编辑模式" }
+  class n12 node_component
   class n12 external_node
-  n1 e0@-->|"存在性约束"| n0
-  class e0 edge_reference
+  n1 e0@-->|"先于"| n0
+  class e0 edge_order
   n2 e1@--> n0
-  class e1 edge_consume
-  n3 e2@-->|"先于"| n0
-  class e2 edge_order
-  n4 e3@-->|"存在性约束"| n0
-  class e3 edge_reference
-  n5 e4@--> n0
-  class e4 edge_read
-  n6 e5@-->|"先于"| n0
-  class e5 edge_order
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
-  n8 e7@-->|"调用"| n0
-  class e7 edge_registration
-  n9 e8@-->|"集合成员"| n0
-  class e8 edge_set_membership
-  n10 e9@-->|"先于"| n0
-  class e9 edge_order
-  n11 e10@--> n0
-  class e10 edge_read
+  class e1 edge_read
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
+  n5 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
+  n7 e6@-->|"集合成员"| n0
+  class e6 edge_set_membership
+  n8 e7@-->|"先于"| n0
+  class e7 edge_order
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@--> n0
+  class e9 edge_consume
+  n11 e10@-->|"调用"| n0
+  class e10 edge_registration
   n12 e11@--> n0
   class e11 edge_read
   e0@{ curve: basis }

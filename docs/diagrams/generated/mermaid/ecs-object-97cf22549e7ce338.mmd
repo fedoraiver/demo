@@ -40,42 +40,63 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**solve​_​contacts**<br/>迭代接触冲量以处理穿透与相对速度。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**SolverConfig**<br/>配置接触与关节约束求解参数。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: cyl, label: "**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
   class n2 node_resource
-  class n2 external_node
-  n3@{ shape: lin-rect, label: "**SolveConstraints**<br/>组织约束子步的求解与松弛。" }
-  class n3 node_system_set
-  n4@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
-  class n4 node_resource
-  n5@{ shape: cyl, label: "**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  class n3 node_resource
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: lin-rect, label: "**SolveConstraints**<br/>组织约束子步的求解与松弛。" }
+  class n4 node_system_set
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n5 node_resource
+  class n5 external_node
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
   n6@{ shape: cyl, label: "**ConstraintGraph**<br/>为并行接触求解维护约束着色图。" }
   class n6 node_resource
-  n7@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: cyl, label: "**SolverConfig**<br/>配置接触与关节约束求解参数。" }
   class n7 node_resource
+  end
+  style layout_card_n7 fill:none,stroke:none
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@--> n0
-  class e1 edge_read
-  n3 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
   n5 e4@--> n0
   class e4 edge_read
   n0 e5@-->|"可变访问"| n6
   class e5 edge_write
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
-  n4 layout_output_0@~~~ n6
-  n6 layout_output_1@~~~ n7
+  n7 e6@--> n0
+  class e6 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }

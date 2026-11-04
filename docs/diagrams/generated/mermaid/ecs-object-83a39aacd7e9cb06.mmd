@@ -46,39 +46,39 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**transform​_​to​_​position**<br/>把用户改变的世界变换同步到物理位姿。" }
   class n0 node_system
-  n1@{ shape: lin-rect, label: "**TransformToPosition**<br/>组织实体变换与物理姿态同步。" }
-  class n1 node_system_set
-  n2@{ shape: cyl, label: "**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
-  class n2 node_resource
-  n3@{ shape: cyl, label: "**LastPhysicsTick**<br/>记录上一轮物理调度结束的变化刻度。" }
-  class n3 node_resource
-  n4@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
-  class n4 node_component
-  n5@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
-  class n5 node_component
-  class n5 external_node
-  n6@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否从实体变换更新物理姿态。" }
-  class n6 node_system
-  n7@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
-  class n7 node_component
-  n8@{ shape: fr-rect, label: "**PhysicsTransformPlugin**<br/>同步物理姿态与实体变换。" }
-  class n8 node_plugin
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
+  n1@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  class n1 node_component
+  n2@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  class n2 node_component
+  class n2 external_node
+  n3@{ shape: lin-rect, label: "**TransformToPosition**<br/>组织实体变换与物理姿态同步。" }
+  class n3 node_system_set
+  n4@{ shape: cyl, label: "**LastPhysicsTick**<br/>记录上一轮物理调度结束的变化刻度。" }
+  class n4 node_resource
+  n5@{ shape: cyl, label: "**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
+  class n5 node_resource
+  n6@{ shape: fr-rect, label: "**PhysicsTransformPlugin**<br/>同步物理姿态与实体变换。" }
+  class n6 node_plugin
+  n7@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否从实体变换更新物理姿态。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  class n8 node_component
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
   n2 e1@--> n0
   class e1 edge_read
-  n3 e2@--> n0
-  class e2 edge_read
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
+  n3 e2@-->|"集合成员"| n0
+  class e2 edge_set_membership
+  n4 e3@--> n0
+  class e3 edge_read
   n5 e4@--> n0
   class e4 edge_read
-  n6 e5@-->|"运行条件"| n0
-  class e5 edge_reference
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
-  n8 e7@-->|"调用"| n0
-  class e7 edge_registration
+  n6 e5@-->|"调用"| n0
+  class e5 edge_registration
+  n7 e6@-->|"运行条件"| n0
+  class e6 edge_reference
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

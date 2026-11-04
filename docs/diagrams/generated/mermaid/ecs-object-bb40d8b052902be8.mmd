@@ -41,52 +41,31 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**extract​_​components**<br/>批量同步或移除子世界的目标组件。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
   n1@{ shape: rounded, label: "**MotionBlurUniform**<br/>来自crate:bevy​_​post​_​process ↗：向运<br/>动模糊着色器传递快门角度和采样数。" }
   class n1 node_component
   class n1 external_node
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n2@{ shape: rounded, label: "**MotionBlur**<br/>来自crate:bevy​_​post​_​process ↗：配置<br/>相机运动模糊。" }
   class n2 node_component
   class n2 external_node
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: notch-rect, label: "**Local · arg1**<br/>按上次组件提取数量预留输出容量。" }
-  class n3 node_local
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
-  class n4 node_resource
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
-  class n5 node_component
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**MotionBlur**<br/>来自crate:bevy​_​post​_​process ↗：配置<br/>相机运动模糊。" }
+  n3@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: notch-rect, label: "**Local · arg1**<br/>按上次组件提取数量预留输出容量。" }
+  class n4 node_local
+  n5@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  class n5 node_resource
+  n6@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
   class n6 node_component
-  class n6 external_node
-  end
-  style layout_card_n6 fill:none,stroke:none
   n0 e0@-->|"移除"| n1
   class e0 edge_write
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
-  n4 e3@--> n0
-  class e3 edge_read
+  n2 e1@--> n0
+  class e1 edge_read
+  n3 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
   n5 e4@--> n0
   class e4 edge_read
   n6 e5@--> n0

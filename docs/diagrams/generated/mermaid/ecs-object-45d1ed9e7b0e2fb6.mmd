@@ -46,13 +46,13 @@ flowchart LR
   class n1 node_resource
   n2@{ shape: cyl, label: "**MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**CollisionDiagnostics**<br/>汇总碰撞检测耗时与接触数量。" }
+  n3@{ shape: cyl, label: "**ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
+  n4@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
   class n4 node_resource
   n5@{ shape: lin-rect, label: "**CollectCollisions**<br/>组织宽阶段碰撞候选收集。" }
   class n5 node_system_set
-  n6@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  n6@{ shape: cyl, label: "**CollisionDiagnostics**<br/>汇总碰撞检测耗时与接触数量。" }
   class n6 node_resource
   n1 e0@--> n0
   class e0 edge_read

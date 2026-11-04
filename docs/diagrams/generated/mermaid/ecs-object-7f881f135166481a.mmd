@@ -44,16 +44,16 @@ flowchart LR
   n1@{ shape: rounded, label: "**message​_​update​_​system**<br/>来自crate:bevy​_​ecs ↗：轮换世界中已注<br/>册的消息缓冲。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: lin-rect, label: "**SystemTypeSet:ApplyDeferred**<br/>来自应用 ↗：保留未注册系统类型的依赖端<br/>点。" }
-  class n2 node_system_set
-  class n2 external_node
-  n3@{ shape: fr-rect, label: "**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
-  class n3 node_plugin
+  n2@{ shape: fr-rect, label: "**ScreenshotPlugin**<br/>处理截图请求与图像回传。" }
+  class n2 node_plugin
+  n3@{ shape: lin-rect, label: "**SystemTypeSet:ApplyDeferred**<br/>来自应用 ↗：保留未注册系统类型的依赖端<br/>点。" }
+  class n3 node_system_set
+  class n3 external_node
   n1 e0@-->|"先于"| n0
   class e0 edge_order
-  n0 e1@-->|"先于"| n2
-  class e1 edge_order
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n0 e2@-->|"先于"| n3
+  class e2 edge_order
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }

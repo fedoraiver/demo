@@ -42,15 +42,15 @@ flowchart LR
   class n0 node_system
   n1@{ shape: rounded, label: "**create​_​surfaces**<br/>创建并配置提取窗口的 GPU 表面。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
+  n2@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**SurfaceData**<br/>保存窗口 GPU 表面及其呈现配置。" }
+  n3@{ shape: rounded, label: "**ExtractedWindow**<br/>保存渲染侧窗口尺寸、呈现模式和交换链状<br/>态。" }
   class n3 node_component
   n0 e0@-->|"运行条件"| n1
   class e0 edge_reference
-  n2 e1@--> n0
-  class e1 edge_read
-  n3 e2@-->|"存在性约束"| n0
-  class e2 edge_reference
+  n2 e1@-->|"存在性约束"| n0
+  class e1 edge_reference
+  n3 e2@--> n0
+  class e2 edge_read
   e1@{ curve: basis }
   e2@{ curve: basis }

@@ -47,11 +47,11 @@ flowchart LR
   class n2 node_resource
   n3@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n3 node_system
-  n4@{ shape: cyl, label: "**FallbackImageCubemap**<br/>为未指定的立方体纹理提供默认回退图像。" }
-  class n4 node_resource
-  n5@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
-  class n5 node_system
-  n6@{ shape: cyl, label: "**DefaultImageSampler**<br/>保存渲染器初始化时建立的默认图像采样器。" }
+  n4@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
+  class n4 node_system
+  n5@{ shape: cyl, label: "**DefaultImageSampler**<br/>保存渲染器初始化时建立的默认图像采样器。" }
+  class n5 node_resource
+  n6@{ shape: cyl, label: "**FallbackImageCubemap**<br/>为未指定的立方体纹理提供默认回退图像。" }
   class n6 node_resource
   n1 e0@--> n0
   class e0 edge_read
@@ -59,12 +59,12 @@ flowchart LR
   class e1 edge_read
   n0 e2@-->|"先于"| n3
   class e2 edge_order
-  n0 e3@-->|"插入"| n4
-  class e3 edge_write
-  n5 e4@-->|"先于"| n0
-  class e4 edge_order
-  n6 e5@--> n0
-  class e5 edge_read
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
+  n5 e4@--> n0
+  class e4 edge_read
+  n0 e5@-->|"插入"| n6
+  class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

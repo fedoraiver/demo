@@ -46,39 +46,39 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**advance​_​transitions**<br/>推进动画过渡并归一化混合权重。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
-  class n1 node_resource
-  class n1 external_node
+  n1@{ shape: rounded, label: "**AnimationPlayer**<br/>保存当前激活动画及其播放控制状态" }
+  class n1 node_component
   n2@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: rounded, label: "**AnimationTransitions**<br/>管理动画混合权重的淡出过程" }
-  class n3 node_component
-  n4@{ shape: rounded, label: "**AnimationPlayer**<br/>保存当前激活动画及其播放控制状态" }
+  n3@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: rounded, label: "**AnimationTransitions**<br/>管理动画混合权重的淡出过程" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**thread​_​animation​_​graphs**<br/>维护动画图的快速求值结构。" }
-  class n5 node_system
-  n6@{ shape: rounded, label: "**advance​_​animations**<br/>推进动画播放器中活动动画的播放时间。" }
+  n5@{ shape: fr-rect, label: "**AnimationPlugin**<br/>安装动画播放与更新支持。" }
+  class n5 node_plugin
+  n6@{ shape: rounded, label: "**thread​_​animation​_​graphs**<br/>维护动画图的快速求值结构。" }
   class n6 node_system
-  n7@{ shape: fr-rect, label: "**AnimationPlugin**<br/>安装动画播放与更新支持。" }
-  class n7 node_plugin
+  n7@{ shape: rounded, label: "**advance​_​animations**<br/>推进动画播放器中活动动画的播放时间。" }
+  class n7 node_system
   n8@{ shape: lin-rect, label: "**AnimationSystems**<br/>来自crate:bevy​_​app ↗：更新动画图、播<br/>放时间和目标姿态。" }
   class n8 node_system_set
   class n8 external_node
-  n1 e0@--> n0
-  class e0 edge_read
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
   n0 e1@-->|"先于"| n2
   class e1 edge_order
-  n0 e2@-->|"可变访问"| n3
-  class e2 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
   n0 e3@-->|"可变访问"| n4
   class e3 edge_write
-  n5 e4@-->|"先于"| n0
-  class e4 edge_order
-  n0 e5@-->|"先于"| n6
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
+  n6 e5@-->|"先于"| n0
   class e5 edge_order
-  n7 e6@-->|"调用"| n0
-  class e6 edge_registration
+  n0 e6@-->|"先于"| n7
+  class e6 edge_order
   n8 e7@-->|"集合成员"| n0
   class e7 edge_set_membership
   e0@{ curve: basis }

@@ -45,15 +45,15 @@ flowchart LR
   class n0 node_system
   n1@{ shape: lin-rect, label: "**Cleanup**<br/>组织渲染数据准备与绘制排队。" }
   class n1 node_system_set
-  n2@{ shape: cyl, label: "**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
-  class n2 node_resource
-  n3@{ shape: fr-rect, label: "**RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
-  class n3 node_plugin
+  n2@{ shape: fr-rect, label: "**RenderPlugin**<br/>建立渲染子应用与 GPU 后端。" }
+  class n2 node_plugin
+  n3@{ shape: cyl, label: "**RenderAssetBytesPerFrameLimiter**<br/>统计并限制本帧渲染资产传输字节数。" }
+  class n3 node_resource
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }

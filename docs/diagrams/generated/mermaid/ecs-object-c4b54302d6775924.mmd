@@ -44,60 +44,60 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**cluster​_​on​_​gpu**<br/>执行深度切片、计数、分配和填充的 GPU 聚<br/>簇。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ViewLightProbesUniformOffset**<br/>定位相机在光照探针缓冲中的参数。" }
-  class n1 node_component
-  n2@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
-  class n2 node_resource
+  n1@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
+  class n1 node_resource
+  class n1 external_node
+  n2@{ shape: lin-rect, label: "**Prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
+  class n2 node_system_set
   class n2 external_node
-  n3@{ shape: rounded, label: "**ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
-  class n3 node_component
-  n4@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
-  class n4 node_resource
-  class n4 external_node
-  n5@{ shape: lin-rect, label: "**Prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：划分<br/>三维相机绘制与后处理阶段。" }
-  class n5 node_system_set
-  class n5 external_node
-  n6@{ shape: rounded, label: "**ViewClusteringBindGroups**<br/>保存视图各 GPU 聚簇通道的绑定组。" }
+  n3@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: rounded, label: "**ViewLightProbesUniformOffset**<br/>定位相机在光照探针缓冲中的参数。" }
+  class n4 node_component
+  n5@{ shape: rounded, label: "**ViewGpuClusteringPipelineIds**<br/>记录视图 GPU 聚簇各阶段的管线。" }
+  class n5 node_component
+  n6@{ shape: rounded, label: "**ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
   class n6 node_component
   n7@{ shape: rounded, label: "**early​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：绘制<br/>早期不透明与 AlphaMask 预通道。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
-  class n8 node_component
-  class n8 external_node
-  n9@{ shape: rounded, label: "**ViewGpuClusteringBuffers**<br/>保存单个视图的 GPU 聚簇工作缓冲。" }
+  n8@{ shape: cyl, label: "**RenderViewClusteringReadbackData**<br/>管理各视图的 GPU 聚簇统计回读。" }
+  class n8 node_resource
+  n9@{ shape: rounded, label: "**ViewClusteringDummyTexture**<br/>为聚簇光栅化提供可设置视口的附件。" }
   class n9 node_component
-  n10@{ shape: cyl, label: "**RenderViewClusteringReadbackData**<br/>管理各视图的 GPU 聚簇统计回读。" }
-  class n10 node_resource
-  n11@{ shape: cyl, label: "**PipelineCache**<br/>来自crate:bevy​_​render ↗：缓存 GPU 渲<br/>染、计算管线与待创建队列。" }
+  n10@{ shape: rounded, label: "**ViewClusteringBindGroups**<br/>保存视图各 GPU 聚簇通道的绑定组。" }
+  class n10 node_component
+  n11@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
   class n11 node_resource
   class n11 external_node
-  n12@{ shape: cyl, label: "**GpuClusteringMeshBuffers**<br/>提供聚簇深度切片的四边形几何。" }
-  class n12 node_resource
-  n13@{ shape: rounded, label: "**ViewLightsUniformOffset**<br/>定位视图在光照 Uniform 缓冲中的参数。" }
-  class n13 node_component
-  n14@{ shape: rounded, label: "**ViewUniformOffset**<br/>来自crate:bevy​_​render ↗：定位当前视图<br/>在共享 Uniform 缓冲中的参数。" }
+  n12@{ shape: rounded, label: "**MainEntity**<br/>来自crate:bevy​_​extract ↗：在子世界中<br/>关联原始主世界实体。" }
+  class n12 node_component
+  class n12 external_node
+  n13@{ shape: cyl, label: "**GpuClusteringMeshBuffers**<br/>提供聚簇深度切片的四边形几何。" }
+  class n13 node_resource
+  n14@{ shape: rounded, label: "**ViewLightsUniformOffset**<br/>定位视图在光照 Uniform 缓冲中的参数。" }
   class n14 node_component
-  class n14 external_node
-  n15@{ shape: rounded, label: "**ViewGpuClusteringPipelineIds**<br/>记录视图 GPU 聚簇各阶段的管线。" }
+  n15@{ shape: rounded, label: "**ViewUniformOffset**<br/>来自crate:bevy​_​render ↗：定位当前视图<br/>在共享 Uniform 缓冲中的参数。" }
   class n15 node_component
-  n16@{ shape: rounded, label: "**ViewClusteringDummyTexture**<br/>为聚簇光栅化提供可设置视口的附件。" }
-  class n16 node_component
-  n17@{ shape: cyl, label: "**CurrentView**<br/>来自crate:bevy​_​render ↗：指定当前正在<br/>渲染的视图实体。" }
-  class n17 node_resource
-  class n17 external_node
+  class n15 external_node
+  n16@{ shape: cyl, label: "**DiagnosticsRecorder**<br/>来自crate:bevy​_​render ↗：记录渲染诊断<br/>区间与 GPU 查询索引的对应。" }
+  class n16 node_resource
+  class n16 external_node
+  n17@{ shape: rounded, label: "**ViewGpuClusteringBuffers**<br/>保存单个视图的 GPU 聚簇工作缓冲。" }
+  class n17 node_component
   n18@{ shape: rounded, label: "**gpu​_​clustering​_​is​_​enabled**<br/>判断常规更新是否使用 GPU 聚簇。" }
   class n18 node_system
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@--> n0
-  class e1 edge_read
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
   n3 e2@--> n0
   class e2 edge_read
   n4 e3@--> n0
   class e3 edge_read
-  n5 e4@-->|"集合成员"| n0
-  class e4 edge_set_membership
+  n5 e4@--> n0
+  class e4 edge_read
   n6 e5@--> n0
   class e5 edge_read
   n0 e6@-->|"先于"| n7

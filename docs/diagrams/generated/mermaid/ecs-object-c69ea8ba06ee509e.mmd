@@ -49,55 +49,55 @@ flowchart LR
   class n0 node_system
   n1@{ shape: lin-rect, label: "**ToggleWindowIMEInput**<br/>组织文本输入法状态与事件处理。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
+  n2@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**TextInputPlugin**<br/>处理文本编辑、选择与输入法接入。" }
-  class n3 node_plugin
-  n4@{ shape: rounded, label: "**TextReadWriteMode**<br/>来自crate:bevy​_​text ↗：控制文字输入的<br/>编辑模式" }
+  n3@{ shape: rounded, label: "**TextReadWriteMode**<br/>来自crate:bevy​_​text ↗：控制文字输入的<br/>编辑模式" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: rounded, label: "**TextInput**<br/>标识可编辑文本控件" }
   class n4 node_component
-  class n4 external_node
-  n5@{ shape: rounded, label: "**TextInput**<br/>标识可编辑文本控件" }
+  n5@{ shape: rounded, label: "**EditableText**<br/>来自crate:bevy​_​text ↗：持有 Parley<br/>编辑器、文本、光标及待应用编辑操作" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
-  class n6 node_component
-  class n6 external_node
-  n7@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
-  class n7 node_component
+  class n5 external_node
+  n6@{ shape: fr-rect, label: "**TextInputPlugin**<br/>处理文本编辑、选择与输入法接入。" }
+  class n6 node_plugin
+  n7@{ shape: lin-rect, label: "**Focus**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
+  class n7 node_system_set
   class n7 external_node
-  n8@{ shape: lin-rect, label: "**Focus**<br/>来自crate:bevy​_​ui ↗：组织界面交互、布<br/>局与堆叠更新。" }
-  class n8 node_system_set
+  n8@{ shape: rounded, label: "**PrimaryWindow**<br/>来自crate:bevy​_​window ↗：标识唯一的主<br/>窗口" }
+  class n8 node_component
   class n8 external_node
-  n9@{ shape: lin-rect, label: "**Dispatch**<br/>来自crate:bevy​_​input​_​focus ↗：组织焦<br/>点输入派发与变化通知。" }
-  class n9 node_system_set
+  n9@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
+  class n9 node_resource
   class n9 external_node
-  n10@{ shape: cyl, label: "**InputFocus**<br/>来自crate:bevy​_​input​_​focus ↗：保存当<br/>前输入焦点实体、待派发的焦点变化及原焦点" }
-  class n10 node_resource
+  n10@{ shape: lin-rect, label: "**Dispatch**<br/>来自crate:bevy​_​input​_​focus ↗：组织焦<br/>点输入派发与变化通知。" }
+  class n10 node_system_set
   class n10 external_node
   n11@{ shape: lin-rect, label: "**InputSystems**<br/>来自crate:bevy​_​input ↗：把原始设备消<br/>息汇总为本帧输入状态。" }
   class n11 node_system_set
   class n11 external_node
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
-  n0 e1@-->|"可变访问"| n2
+  n0 e1@-->|"赋值"| n2
   class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@-->|"存在性约束"| n0
-  class e4 edge_reference
-  n0 e5@-->|"赋值"| n6
-  class e5 edge_write
-  n7 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
-  n8 e7@-->|"先于"| n0
-  class e7 edge_order
-  n9 e8@-->|"先于"| n0
-  class e8 edge_order
-  n10 e9@--> n0
-  class e9 edge_read
-  n0 e10@-->|"可变访问"| n6
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n6 e5@-->|"调用"| n0
+  class e5 edge_registration
+  n7 e6@-->|"先于"| n0
+  class e6 edge_order
+  n8 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@-->|"先于"| n0
+  class e9 edge_order
+  n0 e10@-->|"可变访问"| n2
   class e10 edge_write
   n11 e11@-->|"先于"| n0
   class e11 edge_order
@@ -106,9 +106,9 @@ flowchart LR
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: bumpX }
+  e5@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
-  e10@{ curve: basis }
+  e10@{ curve: bumpX }
   e11@{ curve: basis }

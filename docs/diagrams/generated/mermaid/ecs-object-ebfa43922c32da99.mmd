@@ -45,28 +45,28 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**apply​_​constant​_​local​_​linear​_​**<br/>**acceleration**<br/>累加刚体局部坐标中的恒定线加速度。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
-  class n1 node_plugin
-  n2@{ shape: lin-rect, label: "**ApplyConstantForces**<br/>组织外力应用与累积量清理。" }
-  class n2 node_system_set
+  n1@{ shape: lin-rect, label: "**ApplyConstantForces**<br/>组织外力应用与累积量清理。" }
+  class n1 node_system_set
+  n2@{ shape: rounded, label: "**apply​_​constant​_​local​_​angular​_​**<br/>**acceleration**<br/>累加刚体局部坐标中的恒定角加速度。" }
+  class n2 node_system
   n3@{ shape: rounded, label: "**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**apply​_​constant​_​local​_​angular​_​**<br/>**acceleration**<br/>累加刚体局部坐标中的恒定角加速度。" }
+  n4@{ shape: rounded, label: "**apply​_​constant​_​local​_​torques**<br/>按局部惯量把恒定局部扭矩转成角加速度。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**apply​_​constant​_​local​_​torques**<br/>按局部惯量把恒定局部扭矩转成角加速度。" }
-  class n5 node_system
+  n5@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
+  class n5 node_plugin
   n6@{ shape: rounded, label: "**ConstantLocalLinearAcceleration**<br/>持续施加局部空间线性加速度。" }
   class n6 node_component
-  n1 e0@-->|"调用"| n0
-  class e0 edge_registration
-  n2 e1@-->|"集合成员"| n0
-  class e1 edge_set_membership
+  n1 e0@-->|"集合成员"| n0
+  class e0 edge_set_membership
+  n0 e1@-->|"先于"| n2
+  class e1 edge_order
   n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n0 e3@-->|"先于"| n4
+  n4 e3@-->|"先于"| n0
   class e3 edge_order
-  n5 e4@-->|"先于"| n0
-  class e4 edge_order
+  n5 e4@-->|"调用"| n0
+  class e4 edge_registration
   n6 e5@--> n0
   class e5 edge_read
   e0@{ curve: basis }

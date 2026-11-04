@@ -46,35 +46,35 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**text​_​system**<br/>重排变化的 UI 文本并更新字形图集。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**FontAtlasSet**<br/>来自crate:bevy​_​text ↗：保存字体光栅化<br/>结果所在的 FontAtlas 集合" }
-  class n1 node_resource
-  class n1 external_node
-  n2@{ shape: rounded, label: "**ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
-  class n2 node_component
-  class n2 external_node
-  n3@{ shape: rounded, label: "**FontHinting**<br/>来自crate:bevy​_​text ↗：选择字形光栅化<br/>时是否启用字体 hinting" }
-  class n3 node_component
+  n1@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
+  class n1 node_plugin
+  n2@{ shape: lin-rect, label: "**PostLayout**<br/>组织界面交互、布局与堆叠更新。" }
+  class n2 node_system_set
+  n3@{ shape: cyl, label: "**TextPipeline**<br/>来自crate:bevy​_​text ↗：执行文字块布局<br/>与渲染数据生成" }
+  class n3 node_resource
   class n3 external_node
-  n4@{ shape: lin-rect, label: "**PostLayout**<br/>组织界面交互、布局与堆叠更新。" }
-  class n4 node_system_set
-  n5@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n5 node_resource
+  n4@{ shape: rounded, label: "**ComputedTextBlock**<br/>来自crate:bevy​_​text ↗：缓存文字块的<br/>Parley 布局、文本实体树和重绘标记" }
+  class n4 node_component
+  class n4 external_node
+  n5@{ shape: rounded, label: "**TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
+  class n5 node_component
   class n5 external_node
   n6@{ shape: rounded, label: "**TextLayout**<br/>来自crate:bevy​_​text ↗：保存文字块的内<br/>部对齐与换行策略" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**UiPlugin**<br/>建立界面布局与内容更新基础。" }
-  class n7 node_plugin
-  n8@{ shape: rounded, label: "**TextLayoutInfo**<br/>来自crate:bevy​_​text ↗：保存文字块完成<br/>排版后的缩放、字形位置、文字运行几何及尺<br/>寸" }
-  class n8 node_component
+  n7@{ shape: rounded, label: "**ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
+  class n7 node_component
+  n8@{ shape: cyl, label: "**FontAtlasSet**<br/>来自crate:bevy​_​text ↗：保存字体光栅化<br/>结果所在的 FontAtlas 集合" }
+  class n8 node_resource
   class n8 external_node
-  n9@{ shape: rounded, label: "**TextNodeFlags**<br/>追踪 UI 文本测量与重排状态。" }
+  n9@{ shape: rounded, label: "**FontHinting**<br/>来自crate:bevy​_​text ↗：选择字形光栅化<br/>时是否启用字体 hinting" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**ComputedNode**<br/>保存 UI 布局计算后的物理尺寸。" }
-  class n10 node_component
-  n11@{ shape: cyl, label: "**TextPipeline**<br/>来自crate:bevy​_​text ↗：执行文字块布局<br/>与渲染数据生成" }
-  class n11 node_resource
-  class n11 external_node
+  class n9 external_node
+  n10@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n10 node_resource
+  class n10 external_node
+  n11@{ shape: rounded, label: "**TextNodeFlags**<br/>追踪 UI 文本测量与重排状态。" }
+  class n11 node_component
   n12@{ shape: rounded, label: "**load​_​font​_​assets​_​into​_​font​_​**<br/>**collection**<br/>来自crate:bevy​_​text ↗：把字体资产注册<br/>到排版字体数据库。" }
   class n12 node_system
   class n12 external_node
@@ -84,36 +84,36 @@ flowchart LR
   n14@{ shape: lin-rect, label: "**AssetEventSystems**<br/>来自crate:bevy​_​asset ↗：发布资产容器<br/>积累的变更消息。" }
   class n14 node_system_set
   class n14 external_node
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n0 e1@-->|"赋值"| n2
-  class e1 edge_write
-  n3 e2@--> n0
-  class e2 edge_read
-  n4 e3@-->|"集合成员"| n0
-  class e3 edge_set_membership
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n0 e3@-->|"赋值"| n4
+  class e3 edge_write
   n0 e4@-->|"可变访问"| n5
   class e4 edge_write
-  n6 e5@--> n0
-  class e5 edge_read
-  n7 e6@-->|"调用"| n0
-  class e6 edge_registration
-  n0 e7@-->|"可变访问"| n8
-  class e7 edge_write
-  n0 e8@-->|"赋值"| n9
-  class e8 edge_write
-  n0 e9@-->|"赋值"| n8
+  n0 e5@-->|"赋值"| n5
+  class e5 edge_write
+  n0 e6@-->|"可变访问"| n4
+  class e6 edge_write
+  n6 e7@--> n0
+  class e7 edge_read
+  n7 e8@--> n0
+  class e8 edge_read
+  n0 e9@-->|"可变访问"| n8
   class e9 edge_write
-  n10 e10@--> n0
+  n9 e10@--> n0
   class e10 edge_read
-  n0 e11@-->|"可变访问"| n9
+  n0 e11@-->|"可变访问"| n10
   class e11 edge_write
-  n0 e12@-->|"可变访问"| n2
+  n0 e12@-->|"可变访问"| n11
   class e12 edge_write
-  n0 e13@-->|"可变访问"| n11
-  class e13 edge_write
-  n12 e14@-->|"先于"| n0
-  class e14 edge_order
+  n12 e13@-->|"先于"| n0
+  class e13 edge_order
+  n0 e14@-->|"赋值"| n11
+  class e14 edge_write
   n0 e15@-->|"可变访问"| n13
   class e15 edge_write
   n0 e16@-->|"先于"| n14
@@ -123,11 +123,10 @@ flowchart LR
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: bumpX }
+  e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
+  e7@{ curve: bumpX }
   e8@{ curve: basis }
-  e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }

@@ -45,37 +45,37 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**apply​_​constant​_​local​_​torques**<br/>按局部惯量把恒定局部扭矩转成角加速度。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ConstantLocalTorque**<br/>持续施加局部空间扭矩。" }
-  class n1 node_component
-  n2@{ shape: rounded, label: "**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
+  n1@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
+  class n1 node_plugin
+  n2@{ shape: rounded, label: "**ConstantLocalTorque**<br/>持续施加局部空间扭矩。" }
   class n2 node_component
   n3@{ shape: rounded, label: "**apply​_​constant​_​local​_​forces**<br/>按总质量把局部恒力转成局部线加速度。" }
   class n3 node_system
-  n4@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
-  class n4 node_plugin
-  n5@{ shape: rounded, label: "**apply​_​constant​_​local​_​linear​_​**<br/>**acceleration**<br/>累加刚体局部坐标中的恒定线加速度。" }
-  class n5 node_system
+  n4@{ shape: rounded, label: "**apply​_​constant​_​local​_​linear​_​**<br/>**acceleration**<br/>累加刚体局部坐标中的恒定线加速度。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
+  class n5 node_component
   n6@{ shape: lin-rect, label: "**ApplyConstantForces**<br/>组织外力应用与累积量清理。" }
   class n6 node_system_set
   n7@{ shape: rounded, label: "**ComputedAngularInertia**<br/>保存汇总后的刚体局部角惯量。" }
   class n7 node_component
-  n1 e0@--> n0
-  class e0 edge_read
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
+  n2 e1@--> n0
+  class e1 edge_read
   n3 e2@-->|"先于"| n0
   class e2 edge_order
-  n4 e3@-->|"调用"| n0
-  class e3 edge_registration
-  n0 e4@-->|"先于"| n5
-  class e4 edge_order
+  n0 e3@-->|"先于"| n4
+  class e3 edge_order
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
   n6 e5@-->|"集合成员"| n0
   class e5 edge_set_membership
   n7 e6@--> n0
   class e6 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

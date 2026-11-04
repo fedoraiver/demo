@@ -50,121 +50,121 @@ flowchart LR
   class n0 node_system
   n1@{ shape: lin-rect, label: "**ExtractGradient**<br/>组织各类界面绘制数据提取。" }
   class n1 node_system_set
-  n2@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>来自crate:bevy​_​ui ↗：缓存 UI 目标的尺<br/>寸与缩放。" }
+  n2@{ shape: rounded, label: "**ComputedStackIndex**<br/>来自crate:bevy​_​ui ↗：保存节点计算后的<br/>绘制堆叠位置。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: notch-rect, label: "**Local · arg4.5.0.0.0.0.0**<br/>保存 InheritedVisibility 移除参数的组<br/>件 ID。" }
+  n3@{ shape: notch-rect, label: "**Local · arg4.6.0.0.1**<br/>跟踪 CalculatedClip 移除记录的读取进<br/>度。" }
   class n3 node_local
-  n4@{ shape: rounded, label: "**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
-  class n4 node_component
-  class n4 external_node
-  n5@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  n4@{ shape: notch-rect, label: "**Local · arg4.1.0.0.0.0.0**<br/>保存 ComputedStackIndex 移除参数的组<br/>件 ID。" }
+  class n4 node_local
+  n5@{ shape: rounded, label: "**ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**BorderGradient**<br/>来自crate:bevy​_​ui ↗：为 UI 节点边框配<br/>置渐变。" }
-  class n6 node_component
-  class n6 external_node
-  n7@{ shape: rounded, label: "**CalculatedClip**<br/>来自crate:bevy​_​ui ↗：缓存节点从祖先继<br/>承的裁剪结果。" }
-  class n7 node_component
-  class n7 external_node
-  n8@{ shape: rounded, label: "**ComputedUiTargetCamera**<br/>来自crate:bevy​_​ui ↗：缓存 UI 节点实际<br/>采用的相机。" }
-  class n8 node_component
-  class n8 external_node
-  n9@{ shape: notch-rect, label: "**Local · arg4.1.0.0.0.0.0**<br/>保存 ComputedStackIndex 移除参数的组<br/>件 ID。" }
-  class n9 node_local
-  n10@{ shape: notch-rect, label: "**Local · arg4.7.0.0.0.0.0**<br/>保存 BackgroundGradient 移除参数的组<br/>件 ID。" }
-  class n10 node_local
-  n11@{ shape: notch-rect, label: "**Local · arg4.1.0.0.1**<br/>跟踪 ComputedStackIndex 移除记录的读<br/>取进度。" }
-  class n11 node_local
-  n12@{ shape: notch-rect, label: "**Local · arg4.8.0.0.0.0.0**<br/>保存 BorderGradient 移除参数的组件<br/>ID。" }
+  n6@{ shape: notch-rect, label: "**Local · arg4.0.0.0.1**<br/>跟踪 ComputedNode 移除记录的读取进度。" }
+  class n6 node_local
+  n7@{ shape: notch-rect, label: "**Local · arg4.1.0.0.1**<br/>跟踪 ComputedStackIndex 移除记录的读<br/>取进度。" }
+  class n7 node_local
+  n8@{ shape: notch-rect, label: "**Local · arg4.3.0.0.0.0.0**<br/>保存 ComputedUiRenderTargetInfo 移除<br/>参数的组件 ID。" }
+  class n8 node_local
+  n9@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
+  class n9 node_component
+  class n9 external_node
+  n10@{ shape: rounded, label: "**ComputedUiRenderTargetInfo**<br/>来自crate:bevy​_​ui ↗：缓存 UI 目标的尺<br/>寸与缩放。" }
+  class n10 node_component
+  class n10 external_node
+  n11@{ shape: rounded, label: "**BackgroundGradient**<br/>来自crate:bevy​_​ui ↗：为 UI 节点背景配<br/>置渐变。" }
+  class n11 node_component
+  class n11 external_node
+  n12@{ shape: notch-rect, label: "**Local · arg4.7.0.0.0.0.0**<br/>保存 BackgroundGradient 移除参数的组<br/>件 ID。" }
   class n12 node_local
-  n13@{ shape: notch-rect, label: "**Local · arg4.8.0.0.1**<br/>跟踪 BorderGradient 移除记录的读取进<br/>度。" }
+  n13@{ shape: notch-rect, label: "**Local · arg4.5.0.0.1**<br/>跟踪 InheritedVisibility 移除记录的读<br/>取进度。" }
   class n13 node_local
-  n14@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
-  class n14 node_component
-  class n14 external_node
-  n15@{ shape: rounded, label: "**BackgroundGradient**<br/>来自crate:bevy​_​ui ↗：为 UI 节点背景配<br/>置渐变。" }
-  class n15 node_component
-  class n15 external_node
-  n16@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
-  class n16 node_component
-  class n16 external_node
-  n17@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
-  class n17 node_resource
+  n14@{ shape: notch-rect, label: "**Local · arg4.6.0.0.0.0.0**<br/>保存 CalculatedClip 移除参数的组件<br/>ID。" }
+  class n14 node_local
+  n15@{ shape: notch-rect, label: "**Local · arg4.3.0.0.1**<br/>跟踪 ComputedUiRenderTargetInfo 移除<br/>记录的读取进度。" }
+  class n15 node_local
+  n16@{ shape: notch-rect, label: "**Local · nodes​_​processed​_​this​_​frame**<br/>去重本轮已重建的 UI 渐变节点。" }
+  class n16 node_local
+  n17@{ shape: rounded, label: "**InheritedVisibility**<br/>来自crate:bevy​_​camera ↗：保存从实体层<br/>级计算出的可见性。" }
+  class n17 node_component
   class n17 external_node
-  n18@{ shape: notch-rect, label: "**Local · arg4.4.0.0.0.0.0**<br/>保存 UiGlobalTransform 移除参数的组<br/>件 ID。" }
-  class n18 node_local
-  n19@{ shape: notch-rect, label: "**Local · arg4.6.0.0.0.0.0**<br/>保存 CalculatedClip 移除参数的组件<br/>ID。" }
+  n18@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
+  class n18 node_component
+  class n18 external_node
+  n19@{ shape: notch-rect, label: "**Local · arg4.0.0.0.0.0.0**<br/>保存 ComputedNode 移除参数的组件 ID。" }
   class n19 node_local
-  n20@{ shape: notch-rect, label: "**Local · arg4.0.0.0.0.0.0**<br/>保存 ComputedNode 移除参数的组件 ID。" }
+  n20@{ shape: notch-rect, label: "**Local · arg4.2.0.0.1**<br/>跟踪 ComputedUiTargetCamera 移除记录<br/>的读取进度。" }
   class n20 node_local
-  n21@{ shape: notch-rect, label: "**Local · arg4.5.0.0.1**<br/>跟踪 InheritedVisibility 移除记录的读<br/>取进度。" }
+  n21@{ shape: notch-rect, label: "**Local · arg4.8.0.0.0.0.0**<br/>保存 BorderGradient 移除参数的组件<br/>ID。" }
   class n21 node_local
-  n22@{ shape: notch-rect, label: "**Local · arg4.3.0.0.0.0.0**<br/>保存 ComputedUiRenderTargetInfo 移除<br/>参数的组件 ID。" }
+  n22@{ shape: notch-rect, label: "**Local · arg4.8.0.0.1**<br/>跟踪 BorderGradient 移除记录的读取进<br/>度。" }
   class n22 node_local
-  n23@{ shape: notch-rect, label: "**Local · arg4.4.0.0.1**<br/>跟踪 UiGlobalTransform 移除记录的读取<br/>进度。" }
-  class n23 node_local
-  n24@{ shape: notch-rect, label: "**Local · arg4.3.0.0.1**<br/>跟踪 ComputedUiRenderTargetInfo 移除<br/>记录的读取进度。" }
-  class n24 node_local
-  n25@{ shape: notch-rect, label: "**Local · arg4.6.0.0.1**<br/>跟踪 CalculatedClip 移除记录的读取进<br/>度。" }
+  n23@{ shape: rounded, label: "**BorderGradient**<br/>来自crate:bevy​_​ui ↗：为 UI 节点边框配<br/>置渐变。" }
+  class n23 node_component
+  class n23 external_node
+  n24@{ shape: rounded, label: "**CalculatedClip**<br/>来自crate:bevy​_​ui ↗：缓存节点从祖先继<br/>承的裁剪结果。" }
+  class n24 node_component
+  class n24 external_node
+  n25@{ shape: notch-rect, label: "**Local · arg4.5.0.0.0.0.0**<br/>保存 InheritedVisibility 移除参数的组<br/>件 ID。" }
   class n25 node_local
-  n26@{ shape: rounded, label: "**ComputedStackIndex**<br/>来自crate:bevy​_​ui ↗：保存节点计算后的<br/>绘制堆叠位置。" }
-  class n26 node_component
-  class n26 external_node
-  n27@{ shape: cyl, label: "**ExtractedGradients**<br/>保存已提取的 UI 背景与边框渐变。" }
-  class n27 node_resource
-  n28@{ shape: notch-rect, label: "**Local · arg4.2.0.0.0.0.0**<br/>保存 ComputedUiTargetCamera 移除参数<br/>的组件 ID。" }
-  class n28 node_local
-  n29@{ shape: notch-rect, label: "**Local · arg4.2.0.0.1**<br/>跟踪 ComputedUiTargetCamera 移除记录<br/>的读取进度。" }
+  n26@{ shape: notch-rect, label: "**Local · arg4.2.0.0.0.0.0**<br/>保存 ComputedUiTargetCamera 移除参数<br/>的组件 ID。" }
+  class n26 node_local
+  n27@{ shape: notch-rect, label: "**Local · arg4.4.0.0.1**<br/>跟踪 UiGlobalTransform 移除记录的读取<br/>进度。" }
+  class n27 node_local
+  n28@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>来自crate:bevy​_​extract ↗：记录主实体<br/>对应的子世界实体。" }
+  class n28 node_component
+  class n28 external_node
+  n29@{ shape: notch-rect, label: "**Local · arg4.7.0.0.1**<br/>跟踪 BackgroundGradient 移除记录的读<br/>取进度。" }
   class n29 node_local
-  n30@{ shape: notch-rect, label: "**Local · arg4.0.0.0.1**<br/>跟踪 ComputedNode 移除记录的读取进度。" }
-  class n30 node_local
-  n31@{ shape: fr-rect, label: "**GradientPlugin**<br/>提取并绘制界面渐变。" }
-  class n31 node_plugin
-  n32@{ shape: notch-rect, label: "**Local · nodes​_​processed​_​this​_​frame**<br/>去重本轮已重建的 UI 渐变节点。" }
+  n30@{ shape: fr-rect, label: "**GradientPlugin**<br/>提取并绘制界面渐变。" }
+  class n30 node_plugin
+  n31@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n31 node_resource
+  class n31 external_node
+  n32@{ shape: notch-rect, label: "**Local · arg4.4.0.0.0.0.0**<br/>保存 UiGlobalTransform 移除参数的组<br/>件 ID。" }
   class n32 node_local
-  n33@{ shape: notch-rect, label: "**Local · arg4.7.0.0.1**<br/>跟踪 BackgroundGradient 移除记录的读<br/>取进度。" }
-  class n33 node_local
+  n33@{ shape: cyl, label: "**ExtractedGradients**<br/>保存已提取的 UI 背景与边框渐变。" }
+  class n33 node_resource
   n34@{ shape: rounded, label: "**extract​_​uinode​_​background​_​colors**<br/>提取 UI 节点背景与外侧填充色。" }
   class n34 node_system
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
+  n2 e1@--> n0
+  class e1 edge_read
   n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n4 e3@-->|"存在性约束"| n0
-  class e3 edge_reference
-  n5 e4@--> n0
-  class e4 edge_read
-  n6 e5@--> n0
-  class e5 edge_read
-  n7 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
-  n8 e7@-->|"存在性约束"| n0
-  class e7 edge_reference
-  n0 e8@-->|"可变访问"| n9
-  class e8 edge_write
-  n2 e9@--> n0
-  class e9 edge_read
-  n0 e10@-->|"可变访问"| n10
-  class e10 edge_write
-  n0 e11@-->|"可变访问"| n11
-  class e11 edge_write
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n5 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
+  n0 e5@-->|"可变访问"| n6
+  class e5 edge_write
+  n0 e6@-->|"可变访问"| n7
+  class e6 edge_write
+  n0 e7@-->|"可变访问"| n8
+  class e7 edge_write
+  n9 e8@--> n0
+  class e8 edge_read
+  n9 e9@-->|"存在性约束"| n0
+  class e9 edge_reference
+  n10 e10@-->|"存在性约束"| n0
+  class e10 edge_reference
+  n11 e11@--> n0
+  class e11 edge_read
   n0 e12@-->|"可变访问"| n12
   class e12 edge_write
   n0 e13@-->|"可变访问"| n13
   class e13 edge_write
-  n14 e14@--> n0
-  class e14 edge_read
-  n15 e15@--> n0
-  class e15 edge_read
-  n16 e16@--> n0
-  class e16 edge_read
+  n0 e14@-->|"可变访问"| n14
+  class e14 edge_write
+  n0 e15@-->|"可变访问"| n15
+  class e15 edge_write
+  n0 e16@-->|"可变访问"| n16
+  class e16 edge_write
   n17 e17@--> n0
   class e17 edge_read
-  n0 e18@-->|"可变访问"| n18
-  class e18 edge_write
+  n18 e18@--> n0
+  class e18 edge_read
   n0 e19@-->|"可变访问"| n19
   class e19 edge_write
   n0 e20@-->|"可变访问"| n20
@@ -173,46 +173,46 @@ flowchart LR
   class e21 edge_write
   n0 e22@-->|"可变访问"| n22
   class e22 edge_write
-  n16 e23@-->|"存在性约束"| n0
-  class e23 edge_reference
-  n0 e24@-->|"可变访问"| n23
-  class e24 edge_write
-  n0 e25@-->|"可变访问"| n24
+  n23 e23@--> n0
+  class e23 edge_read
+  n24 e24@-->|"存在性约束"| n0
+  class e24 edge_reference
+  n0 e25@-->|"可变访问"| n25
   class e25 edge_write
-  n14 e26@-->|"存在性约束"| n0
+  n18 e26@-->|"存在性约束"| n0
   class e26 edge_reference
-  n4 e27@--> n0
-  class e27 edge_read
-  n0 e28@-->|"可变访问"| n25
-  class e28 edge_write
-  n26 e29@-->|"存在性约束"| n0
-  class e29 edge_reference
-  n0 e30@-->|"可变访问"| n27
-  class e30 edge_write
-  n15 e31@-->|"存在性约束"| n0
-  class e31 edge_reference
-  n6 e32@-->|"存在性约束"| n0
+  n0 e27@-->|"可变访问"| n26
+  class e27 edge_write
+  n10 e28@--> n0
+  class e28 edge_read
+  n0 e29@-->|"可变访问"| n27
+  class e29 edge_write
+  n17 e30@-->|"存在性约束"| n0
+  class e30 edge_reference
+  n28 e31@--> n0
+  class e31 edge_read
+  n2 e32@-->|"存在性约束"| n0
   class e32 edge_reference
-  n0 e33@-->|"可变访问"| n28
-  class e33 edge_write
+  n23 e33@-->|"存在性约束"| n0
+  class e33 edge_reference
   n0 e34@-->|"可变访问"| n29
   class e34 edge_write
-  n8 e35@--> n0
-  class e35 edge_read
-  n0 e36@-->|"可变访问"| n30
-  class e36 edge_write
-  n31 e37@-->|"调用"| n0
-  class e37 edge_registration
+  n30 e35@-->|"调用"| n0
+  class e35 edge_registration
+  n31 e36@--> n0
+  class e36 edge_read
+  n5 e37@--> n0
+  class e37 edge_read
   n0 e38@-->|"可变访问"| n32
   class e38 edge_write
-  n7 e39@--> n0
+  n24 e39@--> n0
   class e39 edge_read
   n0 e40@-->|"可变访问"| n33
   class e40 edge_write
-  n34 e41@-->|"先于"| n0
-  class e41 edge_order
-  n26 e42@--> n0
-  class e42 edge_read
+  n11 e41@-->|"存在性约束"| n0
+  class e41 edge_reference
+  n34 e42@-->|"先于"| n0
+  class e42 edge_order
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

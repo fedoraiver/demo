@@ -55,22 +55,22 @@ flowchart LR
   class n2 external_node
   n3@{ shape: rounded, label: "**stop​_​on​_​exit**<br/>停止音频通道并记录退出。" }
   class n3 node_system
-  n4@{ shape: lean-r, label: "**SoundRequest**<br/>业务实体只用于日志和节流，不持有其组件引<br/>用，实体销毁后消息仍可被消费。" }
-  class n4 node_message
-  n5@{ shape: fr-rect, label: "**GameAudioPlugin**<br/>安装 Kira 输出与音频生命周期；无设备测<br/>试直接使用内部纯数据夹具。" }
-  class n5 node_plugin
-  n6@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
-  class n6 node_resource
-  class n6 external_node
-  n7@{ shape: cyl, label: "**SoundBank**<br/>短音的句柄生命周期与播放状态集中维护；只<br/>保留每种事件最后一次获准的播放时间。" }
-  class n7 node_resource
-  n8@{ shape: cyl, label: "**AudioChannel#lt;UiTrack#gt;**<br/>来自crate:bevy​_​kira​_​audio ↗：保存特<br/>定通道类型的音频命令队列及实例播放状态" }
+  n4@{ shape: cyl, label: "**AudioChannel#lt;UiTrack#gt;**<br/>来自crate:bevy​_​kira​_​audio ↗：保存特<br/>定通道类型的音频命令队列及实例播放状态" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: cyl, label: "**SoundBank**<br/>短音的句柄生命周期与播放状态集中维护；只<br/>保留每种事件最后一次获准的播放时间。" }
+  class n5 node_resource
+  n6@{ shape: lean-r, label: "**SoundRequest**<br/>业务实体只用于日志和节流，不持有其组件引<br/>用，实体销毁后消息仍可被消费。" }
+  class n6 node_message
+  n7@{ shape: fr-rect, label: "**GameAudioPlugin**<br/>安装 Kira 输出与音频生命周期；无设备测<br/>试直接使用内部纯数据夹具。" }
+  class n7 node_plugin
+  n8@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: lin-rect, label: "**Playback**<br/>跨功能只约束混音与播放阶段，具体资源和实<br/>例处理顺序留在音频内部。" }
-  class n9 node_system_set
-  n10@{ shape: cyl, label: "**AudioMix**<br/>两条业务通道共用的有效混音源；离开设置页<br/>便回到最近成功应用的配置。" }
-  class n10 node_resource
+  n9@{ shape: cyl, label: "**AudioMix**<br/>两条业务通道共用的有效混音源；离开设置页<br/>便回到最近成功应用的配置。" }
+  class n9 node_resource
+  n10@{ shape: lin-rect, label: "**Playback**<br/>跨功能只约束混音与播放阶段，具体资源和实<br/>例处理顺序留在音频内部。" }
+  class n10 node_system_set
   n11@{ shape: cyl, label: "**Assets#lt;AudioSource#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n11 node_resource
   class n11 external_node
@@ -81,19 +81,19 @@ flowchart LR
   n0 e2@-->|"先于"| n3
   class e2 edge_order
   n4 e3@--> n0
-  class e3 edge_consume
-  n5 e4@-->|"调用"| n0
-  class e4 edge_registration
+  class e3 edge_read
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
   n6 e5@--> n0
-  class e5 edge_read
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
+  class e5 edge_consume
+  n7 e6@-->|"调用"| n0
+  class e6 edge_registration
   n8 e7@--> n0
   class e7 edge_read
-  n9 e8@-->|"集合成员"| n0
-  class e8 edge_set_membership
-  n10 e9@--> n0
-  class e9 edge_read
+  n9 e8@--> n0
+  class e8 edge_read
+  n10 e9@-->|"集合成员"| n0
+  class e9 edge_set_membership
   n11 e10@--> n0
   class e10 edge_read
   e0@{ curve: basis }
@@ -101,7 +101,7 @@ flowchart LR
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e6@{ curve: basis }
+  e5@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

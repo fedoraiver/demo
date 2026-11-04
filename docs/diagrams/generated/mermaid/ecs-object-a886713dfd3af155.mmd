@@ -52,10 +52,10 @@ flowchart LR
   class e0 edge_write
   n0 e1@-->|"先于"| n2
   class e1 edge_order
-  n0 e2@-->|"可变访问"| n1
-  class e2 edge_write
-  n3 e3@-->|"调用"| n0
-  class e3 edge_registration
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n0 e3@-->|"可变访问"| n1
+  class e3 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e3@{ curve: basis }

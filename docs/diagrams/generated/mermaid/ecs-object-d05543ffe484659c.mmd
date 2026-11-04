@@ -44,27 +44,27 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**init​_​material​_​pipeline**<br/>初始化与网格管线共享接口的材质管线资源。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**MeshPipeline**<br/>提供三维网格管线的着色与资源布局。" }
-  class n1 node_resource
-  n2@{ shape: fr-rect, label: "**MaterialsPlugin**<br/>组织材质实例、管线及绘制队列。" }
-  class n2 node_plugin
-  n3@{ shape: lin-rect, label: "**MeshPipelineSystems**<br/>先初始化网格视图布局，再初始化三维网格管<br/>线。" }
-  class n3 node_system_set
-  n4@{ shape: rounded, label: "**init​_​prepass​_​pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
-  class n4 node_system
-  n5@{ shape: cyl, label: "**MaterialPipeline**<br/>提供指定材质类型的网格渲染管线数据。" }
+  n1@{ shape: lin-rect, label: "**MeshPipelineSystems**<br/>先初始化网格视图布局，再初始化三维网格管<br/>线。" }
+  class n1 node_system_set
+  n2@{ shape: rounded, label: "**init​_​prepass​_​pipeline**<br/>初始化带运动矢量及普通预通道的资源布局。" }
+  class n2 node_system
+  n3@{ shape: fr-rect, label: "**MaterialsPlugin**<br/>组织材质实例、管线及绘制队列。" }
+  class n3 node_plugin
+  n4@{ shape: cyl, label: "**MaterialPipeline**<br/>提供指定材质类型的网格渲染管线数据。" }
+  class n4 node_resource
+  n5@{ shape: cyl, label: "**MeshPipeline**<br/>提供三维网格管线的着色与资源布局。" }
   class n5 node_resource
-  n1 e0@--> n0
-  class e0 edge_read
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
-  n3 e2@-->|"先于"| n0
-  class e2 edge_order
-  n0 e3@-->|"先于"| n4
-  class e3 edge_order
-  n0 e4@-->|"插入"| n5
-  class e4 edge_write
+  n1 e0@-->|"先于"| n0
+  class e0 edge_order
+  n0 e1@-->|"先于"| n2
+  class e1 edge_order
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n0 e3@-->|"插入"| n4
+  class e3 edge_write
+  n5 e4@--> n0
+  class e4 edge_read
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

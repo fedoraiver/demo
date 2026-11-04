@@ -44,97 +44,58 @@ flowchart LR
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**raycast**<br/>执行已启用的射线查询并更新命中列表。" }
   class n0 node_system
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
-  n1@{ shape: lin-rect, label: "**SpatialQuerySystems**<br/>刷新空间投射器并执行射线和形状查询。" }
-  class n1 node_system_set
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**RayCaster**<br/>声明实体的射线投射查询。" }
-  class n2 node_component
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: fr-rect, label: "**SpatialQueryPlugin**<br/>执行组件声明的射线和形状查询。" }
-  class n3 node_plugin
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
+  n1@{ shape: rounded, label: "**ColliderAabb**<br/>保存碰撞体的世界轴对齐包围盒。" }
+  class n1 node_component
+  n2@{ shape: lin-rect, label: "**SpatialQuerySystems**<br/>刷新空间投射器并执行射线和形状查询。" }
+  class n2 node_system_set
+  n3@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  class n3 node_component
   n4@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n4 node_component
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  n5@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
   class n5 node_component
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
   n6@{ shape: cyl, label: "**SpatialQueryDiagnostics**<br/>记录射线与形状查询耗时。" }
   class n6 node_resource
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**update​_​shape​_​caster​_​positions**<br/>把形状扫掠的原点、方向和形状朝向换到世界<br/>空间。" }
-  class n7 node_system
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**RayHits**<br/>保存 RayCaster 最近生成的命中。" }
-  class n8 node_component
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**ColliderAabb**<br/>保存碰撞体的世界轴对齐包围盒。" }
-  class n9 node_component
-  end
-  style layout_card_n9 fill:none,stroke:none
-  subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  n7@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  class n7 node_resource
+  n8@{ shape: rounded, label: "**update​_​shape​_​caster​_​positions**<br/>把形状扫掠的原点、方向和形状朝向换到世界<br/>空间。" }
+  class n8 node_system
+  n9@{ shape: fr-rect, label: "**SpatialQueryPlugin**<br/>执行组件声明的射线和形状查询。" }
+  class n9 node_plugin
+  n10@{ shape: rounded, label: "**RayCaster**<br/>声明实体的射线投射查询。" }
   class n10 node_component
-  end
-  style layout_card_n10 fill:none,stroke:none
-  subgraph layout_card_n11[" "]
   n11@{ shape: rounded, label: "**shapecast**<br/>执行已启用的形状扫掠并更新命中列表。" }
   class n11 node_system
-  end
-  style layout_card_n11 fill:none,stroke:none
-  subgraph layout_card_n12[" "]
-  n12@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
-  class n12 node_resource
-  end
-  style layout_card_n12 fill:none,stroke:none
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n12@{ shape: rounded, label: "**RayHits**<br/>保存 RayCaster 最近生成的命中。" }
+  class n12 node_component
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
+  n3 e2@--> n0
+  class e2 edge_read
   n4 e3@--> n0
   class e3 edge_read
   n5 e4@--> n0
   class e4 edge_read
   n0 e5@-->|"赋值"| n6
   class e5 edge_write
-  n7 e6@-->|"先于"| n0
-  class e6 edge_order
-  n0 e7@-->|"可变访问"| n8
-  class e7 edge_write
-  n0 e8@-->|"可变访问"| n6
-  class e8 edge_write
-  n9 e9@--> n0
-  class e9 edge_read
-  n10 e10@--> n0
-  class e10 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@-->|"先于"| n0
+  class e7 edge_order
+  n9 e8@-->|"调用"| n0
+  class e8 edge_registration
+  n0 e9@-->|"可变访问"| n6
+  class e9 edge_write
+  n0 e10@-->|"可变访问"| n10
+  class e10 edge_write
   n0 e11@-->|"先于"| n11
   class e11 edge_order
-  n12 e12@--> n0
-  class e12 edge_read
+  n0 e12@-->|"可变访问"| n12
+  class e12 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

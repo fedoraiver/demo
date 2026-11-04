@@ -49,30 +49,30 @@ flowchart LR
   class n1 external_node
   n2@{ shape: rounded, label: "**MeshMaterial3d#lt;StandardMaterial#gt;**<br/>为三维网格指定材质资产。" }
   class n2 node_component
-  n3@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  n3@{ shape: cyl, label: "**RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
   class n3 node_resource
-  class n3 external_node
-  n4@{ shape: lin-rect, label: "**MaterialExtractionSystems**<br/>按材质类型提取三维网格材质实例。" }
-  class n4 node_system_set
-  n5@{ shape: cyl, label: "**RenderMaterialInstances**<br/>保存提取后的实体材质实例。" }
-  class n5 node_resource
-  n1 e0@--> n0
-  class e0 edge_read
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
-  n3 e2@--> n0
-  class e2 edge_read
-  n1 e3@-->|"存在性约束"| n0
-  class e3 edge_reference
-  n4 e4@-->|"集合成员"| n0
-  class e4 edge_set_membership
-  n0 e5@-->|"可变访问"| n5
-  class e5 edge_write
-  n2 e6@--> n0
+  n4@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: lin-rect, label: "**MaterialExtractionSystems**<br/>按材质类型提取三维网格材质实例。" }
+  class n5 node_system_set
+  n1 e0@-->|"存在性约束"| n0
+  class e0 edge_reference
+  n2 e1@--> n0
+  class e1 edge_read
+  n2 e2@-->|"存在性约束"| n0
+  class e2 edge_reference
+  n0 e3@-->|"可变访问"| n3
+  class e3 edge_write
+  n4 e4@--> n0
+  class e4 edge_read
+  n5 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
+  n1 e6@--> n0
   class e6 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }

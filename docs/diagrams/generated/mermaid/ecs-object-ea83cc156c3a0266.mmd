@@ -45,41 +45,41 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**free​_​egui​_​textures​_​system**<br/>回收 Egui 已释放或失效的纹理引用。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**EguiManagedTextures**<br/>保存 Egui 分配并绘制的纹理及其 Bevy 图<br/>像句柄" }
-  class n1 node_resource
-  n2@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  n1@{ shape: rounded, label: "**EguiRenderOutput**<br/>保存 Egui 绘制图元和纹理增量" }
+  class n1 node_component
+  n2@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;Image#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n2 node_resource
   class n2 external_node
   n3@{ shape: cyl, label: "**EguiUserTextures**<br/>登记由用户提供给 Egui 的 Bevy 图像纹理" }
   class n3 node_resource
-  n4@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
-  class n4 node_plugin
-  n5@{ shape: lean-r, label: "**AssetEvent#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
-  class n5 node_message
-  class n5 external_node
-  n6@{ shape: cyl, label: "**Messages#lt;AssetEvent#lt;Image#gt;#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n6 node_resource
+  n4@{ shape: cyl, label: "**Assets#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n4 node_resource
+  class n4 external_node
+  n5@{ shape: cyl, label: "**EguiManagedTextures**<br/>保存 Egui 分配并绘制的纹理及其 Bevy 图<br/>像句柄" }
+  class n5 node_resource
+  n6@{ shape: lean-r, label: "**AssetEvent#lt;Image#gt;**<br/>来自crate:bevy​_​asset ↗：通知指定资产<br/>及依赖发生变化。" }
+  class n6 node_message
   class n6 external_node
-  n7@{ shape: rounded, label: "**EguiRenderOutput**<br/>保存 Egui 绘制图元和纹理增量" }
-  class n7 node_component
+  n7@{ shape: fr-rect, label: "**EguiPlugin**<br/>装配 Egui 输入、上下文与渲染。" }
+  class n7 node_plugin
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
+  n2 e1@--> n0
+  class e1 edge_read
   n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n4 e3@-->|"调用"| n0
-  class e3 edge_registration
-  n5 e4@--> n0
-  class e4 edge_consume
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
   n6 e5@--> n0
-  class e5 edge_read
-  n0 e6@-->|"可变访问"| n7
-  class e6 edge_write
+  class e5 edge_consume
+  n7 e6@-->|"调用"| n0
+  class e6 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: bumpX }
-  e5@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: bumpX }
   e6@{ curve: basis }

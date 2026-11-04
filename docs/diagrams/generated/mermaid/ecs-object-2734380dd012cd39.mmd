@@ -43,24 +43,24 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**assert​_​components​_​finite**<br/>在调试构建检查物理位置和速度是否有限。" }
   class n0 node_system
-  n1@{ shape: lin-rect, label: "**First**<br/>划分物理准备、模拟与回写边界。" }
-  class n1 node_system_set
-  n2@{ shape: fr-rect, label: "**PhysicsSchedulePlugin**<br/>建立物理调度与时间资源。" }
-  class n2 node_plugin
+  n1@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  class n1 node_component
+  n2@{ shape: lin-rect, label: "**First**<br/>划分物理准备、模拟与回写边界。" }
+  class n2 node_system_set
   n3@{ shape: rounded, label: "**LinearVelocity**<br/>保存刚体的世界线速度。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**AngularVelocity**<br/>保存刚体的世界角速度。" }
-  class n4 node_component
-  n5@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
+  n4@{ shape: fr-rect, label: "**PhysicsSchedulePlugin**<br/>建立物理调度与时间资源。" }
+  class n4 node_plugin
+  n5@{ shape: rounded, label: "**AngularVelocity**<br/>保存刚体的世界角速度。" }
   class n5 node_component
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
-  n2 e1@-->|"调用"| n0
-  class e1 edge_registration
+  n1 e0@--> n0
+  class e0 edge_read
+  n2 e1@-->|"集合成员"| n0
+  class e1 edge_set_membership
   n3 e2@--> n0
   class e2 edge_read
-  n4 e3@--> n0
-  class e3 edge_read
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
   n5 e4@--> n0
   class e4 edge_read
   e0@{ curve: basis }

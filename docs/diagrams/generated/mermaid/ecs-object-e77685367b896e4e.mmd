@@ -42,41 +42,41 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**check​_​tonemapping​_​none**<br/>警告关闭色调映射后仍配置无效效果的相机。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
+  n1@{ shape: rounded, label: "**Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: rounded, label: "**Tonemapping**<br/>来自crate:bevy​_​render ↗：选择 HDR 颜<br/>色到显示颜色的映射方式。" }
+  n2@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n3@{ shape: rounded, label: "**DebandDither**<br/>来自crate:bevy​_​render ↗：控制颜色输出<br/>的去色带抖动。" }
   class n3 node_component
   class n3 external_node
-  n4@{ shape: rounded, label: "**DebandDither**<br/>来自crate:bevy​_​render ↗：控制颜色输出<br/>的去色带抖动。" }
+  n4@{ shape: rounded, label: "**ColorGrading**<br/>来自crate:bevy​_​render ↗：配置整幅图像<br/>及明暗分区的电影式调色。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**ColorGrading**<br/>来自crate:bevy​_​render ↗：配置整幅图像<br/>及明暗分区的电影式调色。" }
-  class n5 node_component
-  class n5 external_node
-  n6@{ shape: fr-rect, label: "**TonemappingPlugin**<br/>准备相机色调映射与查找表。" }
-  class n6 node_plugin
+  n5@{ shape: fr-rect, label: "**TonemappingPlugin**<br/>准备相机色调映射与查找表。" }
+  class n5 node_plugin
+  n6@{ shape: rounded, label: "**Name**<br/>来自crate:bevy​_​ecs ↗：保存供调试和界<br/>面展示的实体名称及缓存哈希" }
+  class n6 node_component
+  class n6 external_node
   n1 e0@--> n0
   class e0 edge_read
   n2 e1@-->|"存在性约束"| n0
   class e1 edge_reference
-  n2 e2@--> n0
+  n3 e2@--> n0
   class e2 edge_read
-  n3 e3@-->|"存在性约束"| n0
+  n4 e3@-->|"存在性约束"| n0
   class e3 edge_reference
   n4 e4@--> n0
   class e4 edge_read
-  n4 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
-  n5 e6@--> n0
-  class e6 edge_read
-  n6 e7@-->|"调用"| n0
-  class e7 edge_registration
-  n5 e8@-->|"存在性约束"| n0
-  class e8 edge_reference
+  n5 e5@-->|"调用"| n0
+  class e5 edge_registration
+  n3 e6@-->|"存在性约束"| n0
+  class e6 edge_reference
+  n1 e7@-->|"存在性约束"| n0
+  class e7 edge_reference
+  n6 e8@--> n0
+  class e8 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

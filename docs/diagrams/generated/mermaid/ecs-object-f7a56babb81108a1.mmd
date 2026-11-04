@@ -46,50 +46,50 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**apply​_​local​_​acceleration**<br/>在子步中把局部加速度作用到世界速度。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
-  class n1 node_component
-  n2@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n1@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
+  class n1 node_resource
+  n2@{ shape: rounded, label: "**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
   class n2 node_component
-  n3@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
-  class n3 node_plugin
-  n4@{ shape: lin-rect, label: "**ApplyLocalAcceleration**<br/>组织外力应用与累积量清理。" }
-  class n4 node_system_set
-  n5@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
-  class n5 node_resource
-  n6@{ shape: rounded, label: "**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
-  class n6 node_component
-  n7@{ shape: cyl, label: "**Time#lt;Substeps#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
-  class n7 node_resource
-  class n7 external_node
-  n8@{ shape: rounded, label: "**CustomVelocityIntegration**<br/>将速度积分交给自定义逻辑。" }
+  n3@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  class n3 node_component
+  n4@{ shape: cyl, label: "**SolverDiagnostics**<br/>记录物理求解各阶段耗时。" }
+  class n4 node_resource
+  n5@{ shape: lin-rect, label: "**ApplyLocalAcceleration**<br/>组织外力应用与累积量清理。" }
+  class n5 node_system_set
+  n6@{ shape: cyl, label: "**Time#lt;Substeps#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  class n6 node_resource
+  class n6 external_node
+  n7@{ shape: rounded, label: "**CustomVelocityIntegration**<br/>将速度积分交给自定义逻辑。" }
+  class n7 node_component
+  n8@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n8 node_component
-  n9@{ shape: cyl, label: "**SolverBodies**<br/>连续存储活跃刚体的求解状态。" }
-  class n9 node_resource
-  n1 e0@--> n0
-  class e0 edge_read
+  n9@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
+  class n9 node_plugin
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
   n2 e1@--> n0
   class e1 edge_read
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n4 e3@-->|"集合成员"| n0
-  class e3 edge_set_membership
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
+  n0 e3@-->|"可变访问"| n4
+  class e3 edge_write
+  n5 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
   n6 e5@--> n0
   class e5 edge_read
-  n7 e6@--> n0
-  class e6 edge_read
-  n8 e7@-->|"存在性约束"| n0
+  n0 e6@-->|"赋值"| n4
+  class e6 edge_write
+  n7 e7@-->|"存在性约束"| n0
   class e7 edge_reference
-  n0 e8@-->|"赋值"| n5
-  class e8 edge_write
-  n0 e9@-->|"可变访问"| n9
-  class e9 edge_write
+  n8 e8@--> n0
+  class e8 edge_read
+  n9 e9@-->|"调用"| n0
+  class e9 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

@@ -49,18 +49,18 @@ flowchart LR
   n2@{ shape: rounded, label: "**GlobalZIndex**<br/>来自crate:bevy​_​ui ↗：跨 UI 层级指定全<br/>局绘制层次。" }
   class n2 node_component
   class n2 external_node
-  n3@{ shape: rounded, label: "**resource​_​changed**<br/>来自crate:bevy​_​ecs ↗：判断资源是否被<br/>标记为变化。" }
-  class n3 node_system
-  class n3 external_node
-  n4@{ shape: fr-rect, label: "**DialogPlugin**<br/>管理对话框层次与拖动。" }
-  class n4 node_plugin
+  n3@{ shape: fr-rect, label: "**DialogPlugin**<br/>管理对话框层次与拖动。" }
+  class n3 node_plugin
+  n4@{ shape: rounded, label: "**resource​_​changed**<br/>来自crate:bevy​_​ecs ↗：判断资源是否被<br/>标记为变化。" }
+  class n4 node_system
+  class n4 external_node
   n1 e0@--> n0
   class e0 edge_read
   n0 e1@-->|"插入"| n2
   class e1 edge_write
-  n3 e2@-->|"运行条件"| n0
-  class e2 edge_reference
-  n4 e3@-->|"调用"| n0
-  class e3 edge_registration
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n4 e3@-->|"运行条件"| n0
+  class e3 edge_reference
   e0@{ curve: basis }
   e3@{ curve: basis }

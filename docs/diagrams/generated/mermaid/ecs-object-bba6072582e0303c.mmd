@@ -47,38 +47,38 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**trigger​_​collision​_​events**<br/>把碰撞开始和结束消息触发为实体事件。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**CollisionStart**<br/>报告一对碰撞体开始接触及其所属刚体。" }
-  class n1 node_message
+  n1@{ shape: rounded, label: "**CollisionEventsEnabled**<br/>为此碰撞体开启接触开始与结束事件。" }
+  class n1 node_component
   n2@{ shape: cyl, label: "**Messages#lt;CollisionEnd#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n2 node_resource
   class n2 external_node
-  n3@{ shape: lin-rect, label: "**CollisionEventSystems**<br/>在求解完成后触发碰撞开始与结束事件。" }
-  class n3 node_system_set
-  n4@{ shape: notch-rect, label: "**Local · ended**<br/>暂存待触发的碰撞结束实体事件。" }
-  class n4 node_local
+  n3@{ shape: notch-rect, label: "**Local · started**<br/>暂存待触发的碰撞开始实体事件。" }
+  class n3 node_local
+  n4@{ shape: lin-rect, label: "**CollisionEventSystems**<br/>在求解完成后触发碰撞开始与结束事件。" }
+  class n4 node_system_set
   n5@{ shape: cyl, label: "**Messages#lt;CollisionStart#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n5 node_resource
   class n5 external_node
   n6@{ shape: lean-r, label: "**CollisionEnd**<br/>报告一对碰撞体结束接触及其所属刚体。" }
   class n6 node_message
-  n7@{ shape: rounded, label: "**CollisionEventsEnabled**<br/>为此碰撞体开启接触开始与结束事件。" }
-  class n7 node_component
-  n8@{ shape: notch-rect, label: "**Local · started**<br/>暂存待触发的碰撞开始实体事件。" }
+  n7@{ shape: lean-r, label: "**CollisionStart**<br/>报告一对碰撞体开始接触及其所属刚体。" }
+  class n7 node_message
+  n8@{ shape: notch-rect, label: "**Local · ended**<br/>暂存待触发的碰撞结束实体事件。" }
   class n8 node_local
-  n1 e0@--> n0
-  class e0 edge_consume
+  n1 e0@-->|"存在性约束"| n0
+  class e0 edge_reference
   n2 e1@--> n0
   class e1 edge_read
-  n3 e2@-->|"集合成员"| n0
-  class e2 edge_set_membership
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@-->|"集合成员"| n0
+  class e3 edge_set_membership
   n5 e4@--> n0
   class e4 edge_read
   n6 e5@--> n0
   class e5 edge_consume
-  n7 e6@-->|"存在性约束"| n0
-  class e6 edge_reference
+  n7 e6@--> n0
+  class e6 edge_consume
   n0 e7@-->|"可变访问"| n8
   class e7 edge_write
   e0@{ curve: basis }

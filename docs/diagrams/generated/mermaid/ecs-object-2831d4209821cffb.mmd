@@ -45,20 +45,20 @@ flowchart LR
   n1@{ shape: cyl, label: "**AssetServer**<br/>来自crate:bevy​_​asset ↗：加载资产并追<br/>踪加载状态。" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: cyl, label: "**FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
+  n2@{ shape: cyl, label: "**BloomUpsamplingPipeline**<br/>提供 Bloom 逐级上采样与合成管线。" }
   class n2 node_resource
-  class n2 external_node
-  n3@{ shape: fr-rect, label: "**BloomPlugin**<br/>准备并合成画面辉光。" }
-  class n3 node_plugin
-  n4@{ shape: cyl, label: "**BloomUpsamplingPipeline**<br/>提供 Bloom 逐级上采样与合成管线。" }
-  class n4 node_resource
+  n3@{ shape: cyl, label: "**FullscreenShader**<br/>来自crate:bevy​_​core​_​pipeline ↗：提供<br/>覆盖整个屏幕的顶点着色器。" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: fr-rect, label: "**BloomPlugin**<br/>准备并合成画面辉光。" }
+  class n4 node_plugin
   n1 e0@--> n0
   class e0 edge_read
-  n2 e1@--> n0
-  class e1 edge_read
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n0 e3@-->|"插入"| n4
-  class e3 edge_write
+  n0 e1@-->|"插入"| n2
+  class e1 edge_write
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e3@{ curve: basis }

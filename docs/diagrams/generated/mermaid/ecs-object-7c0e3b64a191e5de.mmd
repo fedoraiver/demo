@@ -50,19 +50,19 @@ flowchart LR
   class n1 external_node
   n2@{ shape: rounded, label: "**ShowAabbGizmo**<br/>为实体显示轴对齐包围盒调试线框。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否绘制全部包围盒。" }
-  class n3 node_system
-  n4@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
+  n3@{ shape: cyl, label: "**GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
+  class n3 node_resource
+  n4@{ shape: rounded, label: "**Aabb**<br/>来自crate:bevy​_​camera ↗：以局部轴对齐<br/>包围盒支持可见性裁剪。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: cyl, label: "**GizmoConfigStore**<br/>按配置组保存调试图元绘制设置。" }
-  class n5 node_resource
-  n6@{ shape: rounded, label: "**Aabb**<br/>来自crate:bevy​_​camera ↗：以局部轴对齐<br/>包围盒支持可见性裁剪。" }
+  n5@{ shape: rounded, label: "**build::{{closure}}**<br/>判断是否绘制全部包围盒。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
   class n6 node_component
   class n6 external_node
   n7@{ shape: fr-rect, label: "**AabbGizmoPlugin**<br/>绘制包围盒调试形状。" }
   class n7 node_plugin
-  n8@{ shape: rounded, label: "**GlobalTransform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>合并祖先变换后的世界空间仿射变换" }
+  n8@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
   class n8 node_component
   class n8 external_node
   n9@{ shape: lin-rect, label: "**MarkNewlyHiddenEntitiesInvisible**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
@@ -72,12 +72,12 @@ flowchart LR
   class e0 edge_order
   n2 e1@-->|"存在性约束"| n0
   class e1 edge_reference
-  n3 e2@-->|"运行条件"| n0
-  class e2 edge_reference
+  n3 e2@--> n0
+  class e2 edge_read
   n4 e3@--> n0
   class e3 edge_read
-  n5 e4@--> n0
-  class e4 edge_read
+  n5 e4@-->|"运行条件"| n0
+  class e4 edge_reference
   n6 e5@--> n0
   class e5 edge_read
   n7 e6@-->|"调用"| n0

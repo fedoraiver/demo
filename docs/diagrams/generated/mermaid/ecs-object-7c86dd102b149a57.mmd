@@ -48,18 +48,18 @@ flowchart LR
   n2@{ shape: lin-rect, label: "**CheckForChanges**<br/>来自crate:bevy​_​render ↗：组织绘制管线<br/>失效检测。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: cyl, label: "**EntitiesNeedingSpecialization#lt;Extend**<br/>**edMaterial#lt;StandardMaterial,**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>暂存需要更新或移除专用管线的实体。" }
+  n3@{ shape: cyl, label: "**DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
   class n3 node_resource
-  n4@{ shape: cyl, label: "**DirtySpecializations**<br/>来自crate:bevy​_​render ↗：记录需刷新或<br/>移除管线专用化的对象与视图。" }
+  class n3 external_node
+  n4@{ shape: cyl, label: "**EntitiesNeedingSpecialization#lt;Extend**<br/>**edMaterial#lt;StandardMaterial,**<br/>**ForwardDecalMaterialExt#gt;#gt;**<br/>暂存需要更新或移除专用管线的实体。" }
   class n4 node_resource
-  class n4 external_node
   n1 e0@--> n0
   class e0 edge_read
   n2 e1@-->|"集合成员"| n0
   class e1 edge_set_membership
-  n3 e2@--> n0
-  class e2 edge_read
-  n0 e3@-->|"可变访问"| n4
-  class e3 edge_write
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@--> n0
+  class e3 edge_read
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e3@{ curve: basis }

@@ -41,11 +41,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**trim​_​source​_​cache**<br/>裁减排版字体来源缓存。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**TextPlugin**<br/>提供文本排版与渲染基础。" }
-  class n1 node_plugin
-  n2@{ shape: cyl, label: "**FontCx**<br/>维护字体数据库、家族解析与字体缓存" }
-  class n2 node_resource
-  n1 e0@-->|"调用"| n0
-  class e0 edge_registration
-  n0 e1@-->|"可变访问"| n2
-  class e1 edge_write
+  n1@{ shape: cyl, label: "**FontCx**<br/>维护字体数据库、家族解析与字体缓存" }
+  class n1 node_resource
+  n2@{ shape: fr-rect, label: "**TextPlugin**<br/>提供文本排版与渲染基础。" }
+  class n2 node_plugin
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
+  n2 e1@-->|"调用"| n0
+  class e1 edge_registration

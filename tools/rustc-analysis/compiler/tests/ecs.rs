@@ -471,6 +471,65 @@ fn purpose_evidence_tracks_name_initializer_and_helper_body_changes() {
     );
 }
 
+// for 展开生成的 const trait 函数路径不填 node_args，提取仍须完成三种具体迭代。
+#[test]
+fn purpose_evidence_resolves_const_trait_functions_in_desugared_for_loops() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../tmp/rustc-analysis/fixtures/desugared-const-trait-functions");
+    fs::create_dir_all(&root).unwrap();
+    let source = root.join("lib.rs");
+    fs::write(
+        &source,
+        r#"
+pub mod component { pub trait Component {} }
+pub fn borrowed(values: &[u32]) -> u32 {
+    let mut total = 0;
+    for value in values { total += value; }
+    total
+}
+pub fn owned(values: Vec<u32>) -> u32 {
+    let mut total = 0;
+    for value in values { total += value; }
+    total
+}
+pub fn mutable(values: &mut [u32]) {
+    for value in values { *value += 1; }
+}
+"#,
+    )
+    .unwrap();
+    let compiler = Command::new("rustc")
+        .args(["--print", "sysroot"])
+        .output()
+        .unwrap();
+    assert!(compiler.status.success());
+    let sysroot = String::from_utf8(compiler.stdout).unwrap();
+    let arguments = vec![
+        "rustc".into(),
+        source.to_string_lossy().into_owned(),
+        "--crate-name=bevy_ecs".into(),
+        "--crate-type=lib".into(),
+        "--edition=2024".into(),
+        "--sysroot".into(),
+        sysroot.trim().into(),
+        "--out-dir".into(),
+        root.to_string_lossy().into_owned(),
+        "-Zalways-encode-mir".into(),
+        "-Zmir-opt-level=0".into(),
+    ];
+    let mut extractor = Extractor { facts: None };
+    rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
+    let facts = extractor.facts.unwrap();
+    for function in ["borrowed", "owned", "mutable"] {
+        let declaration = facts
+            .declarations
+            .iter()
+            .find(|declaration| declaration.full_name == format!("bevy_ecs::{function}"))
+            .unwrap();
+        assert!(!declaration.evidence_hash.is_empty());
+    }
+}
+
 #[test]
 fn purpose_evidence_tracks_referenced_constants_without_hashing_unrelated_declarations() {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -549,6 +608,39 @@ fn purpose_evidence_tracks_referenced_external_static_values() {
 }
 
 #[test]
+fn purpose_evidence_tracks_external_cyclic_static_relocations() {
+    let versions = external_initializer_evidence("relocation");
+    assert_ne!(
+        versions[0], versions[1],
+        "Pointer relocation targets affect static evidence"
+    );
+    assert_ne!(
+        versions[0], versions[2],
+        "Values reached through a cyclic static reference affect evidence"
+    );
+    assert_eq!(
+        versions[0], versions[3],
+        "Unreferenced static values must not affect the caller"
+    );
+    assert_eq!(
+        versions[0], versions[4],
+        "Native allocation IDs and dependency metadata must not enter static evidence"
+    );
+}
+
+#[test]
+fn purpose_evidence_tracks_external_const_function_mir() {
+    let versions = external_initializer_evidence("const-function");
+    assert_ne!(versions[0], versions[1]);
+    assert_ne!(versions[0], versions[2]);
+    assert_eq!(versions[0], versions[3]);
+    assert_eq!(
+        versions[0], versions[4],
+        "External const fn MIR evidence must ignore dependency metadata"
+    );
+}
+
+#[test]
 fn foreign_generic_trait_uncertainty_is_retained_without_metadata_identity() {
     let versions = external_initializer_evidence("trait");
     assert_eq!(
@@ -570,6 +662,10 @@ fn external_initializer_evidence(storage: &str) -> Vec<String> {
     fs::write(&dependency_source, "").unwrap();
     let consumer_code = if storage == "trait" {
         "struct Marker;\nimpl bevy_ecs::Named for Marker { const LABEL: &'static str = bevy_ecs::NAME; }\nfn create<T: bevy_ecs::Named>() { let _name = T::LABEL; }\npub fn entry() { create::<Marker>(); }\n"
+    } else if storage == "relocation" {
+        "pub fn create() { let _root = bevy_ecs::ROOT; }\n"
+    } else if storage == "const-function" {
+        "pub fn create() { let _name = bevy_ecs::name(); let _number = bevy_ecs::number(); }\n"
     } else {
         "pub fn create() { let _name = bevy_ecs::NAME; let _number = bevy_ecs::NUMBER; }\n"
     };
@@ -630,7 +726,21 @@ fn external_initializer_evidence(storage: &str) -> Vec<String> {
         } else {
             ("u32", number.to_string())
         };
-        fs::write(&dependency_source, format!("pub mod component {{ pub trait Component {{}} }}\npub trait Named {{ const LABEL: &'static str; }}\npub {declaration_storage} NAME: &str = {name:?};\npub {declaration_storage} NUMBER: {number_type} = {number_value};\npub const UNRELATED: u32 = {unrelated};\n")).unwrap();
+        let dependency_code = if storage == "relocation" {
+            let target = if name == "Original" { "LEFT" } else { "RIGHT" };
+            format!(
+                "pub mod component {{ pub trait Component {{}} }}\npub struct Node {{ pub value: u32, pub next: &'static Node }}\npub static LEFT: Node = Node {{ value: {number}, next: &RIGHT }};\npub static RIGHT: Node = Node {{ value: 29, next: &LEFT }};\npub static ROOT: &Node = &{target};\npub static UNRELATED: u32 = {unrelated};\n"
+            )
+        } else if storage == "const-function" {
+            format!(
+                "pub mod component {{ pub trait Component {{}} }}\npub const fn name() -> &'static str {{ {name:?} }}\npub const fn number() -> u32 {{ {number} }}\npub const UNRELATED: u32 = {unrelated};\n"
+            )
+        } else {
+            format!(
+                "pub mod component {{ pub trait Component {{}} }}\npub trait Named {{ const LABEL: &'static str; }}\npub {declaration_storage} NAME: &str = {name:?};\npub {declaration_storage} NUMBER: {number_type} = {number_value};\npub const UNRELATED: u32 = {unrelated};\n"
+            )
+        };
+        fs::write(&dependency_source, dependency_code).unwrap();
         let compiled = Command::new("rustc")
             .args([
                 dependency_source.as_os_str(),

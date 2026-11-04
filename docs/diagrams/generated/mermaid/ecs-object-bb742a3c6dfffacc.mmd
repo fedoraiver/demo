@@ -47,9 +47,8 @@ flowchart LR
   end
   style layout_card_n0 fill:none,stroke:none
   subgraph layout_card_n1[" "]
-  n1@{ shape: rounded, label: "**Hdr**<br/>来自crate:bevy​_​camera ↗：使相机使用高<br/>动态范围中间纹理。" }
-  class n1 node_component
-  class n1 external_node
+  n1@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
+  class n1 node_resource
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
@@ -58,46 +57,47 @@ flowchart LR
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**BloomUniforms**<br/>来自crate:bevy​_​post​_​process ↗：上传<br/>Bloom 阈值、视口及缩放参数。" }
+  n3@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
   class n3 node_component
   class n3 external_node
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**Camera**<br/>来自crate:bevy​_​camera ↗：配置相机视<br/>口、输出目标和渲染顺序。" }
+  n4@{ shape: rounded, label: "**Hdr**<br/>来自crate:bevy​_​camera ↗：使相机使用高<br/>动态范围中间纹理。" }
   class n4 node_component
   class n4 external_node
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: cyl, label: "**MainWorld**<br/>在提取阶段临时提供主模拟世界。" }
-  class n5 node_resource
+  n5@{ shape: rounded, label: "**Bloom**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>HDR 相机配置亮部扩散光晕。" }
+  class n5 node_component
+  class n5 external_node
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
+  n6@{ shape: rounded, label: "**BloomUniforms**<br/>来自crate:bevy​_​post​_​process ↗：上传<br/>Bloom 阈值、视口及缩放参数。" }
   class n6 node_component
+  class n6 external_node
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**Bloom**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>HDR 相机配置亮部扩散光晕。" }
+  n7@{ shape: rounded, label: "**SubEntity#lt;RenderApp#gt;**<br/>记录主实体对应的子世界实体。" }
   class n7 node_component
-  class n7 external_node
   end
   style layout_card_n7 fill:none,stroke:none
-  n1 e0@-->|"存在性约束"| n0
-  class e0 edge_reference
+  n1 e0@--> n0
+  class e0 edge_read
   n0 e1@-->|"可变访问"| n2
   class e1 edge_write
-  n0 e2@-->|"移除"| n3
-  class e2 edge_write
-  n4 e3@--> n0
-  class e3 edge_read
+  n3 e2@--> n0
+  class e2 edge_read
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
   n5 e4@--> n0
   class e4 edge_read
-  n6 e5@--> n0
-  class e5 edge_read
-  n7 e6@---|"移除"| n0
+  n0 e5@-->|"移除"| n6
+  class e5 edge_write
+  n5 e6@---|"移除"| n0
   class e6 edge_write
   n7 e7@--> n0
   class e7 edge_read

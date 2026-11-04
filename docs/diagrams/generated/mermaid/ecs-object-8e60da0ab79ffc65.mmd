@@ -39,15 +39,15 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**collect​_​erased​_​render​_​assets​_​to​_​**<br/>**reextract**<br/>按源材质类型排空擦除资产并请求重新提取。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**ErasedRenderAssetsToReExtract#lt;MeshMa**<br/>**terial2d#lt;SpriteMeshMaterial#gt;#gt;**<br/>记录设备恢复后需重新提取的资产身份。" }
+  n1@{ shape: cyl, label: "**ErasedRenderAssets#lt;PreparedMaterial2**<br/>**d#gt;**<br/>存储源资产对应的类型擦除 GPU 表示。" }
   class n1 node_resource
-  n2@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;MeshMaterial2**<br/>**d#lt;SpriteMeshMaterial#gt;#gt;**<br/>保留下一帧需要继续准备的资产。" }
+  n2@{ shape: cyl, label: "**ErasedRenderAssetsToReExtract#lt;MeshMa**<br/>**terial2d#lt;SpriteMeshMaterial#gt;#gt;**<br/>记录设备恢复后需重新提取的资产身份。" }
   class n2 node_resource
-  n3@{ shape: cyl, label: "**ErasedRenderAssets#lt;PreparedMaterial2**<br/>**d#gt;**<br/>存储源资产对应的类型擦除 GPU 表示。" }
+  n3@{ shape: cyl, label: "**PrepareNextFrameAssets#lt;MeshMaterial2**<br/>**d#lt;SpriteMeshMaterial#gt;#gt;**<br/>保留下一帧需要继续准备的资产。" }
   class n3 node_resource
-  n0 e0@-->|"插入"| n1
+  n0 e0@-->|"可变访问"| n1
   class e0 edge_write
-  n0 e1@-->|"可变访问"| n2
+  n0 e1@-->|"插入"| n2
   class e1 edge_write
   n0 e2@-->|"可变访问"| n3
   class e2 edge_write

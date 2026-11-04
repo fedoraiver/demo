@@ -47,28 +47,28 @@ flowchart LR
   class n0 node_system
   n1@{ shape: fr-rect, label: "**ForcePlugin**<br/>管理并施加刚体外力和力矩。" }
   class n1 node_plugin
-  n2@{ shape: rounded, label: "**apply​_​constant​_​local​_​forces**<br/>按总质量把局部恒力转成局部线加速度。" }
-  class n2 node_system
-  n3@{ shape: rounded, label: "**apply​_​constant​_​linear​_​acceleration**<br/>把恒定世界线加速度加入待积分增量。" }
+  n2@{ shape: rounded, label: "**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
+  class n2 node_component
+  n3@{ shape: rounded, label: "**apply​_​constant​_​local​_​forces**<br/>按总质量把局部恒力转成局部线加速度。" }
   class n3 node_system
-  n4@{ shape: lin-rect, label: "**ApplyConstantForces**<br/>组织外力应用与累积量清理。" }
-  class n4 node_system_set
-  n5@{ shape: rounded, label: "**VelocityIntegrationData**<br/>缓存子步速度增量和阻尼系数。" }
+  n4@{ shape: rounded, label: "**apply​_​constant​_​linear​_​acceleration**<br/>把恒定世界线加速度加入待积分增量。" }
+  class n4 node_system
+  n5@{ shape: rounded, label: "**ConstantAngularAcceleration**<br/>持续施加世界空间角加速度。" }
   class n5 node_component
-  n6@{ shape: rounded, label: "**ConstantAngularAcceleration**<br/>持续施加世界空间角加速度。" }
-  class n6 node_component
+  n6@{ shape: lin-rect, label: "**ApplyConstantForces**<br/>组织外力应用与累积量清理。" }
+  class n6 node_system_set
   n1 e0@-->|"调用"| n0
   class e0 edge_registration
-  n0 e1@-->|"先于"| n2
-  class e1 edge_order
-  n3 e2@-->|"先于"| n0
+  n0 e1@-->|"可变访问"| n2
+  class e1 edge_write
+  n0 e2@-->|"先于"| n3
   class e2 edge_order
-  n4 e3@-->|"集合成员"| n0
-  class e3 edge_set_membership
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
-  n6 e5@--> n0
-  class e5 edge_read
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
+  n5 e4@--> n0
+  class e4 edge_read
+  n6 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

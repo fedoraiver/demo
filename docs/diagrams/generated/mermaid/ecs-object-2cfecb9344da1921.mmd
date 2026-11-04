@@ -47,9 +47,9 @@ flowchart LR
   class n2 node_resource
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
-  n0 e1@-->|"赋值"| n2
+  n0 e1@-->|"可变访问"| n2
   class e1 edge_write
-  n0 e2@-->|"可变访问"| n2
+  n0 e2@-->|"赋值"| n2
   class e2 edge_write
   e1@{ curve: basis }
   e2@{ curve: basis }

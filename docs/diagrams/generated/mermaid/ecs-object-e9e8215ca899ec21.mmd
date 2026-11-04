@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-e9e8215ca899ec21-e3{marker-start:url(#object-e9e8215ca899ec21_flowchart-v2-pointStart)!important}\n#object-e9e8215ca899ec21_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-e9e8215ca899ec21-e11{marker-start:url(#object-e9e8215ca899ec21_flowchart-v2-pointStart)!important}\n#object-e9e8215ca899ec21_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -44,86 +44,86 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
   class n0 node_system
-  n1@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
+  n1@{ shape: cyl, label: "**ColliderTreeDiagnostics**<br/>记录碰撞体树维护耗时。" }
   class n1 node_resource
-  n2@{ shape: rounded, label: "**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
+  n2@{ shape: rounded, label: "**EnlargedAabb**<br/>保存用于树更新的扩大包围盒。" }
   class n2 node_component
-  n3@{ shape: rounded, label: "**EnlargedAabb**<br/>保存用于树更新的扩大包围盒。" }
+  n3@{ shape: rounded, label: "**AngularVelocity**<br/>保存刚体的世界角速度。" }
   class n3 node_component
-  n4@{ shape: cyl, label: "**NarrowPhaseConfig**<br/>配置窄相的接触容差。" }
-  class n4 node_resource
-  n5@{ shape: cyl, label: "**MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
+  n4@{ shape: rounded, label: "**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
+  class n4 node_component
+  n5@{ shape: cyl, label: "**LastDynamicKinematicAabbUpdate**<br/>记录动态与运动学 AABB 更新刻度。" }
   class n5 node_resource
-  n6@{ shape: rounded, label: "**ColliderAabbMargin**<br/>控制碰撞体树包围盒的扩大余量。" }
+  n6@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n6 node_component
-  n7@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
+  n7@{ shape: rounded, label: "**RigidBodyColliders**<br/>维护刚体附着的碰撞体集合。" }
   class n7 node_component
-  n8@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
-  class n8 node_component
-  n9@{ shape: rounded, label: "**RigidBodyColliders**<br/>维护刚体附着的碰撞体集合。" }
+  n8@{ shape: rounded, label: "**clear​_​moved​_​proxies**<br/>清空本轮广相使用的移动代理目录。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**ColliderAabb**<br/>保存碰撞体的世界轴对齐包围盒。" }
   class n9 node_component
-  n10@{ shape: rounded, label: "**clear​_​moved​_​proxies**<br/>清空本轮广相使用的移动代理目录。" }
-  class n10 node_system
-  n11@{ shape: rounded, label: "**ColliderAabb**<br/>保存碰撞体的世界轴对齐包围盒。" }
+  n10@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
+  class n10 node_component
+  n11@{ shape: rounded, label: "**ColliderDisabled**<br/>暂停碰撞体检测和空间查询。" }
   class n11 node_component
-  n12@{ shape: cyl, label: "**LastDynamicKinematicAabbUpdate**<br/>记录动态与运动学 AABB 更新刻度。" }
+  n12@{ shape: cyl, label: "**ColliderTrees**<br/>按运动类别组织碰撞体加速树。" }
   class n12 node_resource
-  n13@{ shape: cyl, label: "**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
-  class n13 node_resource
-  n14@{ shape: rounded, label: "**AngularVelocity**<br/>保存刚体的世界角速度。" }
+  n13@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  class n13 node_component
+  n14@{ shape: rounded, label: "**LinearVelocity**<br/>保存刚体的世界线速度。" }
   class n14 node_component
-  n15@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  n15@{ shape: cyl, label: "**NarrowPhaseConfig**<br/>配置窄相的接触容差。" }
   class n15 node_resource
-  class n15 external_node
-  n16@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
+  n16@{ shape: rounded, label: "**ColliderAabbMargin**<br/>控制碰撞体树包围盒的扩大余量。" }
   class n16 node_component
-  n17@{ shape: rounded, label: "**Collider**<br/>保存 Parry 碰撞后端的几何形状。" }
+  n17@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n17 node_component
-  n18@{ shape: rounded, label: "**CollisionMargin**<br/>为碰撞形状添加接触外皮。" }
-  class n18 node_component
-  n19@{ shape: rounded, label: "**SpeculativeCcd**<br/>配置基于速度的预测接触范围。" }
+  n18@{ shape: cyl, label: "**EnlargedProxies**<br/>标记需要扩大边界的碰撞代理。" }
+  class n18 node_resource
+  n19@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n19 node_component
-  n20@{ shape: cyl, label: "**ColliderTreeDiagnostics**<br/>记录碰撞体树维护耗时。" }
-  class n20 node_resource
-  n21@{ shape: rounded, label: "**LinearVelocity**<br/>保存刚体的世界线速度。" }
+  n20@{ shape: lin-rect, label: "**Last**<br/>组织一次物理模拟步的主要阶段。" }
+  class n20 node_system_set
+  n21@{ shape: rounded, label: "**CollisionMargin**<br/>为碰撞形状添加接触外皮。" }
   class n21 node_component
-  n22@{ shape: lin-rect, label: "**Last**<br/>组织一次物理模拟步的主要阶段。" }
-  class n22 node_system_set
-  n23@{ shape: cyl, label: "**EnlargedProxies**<br/>标记需要扩大边界的碰撞代理。" }
+  n22@{ shape: cyl, label: "**PhysicsLengthUnit**<br/>设置物理世界的长度尺度。" }
+  class n22 node_resource
+  n23@{ shape: cyl, label: "**Time**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n23 node_resource
-  n24@{ shape: rounded, label: "**ComputedCenterOfMass**<br/>保存汇总后的刚体局部质心。" }
-  class n24 node_component
+  class n23 external_node
+  n24@{ shape: cyl, label: "**MovedProxies**<br/>收集需要重检碰撞对的移动代理。" }
+  class n24 node_resource
   n25@{ shape: lin-rect, label: "**Finalize**<br/>组织一次物理模拟步的主要阶段。" }
   class n25 node_system_set
-  n26@{ shape: rounded, label: "**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
+  n26@{ shape: rounded, label: "**SpeculativeCcd**<br/>配置基于速度的预测接触范围。" }
   class n26 node_component
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
+  n2 e1@--> n0
+  class e1 edge_read
   n3 e2@--> n0
   class e2 edge_read
-  n3 e3@---|"可变访问"| n0
-  class e3 edge_write
-  n4 e4@--> n0
-  class e4 edge_read
-  n0 e5@-->|"可变访问"| n5
-  class e5 edge_write
-  n0 e6@-->|"可变访问"| n6
-  class e6 edge_write
-  n7 e7@--> n0
-  class e7 edge_read
-  n8 e8@--> n0
-  class e8 edge_read
-  n9 e9@--> n0
-  class e9 edge_read
-  n10 e10@-->|"先于"| n0
-  class e10 edge_order
-  n0 e11@-->|"可变访问"| n11
+  n4 e3@--> n0
+  class e3 edge_read
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n6 e5@--> n0
+  class e5 edge_read
+  n7 e6@--> n0
+  class e6 edge_read
+  n8 e7@-->|"先于"| n0
+  class e7 edge_order
+  n0 e8@-->|"赋值"| n5
+  class e8 edge_write
+  n0 e9@-->|"可变访问"| n9
+  class e9 edge_write
+  n10 e10@--> n0
+  class e10 edge_read
+  n2 e11@---|"可变访问"| n0
   class e11 edge_write
-  n0 e12@-->|"可变访问"| n12
-  class e12 edge_write
-  n0 e13@-->|"赋值"| n12
+  n11 e12@-->|"存在性约束"| n0
+  class e12 edge_reference
+  n0 e13@-->|"可变访问"| n12
   class e13 edge_write
   n13 e14@--> n0
   class e14 edge_read
@@ -131,24 +131,24 @@ flowchart LR
   class e15 edge_read
   n15 e16@--> n0
   class e16 edge_read
-  n16 e17@-->|"存在性约束"| n0
-  class e17 edge_reference
+  n0 e17@-->|"可变访问"| n16
+  class e17 edge_write
   n17 e18@--> n0
   class e18 edge_read
-  n18 e19@--> n0
-  class e19 edge_read
-  n19 e20@--> n0
-  class e20 edge_read
-  n0 e21@-->|"可变访问"| n20
-  class e21 edge_write
+  n0 e19@-->|"可变访问"| n18
+  class e19 edge_write
+  n19 e20@-->|"存在性约束"| n0
+  class e20 edge_reference
+  n0 e21@-->|"先于"| n20
+  class e21 edge_order
   n21 e22@--> n0
   class e22 edge_read
-  n0 e23@-->|"先于"| n22
-  class e23 edge_order
-  n0 e24@-->|"可变访问"| n23
-  class e24 edge_write
-  n24 e25@--> n0
-  class e25 edge_read
+  n22 e23@--> n0
+  class e23 edge_read
+  n23 e24@--> n0
+  class e24 edge_read
+  n0 e25@-->|"可变访问"| n24
+  class e25 edge_write
   n25 e26@-->|"先于"| n0
   class e26 edge_order
   n26 e27@--> n0
@@ -167,7 +167,7 @@ flowchart LR
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
-  e14@{ curve: basis }
+  e15@{ curve: basis }
   e16@{ curve: basis }
   e17@{ curve: basis }
   e18@{ curve: basis }

@@ -43,35 +43,35 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**gilrs​_​event​_​startup​_​system**<br/>登记启动时已经连接的手柄。" }
   class n0 node_system
-  n1@{ shape: lean-r, label: "**GamepadConnectionEvent**<br/>来自crate:bevy​_​input ↗：通知手柄连接<br/>或断开。" }
-  class n1 node_message
+  n1@{ shape: cyl, label: "**Messages#lt;GamepadConnectionEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
+  class n1 node_resource
   class n1 external_node
   n2@{ shape: cyl, label: "**Gilrs**<br/>持有 gilrs 手柄后端实例" }
   class n2 node_resource
   n3@{ shape: fr-rect, label: "**GilrsPlugin**<br/>接入平台手柄设备与输入。" }
   class n3 node_plugin
-  n4@{ shape: cyl, label: "**Messages#lt;GamepadConnectionEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
-  class n4 node_resource
+  n4@{ shape: lean-r, label: "**GamepadConnectionEvent**<br/>来自crate:bevy​_​input ↗：通知手柄连接<br/>或断开。" }
+  class n4 node_message
   class n4 external_node
   n5@{ shape: cyl, label: "**GilrsGamepads**<br/>维护已连接 gilrs 手柄编号与 Bevy 手柄<br/>实体的双向映射" }
   class n5 node_resource
-  n0 e0@-->|"消息"| n1
-  class e0 edge_publish
+  n0 e0@-->|"可变访问"| n1
+  class e0 edge_write
   n0 e1@-->|"可变访问"| n2
   class e1 edge_write
-  n0 e2@-->|"可变访问"| n1
-  class e2 edge_publish
-  n3 e3@-->|"调用"| n0
-  class e3 edge_registration
-  n0 e4@-->|"可变访问"| n4
+  n3 e2@-->|"调用"| n0
+  class e2 edge_registration
+  n0 e3@-->|"消息"| n4
+  class e3 edge_publish
+  n0 e4@-->|"可变访问"| n5
   class e4 edge_write
-  n0 e5@-->|"可变访问"| n5
+  n0 e5@-->|"赋值"| n1
   class e5 edge_write
-  n0 e6@-->|"赋值"| n4
-  class e6 edge_write
+  n0 e6@-->|"可变访问"| n4
+  class e6 edge_publish
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

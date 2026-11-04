@@ -47,34 +47,34 @@ flowchart LR
   n1@{ shape: lin-rect, label: "**Prepare**<br/>来自crate:bevy​_​render ↗：组织渲染数据<br/>准备与绘制排队。" }
   class n1 node_system_set
   class n1 external_node
-  n2@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
-  class n2 node_resource
-  class n2 external_node
-  n3@{ shape: rounded, label: "**ViewClusteringDummyTexture**<br/>为聚簇光栅化提供可设置视口的附件。" }
-  class n3 node_component
-  n4@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
+  n2@{ shape: rounded, label: "**ViewClusteringDummyTexture**<br/>为聚簇光栅化提供可设置视口的附件。" }
+  class n2 node_component
+  n3@{ shape: cyl, label: "**TextureCache**<br/>来自crate:bevy​_​render ↗：复用渲染中反<br/>复创建的临时纹理。" }
+  class n3 node_resource
+  class n3 external_node
+  n4@{ shape: rounded, label: "**ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
   class n4 node_component
-  class n4 external_node
   n5@{ shape: cyl, label: "**RenderDevice**<br/>来自crate:bevy​_​render ↗：创建渲染和计<br/>算所需的 GPU 资源。" }
   class n5 node_resource
   class n5 external_node
-  n6@{ shape: rounded, label: "**ExtractedClusterConfig**<br/>保存视图聚簇的深度范围与网格划分。" }
+  n6@{ shape: rounded, label: "**ExtractedView**<br/>来自crate:bevy​_​render ↗：描述渲染视图<br/>的身份、投影与空间状态。" }
   class n6 node_component
+  class n6 external_node
   n7@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n7 node_system_set
   class n7 external_node
   n1 e0@-->|"集合成员"| n0
   class e0 edge_set_membership
-  n0 e1@-->|"可变访问"| n2
+  n0 e1@-->|"插入"| n2
   class e1 edge_write
-  n0 e2@-->|"插入"| n3
+  n0 e2@-->|"可变访问"| n3
   class e2 edge_write
-  n4 e3@-->|"存在性约束"| n0
-  class e3 edge_reference
+  n4 e3@--> n0
+  class e3 edge_read
   n5 e4@--> n0
   class e4 edge_read
-  n6 e5@--> n0
-  class e5 edge_read
+  n6 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
   n7 e6@-->|"集合成员"| n0
   class e6 edge_set_membership
   e0@{ curve: basis }

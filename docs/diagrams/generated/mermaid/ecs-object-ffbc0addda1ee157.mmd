@@ -1,0 +1,754 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: bevy_ecs::lifecycle::RemoveEvent · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
+  classDef node_event fill:#F9F3EE,stroke:#B66B2D,stroke-width:1.6px,color:#1F3340
+  classDef edge_observe stroke:#B66B2D,stroke-width:1.8px,stroke-dasharray:2 4
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: stadium, label: "**RemoveEvent**<br/>在组件移除前发出通知。" }
+  class n0 node_event
+  n1@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：清除已移除刚体的<br/>求解缓存。" }
+  class n1 node_observer
+  class n1 external_node
+  n2@{ shape: hex, label: "**on​_​body​_​removed**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>碰撞体归属。" }
+  class n2 node_observer
+  class n2 external_node
+  n3@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n3 node_observer
+  class n3 external_node
+  n4@{ shape: hex, label: "**on​_​remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n5 node_observer
+  class n5 external_node
+  n6@{ shape: hex, label: "**reset​_​action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
+  class n6 node_observer
+  class n6 external_node
+  n7@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n7 node_observer
+  class n7 external_node
+  n8@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n8 node_observer
+  class n8 external_node
+  n9@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n9 node_observer
+  class n9 external_node
+  n10@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n10 node_observer
+  class n10 external_node
+  n11@{ shape: hex, label: "**on​_​remove​_​cursor​_​icon**<br/>来自crate:bevy​_​winit ↗：在图标设置移<br/>除后恢复默认光标。" }
+  class n11 node_observer
+  class n11 external_node
+  n12@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n12 node_observer
+  class n12 external_node
+  n13@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:avian3d ↗：在刚体唤醒时恢复<br/>求解器体。" }
+  class n13 node_observer
+  class n13 external_node
+  n14@{ shape: hex, label: "**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
+  class n14 node_observer
+  class n14 external_node
+  n15@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n15 node_observer
+  class n15 external_node
+  n16@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
+  class n16 node_observer
+  class n16 external_node
+  n17@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n17 node_observer
+  class n17 external_node
+  n18@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n18 node_observer
+  class n18 external_node
+  n19@{ shape: hex, label: "**remove​_​collider​_​on**<br/>来自crate:avian3d ↗：清理碰撞体接触与<br/>对端碰撞记录。" }
+  class n19 node_observer
+  class n19 external_node
+  n20@{ shape: hex, label: "**reset​_​action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
+  class n20 node_observer
+  class n20 external_node
+  n21@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n21 node_observer
+  class n21 external_node
+  n22@{ shape: hex, label: "**deregister​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>销毁对话框的栈登记。" }
+  class n22 node_observer
+  class n22 external_node
+  n23@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为重新启用刚体补<br/>建求解器体。" }
+  class n23 node_observer
+  class n23 external_node
+  n24@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:bevy​_​extract ↗：登记子世界<br/>对应实体的移除请求。" }
+  class n24 node_observer
+  class n24 external_node
+  n25@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n25 node_observer
+  class n25 external_node
+  n26@{ shape: hex, label: "**on​_​remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
+  class n26 node_observer
+  class n26 external_node
+  n27@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n27 node_observer
+  class n27 external_node
+  n28@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：清除同实体碰撞体<br/>的失效归属。" }
+  class n28 node_observer
+  class n28 external_node
+  n29@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n29 node_observer
+  class n29 external_node
+  n30@{ shape: hex, label: "**remove​_​point​_​and​_​spot​_​light​_​view​_​**<br/>**entities**<br/>来自crate:bevy​_​pbr ↗：清理点光和聚光<br/>的渲染视图实体。" }
+  class n30 node_observer
+  class n30 external_node
+  n31@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
+  class n31 node_observer
+  class n31 external_node
+  n32@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n32 node_observer
+  class n32 external_node
+  n33@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n33 node_observer
+  class n33 external_node
+  n34@{ shape: hex, label: "**build::{closure#35;6}**<br/>来自crate:avian3d ↗：恢复非传感器碰撞<br/>体的质量属性。" }
+  class n34 node_observer
+  class n34 external_node
+  n35@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n35 node_observer
+  class n35 external_node
+  n36@{ shape: hex, label: "**on​_​remove​_​cursor​_​icon**<br/>来自crate:bevy​_​winit ↗：在图标设置移<br/>除后恢复默认光标。" }
+  class n36 node_observer
+  class n36 external_node
+  n37@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n37 node_observer
+  class n37 external_node
+  n38@{ shape: hex, label: "**on​_​r​_​removed**<br/>来自crate:bevy​_​app ↗：清除已断开关系<br/>的组件继承标记。" }
+  class n38 node_observer
+  class n38 external_node
+  n39@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
+  class n39 node_observer
+  class n39 external_node
+  n40@{ shape: hex, label: "**on​_​body​_​removed**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>碰撞体归属。" }
+  class n40 node_observer
+  class n40 external_node
+  n41@{ shape: hex, label: "**remove​_​point​_​and​_​spot​_​light​_​view​_​**<br/>**entities**<br/>来自crate:bevy​_​pbr ↗：清理点光和聚光<br/>的渲染视图实体。" }
+  class n41 node_observer
+  class n41 external_node
+  n42@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:avian3d ↗：移除失去刚体的实<br/>体物理岛节点。" }
+  class n42 node_observer
+  class n42 external_node
+  n43@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:avian3d ↗：在刚体唤醒时恢复<br/>求解器体。" }
+  class n43 node_observer
+  class n43 external_node
+  n44@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n44 node_observer
+  class n44 external_node
+  n45@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n45 node_observer
+  class n45 external_node
+  n46@{ shape: hex, label: "**on​_​remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
+  class n46 node_observer
+  class n46 external_node
+  n47@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>来自crate:avian3d ↗：加入关节连接并发<br/>布连接图变化。" }
+  class n47 node_observer
+  class n47 external_node
+  n48@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n48 node_observer
+  class n48 external_node
+  n49@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n49 node_observer
+  class n49 external_node
+  n50@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>来自crate:avian3d ↗：从空间树移除碰撞<br/>体代理。" }
+  class n50 node_observer
+  class n50 external_node
+  n51@{ shape: hex, label: "**clear​_​primary​_​press**<br/>来自ui ↗：原生 Button 在释放、拖动结<br/>束或取消时移除 Pressed；同一生命周期清<br/>理主键来源。" }
+  class n51 node_observer
+  class n51 external_node
+  n52@{ shape: hex, label: "**on​_​remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
+  class n52 node_observer
+  class n52 external_node
+  n53@{ shape: hex, label: "**on​_​remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
+  class n53 node_observer
+  class n53 external_node
+  n54@{ shape: hex, label: "**remove​_​body​_​on**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>接触图记录。" }
+  class n54 node_observer
+  class n54 external_node
+  n55@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n55 node_observer
+  class n55 external_node
+  n56@{ shape: hex, label: "**on​_​remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
+  class n56 node_observer
+  class n56 external_node
+  n57@{ shape: hex, label: "**on​_​remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
+  class n57 node_observer
+  class n57 external_node
+  n58@{ shape: hex, label: "**remove​_​light​_​view​_​entities**<br/>来自crate:bevy​_​pbr ↗：清理平行光创建<br/>的渲染视图实体。" }
+  class n58 node_observer
+  class n58 external_node
+  n59@{ shape: hex, label: "**clear​_​primary​_​press**<br/>来自ui ↗：原生 Button 在释放、拖动结<br/>束或取消时移除 Pressed；同一生命周期清<br/>理主键来源。" }
+  class n59 node_observer
+  class n59 external_node
+  n60@{ shape: hex, label: "**on​_​remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
+  class n60 node_observer
+  class n60 external_node
+  n61@{ shape: hex, label: "**build::{closure#35;4}**<br/>来自crate:avian3d ↗：清除碰撞代理的传<br/>感器标志。" }
+  class n61 node_observer
+  class n61 external_node
+  n62@{ shape: hex, label: "**on​_​remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
+  class n62 node_observer
+  class n62 external_node
+  n63@{ shape: hex, label: "**reset​_​action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
+  class n63 node_observer
+  class n63 external_node
+  n64@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:avian3d ↗：移除失去刚体的实<br/>体物理岛节点。" }
+  class n64 node_observer
+  class n64 external_node
+  n65@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n65 node_observer
+  class n65 external_node
+  n66@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n66 node_observer
+  class n66 external_node
+  n67@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n67 node_observer
+  class n67 external_node
+  n68@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n68 node_observer
+  class n68 external_node
+  n69@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为重新启用刚体补<br/>建求解器体。" }
+  class n69 node_observer
+  class n69 external_node
+  n70@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>来自crate:avian3d ↗：加入关节连接并发<br/>布连接图变化。" }
+  class n70 node_observer
+  class n70 external_node
+  n71@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n71 node_observer
+  class n71 external_node
+  n72@{ shape: hex, label: "**on​_​remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
+  class n72 node_observer
+  class n72 external_node
+  n73@{ shape: hex, label: "**on​_​remove​_​selected**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未选中状态。" }
+  class n73 node_observer
+  class n73 external_node
+  n74@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:avian3d ↗：移除失去刚体的实<br/>体物理岛节点。" }
+  class n74 node_observer
+  class n74 external_node
+  n75@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n75 node_observer
+  class n75 external_node
+  n76@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n76 node_observer
+  class n76 external_node
+  n77@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：清除已移除刚体的<br/>求解缓存。" }
+  class n77 node_observer
+  class n77 external_node
+  n78@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：清除已移除刚体的<br/>求解缓存。" }
+  class n78 node_observer
+  class n78 external_node
+  n79@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为重新启用刚体补<br/>建求解器体。" }
+  class n79 node_observer
+  class n79 external_node
+  n80@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：把失去刚体归属的<br/>碰撞体迁到独立树。" }
+  class n80 node_observer
+  class n80 external_node
+  n81@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n81 node_observer
+  class n81 external_node
+  n82@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:bevy​_​extract ↗：排队同步已<br/>移除的主世界组件。" }
+  class n82 node_observer
+  class n82 external_node
+  n83@{ shape: hex, label: "**on​_​remove​_​disabled**<br/>来自crate:bevy​_​ui ↗：向无障碍节点同步<br/>解除禁用。" }
+  class n83 node_observer
+  class n83 external_node
+  n84@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n84 node_observer
+  class n84 external_node
+  n85@{ shape: hex, label: "**deregister​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>销毁对话框的栈登记。" }
+  class n85 node_observer
+  class n85 external_node
+  n86@{ shape: hex, label: "**reset​_​action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
+  class n86 node_observer
+  class n86 external_node
+  n87@{ shape: hex, label: "**on​_​body​_​removed**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>碰撞体归属。" }
+  class n87 node_observer
+  class n87 external_node
+  n88@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n88 node_observer
+  class n88 external_node
+  n89@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n89 node_observer
+  class n89 external_node
+  n90@{ shape: hex, label: "**on​_​remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
+  class n90 node_observer
+  class n90 external_node
+  n91@{ shape: hex, label: "**reset​_​action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
+  class n91 node_observer
+  class n91 external_node
+  n92@{ shape: hex, label: "**on​_​body​_​remove​_​rigid​_​body​_​disabled**<br/>来自crate:avian3d ↗：清除刚体重新启用<br/>时的旧接触。" }
+  class n92 node_observer
+  class n92 external_node
+  n93@{ shape: hex, label: "**on​_​remove​_​sensor**<br/>来自crate:avian3d ↗：清除传感器转回普<br/>通碰撞体的旧接触。" }
+  class n93 node_observer
+  class n93 external_node
+  n94@{ shape: hex, label: "**build::{closure#35;2}**<br/>来自crate:avian3d ↗：在刚体唤醒时恢复<br/>求解器体。" }
+  class n94 node_observer
+  class n94 external_node
+  n95@{ shape: hex, label: "**on​_​remove​_​checkable**<br/>来自crate:bevy​_​ui ↗：清除已不可勾选控<br/>件的无障碍属性。" }
+  class n95 node_observer
+  class n95 external_node
+  n96@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n96 node_observer
+  class n96 external_node
+  n97@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n97 node_observer
+  class n97 external_node
+  n98@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n98 node_observer
+  class n98 external_node
+  n99@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n99 node_observer
+  class n99 external_node
+  n100@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n100 node_observer
+  class n100 external_node
+  n101@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n101 node_observer
+  class n101 external_node
+  n102@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：清除同实体碰撞体<br/>的失效归属。" }
+  class n102 node_observer
+  class n102 external_node
+  n103@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n103 node_observer
+  class n103 external_node
+  n104@{ shape: hex, label: "**remove​_​light​_​view​_​entities**<br/>来自crate:bevy​_​pbr ↗：清理平行光创建<br/>的渲染视图实体。" }
+  class n104 node_observer
+  class n104 external_node
+  n105@{ shape: hex, label: "**deregister​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>销毁对话框的栈登记。" }
+  class n105 node_observer
+  class n105 external_node
+  n106@{ shape: hex, label: "**on​_​remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }
+  class n106 node_observer
+  class n106 external_node
+  n107@{ shape: hex, label: "**on​_​remove​_​cursor​_​icon**<br/>来自crate:bevy​_​winit ↗：在图标设置移<br/>除后恢复默认光标。" }
+  class n107 node_observer
+  class n107 external_node
+  n108@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n108 node_observer
+  class n108 external_node
+  n109@{ shape: hex, label: "**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
+  class n109 node_observer
+  class n109 external_node
+  n110@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n110 node_observer
+  class n110 external_node
+  n111@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n111 node_observer
+  class n111 external_node
+  n112@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n112 node_observer
+  class n112 external_node
+  n113@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n113 node_observer
+  class n113 external_node
+  n114@{ shape: hex, label: "**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
+  class n114 node_observer
+  class n114 external_node
+  n115@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
+  class n115 node_observer
+  class n115 external_node
+  n116@{ shape: hex, label: "**remove​_​joint​_​from​_​graph**<br/>来自crate:avian3d ↗：移除关节连接并发<br/>布连接图变化。" }
+  class n116 node_observer
+  class n116 external_node
+  n117@{ shape: hex, label: "**clear​_​primary​_​press**<br/>来自ui ↗：原生 Button 在释放、拖动结<br/>束或取消时移除 Pressed；同一生命周期清<br/>理主键来源。" }
+  class n117 node_observer
+  class n117 external_node
+  n118@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
+  class n118 node_observer
+  class n118 external_node
+  n119@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：清除同实体碰撞体<br/>的失效归属。" }
+  class n119 node_observer
+  class n119 external_node
+  n0 e0@-->|"接收事件"| n1
+  class e0 edge_observe
+  n0 e1@-->|"接收事件"| n2
+  class e1 edge_observe
+  n0 e2@-->|"接收事件"| n3
+  class e2 edge_observe
+  n0 e3@-->|"接收事件"| n4
+  class e3 edge_observe
+  n0 e4@-->|"接收事件"| n5
+  class e4 edge_observe
+  n0 e5@-->|"接收事件"| n6
+  class e5 edge_observe
+  n0 e6@-->|"接收事件"| n7
+  class e6 edge_observe
+  n0 e7@-->|"接收事件"| n8
+  class e7 edge_observe
+  n0 e8@-->|"接收事件"| n9
+  class e8 edge_observe
+  n0 e9@-->|"接收事件"| n10
+  class e9 edge_observe
+  n0 e10@-->|"接收事件"| n11
+  class e10 edge_observe
+  n0 e11@-->|"接收事件"| n12
+  class e11 edge_observe
+  n0 e12@-->|"接收事件"| n13
+  class e12 edge_observe
+  n0 e13@-->|"接收事件"| n14
+  class e13 edge_observe
+  n0 e14@-->|"接收事件"| n15
+  class e14 edge_observe
+  n0 e15@-->|"接收事件"| n16
+  class e15 edge_observe
+  n0 e16@-->|"接收事件"| n17
+  class e16 edge_observe
+  n0 e17@-->|"接收事件"| n18
+  class e17 edge_observe
+  n0 e18@-->|"接收事件"| n19
+  class e18 edge_observe
+  n0 e19@-->|"接收事件"| n20
+  class e19 edge_observe
+  n0 e20@-->|"接收事件"| n21
+  class e20 edge_observe
+  n0 e21@-->|"接收事件"| n22
+  class e21 edge_observe
+  n0 e22@-->|"接收事件"| n23
+  class e22 edge_observe
+  n0 e23@-->|"接收事件"| n24
+  class e23 edge_observe
+  n0 e24@-->|"接收事件"| n25
+  class e24 edge_observe
+  n0 e25@-->|"接收事件"| n26
+  class e25 edge_observe
+  n0 e26@-->|"接收事件"| n27
+  class e26 edge_observe
+  n0 e27@-->|"接收事件"| n28
+  class e27 edge_observe
+  n0 e28@-->|"接收事件"| n29
+  class e28 edge_observe
+  n0 e29@-->|"接收事件"| n30
+  class e29 edge_observe
+  n0 e30@-->|"接收事件"| n31
+  class e30 edge_observe
+  n0 e31@-->|"接收事件"| n32
+  class e31 edge_observe
+  n0 e32@-->|"接收事件"| n33
+  class e32 edge_observe
+  n0 e33@-->|"接收事件"| n34
+  class e33 edge_observe
+  n0 e34@-->|"接收事件"| n35
+  class e34 edge_observe
+  n0 e35@-->|"接收事件"| n36
+  class e35 edge_observe
+  n0 e36@-->|"接收事件"| n37
+  class e36 edge_observe
+  n0 e37@-->|"接收事件"| n38
+  class e37 edge_observe
+  n0 e38@-->|"接收事件"| n39
+  class e38 edge_observe
+  n0 e39@-->|"接收事件"| n40
+  class e39 edge_observe
+  n0 e40@-->|"接收事件"| n41
+  class e40 edge_observe
+  n0 e41@-->|"接收事件"| n42
+  class e41 edge_observe
+  n0 e42@-->|"接收事件"| n43
+  class e42 edge_observe
+  n0 e43@-->|"接收事件"| n44
+  class e43 edge_observe
+  n0 e44@-->|"接收事件"| n45
+  class e44 edge_observe
+  n0 e45@-->|"接收事件"| n46
+  class e45 edge_observe
+  n0 e46@-->|"接收事件"| n47
+  class e46 edge_observe
+  n0 e47@-->|"接收事件"| n48
+  class e47 edge_observe
+  n0 e48@-->|"接收事件"| n49
+  class e48 edge_observe
+  n0 e49@-->|"接收事件"| n50
+  class e49 edge_observe
+  n0 e50@-->|"接收事件"| n51
+  class e50 edge_observe
+  n0 e51@-->|"接收事件"| n52
+  class e51 edge_observe
+  n0 e52@-->|"接收事件"| n53
+  class e52 edge_observe
+  n0 e53@-->|"接收事件"| n54
+  class e53 edge_observe
+  n0 e54@-->|"接收事件"| n55
+  class e54 edge_observe
+  n0 e55@-->|"接收事件"| n56
+  class e55 edge_observe
+  n0 e56@-->|"接收事件"| n57
+  class e56 edge_observe
+  n0 e57@-->|"接收事件"| n58
+  class e57 edge_observe
+  n0 e58@-->|"接收事件"| n59
+  class e58 edge_observe
+  n0 e59@-->|"接收事件"| n60
+  class e59 edge_observe
+  n0 e60@-->|"接收事件"| n61
+  class e60 edge_observe
+  n0 e61@-->|"接收事件"| n62
+  class e61 edge_observe
+  n0 e62@-->|"接收事件"| n63
+  class e62 edge_observe
+  n0 e63@-->|"接收事件"| n64
+  class e63 edge_observe
+  n0 e64@-->|"接收事件"| n65
+  class e64 edge_observe
+  n0 e65@-->|"接收事件"| n66
+  class e65 edge_observe
+  n0 e66@-->|"接收事件"| n67
+  class e66 edge_observe
+  n0 e67@-->|"接收事件"| n68
+  class e67 edge_observe
+  n0 e68@-->|"接收事件"| n69
+  class e68 edge_observe
+  n0 e69@-->|"接收事件"| n70
+  class e69 edge_observe
+  n0 e70@-->|"接收事件"| n71
+  class e70 edge_observe
+  n0 e71@-->|"接收事件"| n72
+  class e71 edge_observe
+  n0 e72@-->|"接收事件"| n73
+  class e72 edge_observe
+  n0 e73@-->|"接收事件"| n74
+  class e73 edge_observe
+  n0 e74@-->|"接收事件"| n75
+  class e74 edge_observe
+  n0 e75@-->|"接收事件"| n76
+  class e75 edge_observe
+  n0 e76@-->|"接收事件"| n77
+  class e76 edge_observe
+  n0 e77@-->|"接收事件"| n78
+  class e77 edge_observe
+  n0 e78@-->|"接收事件"| n79
+  class e78 edge_observe
+  n0 e79@-->|"接收事件"| n80
+  class e79 edge_observe
+  n0 e80@-->|"接收事件"| n81
+  class e80 edge_observe
+  n0 e81@-->|"接收事件"| n82
+  class e81 edge_observe
+  n0 e82@-->|"接收事件"| n83
+  class e82 edge_observe
+  n0 e83@-->|"接收事件"| n84
+  class e83 edge_observe
+  n0 e84@-->|"接收事件"| n85
+  class e84 edge_observe
+  n0 e85@-->|"接收事件"| n86
+  class e85 edge_observe
+  n0 e86@-->|"接收事件"| n87
+  class e86 edge_observe
+  n0 e87@-->|"接收事件"| n88
+  class e87 edge_observe
+  n0 e88@-->|"接收事件"| n89
+  class e88 edge_observe
+  n0 e89@-->|"接收事件"| n90
+  class e89 edge_observe
+  n0 e90@-->|"接收事件"| n91
+  class e90 edge_observe
+  n0 e91@-->|"接收事件"| n92
+  class e91 edge_observe
+  n0 e92@-->|"接收事件"| n93
+  class e92 edge_observe
+  n0 e93@-->|"接收事件"| n94
+  class e93 edge_observe
+  n0 e94@-->|"接收事件"| n95
+  class e94 edge_observe
+  n0 e95@-->|"接收事件"| n96
+  class e95 edge_observe
+  n0 e96@-->|"接收事件"| n97
+  class e96 edge_observe
+  n0 e97@-->|"接收事件"| n98
+  class e97 edge_observe
+  n0 e98@-->|"接收事件"| n99
+  class e98 edge_observe
+  n0 e99@-->|"接收事件"| n100
+  class e99 edge_observe
+  n0 e100@-->|"接收事件"| n101
+  class e100 edge_observe
+  n0 e101@-->|"接收事件"| n102
+  class e101 edge_observe
+  n0 e102@-->|"接收事件"| n103
+  class e102 edge_observe
+  n0 e103@-->|"接收事件"| n104
+  class e103 edge_observe
+  n0 e104@-->|"接收事件"| n105
+  class e104 edge_observe
+  n0 e105@-->|"接收事件"| n106
+  class e105 edge_observe
+  n0 e106@-->|"接收事件"| n107
+  class e106 edge_observe
+  n0 e107@-->|"接收事件"| n108
+  class e107 edge_observe
+  n0 e108@-->|"接收事件"| n109
+  class e108 edge_observe
+  n0 e109@-->|"接收事件"| n110
+  class e109 edge_observe
+  n0 e110@-->|"接收事件"| n111
+  class e110 edge_observe
+  n0 e111@-->|"接收事件"| n112
+  class e111 edge_observe
+  n0 e112@-->|"接收事件"| n113
+  class e112 edge_observe
+  n0 e113@-->|"接收事件"| n114
+  class e113 edge_observe
+  n0 e114@-->|"接收事件"| n115
+  class e114 edge_observe
+  n0 e115@-->|"接收事件"| n116
+  class e115 edge_observe
+  n0 e116@-->|"接收事件"| n117
+  class e116 edge_observe
+  n0 e117@-->|"接收事件"| n118
+  class e117 edge_observe
+  n0 e118@-->|"接收事件"| n119
+  class e118 edge_observe
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }
+  e9@{ curve: basis }
+  e10@{ curve: basis }
+  e11@{ curve: basis }
+  e12@{ curve: basis }
+  e13@{ curve: basis }
+  e14@{ curve: basis }
+  e15@{ curve: basis }
+  e16@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: basis }
+  e19@{ curve: basis }
+  e20@{ curve: basis }
+  e21@{ curve: basis }
+  e22@{ curve: basis }
+  e23@{ curve: basis }
+  e24@{ curve: basis }
+  e25@{ curve: basis }
+  e26@{ curve: basis }
+  e27@{ curve: basis }
+  e28@{ curve: basis }
+  e29@{ curve: basis }
+  e30@{ curve: basis }
+  e31@{ curve: basis }
+  e32@{ curve: basis }
+  e33@{ curve: basis }
+  e34@{ curve: basis }
+  e35@{ curve: basis }
+  e36@{ curve: basis }
+  e37@{ curve: basis }
+  e38@{ curve: basis }
+  e39@{ curve: basis }
+  e40@{ curve: basis }
+  e41@{ curve: basis }
+  e42@{ curve: basis }
+  e43@{ curve: basis }
+  e44@{ curve: basis }
+  e45@{ curve: basis }
+  e46@{ curve: basis }
+  e47@{ curve: basis }
+  e48@{ curve: basis }
+  e49@{ curve: basis }
+  e50@{ curve: basis }
+  e51@{ curve: basis }
+  e52@{ curve: basis }
+  e53@{ curve: basis }
+  e54@{ curve: basis }
+  e55@{ curve: basis }
+  e56@{ curve: basis }
+  e57@{ curve: basis }
+  e58@{ curve: basis }
+  e60@{ curve: basis }
+  e61@{ curve: basis }
+  e62@{ curve: basis }
+  e63@{ curve: basis }
+  e64@{ curve: basis }
+  e65@{ curve: basis }
+  e66@{ curve: basis }
+  e67@{ curve: basis }
+  e68@{ curve: basis }
+  e69@{ curve: basis }
+  e70@{ curve: basis }
+  e71@{ curve: basis }
+  e72@{ curve: basis }
+  e73@{ curve: basis }
+  e74@{ curve: basis }
+  e75@{ curve: basis }
+  e76@{ curve: basis }
+  e77@{ curve: basis }
+  e78@{ curve: basis }
+  e79@{ curve: basis }
+  e80@{ curve: basis }
+  e81@{ curve: basis }
+  e82@{ curve: basis }
+  e83@{ curve: basis }
+  e84@{ curve: basis }
+  e85@{ curve: basis }
+  e86@{ curve: basis }
+  e87@{ curve: basis }
+  e88@{ curve: basis }
+  e89@{ curve: basis }
+  e90@{ curve: basis }
+  e91@{ curve: basis }
+  e92@{ curve: basis }
+  e93@{ curve: basis }
+  e94@{ curve: basis }
+  e95@{ curve: basis }
+  e96@{ curve: basis }
+  e97@{ curve: basis }
+  e98@{ curve: basis }
+  e99@{ curve: basis }
+  e100@{ curve: basis }
+  e101@{ curve: basis }
+  e102@{ curve: basis }
+  e103@{ curve: basis }
+  e104@{ curve: basis }
+  e105@{ curve: basis }
+  e106@{ curve: basis }
+  e107@{ curve: basis }
+  e108@{ curve: basis }
+  e109@{ curve: basis }
+  e110@{ curve: basis }
+  e111@{ curve: basis }
+  e112@{ curve: basis }
+  e113@{ curve: basis }
+  e114@{ curve: basis }
+  e115@{ curve: basis }
+  e116@{ curve: basis }
+  e117@{ curve: basis }
+  e118@{ curve: basis }

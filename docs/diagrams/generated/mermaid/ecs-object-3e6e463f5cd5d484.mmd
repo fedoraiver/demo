@@ -1,0 +1,73 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: graph::AnimationGraphHandle · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**AnimationGraphHandle**<br/>选择播放器使用的动画图资产。" }
+  class n0 node_component
+  n1@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**trigger​_​untargeted​_​animation​_​events**<br/>派发动画片段的根目标事件。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**animate​_​targets**<br/>评估动画图并把结果应用到动画目标。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**play​_​courier​_​animation**<br/>来自ui ↗：仅遍历已展开的展示角色子树，<br/>命名资产尚未就绪时保留 pending 供下一帧<br/>重试。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**advance​_​animations**<br/>推进动画播放器中活动动画的播放时间。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
+  class n6 node_system
+  class n6 external_node
+  n1 e0@-->|"插入"| n0
+  class e0 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@-->|"插入"| n0
+  class e3 edge_write
+  n0 e4@--> n5
+  class e4 edge_read
+  n6 e5@-->|"移除"| n0
+  class e5 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }

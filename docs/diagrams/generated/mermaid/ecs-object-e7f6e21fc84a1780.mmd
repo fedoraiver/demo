@@ -1,0 +1,81 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: batching::gpu_preprocessing::BuildIndirectParametersMetadata · 对象关系
+  accDescr: 当前对象及全部直接关联对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
+  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
+  classDef edge_write stroke:#2F7161,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: cyl, label: "**BuildIndirectParametersMetadata**<br/>描述间接绘制参数构建的 GPU 调度。" }
+  class n0 node_resource
+  n1@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
+  class n1 node_system
+  class n1 external_node
+  n2@{ shape: rounded, label: "**prepare​_​indirect​_​parameters​_​build​_​**<br/>**jobs**<br/>按视图阶段的批范围登记间接参数构建任务。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
+  class n3 node_system
+  class n3 external_node
+  n4@{ shape: rounded, label: "**late​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：为本帧新显露对<br/>象构建后期预通道间接参数。" }
+  class n4 node_system
+  class n4 external_node
+  n5@{ shape: rounded, label: "**early​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：构建早期预通道<br/>使用的多重间接绘制参数。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**main​_​build​_​indirect​_​parameters**<br/>来自crate:bevy​_​pbr ↗：为主不透明及透<br/>明通道构建间接绘制参数。" }
+  class n6 node_system
+  class n6 external_node
+  n7@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
+  class n7 node_system
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n0 e2@--> n3
+  class e2 edge_read
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@--> n5
+  class e4 edge_read
+  n0 e5@--> n6
+  class e5 edge_read
+  n7 e6@-->|"插入"| n0
+  class e6 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: basis }
+  e6@{ curve: basis }

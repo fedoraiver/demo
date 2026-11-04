@@ -44,22 +44,22 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**extract​_​mesh​_​materials​_​2d**<br/>同步可见二维网格使用的材质资产身份。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
-  class n1 node_component
+  n1@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
+  class n1 node_resource
   class n1 external_node
-  n2@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.1**<br/>跟踪 MeshMaterial2d#lt;M#gt; 移除记录的读取<br/>进度。" }
+  n2@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.0.0.0**<br/>保存 MeshMaterial2d#lt;M#gt; 移除参数的组<br/>件 ID。" }
   class n2 node_local
-  n3@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.0.0.0**<br/>保存 MeshMaterial2d#lt;M#gt; 移除参数的组<br/>件 ID。" }
-  class n3 node_local
-  n4@{ shape: cyl, label: "**MainWorld**<br/>来自crate:bevy​_​extract ↗：在提取阶段<br/>临时提供主模拟世界。" }
-  class n4 node_resource
-  class n4 external_node
-  n5@{ shape: rounded, label: "**extract​_​2d​_​meshes**<br/>增量同步二维网格变换和渲染实例信息。" }
-  class n5 node_system
-  n6@{ shape: rounded, label: "**MeshMaterial2d#lt;TilemapChunkMaterial#gt;**<br/>为二维网格指定材质资产。" }
+  n3@{ shape: cyl, label: "**RenderMaterial2dInstances**<br/>映射可渲染主世界实体到二维材质资产。" }
+  class n3 node_resource
+  n4@{ shape: rounded, label: "**MeshMaterial2d#lt;TilemapChunkMaterial#gt;**<br/>为二维网格指定材质资产。" }
+  class n4 node_component
+  n5@{ shape: notch-rect, label: "**Local · removed​_​materials​_​**<br/>**query.0.0.1**<br/>跟踪 MeshMaterial2d#lt;M#gt; 移除记录的读取<br/>进度。" }
+  class n5 node_local
+  n6@{ shape: rounded, label: "**ViewVisibility**<br/>来自crate:bevy​_​camera ↗：记录实体是否<br/>应被提取用于渲染。" }
   class n6 node_component
-  n7@{ shape: cyl, label: "**RenderMaterial2dInstances**<br/>映射可渲染主世界实体到二维材质资产。" }
-  class n7 node_resource
+  class n6 external_node
+  n7@{ shape: rounded, label: "**extract​_​2d​_​meshes**<br/>增量同步二维网格变换和渲染实例信息。" }
+  class n7 node_system
   n1 e0@--> n0
   class e0 edge_read
   n0 e1@-->|"可变访问"| n2
@@ -68,22 +68,22 @@ flowchart LR
   class e2 edge_write
   n4 e3@--> n0
   class e3 edge_read
-  n0 e4@-->|"先于"| n5
-  class e4 edge_order
-  n6 e5@--> n0
-  class e5 edge_read
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
+  n4 e5@-->|"存在性约束"| n0
+  class e5 edge_reference
   n6 e6@-->|"存在性约束"| n0
   class e6 edge_reference
-  n0 e7@-->|"可变访问"| n7
-  class e7 edge_write
-  n1 e8@-->|"存在性约束"| n0
-  class e8 edge_reference
+  n0 e7@-->|"先于"| n7
+  class e7 edge_order
+  n6 e8@--> n0
+  class e8 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
+  e5@{ curve: bumpX }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
