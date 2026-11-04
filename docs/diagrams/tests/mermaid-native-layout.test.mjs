@@ -111,6 +111,28 @@ test('captured InputFocus output fanout clears a near-collinear read using one n
   assert.deepEqual(fixture, before);
 });
 
+test('captured SSAO parallel input operations clear a near-collinear removal using native output neighbors', { skip: !chromium, timeout: 180000 }, async () => {
+  const fixture = JSON.parse(fs.readFileSync(new URL('./fixtures/native-ssao-input.json', import.meta.url), 'utf8'));
+  const { graph, registry, features, targetEdgeId } = fixture, before = structuredClone(fixture), attempts = [];
+  const view = renderGraphView(fixture.view, graph, registry, features);
+  const result = await compileFixture(view, graph, 'ssao-input', registry, { onAttempt: attempt => attempts.push(attempt) });
+  assert.equal(result.nodes.length, 5); assert.equal(result.links.length, 6);
+  assert.deepEqual(view.layoutLinks, []);
+  assert.deepEqual(result.layoutLinks, [
+    { mermaidId: 'layout_output_0', from: 'n2', to: 'n3' },
+    { mermaidId: 'layout_output_1', from: 'n3', to: 'n4' },
+  ]);
+  assert.ok(attempts.length > 0, 'The original native layout reproduces the near-collinear input failure');
+  assert.equal(attempts[0].layoutError, null);
+  assert.deepEqual(attempts[0].invalid.map(edge => [edge.id, edge.axis, edge.curved, edge.collisions, edge.arrowIssues]), [[targetEdgeId, null, false, [], []]]);
+  const removal = result.links.find(link => link.id === targetEdgeId);
+  assert.equal(removal.operation, 'remove'); assert.equal(removal.displayLabel, '移除');
+  assert.equal(result.links[0].nativeReverse, true);
+  assert.equal(inspectViewRoutes(result).edges.find(edge => edge.id === targetEdgeId).curved, true);
+  assert.deepEqual(nativeLabelMismatches(result), []);
+  assert.deepEqual(fixture, before);
+});
+
 test('native guide samples retain identical bytes and shared styles across repeated compilation', { skip: !chromium, timeout: 180000 }, async () => {
   fs.mkdirSync(temporary, { recursive: true });
   const browser = await puppeteer.launch({ executablePath: chromium, headless: true, userDataDir: fs.mkdtempSync(path.join(temporary, 'guide-repeat-')) });

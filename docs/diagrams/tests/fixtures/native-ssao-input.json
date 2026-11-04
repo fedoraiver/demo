@@ -1,0 +1,149 @@
+{
+  "view": {
+    "id": "object-07d6a39fd297d81a",
+    "feature": "crate:bevy_pbr",
+    "aspect": "object",
+    "label": "ssao::ScreenSpaceAmbientOcclusion · 对象关系",
+    "summary": "当前对象及全部直接关联对象。",
+    "objectId": "type-846c0bab10bbf6b11cb9549d",
+    "centerNodeId": "type-846c0bab10bbf6b11cb9549d"
+  },
+  "graph": {
+    "centerNodeId": "type-846c0bab10bbf6b11cb9549d",
+    "nodes": [
+      {
+        "id": "type-846c0bab10bbf6b11cb9549d",
+        "role": "internal",
+        "group": "当前对象"
+      },
+      {
+        "id": "registration-d15418ae65ee0132a331465e",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-2337a57c316b875ea82912f1",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-c885d2ea1a060f674137f998",
+        "role": "internal",
+        "group": "直接关联对象"
+      },
+      {
+        "id": "registration-0dfd0b1f5d9038179e47e928",
+        "role": "internal",
+        "group": "直接关联对象"
+      }
+    ],
+    "links": [
+      {
+        "id": "relation-038a750a55566fd0e327d401",
+        "from": "type-846c0bab10bbf6b11cb9549d",
+        "to": "registration-d15418ae65ee0132a331465e",
+        "kind": "read",
+        "label": "读取",
+        "evidence": "parameter"
+      },
+      {
+        "id": "relation-6c8ad97e6fe5f301aa052c4c",
+        "from": "type-846c0bab10bbf6b11cb9549d",
+        "to": "registration-2337a57c316b875ea82912f1",
+        "kind": "reference",
+        "label": "存在性约束",
+        "factKind": "filter",
+        "operation": "filter",
+        "evidence": "parameter"
+      },
+      {
+        "id": "relation-9706ec72781fc047f714b6be",
+        "from": "registration-d15418ae65ee0132a331465e",
+        "to": "type-846c0bab10bbf6b11cb9549d",
+        "kind": "write",
+        "label": "移除",
+        "factKind": "remove",
+        "operation": "remove",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-b22549f6200b7ebb73d01c99",
+        "from": "registration-d15418ae65ee0132a331465e",
+        "to": "type-846c0bab10bbf6b11cb9549d",
+        "kind": "write",
+        "label": "插入",
+        "factKind": "insert",
+        "operation": "insert",
+        "evidence": "body"
+      },
+      {
+        "id": "relation-c1a52cee342e181e5879305e",
+        "from": "type-846c0bab10bbf6b11cb9549d",
+        "to": "registration-c885d2ea1a060f674137f998",
+        "kind": "read",
+        "label": "读取",
+        "evidence": "parameter"
+      },
+      {
+        "id": "relation-e8e0210b46a86cb956502510",
+        "from": "type-846c0bab10bbf6b11cb9549d",
+        "to": "registration-0dfd0b1f5d9038179e47e928",
+        "kind": "read",
+        "label": "读取",
+        "evidence": "parameter"
+      }
+    ]
+  },
+  "registry": {
+    "registration-0dfd0b1f5d9038179e47e928": {
+      "id": "registration-0dfd0b1f5d9038179e47e928",
+      "kind": "System",
+      "name": "bevy_pbr::ssao::prepare_ssao_pipelines",
+      "feature": "crate:bevy_pbr",
+      "description": "把每台视图的质量级别与是否启用 TemporalJitter 组成专用化键，通过缓存取得环境光遮蔽管线并插入 SsaoPipelineId。",
+      "display_summary": "按遮蔽质量和时间抖动配置选择计算管线。"
+    },
+    "registration-2337a57c316b875ea82912f1": {
+      "id": "registration-2337a57c316b875ea82912f1",
+      "kind": "System",
+      "name": "bevy_pbr::render::mesh::check_views_need_specialization",
+      "feature": "crate:bevy_pbr",
+      "description": "将格式、采样、预通道、投影、时间抖动、探针和反射、雾、大气、透射等设置组合为网格视图键，新建或变化时标记待专用化，并移除不再出现视图的缓存。",
+      "display_summary": "汇总视图渲染特性并检测管线配置变化。"
+    },
+    "registration-c885d2ea1a060f674137f998": {
+      "id": "registration-c885d2ea1a060f674137f998",
+      "kind": "System",
+      "name": "bevy_pbr::ssao::prepare_ssao_textures",
+      "feature": "crate:bevy_pbr",
+      "description": "需要相机物理视口尺寸；通过纹理缓存取得五级预处理深度、带噪和降噪遮蔽及整数深度差纹理，建立半径与厚度 Uniform，保存该视图的遮蔽资源。",
+      "display_summary": "为环境光遮蔽分配中间纹理及参数缓冲。"
+    },
+    "registration-d15418ae65ee0132a331465e": {
+      "id": "registration-d15418ae65ee0132a331465e",
+      "kind": "System",
+      "name": "bevy_pbr::ssao::extract_ssao_settings",
+      "feature": "crate:bevy_pbr",
+      "description": "读取带深度与法线预通道的三维相机；开启 MSAA 时记录不兼容错误并跳过，否则为活动相机复制遮蔽配置，为非活动相机移除该配置。",
+      "display_summary": "向渲染相机提取屏幕空间环境光遮蔽配置。"
+    },
+    "type-846c0bab10bbf6b11cb9549d": {
+      "id": "type-846c0bab10bbf6b11cb9549d",
+      "kind": "Component",
+      "name": "ssao::ScreenSpaceAmbientOcclusion",
+      "fullName": "ssao::ScreenSpaceAmbientOcclusion",
+      "feature": "crate:bevy_pbr",
+      "description": "用质量等级、采样半径和物体厚度等设置近似屏幕可见物体之间的小尺度间接漫反射遮蔽，不用于点光或平行光等直接光照。",
+      "display_summary": "配置三维相机的屏幕空间环境光遮蔽。"
+    }
+  },
+  "features": [
+    {
+      "id": "crate:bevy_pbr",
+      "label": "crate:bevy_pbr",
+      "overviewNode": "type-f9852066a80008c3b20e0706",
+      "plugin": "StandardMaterial>"
+    }
+  ],
+  "targetEdgeId": "relation-9706ec72781fc047f714b6be"
+}

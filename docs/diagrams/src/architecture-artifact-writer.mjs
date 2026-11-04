@@ -18,6 +18,14 @@ export function replaceArtifactSync(staged, target, { platform = process.platfor
 }
 
 export function copyVerifiedArtifactSync(source, staged, target, expectedSha256, options) {
+  let existingSha256;
+  try { existingSha256 = hashFile(target).sha256; }
+  catch (error) { if (error.code !== 'ENOENT') throw error; }
+  if (existingSha256 === expectedSha256) {
+    // 相同目标无需替换，但目标正确不能掩盖编译器输入已经改变。
+    if (hashFile(source).sha256 !== expectedSha256) throw new Error('Compiler call graph changed during artifact copy');
+    return;
+  }
   fs.copyFileSync(source, staged);
   if (hashFile(staged).sha256 !== expectedSha256) throw new Error('Compiler call graph changed during artifact copy');
   replaceArtifactSync(staged, target, options);
