@@ -1,6 +1,7 @@
 //! 通过真实 Cargo 和编译器 driver 验证规则；夹具函数与游戏均不执行。
 
 use std::{
+    collections::BTreeSet,
     fs,
     path::{Path, PathBuf},
     process::Command,
@@ -832,29 +833,15 @@ bevy_scene = "=0.20.0"
     );
     let unresolved = "use bevy_ecs::prelude::*;\nuse bevy_scene::prelude::*;\nmacro_rules! create { ($world:expr, $scene:expr) => { $world.spawn_scene($scene) }; }\nfn unresolved_source(world: &mut World, scene: Box<dyn Scene>) { create!(world, scene); }\npub fn outer(world: &mut World, scene: Box<dyn Scene>) { unresolved_source(world, scene); }\n";
     write(&root, "src/lib.rs", unresolved);
-    if !root.join("Cargo.lock").exists() {
-        fs::copy(
-            project_root().join("tmp/entity-names/fixture/Cargo.lock"),
-            root.join("Cargo.lock"),
-        )
-        .unwrap();
-    }
-    let metadata = Command::new("cargo")
-        .args([
-            "metadata",
-            "--offline",
-            "--no-deps",
-            "--format-version",
-            "1",
-            "--manifest-path",
-        ])
+    let lock = Command::new("cargo")
+        .args(["generate-lockfile", "--offline", "--manifest-path"])
         .arg(root.join("Cargo.toml"))
         .output()
         .unwrap();
     assert!(
-        metadata.status.success(),
-        "Cannot prepare CLI fixture: {}",
-        String::from_utf8_lossy(&metadata.stderr)
+        lock.status.success(),
+        "Cannot prepare the CLI fixture lockfile: {}",
+        String::from_utf8_lossy(&lock.stderr)
     );
     let output = Command::new(env!("CARGO_BIN_EXE_check-entity-names"))
         .arg(&root)
@@ -975,44 +962,59 @@ fn rejects_missing_stale_and_incompatible_driver_reports() {
         "version = 4\n[[package]]\nname = \"entity-name-driver-errors\"\nversion = \"0.0.0\"\n",
     );
     write(&root, "src/lib.rs", "pub fn noop() {}\n");
-    let source = r##"use std::{env, fs, path::Path, process::{Command, ExitCode}};
+    let source = r#"use std::{env, fs, path::Path, process::{Command, ExitCode}};
 fn main() -> ExitCode {
-    let mut args = env::args().skip(1);
-    let program = args.next().unwrap();
-    let args: Vec<_> = args.collect();
+    let args: Vec<_> = env::args().skip(1).collect();
     let executable = env::current_exe().unwrap();
-    let nested = Path::new(&program).file_name() == executable.file_name();
-    let status = Command::new(&program).args(&args).status().unwrap();
+    let nested = args.first().and_then(|program| fs::canonicalize(program).ok()) == Some(executable.canonicalize().unwrap());
+    if nested {
+        let status = Command::new(&args[0]).args(&args[1..]).status().unwrap();
+        return if status.success() { ExitCode::SUCCESS } else { ExitCode::from(2) };
+    }
+    let mut child = Command::new(__DRIVER__).args(&args).spawn().unwrap();
+    let pid = child.id();
+    let status = child.wait().unwrap();
     if !status.success() { return ExitCode::from(2); }
-    let mode = executable.file_stem().unwrap().to_string_lossy();
-    if !nested && !mode.starts_with("missing") {
-        if let Some(source) = args.iter().find(|arg| arg.ends_with(".rs")) {
-            let source = Path::new(source).canonicalize().unwrap().to_string_lossy().trim_start_matches(r"\\?\").replace('\\', "/");
-            let run = if mode.starts_with("stale") { "stale-run".to_owned() } else { env::var("ENTITY_NAME_RUN").unwrap() };
-            let compiler = if mode.starts_with("wrong") { "wrong-compiler" } else { "__COMPILER__" };
-            let configuration = env::var("ENTITY_NAME_CONFIGURATION").unwrap();
-            let manifest_dir = Path::new(&env::var_os("CARGO_MANIFEST_DIR").unwrap()).canonicalize().unwrap().to_string_lossy().trim_start_matches(r"\\?\").replace('\\', "/");
-            let package = env::var("CARGO_PKG_NAME").unwrap();
-            let name = args.windows(2).find(|pair| pair[0] == "--crate-name").unwrap()[1].replace('-', "_");
-            let test = args.iter().any(|arg| arg == "--test");
-            let artifact_tag = args.iter().find_map(|arg| arg.strip_prefix("extra-filename=")).unwrap_or_default();
-            let crate_types: Vec<_> = args.windows(2).filter(|pair| pair[0] == "--crate-type").flat_map(|pair| pair[1].split(',')).collect();
-            let json = format!(r#"{{
-                "run":{run:?},"configuration":{configuration:?},"compiler":{compiler:?},
-                "target":{{"source":{source:?},"name":{name:?},"test":{test}}},
-                "manifest_dir":{manifest_dir:?},"package":{package:?},"artifact_tag":{artifact_tag:?},"crate_types":{crate_types:?},
-                "findings":[],"entities":{{"diagnostics":[],"entities":[],"configuration":""}},"facts":null,"failure":null
-            }}"#);
-            fs::write(Path::new(&env::var_os("ENTITY_NAME_REPORTS").unwrap()).join("stub.json"), json).unwrap();
+    let compiled = args.iter().any(|arg| arg == "--crate-name" || arg.starts_with("--crate-name="))
+        && args.iter().any(|arg| arg.ends_with(".rs") && Path::new(arg).is_file());
+    if !compiled { return ExitCode::SUCCESS; }
+    let prefix = format!("{pid}-");
+    for entry in fs::read_dir(env::var_os("ANALYSIS_REPORTS").unwrap()).unwrap() {
+        let path = entry.unwrap().path();
+        if path.extension().is_none_or(|extension| extension != "json")
+            || !path.file_name().unwrap().to_string_lossy().starts_with(&prefix) { continue; }
+        let mode = executable.file_stem().unwrap().to_string_lossy();
+        let json = fs::read_to_string(&path).unwrap();
+        fs::write(Path::new(__CAPTURE__).join(format!("injected-{mode}-{}", path.file_name().unwrap().to_string_lossy())), &json).unwrap();
+        if mode.starts_with("missing") { fs::remove_file(path).unwrap(); }
+        else {
+            let json = if mode.starts_with("stale") {
+                assert!(json.contains("\"run\":\""));
+                json.replacen("\"run\":\"", "\"run\":\"stale-", 1)
+            } else {
+                let compiler = format!("\"compiler\":{:?}", "__COMPILER__");
+                assert!(json.contains(&compiler));
+                json.replacen(&compiler, "\"compiler\":\"wrong-compiler\"", 1)
+            };
+            fs::write(path, json).unwrap();
         }
     }
     ExitCode::SUCCESS
 }
-"##;
+"#;
     write(
         &root,
         "stub.rs",
-        &source.replace("__COMPILER__", env!("ENTITY_CHECK_COMPILER")),
+        &source
+            .replace(
+                "__DRIVER__",
+                &serde_json::to_string(env!("CARGO_BIN_EXE_check-entity-names-driver")).unwrap(),
+            )
+            .replace(
+                "__CAPTURE__",
+                &serde_json::to_string(&root.to_string_lossy()).unwrap(),
+            )
+            .replace("__COMPILER__", env!("ENTITY_CHECK_COMPILER")),
     );
     let stub = root.join(format!("missing-driver{}", std::env::consts::EXE_SUFFIX));
     let output = Command::new("rustc")
@@ -1026,7 +1028,24 @@ fn main() -> ExitCode {
         "Cannot build fault-injection wrapper: {}",
         String::from_utf8_lossy(&output.stderr)
     );
+    let captured_paths = |mode: &str| -> BTreeSet<PathBuf> {
+        let prefix = format!("injected-{mode}-driver-");
+        fs::read_dir(&root)
+            .unwrap()
+            .map(|entry| entry.unwrap().path())
+            .filter(|path| {
+                path.file_name()
+                    .unwrap()
+                    .to_string_lossy()
+                    .starts_with(&prefix)
+                    && path
+                        .extension()
+                        .is_some_and(|extension| extension == "json")
+            })
+            .collect()
+    };
     for mode in ["missing", "stale", "wrong"] {
+        let before = captured_paths(mode);
         let path = root.join(format!("{mode}-driver{}", std::env::consts::EXE_SUFFIX));
         if path != stub {
             fs::copy(&stub, &path).unwrap();
@@ -1034,6 +1053,21 @@ fn main() -> ExitCode {
         let mut options = Options::new(root.clone());
         options.driver = Some(path);
         let error = workspace::check(&options).unwrap_err();
+        let captures: Vec<_> = captured_paths(mode).difference(&before).cloned().collect();
+        assert!(
+            !captures.is_empty(),
+            "The fault must be injected after a real source compilation"
+        );
+        for captured in captures {
+            let produced: analysis_contract::UnitReport =
+                serde_json::from_slice(&fs::read(captured).unwrap()).unwrap();
+            assert_eq!(
+                produced.schema_version,
+                analysis_contract::ANALYSIS_SCHEMA_VERSION
+            );
+            assert!(produced.analyzed && produced.inputs.complete && produced.failure.is_none());
+            assert_eq!(produced.compiler, env!("ENTITY_CHECK_COMPILER"));
+        }
         assert!(
             error
                 .chain()
@@ -1043,9 +1077,9 @@ fn main() -> ExitCode {
         let message = format!("{error:#}");
         assert!(
             message.contains(if mode == "missing" {
-                "Missing fresh rustc analysis reports"
+                "Missing or ambiguous compiler facts after one package recovery"
             } else {
-                "Stale or incompatible rustc driver report"
+                "Stale or incompatible compiler report"
             }),
             "Unexpected {mode} report result: {message}"
         );

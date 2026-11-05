@@ -6,7 +6,7 @@ assets/audio/sources/*-License.txt -whitespace
 scripts/audio_pipeline.py -text
 # 真实调度 DOT 保留原始字节与上游行尾空白，按普通文本展示差异。
 docs/diagrams/generated/dot/*.dot -text diff whitespace=cr-at-eol,-blank-at-eol
-docs/diagrams/generated/dot/debugdump-manifest.json -diff
+docs/diagrams/generated/dot/debugdump-manifest.json -text -diff
 # 原生调度回归夹具保留导出字节及空白行上的缩进。
 docs/diagrams/tests/fixtures/native-postupdate.dot -text diff whitespace=cr-at-eol,-blank-at-eol
 docs/diagrams/tests/fixtures/native-render.dot -text diff whitespace=cr-at-eol,-blank-at-eol

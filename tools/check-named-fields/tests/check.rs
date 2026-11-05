@@ -4,6 +4,7 @@ use check_named_fields::{
     runner::{self, Options},
 };
 use std::{
+    collections::BTreeSet,
     fs,
     path::PathBuf,
     process::Command,
@@ -359,14 +360,23 @@ fn missing_stale_and_wrong_compiler_reports_fail_closed() {
     let fixture = Fixture::new();
     fixture.write("src/lib.rs", "pub fn noop() {}\n");
     fixture.package();
-    let source = r#"use std::{env, fs, path::PathBuf, process::{Command, ExitCode}};
+    let source = r#"use std::{env, fs, path::Path, process::{Command, ExitCode}};
 fn main() -> ExitCode {
     let args: Vec<_> = env::args().skip(1).collect();
+    let executable = env::current_exe().unwrap();
+    let nested = args.first().and_then(|program| fs::canonicalize(program).ok()) == Some(executable.canonicalize().unwrap());
+    if nested {
+        let status = Command::new(&args[0]).args(&args[1..]).status().unwrap();
+        return if status.success() { ExitCode::SUCCESS } else { ExitCode::from(2) };
+    }
     let mut child = Command::new(__DRIVER__).args(&args).spawn().unwrap();
     let pid = child.id();
     let status = child.wait().unwrap();
     if !status.success() { return ExitCode::from(2); }
-    let directory = PathBuf::from(env::var_os("NAMED_FIELDS_REPORTS").unwrap());
+    let compiled = args.iter().any(|arg| arg == "--crate-name" || arg.starts_with("--crate-name="))
+        && args.iter().any(|arg| arg.ends_with(".rs") && Path::new(arg).is_file());
+    if !compiled { return ExitCode::SUCCESS; }
+    let directory = env::var_os("ANALYSIS_REPORTS").unwrap();
     let prefix = format!("{pid}-");
     for entry in fs::read_dir(directory).unwrap() {
         let path = entry.unwrap().path();
@@ -374,9 +384,22 @@ fn main() -> ExitCode {
             || !path.file_name().unwrap().to_string_lossy().starts_with(&prefix) {
             continue;
         }
-        let mode = env::current_exe().unwrap().file_stem().unwrap().to_string_lossy().into_owned();
-        if mode.starts_with("missing") { if args.iter().any(|arg| arg == "--test") { fs::remove_file(path).unwrap(); } }
-        else { let json = fs::read_to_string(&path).unwrap(); let json = if mode.starts_with("stale") { json.replace("\"run\":\"", "\"run\":\"stale-") } else { json.replace("__COMPILER__", "wrong-compiler") }; fs::write(path, json).unwrap(); }
+        let mode = executable.file_stem().unwrap().to_string_lossy();
+        if mode.starts_with("missing") && !args.iter().any(|arg| arg == "--test") { continue; }
+        let json = fs::read_to_string(&path).unwrap();
+        fs::write(Path::new(__CAPTURE__).join(format!("injected-{mode}-{}", path.file_name().unwrap().to_string_lossy())), &json).unwrap();
+        if mode.starts_with("missing") { fs::remove_file(path).unwrap(); }
+        else {
+            let json = if mode.starts_with("stale") {
+                assert!(json.contains("\"run\":\""));
+                json.replacen("\"run\":\"", "\"run\":\"stale-", 1)
+            } else {
+                let compiler = format!("\"compiler\":{:?}", "__COMPILER__");
+                assert!(json.contains(&compiler));
+                json.replacen(&compiler, "\"compiler\":\"wrong-compiler\"", 1)
+            };
+            fs::write(path, json).unwrap();
+        }
     }
     ExitCode::SUCCESS
 }
@@ -387,6 +410,10 @@ fn main() -> ExitCode {
             .replace(
                 "__DRIVER__",
                 &serde_json::to_string(env!("CARGO_BIN_EXE_check-named-fields-driver")).unwrap(),
+            )
+            .replace(
+                "__CAPTURE__",
+                &serde_json::to_string(&fixture.root.to_string_lossy()).unwrap(),
             )
             .replace("__COMPILER__", env!("NAMED_FIELDS_RUSTC")),
     );
@@ -405,7 +432,24 @@ fn main() -> ExitCode {
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
+    let captured_paths = |mode: &str| -> BTreeSet<PathBuf> {
+        let prefix = format!("injected-{mode}-");
+        fs::read_dir(&fixture.root)
+            .unwrap()
+            .map(|entry| entry.unwrap().path())
+            .filter(|path| {
+                path.file_name()
+                    .unwrap()
+                    .to_string_lossy()
+                    .starts_with(&prefix)
+                    && path
+                        .extension()
+                        .is_some_and(|extension| extension == "json")
+            })
+            .collect()
+    };
     for mode in ["missing", "stale", "wrong"] {
+        let before = captured_paths(mode);
         let driver = fixture
             .root
             .join(format!("{mode}{}", std::env::consts::EXE_SUFFIX));
@@ -413,10 +457,31 @@ fn main() -> ExitCode {
         let mut options = fixture.options();
         options.driver = Some(driver);
         let error = runner::check(&options).unwrap_err();
+        let captures: Vec<_> = captured_paths(mode).difference(&before).cloned().collect();
+        assert!(
+            !captures.is_empty(),
+            "The fault must be injected after a real source compilation"
+        );
+        for captured in captures {
+            let produced: analysis_contract::UnitReport =
+                serde_json::from_slice(&fs::read(captured).unwrap()).unwrap();
+            assert_eq!(
+                produced.schema_version,
+                analysis_contract::ANALYSIS_SCHEMA_VERSION
+            );
+            assert!(produced.analyzed && produced.inputs.complete && produced.failure.is_none());
+            assert_eq!(produced.compiler, env!("NAMED_FIELDS_RUSTC"));
+        }
+        assert!(
+            error
+                .chain()
+                .all(|cause| cause.downcast_ref::<serde_json::Error>().is_none()),
+            "A valid v2 report must reach provenance validation: {error:#}"
+        );
         let text = format!("{error:#}");
         assert!(
             text.contains(if mode == "missing" {
-                "compilation reports"
+                "Missing or ambiguous compiler facts after one package recovery"
             } else {
                 "Stale or incompatible compiler report"
             }),

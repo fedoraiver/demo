@@ -45,6 +45,7 @@ test('plan is read-only without npm dependencies; validates real DOT content and
   const plan = await planMaintenance({ workspace: f.workspace, debugdumpDirectory: 'docs/diagrams/generated/dot' });
   assert.equal(plan.dependencies.valid, false);
   assert.equal(plan.debugdump.valid, true);
+  assert.deepEqual(plan.manual, { svg: 'skipped-by-default', browser: 'not-required', protocol: 'not-required' });
   assert.deepEqual(plan.stages.map(stage => stage.id), ['dependencies', 'extract', 'model', 'preflight', 'build', 'check', 'test']);
   assert.equal(plan.stages.find(stage => stage.id === 'extract').action, 'extract');
   assert.deepEqual(fileSnapshot(f.workspace, ['.']), before);
@@ -59,7 +60,7 @@ test('real child records argv, PID, timestamps, exit and raw streams; unchanged 
   const f = fixture(t), stages = pipeline();
   const first = await runMaintenance({ workspace: f.workspace, pipeline: stages });
   assert.equal(first.status, 'passed');
-  assert.deepEqual(first.manual, { svg: 'pending', browser: 'pending', protocol: 'pending' });
+  assert.deepEqual(first.manual, { svg: 'skipped-by-default', browser: 'not-required', protocol: 'not-required' });
   for (const record of first.stages) {
     assert.equal(record.command, process.execPath);
     assert.ok(record.pid > 0);
@@ -76,7 +77,48 @@ test('real child records argv, PID, timestamps, exit and raw streams; unchanged 
   assert.equal(resumed.stages.length, 2);
   assert.equal(fs.readFileSync(path.join(f.workspace, 'executions.txt'), 'utf8'), 'produce\nverify\n');
   assert.equal((await maintenanceStatus({ workspace: f.workspace })).status, 'passed');
-  assert.match(await maintenanceReport({ workspace: f.workspace, format: 'markdown' }), /待实际执行/);
+  const report = await maintenanceReport({ workspace: f.workspace, format: 'markdown' });
+  assert.match(report, /SVG 目测 skipped-by-default/);
+  assert.match(report, /HTTP／浏览器与 VS Code 协议无需验收（not-required）/);
+  assert.doesNotMatch(report, /待实际执行/);
+});
+
+test('not-started status and reports use the current manual acceptance policy', async t => {
+  const f = fixture(t);
+  const status = await maintenanceStatus({ workspace: f.workspace });
+  assert.equal(status.status, 'not-started');
+  assert.deepEqual(status.manual, { svg: 'skipped-by-default', browser: 'not-required', protocol: 'not-required' });
+  assert.deepEqual((await maintenanceReport({ workspace: f.workspace })).manual, status.manual);
+  const report = await maintenanceReport({ workspace: f.workspace, format: 'markdown' });
+  assert.match(report, /HTTP／浏览器与 VS Code 协议无需验收（not-required）/);
+  assert.doesNotMatch(report, /待实际执行/);
+  assert.equal(fs.existsSync(path.join(f.workspace, 'tmp')), false);
+});
+
+test('legacy report projection preserves historical bytes and persists current manual policy on resume', async t => {
+  const f = fixture(t), stages = pipeline();
+  const first = await runMaintenance({ workspace: f.workspace, pipeline: stages });
+  const filename = path.join(f.workspace, 'tmp/ecs-architecture/maintenance', first.runId, 'state.json');
+  for (const [manual, svg] of [
+    [undefined, 'skipped-by-default'],
+    [{ svg: 'pending', browser: 'pending', protocol: 'pending' }, 'skipped-by-default'],
+    [{ svg: 'passed', browser: 'passed', protocol: 'passed' }, 'passed'],
+  ]) {
+    const bytes = JSON.stringify({ ...first, manual });
+    fs.writeFileSync(filename, bytes);
+    const status = await maintenanceStatus({ workspace: f.workspace, runId: first.runId });
+    assert.deepEqual(status.manual, { svg, browser: 'not-required', protocol: 'not-required' });
+    assert.deepEqual((await maintenanceReport({ workspace: f.workspace, runId: first.runId })).manual, status.manual);
+    const report = await maintenanceReport({ workspace: f.workspace, runId: first.runId, format: 'markdown' });
+    assert.match(report, /HTTP／浏览器与 VS Code 协议无需验收（not-required）/);
+    assert.doesNotMatch(report, /待实际执行/);
+    assert.equal(fs.readFileSync(filename, 'utf8'), bytes);
+  }
+  fs.writeFileSync(filename, JSON.stringify({ ...first, manual: { svg: 'pending', browser: 'pending', protocol: 'pending' } }));
+  const resumed = await runMaintenance({ workspace: f.workspace, resume: first.runId, pipeline: stages });
+  assert.deepEqual(resumed.manual, { svg: 'skipped-by-default', browser: 'not-required', protocol: 'not-required' });
+  assert.deepEqual(JSON.parse(fs.readFileSync(filename, 'utf8')).manual, resumed.manual);
+  assert.equal(resumed.stages.length, first.stages.length);
 });
 
 test('changing input invalidates producer and every downstream stage; HEAD metadata cannot reuse it', async t => {
