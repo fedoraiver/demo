@@ -40,7 +40,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**Dialog**<br/>标识浮动或模态对话框。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
+  n1@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已移除浮动对话框的栈登记。" }
   class n1 node_observer
   n2@{ shape: hex, label: "**dialog​_​drag​_​start**<br/>记录对话框拖动开始位置。" }
   class n2 node_observer
@@ -62,9 +62,9 @@ flowchart LR
   class n10 node_observer
   n11@{ shape: hex, label: "**bring​_​to​_​front**<br/>将被操作的浮动对话框提到前方。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
+  n12@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已移除浮动对话框的栈登记。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
+  n13@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已移除浮动对话框的栈登记。" }
   class n13 node_observer
   n14@{ shape: hex, label: "**dialog​_​drag**<br/>按累计拖动距离移动对话框。" }
   class n14 node_observer

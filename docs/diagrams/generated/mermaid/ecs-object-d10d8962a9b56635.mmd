@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: window::PrimaryWindow · 对象关系
+  accTitle: bevy::bevy_window::PrimaryWindow · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -92,7 +92,7 @@ flowchart LR
   n17@{ shape: rounded, label: "**listen​_​for​_​ime​_​input​_​when​_​text​_​**<br/>**input​_​focused**<br/>来自crate:bevy​_​ui​_​widgets ↗：按可编<br/>辑焦点控制主窗口输入法。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
+  n18@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：将当前可访问<br/>性树同步给已激活的原生适配器。" }
   class n18 node_system
   class n18 external_node
   n19@{ shape: rounded, label: "**rebuild​_​page**<br/>来自ui ↗：只在页面结构或视口变化时重<br/>建；数值、提示与焦点变化保留现有滚动控<br/>件。" }

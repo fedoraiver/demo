@@ -46,7 +46,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**update​_​is​_​hovered**<br/>把鼠标悬停传播到实体祖先。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**Hovered**<br/>记录实体当前是否被任一指针悬停。" }
+  n1@{ shape: rounded, label: "**Hovered**<br/>记录自身或后代的鼠标悬停状态。" }
   class n1 node_component
   n2@{ shape: cyl, label: "**HoverMap**<br/>保存各指针当前可交互的悬停目标。" }
   class n2 node_resource

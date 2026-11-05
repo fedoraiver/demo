@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: dynamics::rigid_body::AngularVelocity · 对象关系
+  accTitle: avian3d::prelude::AngularVelocity · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -128,7 +128,7 @@ flowchart LR
   end
   style layout_card_n14 fill:none,stroke:none
   subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**update​_​previous​_​velocity**<br/>更新平滑显示所需的历史速度快照。" }
+  n15@{ shape: rounded, label: "**update​_​previous​_​velocity**<br/>更新物理步起始的线速度与角速度快照。" }
   class n15 node_system
   end
   style layout_card_n15 fill:none,stroke:none

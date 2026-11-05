@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: bevy_ecs::hierarchy::Children · 对象关系
+  accTitle: bevy::bevy_ecs::hierarchy::Children · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -194,7 +194,7 @@ flowchart LR
   n51@{ shape: rounded, label: "**button​_​changed**<br/>来自crate:bevy​_​ui ↗：为按钮生成或更新<br/>无障碍角色与文本标签。" }
   class n51 node_system
   class n51 external_node
-  n52@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
+  n52@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：将当前可访问<br/>性树同步给已激活的原生适配器。" }
   class n52 node_system
   class n52 external_node
   n53@{ shape: hex, label: "**radio​_​group​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过键<br/>盘请求更改单选组选项。" }

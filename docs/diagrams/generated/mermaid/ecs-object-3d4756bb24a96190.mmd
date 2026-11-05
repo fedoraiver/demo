@@ -61,7 +61,7 @@ flowchart LR
   class n4 external_node
   n5@{ shape: lean-r, label: "**StateTransitionEvent#lt;AppState#gt;**<br/>通知状态离开和进入的变化。" }
   class n5 node_message
-  n6@{ shape: lin-rect, label: "**ExitSchedules(PhantomData#lt;AppState#gt;)**<br/>执行旧状态的退出调度和退出生命周期。" }
+  n6@{ shape: lin-rect, label: "**ExitSchedules(PhantomData#lt;AppState#gt;)**<br/>执行指定状态旧值的退出调度。" }
   class n6 node_system_set
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write

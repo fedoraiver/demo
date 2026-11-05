@@ -37,7 +37,7 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**LastDynamicKinematicAabbUpdate**<br/>记录动态与运动学 AABB 更新刻度。" }
+  n0@{ shape: cyl, label: "**LastDynamicKinematicAabbUpdate**<br/>记录活跃刚体 AABB 更新的完成刻度。" }
   class n0 node_resource
   n1@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
   class n1 node_system

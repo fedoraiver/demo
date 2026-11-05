@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: bevy_ecs::lifecycle::RemoveEvent · 对象关系
+  accTitle: bevy::bevy_ecs::lifecycle::RemoveEvent · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
@@ -102,7 +102,7 @@ flowchart LR
   n21@{ shape: hex, label: "**unregister​_​modifier**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入修饰器的处理入口。" }
   class n21 node_observer
   class n21 external_node
-  n22@{ shape: hex, label: "**deregister​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>销毁对话框的栈登记。" }
+  n22@{ shape: hex, label: "**deregister​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>移除浮动对话框的栈登记。" }
   class n22 node_observer
   class n22 external_node
   n23@{ shape: hex, label: "**build::{closure#35;0}**<br/>来自crate:avian3d ↗：为重新启用刚体补<br/>建求解器体。" }
@@ -198,7 +198,7 @@ flowchart LR
   n53@{ shape: hex, label: "**on​_​remove​_​checked**<br/>来自crate:bevy​_​ui ↗：同步无障碍节点的<br/>未勾选状态。" }
   class n53 node_observer
   class n53 external_node
-  n54@{ shape: hex, label: "**remove​_​body​_​on**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>接触图记录。" }
+  n54@{ shape: hex, label: "**remove​_​body​_​on**<br/>来自crate:avian3d ↗：在刚体插入或移除<br/>时清理旧接触。" }
   class n54 node_observer
   class n54 external_node
   n55@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
@@ -291,7 +291,7 @@ flowchart LR
   n84@{ shape: hex, label: "**unregister​_​condition**<br/>来自crate:bevy​_​enhanced​_​input ↗：清<br/>除已移除输入条件的求值入口。" }
   class n84 node_observer
   class n84 external_node
-  n85@{ shape: hex, label: "**deregister​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>销毁对话框的栈登记。" }
+  n85@{ shape: hex, label: "**deregister​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>移除浮动对话框的栈登记。" }
   class n85 node_observer
   class n85 external_node
   n86@{ shape: hex, label: "**reset​_​action**<br/>来自crate:bevy​_​enhanced​_​input ↗：重<br/>置离开上下文的输入动作状态。" }
@@ -351,7 +351,7 @@ flowchart LR
   n104@{ shape: hex, label: "**remove​_​light​_​view​_​entities**<br/>来自crate:bevy​_​pbr ↗：清理平行光创建<br/>的渲染视图实体。" }
   class n104 node_observer
   class n104 external_node
-  n105@{ shape: hex, label: "**deregister​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>销毁对话框的栈登记。" }
+  n105@{ shape: hex, label: "**deregister​_​dialog**<br/>来自crate:bevy​_​ui​_​widgets ↗：清理已<br/>移除浮动对话框的栈登记。" }
   class n105 node_observer
   class n105 external_node
   n106@{ shape: hex, label: "**on​_​remove​_​selectable**<br/>来自crate:bevy​_​ui ↗：清除已不可选择控<br/>件的无障碍属性。" }

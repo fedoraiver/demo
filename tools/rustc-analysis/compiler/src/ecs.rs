@@ -1,12 +1,8 @@
 //! 从 rustc 的声明、类型检查结果和 MIR 提取事实；显示名不参与身份解析。
-use crate::identity::{BehaviorHashContext, Identities};
+use crate::identity::Identities;
 use analysis_contract::facts::*;
 use anyhow::Result;
 use rustc_ast::{BinOpKind, attr::AttributeExt};
-use rustc_data_structures::{
-    fingerprint::Fingerprint,
-    stable_hash::{StableHash, StableHasher},
-};
 use rustc_hir::{
     Expr, ExprKind, UnOp,
     def::DefKind,
@@ -110,7 +106,6 @@ pub fn extract_with_origins(
         source_fingerprints: HashMap::new(),
         hir_call_conditions: HashMap::new(),
         hir_operation_templates: HashMap::new(),
-        hir_behavior_hashes: HashMap::new(),
         facts: UnitFacts {
             schema_version: FACT_SCHEMA_VERSION,
             crate_name: tcx.crate_name(LOCAL_CRATE).to_string(),
@@ -133,6 +128,8 @@ pub fn extract_with_origins(
             .map(|(path, sha256)| SourceFile { path, sha256 })
             .collect();
         collector.facts.behavior_hash = format!("{:?}", collector.identities.owning_behavior());
+        collector.facts.purpose_inventory = crate::purpose::collect(&collector.identities);
+        collector.facts.gaps.extend(collector.identities.gaps());
         return Ok(collector.facts);
     }
     // HIR 是当前 crate 的真实声明，不扫描未加载的目录或未启用的文件。
@@ -150,6 +147,7 @@ pub fn extract_with_origins(
             collector.type_id(ty, env, 0);
         }
     }
+    let mut purpose_bodies = vec![];
     for owner in tcx.hir_body_owners() {
         let id = owner.to_def_id();
         collector.generic_owner = id;
@@ -178,13 +176,14 @@ pub fn extract_with_origins(
             collector: &mut collector,
             types,
             env,
-            owner: callable,
+            owner: callable.clone(),
             definition: id,
             deferred: false,
             existence_check: false,
             conditions: vec![],
         }
         .visit_body(body);
+        purpose_bodies.push((id, callable));
         if !args.has_non_region_param() {
             collector
                 .pending
@@ -192,6 +191,9 @@ pub fn extract_with_origins(
         }
     }
     collector.index_hir_templates();
+    for (definition, callable) in purpose_bodies {
+        collector.audit_purpose_body(definition, &callable);
+    }
     collector.seed_native_system_instances();
     collector.collect_mir_instances();
     collector.collect_entity_templates()?;
@@ -209,6 +211,7 @@ pub fn extract_with_origins(
     collector.facts.types = collector.types.into_values().collect();
     collector.facts.callables = collector.callables.into_values().collect();
     collector.facts.behavior_hash = format!("{:?}", collector.identities.owning_behavior());
+    collector.facts.purpose_inventory = crate::purpose::collect(&collector.identities);
     collector.facts.gaps.extend(collector.identities.gaps());
     sort_facts(&mut collector.facts);
     compact_source_previews(&mut collector.facts);
@@ -256,7 +259,7 @@ fn compact_source_previews(facts: &mut UnitFacts) {
             source(evidence);
         }
     }
-    for call in &mut facts.calls {
+    for call in facts.calls.iter_mut().chain(facts.purpose_calls.iter_mut()) {
         optional(&mut call.source);
     }
     for entity in &mut facts.entities {
@@ -298,22 +301,28 @@ fn sort_facts(facts: &mut UnitFacts) {
     });
     facts.operations.sort_by(|a, b| a.id.cmp(&b.id));
     facts.operations.dedup_by(|a, b| a.id == b.id);
-    facts.calls.sort_by_key(|fact| {
-        (
-            fact.caller.clone(),
-            fact.callee.clone(),
-            fact.source
-                .as_ref()
-                .map(|s| (s.path.clone(), s.line, s.column)),
-        )
-    });
-    facts.calls.dedup_by(|a, b| {
-        a.caller == b.caller
-            && a.callee == b.callee
-            && a.source == b.source
-            && a.deferred == b.deferred
-            && a.conditions == b.conditions
-    });
+    for calls in [&mut facts.calls, &mut facts.purpose_calls] {
+        calls.sort_by_key(|fact| {
+            (
+                fact.caller.clone(),
+                fact.callee.clone(),
+                fact.declaration.clone(),
+                fact.unresolved_reason.clone(),
+                fact.source
+                    .as_ref()
+                    .map(|s| (s.path.clone(), s.line, s.column)),
+            )
+        });
+        calls.dedup_by(|a, b| {
+            a.caller == b.caller
+                && a.callee == b.callee
+                && a.declaration == b.declaration
+                && a.unresolved_reason == b.unresolved_reason
+                && a.source == b.source
+                && a.deferred == b.deferred
+                && a.conditions == b.conditions
+        });
+    }
     facts.entities.sort_by(|a, b| a.id.cmp(&b.id));
     facts.entities.dedup_by(|a, b| a.id == b.id);
     facts
@@ -337,7 +346,6 @@ struct Collector<'tcx> {
     source_fingerprints: HashMap<String, Option<(String, String)>>,
     hir_call_conditions: HashMap<HirSiteKey, Vec<SourceEvidence>>,
     hir_operation_templates: HashMap<HirSiteKey, HirOperationTemplate>,
-    hir_behavior_hashes: HashMap<rustc_hir::OwnerId, (Fingerprint, bool)>,
     facts: UnitFacts,
     pending: VecDeque<(Instance<'tcx>, usize)>,
     mir_seen: HashSet<Instance<'tcx>>,
@@ -638,30 +646,17 @@ impl<'tcx> Collector<'tcx> {
         let behavior_hash = id
             .as_local()
             .filter(|_| self.tcx.def_kind(id) != DefKind::SyntheticCoroutineBody)
-            .and_then(|local| {
-                let owner = self.tcx.local_def_id_to_hir_id(local).owner;
-                if let Some(fingerprint) = self.hir_behavior_hashes.get(&owner) {
-                    return Some(*fingerprint);
-                }
-                let nodes = self.tcx.hir_owner_nodes(owner);
-                if matches!(nodes.node(), rustc_hir::OwnerNode::Synthetic) {
-                    return None;
-                }
-                let mut context =
-                    BehaviorHashContext::new(&self.identities, owner.def_id.to_def_id());
-                let mut hasher = StableHasher::new();
-                nodes.node().stable_hash(&mut context, &mut hasher);
-                nodes.bodies.stable_hash(&mut context, &mut hasher);
-                context.hash_body_dependencies(owner, &mut hasher);
-                let fingerprint: Fingerprint = hasher.finish();
-                let evidence = (fingerprint, context.unresolved_behavior());
-                self.hir_behavior_hashes.insert(owner, evidence);
-                Some(evidence)
-            });
+            .and_then(|local| self.identities.local_behavior(local));
         // 本地按展开后的 HIR（包括 body、不含物理跨度）校验描述；移动行号不改变行为证据。
         // 外部优先用完整文件 SHA，源码不可读时用 rustc 的整 crate 内容哈希，均不只依赖名称跨度。
-        let unresolved_behavior = behavior_hash.is_some_and(|(_, unresolved)| unresolved);
-        let evidence_hash = if let Some((behavior_hash, _)) = behavior_hash {
+        let unresolved_behavior = behavior_hash
+            .as_ref()
+            .is_some_and(|(_, unresolved, _)| *unresolved);
+        let purpose_dependencies = behavior_hash
+            .as_ref()
+            .map(|(_, _, dependencies)| dependencies.clone())
+            .unwrap_or_default();
+        let evidence_hash = if let Some((behavior_hash, _, _)) = behavior_hash {
             digest(serde_json::to_vec(&(format!("{behavior_hash:?}"), &full_name, &docs)).unwrap())
         } else if source
             .as_ref()
@@ -702,6 +697,7 @@ impl<'tcx> Collector<'tcx> {
                 docs,
                 evidence_hash,
                 unresolved_behavior,
+                purpose_dependencies,
             },
         );
         key
@@ -1507,6 +1503,93 @@ impl<'tcx> Collector<'tcx> {
         });
     }
 
+    fn opaque_call(&mut self, caller: &str, kind: &str, reason: &str, span: Span) {
+        let source = self.source(span, "call");
+        self.gap(caller, kind, reason, source.clone());
+        self.facts.purpose_calls.push(CallFact {
+            caller: caller.into(),
+            callee: None,
+            declaration: None,
+            unresolved_reason: Some(kind.into()),
+            source,
+            deferred: false,
+            conditions: vec![],
+        });
+    }
+
+    /// HIR 遍历本身不覆盖析构与运算符降级；泛型 body 也须审计原生 MIR 才能认证闭包。
+    fn audit_purpose_body(&mut self, definition: DefId, caller: &str) {
+        if !self.tcx.is_mir_available(definition) {
+            let source = self.source(self.tcx.def_span(definition), "definition");
+            self.gap(
+                caller,
+                "missing-body",
+                "本地 HIR 函数没有可供用途闭包审计的 MIR，不能认证完整行为。",
+                source,
+            );
+            return;
+        }
+        self.generic_owner = definition;
+        let body = self.tcx.optimized_mir(definition);
+        let env = TypingEnv::post_analysis(self.tcx, definition);
+        for block in body.basic_blocks.iter() {
+            let terminator = block.terminator();
+            match &terminator.kind {
+                TerminatorKind::Drop { .. } => self.opaque_call(
+                    caller,
+                    "implicit-drop",
+                    "MIR 包含隐式析构；未精确解析 drop glue 及其实现，局部用途证据不完整。",
+                    terminator.source_info.span,
+                ),
+                TerminatorKind::InlineAsm { .. } => self.opaque_call(
+                    caller,
+                    "inline-assembly",
+                    "内联汇编的调用与符号行为未建模，不能认证局部用途闭包。",
+                    terminator.source_info.span,
+                ),
+                TerminatorKind::Call { func, .. } | TerminatorKind::TailCall { func, .. } => {
+                    let ty = func.ty(&body.local_decls, self.tcx);
+                    if let ty::FnDef(id, args) = ty.kind() {
+                        let args = self.tcx.instantiate_bound_regions_with_erased(*args);
+                        let resolution = self.resolve_instance(*id, args, env);
+                        let resolved = resolution.ok();
+                        let callee = resolved
+                            .map(|instance| self.callable(instance.def_id(), instance.args, env));
+                        let declaration =
+                            self.declaration(resolved.map_or(*id, |instance| instance.def_id()));
+                        let source = self.source(terminator.source_info.span, "call");
+                        if let Err(failure) = resolution {
+                            self.gap(caller, failure.kind(), failure.reason(), source.clone());
+                        }
+                        self.facts.purpose_calls.push(CallFact {
+                            caller: caller.into(),
+                            callee,
+                            declaration: Some(declaration),
+                            unresolved_reason: resolution
+                                .err()
+                                .map(|failure| failure.kind().into()),
+                            source,
+                            deferred: false,
+                            conditions: vec![],
+                        });
+                    } else {
+                        self.opaque_call(
+                            caller,
+                            "dynamic-call",
+                            "MIR 调用目标为函数指针或其他擦除类型，不能证明其实际实现。",
+                            terminator.source_info.span,
+                        );
+                    }
+                }
+                _ => {}
+            }
+        }
+        self.callables
+            .get_mut(caller)
+            .expect("Audited HIR callable must exist")
+            .body_analyzed = true;
+    }
+
     fn collect_mir_instances(&mut self) {
         while let Some((instance, depth)) = self.pending.pop_front() {
             if matches!(instance.def, ty::InstanceKind::Virtual(..)) {
@@ -1557,6 +1640,14 @@ impl<'tcx> Collector<'tcx> {
                 }
             }
             for block in body.basic_blocks.iter() {
+                if matches!(block.terminator().kind, TerminatorKind::Drop { .. }) {
+                    self.opaque_call(
+                        &caller,
+                        "implicit-drop",
+                        "MIR 包含隐式析构；未精确解析 drop glue 及其实现，局部用途证据不完整。",
+                        block.terminator().source_info.span,
+                    );
+                }
                 for statement in &block.statements {
                     let place = match &statement.kind {
                         StatementKind::Assign(assignment) => assignment.0,
@@ -1619,6 +1710,9 @@ impl<'tcx> Collector<'tcx> {
                             caller: caller.clone(),
                             callee,
                             declaration: Some(declaration),
+                            unresolved_reason: resolution
+                                .err()
+                                .map(|failure| failure.kind().into()),
                             source,
                             deferred: false,
                             conditions,
@@ -1640,6 +1734,23 @@ impl<'tcx> Collector<'tcx> {
                         {
                             self.pending.push_back((next, depth + 1));
                         }
+                    } else {
+                        let source = self.source(block.terminator().source_info.span, "call");
+                        self.gap(
+                            &caller,
+                            "dynamic-call",
+                            "MIR 调用目标为函数指针或其他擦除类型，不能证明其实际实现。",
+                            source.clone(),
+                        );
+                        self.facts.purpose_calls.push(CallFact {
+                            caller: caller.clone(),
+                            callee: None,
+                            declaration: None,
+                            unresolved_reason: Some("dynamic-call".into()),
+                            source,
+                            deferred: false,
+                            conditions: vec![],
+                        });
                     }
                 }
             }
@@ -2312,6 +2423,7 @@ impl<'tcx> BodyVisitor<'_, 'tcx> {
             caller: self.owner.clone(),
             callee: callable,
             declaration: Some(target_declaration),
+            unresolved_reason: resolution.err().map(|failure| failure.kind().into()),
             source: source.clone(),
             deferred: self.deferred,
             conditions: self.conditions.clone(),
@@ -2423,6 +2535,7 @@ impl<'tcx> BodyVisitor<'_, 'tcx> {
                             caller: self.owner.clone(),
                             callee: Some(target),
                             declaration: Some(target_declaration),
+                            unresolved_reason: None,
                             source: source.clone(),
                             deferred: true,
                             conditions: self.conditions.clone(),
@@ -2543,9 +2656,36 @@ impl<'tcx> Visitor<'tcx> for BodyVisitor<'_, 'tcx> {
                         &self.owner,
                         "dynamic-call",
                         "动态调用的目标未能唯一解析，未推断其副作用。",
-                        source,
+                        source.clone(),
                     );
+                    self.collector.facts.calls.push(CallFact {
+                        caller: self.owner.clone(),
+                        callee: None,
+                        declaration: None,
+                        unresolved_reason: Some("dynamic-call".into()),
+                        source,
+                        deferred: self.deferred,
+                        conditions: self.conditions.clone(),
+                    });
                 }
+            }
+            ExprKind::InlineAsm(..) => {
+                let source = self.collector.source(expr.span, "call");
+                self.collector.gap(
+                    &self.owner,
+                    "inline-assembly",
+                    "内联汇编的调用与符号行为未建模，不能认证局部用途闭包。",
+                    source.clone(),
+                );
+                self.collector.facts.calls.push(CallFact {
+                    caller: self.owner.clone(),
+                    callee: None,
+                    declaration: None,
+                    unresolved_reason: Some("inline-assembly".into()),
+                    source,
+                    deferred: self.deferred,
+                    conditions: self.conditions.clone(),
+                });
             }
             ExprKind::Assign(left, _, _) | ExprKind::AssignOp(_, left, _) => {
                 self.collector

@@ -20,6 +20,191 @@ struct OriginExtractor {
     origins: Vec<analysis_contract::PackageOrigin>,
 }
 
+fn purpose_inventory_fixture(name: &str, source_text: &str, metadata: &str) -> UnitFacts {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../tmp/rustc-analysis/fixtures/purpose-inventory")
+        .join(name);
+    fs::create_dir_all(&root).unwrap();
+    let source = root.join("lib.rs");
+    fs::write(&source, source_text).unwrap();
+    let compiler = Command::new("rustc")
+        .args(["--print", "sysroot"])
+        .output()
+        .unwrap();
+    assert!(compiler.status.success());
+    let arguments = vec![
+        "rustc".into(),
+        source.to_string_lossy().into_owned(),
+        format!("--crate-name={name}"),
+        "--crate-type=lib".into(),
+        "--edition=2024".into(),
+        "--sysroot".into(),
+        String::from_utf8(compiler.stdout).unwrap().trim().into(),
+        "--out-dir".into(),
+        root.to_string_lossy().into_owned(),
+        "-Zalways-encode-mir".into(),
+        "-Zmir-opt-level=0".into(),
+        format!("-Cmetadata={metadata}"),
+    ];
+    let mut extractor = Extractor { facts: None };
+    rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
+    extractor.facts.unwrap()
+}
+
+#[test]
+fn purpose_inventory_separates_local_hashes_from_trait_defaults_impls_and_helpers() {
+    let mut versions = vec![];
+    for (helper, required, unrelated, metadata, blank_lines) in [
+        (1, 2, 3, "a", 0),
+        (1, 2, 7, "a", 0),
+        (9, 2, 3, "a", 0),
+        (1, 8, 3, "a", 0),
+        (1, 2, 3, "b", 3),
+    ] {
+        let source = format!(
+            "{}pub mod component {{ pub trait Component {{}} }}\nconst fn helper() -> u32 {{ {helper} }}\npub trait Named {{ const VALUE: u32 = Self::REQUIRED + helper(); const REQUIRED: u32; }}\npub trait Other {{ const VALUE: u32; }}\npub struct Marker;\nimpl Named for Marker {{ const REQUIRED: u32 = {required}; }}\nimpl Other for Marker {{ const VALUE: u32 = {unrelated}; }}\npub fn generic<T: Named>() -> u32 {{ T::VALUE }}\n",
+            "\n".repeat(blank_lines)
+        );
+        versions.push(purpose_inventory_fixture("bevy_ecs", &source, metadata));
+    }
+    let generic = |facts: &UnitFacts| {
+        facts
+            .declarations
+            .iter()
+            .find(|d| d.full_name == "bevy_ecs::generic")
+            .unwrap()
+            .clone()
+    };
+    let baseline = generic(&versions[0]);
+    assert!(!baseline.unresolved_behavior);
+    assert_eq!(baseline.purpose_dependencies.len(), 1);
+    for facts in &versions[1..] {
+        let current = generic(facts);
+        assert_eq!(
+            baseline.evidence_hash, current.evidence_hash,
+            "Unresolved impl candidates do not enter the local HIR hash"
+        );
+        assert_eq!(baseline.purpose_dependencies, current.purpose_dependencies);
+    }
+    let dependency = &baseline.purpose_dependencies[0];
+    let default = |facts: &UnitFacts| {
+        facts
+            .purpose_inventory
+            .traits
+            .iter()
+            .find(|t| t.trait_id == dependency.trait_id)
+            .unwrap()
+            .members
+            .iter()
+            .find(|m| m.member_id == dependency.member_id)
+            .unwrap()
+            .clone()
+    };
+    let original = default(&versions[0]);
+    assert!(original.has_value);
+    assert_eq!(
+        original.dependencies.len(),
+        1,
+        "The default retains its dependency on Self::REQUIRED"
+    );
+    assert_ne!(
+        original.evidence_hash,
+        default(&versions[2]).evidence_hash,
+        "The actual const helper body is part of default evidence"
+    );
+    assert_eq!(original.evidence_hash, default(&versions[1]).evidence_hash);
+    assert_eq!(
+        original.evidence_hash,
+        default(&versions[4]).evidence_hash,
+        "Metadata and line movement preserve portable default evidence"
+    );
+    let implementation_member = |facts: &UnitFacts| {
+        facts
+            .purpose_inventory
+            .implementations
+            .iter()
+            .find(|i| i.trait_id == dependency.trait_id)
+            .unwrap()
+            .members[0]
+            .clone()
+    };
+    let required = implementation_member(&versions[0]);
+    assert!(required.has_value && required.implementation_member_id.is_some());
+    assert_eq!(required.member_id, original.dependencies[0].member_id);
+    assert_ne!(
+        required.evidence_hash,
+        implementation_member(&versions[3]).evidence_hash
+    );
+    assert_eq!(
+        required.evidence_hash,
+        implementation_member(&versions[1]).evidence_hash
+    );
+    let definition = versions[0]
+        .purpose_inventory
+        .traits
+        .iter()
+        .find(|t| t.trait_id == dependency.trait_id)
+        .unwrap();
+    let missing_default = definition
+        .members
+        .iter()
+        .find(|m| m.member_id == required.member_id)
+        .unwrap();
+    assert!(!missing_default.has_value && !missing_default.evidence_hash.is_empty());
+}
+
+#[test]
+fn purpose_inventory_proves_empty_local_impl_sets_even_in_early_return_units_and_rejects_auto_traits()
+ {
+    let facts = purpose_inventory_fixture(
+        "inventory_only",
+        "#![feature(auto_traits)]\npub trait Plain { const REQUIRED: u32; }\npub auto trait Automatic {}\n",
+        "fixed",
+    );
+    assert!(
+        facts.declarations.is_empty(),
+        "The no-ECS protocol path must still emit its inventory"
+    );
+    let inventory = &facts.purpose_inventory;
+    assert!(!inventory.crate_identity.is_empty());
+    assert!(!inventory.metadata_hash.is_empty());
+    assert!(
+        inventory
+            .required_views
+            .iter()
+            .any(|view| view.crate_identity == inventory.crate_identity
+                && view.metadata_hash == inventory.metadata_hash)
+    );
+    assert!(
+        inventory
+            .required_crates
+            .contains(&inventory.crate_identity)
+    );
+    assert!(
+        inventory
+            .coverage
+            .iter()
+            .any(|c| c.crate_identity == inventory.crate_identity
+                && c.metadata_hash == inventory.metadata_hash
+                && c.complete
+                && c.traits.is_none())
+    );
+    assert!(inventory.implementations.is_empty());
+    assert_eq!(inventory.traits.len(), 2);
+    assert!(
+        inventory
+            .traits
+            .iter()
+            .all(|item| item.owner_crate == inventory.crate_identity
+                && item.metadata_hash == inventory.metadata_hash)
+    );
+    assert_eq!(inventory.traits.iter().filter(|t| t.complete).count(), 1);
+    let plain = inventory.traits.iter().find(|t| t.complete).unwrap();
+    assert_eq!(plain.members.len(), 1);
+    assert!(!plain.members[0].has_value);
+    assert!(!plain.members[0].evidence_hash.is_empty());
+}
+
 #[test]
 fn caller_purpose_tracks_a_downstream_impl_used_inside_a_dependency_generic() {
     use analysis_contract::runtime::{RuntimeSchedule, RuntimeSnapshot, RuntimeSystem};
@@ -167,7 +352,7 @@ fn caller_purpose_tracks_a_downstream_impl_used_inside_a_dependency_generic() {
         let runtime_bytes = serde_json::to_vec(&runtime).unwrap();
         fs::write(consumer.join("runtime.json"), &runtime_bytes).unwrap();
         fs::write(consumer.join("debugdump/manifest.json"), serde_json::to_vec(&serde_json::json!({"schemaVersion":1,"sourceFingerprint":runtime.source_fingerprint,"schedules":[{"id":schedule_id,"app":"main","label":"Update","filename":"schedule.dot","sha256":digest(dot.as_bytes())}]})).unwrap()).unwrap();
-        fs::write(consumer.join("facts.json"), serde_json::to_vec(&serde_json::json!({"schemaVersion":1,"compiler":"fixed-compiler","configuration":"fixed-build","workspace":consumer,"packages":[{"name":"bevy_ecs","version":"0.1.0","manifest_path":dependency.join("Cargo.toml")}],"units":units,"runtimeSha256":digest(&runtime_bytes)})).unwrap()).unwrap();
+        fs::write(consumer.join("facts.json"), serde_json::to_vec(&serde_json::json!({"schemaVersion":analysis_contract::facts::FACT_SCHEMA_VERSION,"compiler":"fixed-compiler","configuration":"fixed-build","workspace":consumer,"packages":[{"name":"bevy_ecs","version":"0.1.0","manifest_path":dependency.join("Cargo.toml")}],"units":units,"runtimeSha256":digest(&runtime_bytes)})).unwrap()).unwrap();
         fs::write(
             consumer.join("annotations.json"),
             b"{\"schemaVersion\":1,\"items\":{}}",
@@ -213,6 +398,9 @@ fn caller_purpose_tracks_a_downstream_impl_used_inside_a_dependency_generic() {
 }
 
 impl Callbacks for OriginExtractor {
+    fn config(&mut self, config: &mut interface::Config) {
+        config.opts.unstable_opts.metadata_crate_hash = false;
+    }
     fn after_analysis<'tcx>(&mut self, _: &interface::Compiler, tcx: TyCtxt<'tcx>) -> Compilation {
         self.facts =
             Some(analysis_compiler::ecs::extract_with_origins(tcx, &self.origins).unwrap());
@@ -763,20 +951,72 @@ fn external_initializer_evidence(storage: &str) -> Vec<String> {
             origins: origins.clone(),
         };
         rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
-        let declaration = extractor
-            .facts
-            .unwrap()
+        let facts = extractor.facts.unwrap();
+        let declaration = facts
             .declarations
-            .into_iter()
+            .iter()
             .find(|declaration| declaration.full_name == "consumer::create")
             .unwrap();
-        if storage == "trait" {
+        if storage == "const-function" {
             assert!(
-                declaration.unresolved_behavior,
-                "Unknown dispatch must survive into the final model"
+                !declaration.unresolved_behavior,
+                "A plain foreign const fn has certified CTFE evidence even when runtime MIR is not encoded"
             );
         }
-        versions.push(declaration.evidence_hash);
+        if storage == "trait" {
+            assert!(!declaration.unresolved_behavior);
+            assert_eq!(declaration.purpose_dependencies.len(), 1);
+            let dependency = &declaration.purpose_dependencies[0];
+            let inventory = &facts.purpose_inventory;
+            let implementation = inventory
+                .implementations
+                .iter()
+                .find(|implementation| {
+                    implementation.owner_crate == inventory.crate_identity
+                        && implementation.trait_id == dependency.trait_id
+                })
+                .unwrap();
+            assert!(
+                implementation.members.iter().any(|member| {
+                    member.trait_id == dependency.trait_id
+                        && member.member_id == dependency.member_id
+                        && member.has_value
+                        && member.implementation_member_id.is_some()
+                }),
+                "The generic reference must retain the exact foreign trait/member mapping"
+            );
+            let foreign_view = inventory
+                .required_views
+                .iter()
+                .find(|view| {
+                    serde_json::from_str::<serde_json::Value>(&view.crate_identity)
+                        .ok()
+                        .is_some_and(|identity| {
+                            identity["package"] == "exact-package:bevy_ecs:1"
+                                && identity["crate"] == "bevy_ecs"
+                        })
+                })
+                .unwrap();
+            assert!(
+                !inventory.coverage.iter().any(|coverage| {
+                    coverage.crate_identity == foreign_view.crate_identity
+                        && coverage.metadata_hash == foreign_view.metadata_hash
+                        && coverage.complete
+                        && coverage
+                            .traits
+                            .as_ref()
+                            .is_none_or(|traits| traits.contains(&dependency.trait_id))
+                }),
+                "A consumer-only inventory cannot certify the foreign owning view; the model must fall back without its report"
+            );
+            if let Some(previous) = versions.first() {
+                assert_eq!(
+                    previous, &declaration.evidence_hash,
+                    "Foreign impl candidates and owning unit summaries must not leak into the generic declaration's local hash"
+                );
+            }
+        }
+        versions.push(declaration.evidence_hash.clone());
     }
     versions
 }
@@ -816,24 +1056,54 @@ fn purpose_evidence_tracks_generic_trait_impl_constant_values() {
         ];
         let mut extractor = Extractor { facts: None };
         rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
-        versions.push(
-            extractor
-                .facts
-                .unwrap()
-                .declarations
-                .into_iter()
-                .find(|declaration| declaration.full_name == "bevy_ecs::create")
-                .unwrap()
-                .evidence_hash,
-        );
+        let facts = extractor.facts.unwrap();
+        let creator = facts
+            .declarations
+            .iter()
+            .find(|declaration| declaration.full_name == "bevy_ecs::create")
+            .unwrap();
+        assert!(!creator.unresolved_behavior);
+        assert_eq!(creator.purpose_dependencies.len(), 1);
+        let dependency = &creator.purpose_dependencies[0];
+        let implementation = facts
+            .purpose_inventory
+            .implementations
+            .iter()
+            .find(|implementation| implementation.trait_id == dependency.trait_id)
+            .unwrap();
+        let member = implementation
+            .members
+            .iter()
+            .find(|member| member.member_id == dependency.member_id)
+            .unwrap();
+        assert!(member.has_value && member.implementation_member_id.is_some());
+        assert!(!member.unresolved_behavior);
+        versions.push((
+            creator.evidence_hash.clone(),
+            dependency.clone(),
+            implementation.header_hash.clone(),
+            member.clone(),
+        ));
     }
+    assert_eq!(
+        versions[0].0, versions[1].0,
+        "The generic creator's local behavior excludes unresolved impl candidates"
+    );
+    assert_eq!(
+        versions[0].1, versions[1].1,
+        "The creator retains its exact trait/member dependency"
+    );
+    assert_eq!(
+        versions[0].2, versions[1].2,
+        "Changing an initializer does not change the impl header"
+    );
     assert_ne!(
-        versions[0], versions[1],
-        "The selected generic impl initializer must invalidate its creator"
+        versions[0].3.evidence_hash, versions[1].3.evidence_hash,
+        "The referenced impl initializer must change the separately recorded member evidence"
     );
     assert_eq!(
         versions[0], versions[2],
-        "Conservative constant evidence must still ignore metadata and line movement"
+        "Local behavior, exact dependencies and member evidence ignore metadata and line movement"
     );
 }
 
@@ -1263,6 +1533,9 @@ fn extracts_real_bevy_protocols_and_bsn() {
     );
 }
 impl Callbacks for Extractor {
+    fn config(&mut self, config: &mut interface::Config) {
+        config.opts.unstable_opts.metadata_crate_hash = false;
+    }
     fn after_analysis<'tcx>(&mut self, _: &interface::Compiler, tcx: TyCtxt<'tcx>) -> Compilation {
         self.facts = Some(analysis_compiler::ecs::extract(tcx).unwrap());
         Compilation::Stop

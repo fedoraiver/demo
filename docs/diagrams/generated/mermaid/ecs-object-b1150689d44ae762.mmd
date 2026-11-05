@@ -36,7 +36,7 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**SolverConfig**<br/>配置接触与关节约束求解参数。" }
+  n0@{ shape: cyl, label: "**SolverConfig**<br/>配置接触约束的柔度、热启动与碰撞恢复。" }
   class n0 node_resource
   n1@{ shape: rounded, label: "**warm​_​start**<br/>用历史接触冲量初始化本轮约束求解。" }
   class n1 node_system

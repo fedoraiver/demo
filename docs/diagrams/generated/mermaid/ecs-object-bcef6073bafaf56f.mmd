@@ -44,7 +44,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: hex, label: "**slider​_​on​_​insert​_​value**<br/>同步滑条的无障碍当前值。" }
   class n0 node_observer
-  n1@{ shape: fr-rect, label: "**SliderPlugin**<br/>处理滑块交互、数值与范围变化。" }
+  n1@{ shape: fr-rect, label: "**SliderPlugin**<br/>处理滑块交互并同步插入的无障碍属性。" }
   class n1 node_plugin
   n2@{ shape: stadium, label: "**InsertEvent**<br/>来自crate:bevy​_​ecs ↗：通知组件值插入<br/>实体。" }
   class n2 node_event

@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: collision::collision_events::CollisionEnd · 对象关系
+  accTitle: avian3d::prelude::CollisionEnd · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -49,11 +49,11 @@ flowchart LR
   class n3 node_observer
   n4@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n4 node_system
-  n5@{ shape: hex, label: "**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
+  n5@{ shape: hex, label: "**remove​_​body​_​on**<br/>在刚体插入或移除时清理旧接触。" }
   class n5 node_observer
   n6@{ shape: hex, label: "**on​_​disable​_​body**<br/>清理被禁用刚体的接触。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
+  n7@{ shape: hex, label: "**remove​_​body​_​on**<br/>在刚体插入或移除时清理旧接触。" }
   class n7 node_observer
   n8@{ shape: hex, label: "**on​_​body​_​remove​_​rigid​_​body​_​disabled**<br/>清除刚体重新启用时的旧接触。" }
   class n8 node_observer

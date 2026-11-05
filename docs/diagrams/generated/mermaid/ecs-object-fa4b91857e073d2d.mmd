@@ -29,7 +29,7 @@
 }
 ---
 flowchart LR
-  accTitle: collision::collider::collider_hierarchy::RigidBodyColliders · 对象关系
+  accTitle: avian3d::prelude::RigidBodyColliders · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -41,7 +41,7 @@ flowchart LR
   class n0 node_component
   n1@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
+  n2@{ shape: hex, label: "**remove​_​body​_​on**<br/>在刚体插入或移除时清理旧接触。" }
   class n2 node_observer
   n3@{ shape: rounded, label: "**update​_​body​_​size​_​metrics**<br/>重算刚体的 CCD 厚度和最大扫掠半径。" }
   class n3 node_system
@@ -55,7 +55,7 @@ flowchart LR
   class n7 node_observer
   n8@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
+  n9@{ shape: hex, label: "**remove​_​body​_​on**<br/>在刚体插入或移除时清理旧接触。" }
   class n9 node_observer
   n10@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
   class n10 node_system

@@ -41,7 +41,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**DialogStack**<br/>按从底到顶的顺序保存已打开浮动对话框" }
   class n0 node_resource
-  n1@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
+  n1@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已移除浮动对话框的栈登记。" }
   class n1 node_observer
   n2@{ shape: hex, label: "**bring​_​to​_​front**<br/>将被操作的浮动对话框提到前方。" }
   class n2 node_observer
@@ -58,9 +58,9 @@ flowchart LR
   class n7 node_observer
   n8@{ shape: hex, label: "**register​_​dialog**<br/>登记新建浮动对话框的层级。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
+  n9@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已移除浮动对话框的栈登记。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已销毁对话框的栈登记。" }
+  n10@{ shape: hex, label: "**deregister​_​dialog**<br/>清理已移除浮动对话框的栈登记。" }
   class n10 node_observer
   n11@{ shape: hex, label: "**register​_​dialog**<br/>登记新建浮动对话框的层级。" }
   class n11 node_observer

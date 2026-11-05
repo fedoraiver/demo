@@ -50,7 +50,7 @@ flowchart LR
   n1@{ shape: rounded, label: "**Schedules**<br/>来自crate:bevy​_​ecs ↗：按标签保存可运<br/>行的调度实例。" }
   class n1 node_component
   class n1 external_node
-  n2@{ shape: lin-rect, label: "**EnterSchedules(PhantomData#lt;AppState#gt;**<br/>**)**<br/>执行新状态的进入调度和进入生命周期。" }
+  n2@{ shape: lin-rect, label: "**EnterSchedules(PhantomData#lt;AppState#gt;**<br/>**)**<br/>执行指定状态新值的进入调度。" }
   class n2 node_system_set
   n3@{ shape: stadium, label: "**CheckChangeTicks**<br/>来自crate:bevy​_​ecs ↗：请求维护变化检<br/>测 tick 范围。" }
   class n3 node_event

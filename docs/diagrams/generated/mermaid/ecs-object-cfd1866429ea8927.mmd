@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: collision::contact_types::contact_graph::ContactGraph · 对象关系
+  accTitle: avian3d::prelude::ContactGraph · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -41,14 +41,14 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**ContactGraph**<br/>维护碰撞体接触对及其碰撞数据。" }
   class n0 node_resource
-  n1@{ shape: hex, label: "**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
+  n1@{ shape: hex, label: "**remove​_​body​_​on**<br/>在刚体插入或移除时清理旧接触。" }
   class n1 node_observer
   n2@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
   class n2 node_system
   n3@{ shape: rounded, label: "**emit​_​item​_​land**<br/>来自item​_​interaction ↗：检测自由物品<br/>支撑撞击并锁存一次落地音效。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: hex, label: "**remove​_​body​_​on**<br/>清理已移除刚体的接触图记录。" }
+  n4@{ shape: hex, label: "**remove​_​body​_​on**<br/>在刚体插入或移除时清理旧接触。" }
   class n4 node_observer
   n5@{ shape: rounded, label: "**split​_​island**<br/>根据接触与关节连接重新拆分物理岛。" }
   class n5 node_system

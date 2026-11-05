@@ -15,7 +15,7 @@ import { writeExternalArchitecture, obsoleteExternalReferences } from './archite
 import { projectInfrastructureFeatures } from './architecture-infrastructure.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE } from './architecture-style.mjs';
 import { SCHEDULE_LEGEND_LABELS } from './schedule-legend.mjs';
-import { replaceArtifactSync, copyVerifiedArtifactSync } from './architecture-artifact-writer.mjs';
+import { writeTextArtifactSync, copyVerifiedArtifactSync } from './architecture-artifact-writer.mjs';
 
 const root = repositoryRoot, paths = pathsForRepository(root), directory = paths.generatedDirectory;
 const previousManifestPath = path.join(paths.dataDirectory, 'manifest.json');
@@ -32,18 +32,7 @@ const artifactViews = views;
 // 编译期间源码发生变化时先中止，不删除或覆盖上一批正式图。
 if (sourceFingerprint(root) !== dump.manifest.sourceFingerprint) throw new Error('Source changed while building architecture; export schedules again');
 const stagedArtifacts = fs.mkdtempSync(path.join(root, 'tmp/ecs-architecture/artifact-write-'));
-function writeArtifact(filename, content) {
-  const target = path.resolve(directory, filename);
-  if (!target.startsWith(directory + path.sep)) throw new Error('Unsafe architecture output path');
-  if (Buffer.byteLength(content) >= 100 * 1024 * 1024) throw new Error('Architecture artifact exceeds 100 MiB: ' + filename);
-  if (fs.existsSync(target) && fs.readFileSync(target, 'utf8') === content) return;
-  // Windows 浏览器可能映射正在查看的 HTML，不能原地截断；写完整后替换也避免读到半份产物。
-  const staged = path.join(stagedArtifacts, filename);
-  fs.mkdirSync(path.dirname(staged), { recursive: true });
-  fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.writeFileSync(staged, content);
-  replaceArtifactSync(staged, target);
-}
+const writeArtifact = (filename, content) => writeTextArtifactSync(directory, stagedArtifacts, filename, content);
 function copyArtifact(filename, source, expectedSha256) {
   const target = path.resolve(directory, filename), staged = path.resolve(stagedArtifacts, filename);
   if (!target.startsWith(directory + path.sep) || !staged.startsWith(stagedArtifacts + path.sep)) throw new Error('Unsafe compiler sidecar output path');

@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: bevy_ui::Pressed · 对象关系
+  accTitle: bevy::bevy_ui::Pressed · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -59,13 +59,13 @@ flowchart LR
   n6@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消菜<br/>单项的指针按压状态。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
+  n7@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮释放时清除按压。" }
   class n7 node_observer
   class n7 external_node
   n8@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  n9@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮拖动结束时清除按压。" }
   class n9 node_observer
   class n9 external_node
   n10@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消复<br/>选框的指针按压状态。" }
@@ -92,22 +92,22 @@ flowchart LR
   n17@{ shape: hex, label: "**slider​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：释放滑<br/>条的按下状态。" }
   class n17 node_observer
   class n17 external_node
-  n18@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
+  n18@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消可<br/>用按钮的指针按压状态。" }
   class n18 node_observer
   class n18 external_node
   n19@{ shape: hex, label: "**slider​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：释放滑<br/>条的按下状态。" }
   class n19 node_observer
   class n19 external_node
-  n20@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
+  n20@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消可<br/>用按钮的指针按压状态。" }
   class n20 node_observer
   class n20 external_node
-  n21@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
+  n21@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮释放时清除按压。" }
   class n21 node_observer
   class n21 external_node
   n22@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除菜单项按压。" }
   class n22 node_observer
   class n22 external_node
-  n23@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  n23@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮拖动结束时清除按压。" }
   class n23 node_observer
   class n23 external_node
   n24@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消菜<br/>单项的指针按压状态。" }
@@ -152,7 +152,7 @@ flowchart LR
   n37@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录单<br/>选按钮按压并按配置请求选中。" }
   class n37 node_observer
   class n37 external_node
-  n38@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
+  n38@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮释放时清除按压。" }
   class n38 node_observer
   class n38 external_node
   n39@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
@@ -182,7 +182,7 @@ flowchart LR
   n47@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除复选框按压。" }
   class n47 node_observer
   class n47 external_node
-  n48@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
+  n48@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消可<br/>用按钮的指针按压状态。" }
   class n48 node_observer
   class n48 external_node
   n49@{ shape: hex, label: "**slider​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消滑<br/>条的按下状态。" }
@@ -233,7 +233,7 @@ flowchart LR
   n64@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除菜单项按压。" }
   class n64 node_observer
   class n64 external_node
-  n65@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  n65@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮拖动结束时清除按压。" }
   class n65 node_observer
   class n65 external_node
   n66@{ shape: rounded, label: "**clear​_​cancelled​_​primary​_​presses**<br/>来自ui ↗：Bevy 先从 HoverMap 排除取消<br/>的指针，随后可能无法为它发出<br/>PointerCancel。" }

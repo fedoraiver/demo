@@ -41,7 +41,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**InteractionDisabled**<br/>标记禁止交互的 UI 控件。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
+  n1@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮释放时清除按压。" }
   class n1 node_observer
   class n1 external_node
   n2@{ shape: hex, label: "**menubutton​_​on​_​key​_​event**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过方<br/>向键请求打开菜单。" }
@@ -59,7 +59,7 @@ flowchart LR
   n6@{ shape: hex, label: "**checkbox​_​on​_​set​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框设值请求转为勾选变化。" }
   class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
+  n7@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消可<br/>用按钮的指针按压状态。" }
   class n7 node_observer
   class n7 external_node
   n8@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消复<br/>选框的指针按压状态。" }
@@ -71,13 +71,13 @@ flowchart LR
   n10@{ shape: hex, label: "**radio​_​button​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过确<br/>认键请求选中单选按钮。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
+  n11@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮释放时清除按压。" }
   class n11 node_observer
   class n11 external_node
   n12@{ shape: hex, label: "**menu​_​item​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消菜<br/>单项的指针按压状态。" }
   class n12 node_observer
   class n12 external_node
-  n13@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  n13@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮拖动结束时清除按压。" }
   class n13 node_observer
   class n13 external_node
   n14@{ shape: hex, label: "**slider​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：按轨道<br/>点击策略发起滑条调整。" }
@@ -101,7 +101,7 @@ flowchart LR
   n20@{ shape: hex, label: "**checkbox​_​on​_​toggle​_​checked**<br/>来自crate:bevy​_​ui​_​widgets ↗：将复选<br/>框切换请求转为勾选变化。" }
   class n20 node_observer
   class n20 external_node
-  n21@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
+  n21@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消可<br/>用按钮的指针按压状态。" }
   class n21 node_observer
   class n21 external_node
   n22@{ shape: hex, label: "**button​_​on​_​pointer​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：通过有<br/>效指针点击激活按钮。" }
@@ -131,7 +131,7 @@ flowchart LR
   n30@{ shape: hex, label: "**slider​_​on​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：拖动滑<br/>条时发布连续值变化。" }
   class n30 node_observer
   class n30 external_node
-  n31@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  n31@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮拖动结束时清除按压。" }
   class n31 node_observer
   class n31 external_node
   n32@{ shape: hex, label: "**listbox​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：处理列<br/>表键盘导航与行确认。" }
@@ -209,7 +209,7 @@ flowchart LR
   n56@{ shape: hex, label: "**tablist​_​on​_​click**<br/>来自crate:bevy​_​ui​_​widgets ↗：点击可<br/>用标签时请求切换选择。" }
   class n56 node_observer
   class n56 external_node
-  n57@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消按<br/>钮的指针按压状态。" }
+  n57@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>来自crate:bevy​_​ui​_​widgets ↗：取消可<br/>用按钮的指针按压状态。" }
   class n57 node_observer
   class n57 external_node
   n58@{ shape: hex, label: "**tab​_​on​_​key​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：用键盘<br/>导航并激活标签页。" }
@@ -227,7 +227,7 @@ flowchart LR
   n62@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除复选框按压。" }
   class n62 node_observer
   class n62 external_node
-  n63@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在指针<br/>释放时清除按钮按压。" }
+  n63@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮释放时清除按压。" }
   class n63 node_observer
   class n63 external_node
   n64@{ shape: hex, label: "**button​_​on​_​pointer​_​down**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录按<br/>钮按压并按配置立即激活。" }
@@ -413,7 +413,7 @@ flowchart LR
   n124@{ shape: hex, label: "**slider​_​on​_​drag​_​start**<br/>来自crate:bevy​_​ui​_​widgets ↗：记录滑<br/>条拖动起点并捕获指针。" }
   class n124 node_observer
   class n124 external_node
-  n125@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  n125@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮拖动结束时清除按压。" }
   class n125 node_observer
   class n125 external_node
   n126@{ shape: hex, label: "**on​_​focused​_​keyboard​_​input**<br/>来自crate:bevy​_​ui​_​widgets ↗：将聚焦<br/>文本框按键转为编辑操作。" }

@@ -29,10 +29,10 @@
 }
 ---
 flowchart LR
-  accTitle: image::ImagePlugin · 对象关系
+  accTitle: bevy_image::ImagePlugin · 对象关系
   accDescr: 插件单卡；完整关系保存在对象目录中。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: fr-rect, label: "**ImagePlugin**<br/>注册图像资产及其 GPU 准备。" }
+  n0@{ shape: fr-rect, label: "**ImagePlugin**<br/>注册图像资产、默认图像与加载流程。" }
   class n0 node_plugin

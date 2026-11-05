@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: events::PointerDragEnd · 对象关系
+  accTitle: bevy_picking::events::PointerDragEnd · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
@@ -66,7 +66,7 @@ flowchart LR
   n9@{ shape: hex, label: "**checkbox​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除复选框按压。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  n10@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮拖动结束时清除按压。" }
   class n10 node_observer
   class n10 external_node
   n11@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
@@ -75,13 +75,13 @@ flowchart LR
   n12@{ shape: hex, label: "**slider​_​on​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：提交滑<br/>条拖动结果并释放指针。" }
   class n12 node_observer
   class n12 external_node
-  n13@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  n13@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮拖动结束时清除按压。" }
   class n13 node_observer
   class n13 external_node
   n14@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除单选按钮按压。" }
   class n14 node_observer
   class n14 external_node
-  n15@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除按钮按压。" }
+  n15@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在可用<br/>按钮拖动结束时清除按压。" }
   class n15 node_observer
   class n15 external_node
   n16@{ shape: hex, label: "**radio​_​button​_​on​_​pointer​_​drag​_​end**<br/>来自crate:bevy​_​ui​_​widgets ↗：在拖动<br/>结束时清除单选按钮按压。" }

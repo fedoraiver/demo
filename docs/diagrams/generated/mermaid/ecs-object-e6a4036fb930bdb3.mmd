@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: bevy_ecs::lifecycle::InsertEvent · 对象关系
+  accTitle: bevy::bevy_ecs::lifecycle::InsertEvent · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
@@ -180,13 +180,13 @@ flowchart LR
   n47@{ shape: hex, label: "**slider​_​on​_​insert​_​step**<br/>来自crate:bevy​_​ui​_​widgets ↗：同步滑<br/>条的无障碍步长。" }
   class n47 node_observer
   class n47 external_node
-  n48@{ shape: hex, label: "**validate​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：检查父实体是否<br/>满足组件层级要求。" }
+  n48@{ shape: hex, label: "**validate​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：为父实体组件缺<br/>失安排延后复查。" }
   class n48 node_observer
   class n48 external_node
   n49@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>来自crate:avian3d ↗：将可用碰撞体加入<br/>空间树。" }
   class n49 node_observer
   class n49 external_node
-  n50@{ shape: hex, label: "**remove​_​body​_​on**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>接触图记录。" }
+  n50@{ shape: hex, label: "**remove​_​body​_​on**<br/>来自crate:avian3d ↗：在刚体插入或移除<br/>时清理旧接触。" }
   class n50 node_observer
   class n50 external_node
   n51@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：随碰撞体集合变化<br/>重算刚体质量。" }

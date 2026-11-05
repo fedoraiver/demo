@@ -47,7 +47,7 @@ flowchart LR
   class n0 node_observer
   n1@{ shape: rounded, label: "**SliderStep**<br/>设置滑块键盘调节步长。" }
   class n1 node_component
-  n2@{ shape: fr-rect, label: "**SliderPlugin**<br/>处理滑块交互、数值与范围变化。" }
+  n2@{ shape: fr-rect, label: "**SliderPlugin**<br/>处理滑块交互并同步插入的无障碍属性。" }
   class n2 node_plugin
   n3@{ shape: stadium, label: "**FocusedInput#lt;KeyboardInput#gt;**<br/>来自crate:bevy​_​input​_​focus ↗：把输入<br/>消息路由到焦点实体并向窗口冒泡。" }
   class n3 node_event

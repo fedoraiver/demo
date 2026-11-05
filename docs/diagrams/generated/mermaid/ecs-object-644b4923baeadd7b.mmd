@@ -86,7 +86,7 @@ flowchart LR
   class n14 external_node
   n15@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n15 node_plugin
-  n16@{ shape: rounded, label: "**Hovered**<br/>来自crate:bevy​_​picking ↗：记录实体当<br/>前是否被任一指针悬停。" }
+  n16@{ shape: rounded, label: "**Hovered**<br/>来自crate:bevy​_​picking ↗：记录自身或<br/>后代的鼠标悬停状态。" }
   class n16 node_component
   class n16 external_node
   n17@{ shape: cyl, label: "**MenuInputSource**<br/>输入来源单独决定焦点是否可见；鼠标离开后<br/>仍保留序号供后续导航使用。" }

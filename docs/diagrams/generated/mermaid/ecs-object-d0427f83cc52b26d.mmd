@@ -47,7 +47,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: fr-rect, label: "**Pipe(last​_​transition#lt;AppState#gt;, run​_​**<br/>**transition#lt;AppState#gt;)**<br/>执行特定旧状态到新状态的转换调度。；从当<br/>前消息批次取得最后一次状态转换。" }
   class n0 node_system_group
-  n1@{ shape: lin-rect, label: "**TransitionSchedules(PhantomData#lt;AppS**<br/>**tate#gt;)**<br/>执行特定状态对的转换和谓词生命周期。" }
+  n1@{ shape: lin-rect, label: "**TransitionSchedules(PhantomData#lt;AppS**<br/>**tate#gt;)**<br/>执行指定状态对的转换调度。" }
   class n1 node_system_set
   n2@{ shape: lean-r, label: "**StateTransitionEvent#lt;AppState#gt;**<br/>通知状态离开和进入的变化。" }
   class n2 node_message

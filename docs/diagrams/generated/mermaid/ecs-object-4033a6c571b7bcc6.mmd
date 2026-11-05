@@ -61,7 +61,7 @@ flowchart LR
   n6@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: fr-rect, label: "**CameraProjectionPlugin**<br/>维护相机投影数据。" }
+  n7@{ shape: fr-rect, label: "**CameraProjectionPlugin**<br/>根据相机投影更新可见视锥。" }
   class n7 node_plugin
   n1 e0@-->|"先于"| n0
   class e0 edge_order

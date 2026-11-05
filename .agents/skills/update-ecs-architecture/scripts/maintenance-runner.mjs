@@ -11,6 +11,13 @@ const now = () => new Date().toISOString();
 const maintenanceRoot = workspace => path.join(workspace, 'tmp/ecs-architecture/maintenance');
 const generated = 'docs/diagrams/generated';
 const sourceRoot = repositoryRoot;
+// 历史状态也按当前用户验收约定呈现，持久化由运行和恢复入口负责。
+const manualChecks = previous => ({
+  ...previous,
+  svg: previous?.svg && previous.svg !== 'pending' ? previous.svg : 'skipped-by-default',
+  browser: 'not-required',
+  protocol: 'not-required',
+});
 const requireWorkspace = workspace => {
   if (!workspace) throw new Error('--workspace is required');
   const resolved = fs.realpathSync(path.resolve(workspace));
@@ -28,7 +35,8 @@ const loadRun = (workspace, runId) => {
     runId = fs.readdirSync(root, { withFileTypes: true }).filter(entry => entry.isDirectory() && fs.existsSync(path.join(root, entry.name, 'state.json'))).map(entry => entry.name).sort().at(-1);
   }
   if (!runId) return null;
-  return JSON.parse(fs.readFileSync(path.join(root, safeRunId(runId), 'state.json'), 'utf8'));
+  const state = JSON.parse(fs.readFileSync(path.join(root, safeRunId(runId), 'state.json'), 'utf8'));
+  return { ...state, manual: manualChecks(state.manual) };
 };
 
 async function validDump(workspace, debugdumpDirectory) {
@@ -85,7 +93,7 @@ export async function planMaintenance({ workspace, debugdumpDirectory } = {}) {
   return { schemaVersion: 1, workspace, head: headMetadata(workspace), inputs: fileSnapshot(workspace, relevantInputNames(workspace)),
     dependencies, debugdump: dump, analysis,
     dependencyInputs: previous?.dependencyInputs || [],
-    stages: plannedStages, manual: { svg: 'pending', browser: 'pending', protocol: 'pending' } };
+    stages: plannedStages, manual: manualChecks() };
 }
 
 async function compilerAnalysisState(workspace) {
@@ -114,6 +122,7 @@ function defaultPipeline({ workspace, dependencies }) {
   const compilerInputs = ['Cargo.toml', 'Cargo.lock', 'src', 'tools/rustc-analysis/Cargo.toml', 'tools/rustc-analysis/Cargo.lock',
     'tools/rustc-analysis/build.rs', 'tools/rustc-analysis/contract', 'tools/rustc-analysis/compiler',
     'tools/rustc-analysis/runner/Cargo.toml', 'tools/rustc-analysis/runner/src/host.rs',
+    'tools/rustc-analysis/runner/src/report_cache.rs', 'tools/rustc-analysis/runner/src/unit_graph.rs', 'tools/rustc-analysis/runner/src/unit_binding.rs',
     'tools/rustc-analysis/runner/src/lib.rs', 'tools/rustc-analysis/runner/src/main.rs', 'scripts/rustc-analysis.ps1', ...exportProducerInputs,
     ...(fs.existsSync(path.join(workspace, 'build.rs')) ? ['build.rs'] : [])];
   return [
@@ -121,7 +130,7 @@ function defaultPipeline({ workspace, dependencies }) {
       reuse: dependencies.valid, reuseReason: 'Installed packages match package-lock',
       command: () => { const npm = npmCommand(); return { command: npm.command, args: [...npm.args, 'ci', '--prefix', path.join(workspace, 'docs/diagrams')] }; },
       validate: () => { const state = dependencyState(workspace); if (!state.valid) throw new Error(state.reason); return state; } },
-    { id: 'extract', inputs: compilerInputs, outputs: [facts, runtime, exportDirectory],
+    { id: 'extract', inputs: compilerInputs, outputs: [facts, runtime, exportDirectory, path.join(compilerDirectory, 'analysis-summary.json')],
       command: analysis(['extract', '--workspace', workspace, '--out', compilerDirectory]),
       validate: async () => {
         const { readDebugdump } = await import('../../../../docs/diagrams/src/debugdump-input.mjs');
@@ -130,10 +139,18 @@ function defaultPipeline({ workspace, dependencies }) {
         if (snapshot?.schemaVersion !== 1 || snapshot.sourceFingerprint !== dump.manifest.sourceFingerprint || !Array.isArray(snapshot.schedules)) throw new Error('Invalid compiler runtime snapshot');
         if (!fs.statSync(facts).isFile() || fs.statSync(facts).size === 0) throw new Error('Missing compiler facts');
         // Rust 在下一阶段流式解析完整事实；此处用流式指纹登记原始字节，避免 JS 的单字符串大小限制。
-        return { files: fileSnapshot(workspace, [facts, runtime, exportDirectory], { optional: false }), sourceFingerprint: dump.manifest.sourceFingerprint };
+        const cache = JSON.parse(fs.readFileSync(path.join(compilerDirectory, 'analysis-summary.json'), 'utf8'));
+        if (cache.schemaVersion !== 2 || cache.incremental !== true || ['compiled', 'reused', 'recovered', 'attempts', 'cargoMs', 'bindingMs', 'totalMs'].some(key => !Number.isSafeInteger(cache[key]) || cache[key] < 0)) throw new Error('Invalid analysis cache summary');
+        return { files: fileSnapshot(workspace, [facts, runtime, exportDirectory, path.join(compilerDirectory, 'analysis-summary.json')], { optional: false }), sourceFingerprint: dump.manifest.sourceFingerprint, cache };
       } },
-    { id: 'model', inputs: [...compilerInputs, 'tools/rustc-analysis/runner/src/model.rs', 'tools/rustc-analysis/runner/src/model_tests.rs', facts, runtime, annotations], outputs: [model, path.join(compilerDirectory, 'model.calls.ndjson')],
-      command: analysis(['model', '--facts', facts, '--runtime', runtime, '--annotations', annotations, '--out', model]) },
+    { id: 'model', inputs: [...compilerInputs, 'tools/rustc-analysis/runner/src/model.rs', 'tools/rustc-analysis/runner/src/model_tests.rs', facts, runtime, annotations], outputs: [model, path.join(compilerDirectory, 'model.calls.ndjson'), path.join(compilerDirectory, 'purpose-summary.json')],
+      command: analysis(['model', '--facts', facts, '--runtime', runtime, '--annotations', annotations, '--out', model]),
+      validate: () => {
+        const purpose = JSON.parse(fs.readFileSync(path.join(compilerDirectory, 'purpose-summary.json'), 'utf8'));
+        if (purpose.schemaVersion !== 1 || ['certified', 'fallback', 'annotationHits', 'pending'].some(key => !Number.isSafeInteger(purpose[key]) || purpose[key] < 0)) throw new Error('Invalid purpose cache summary');
+        // 逐声明诊断留在阶段输出，运行状态只保存计数，避免反复复制完整 helper 缺口。
+        return { purpose: Object.fromEntries(['schemaVersion', 'certified', 'fallback', 'annotationHits', 'pending'].map(key => [key, purpose[key]])) };
+      } },
     { id: 'preflight', inputs: [...inputs, model, path.join(compilerDirectory, 'model.calls.ndjson'), exportDirectory], outputs: [],
       command: node(cli, ['preflight', '--workspace', workspace, '--debugdump', exportDirectory]), dependencyInputs: true },
     { id: 'build', inputs: [...inputs, model, path.join(compilerDirectory, 'model.calls.ndjson'), exportDirectory], outputs: [generated],
@@ -195,7 +212,7 @@ export async function runMaintenance({ workspace, resume, debugdumpDirectory, pi
       dependencyInputs: structuredClone(checkpoint?.dependencyInputs || []), events: [],
       ...(checkpoint ? { sourceRunId: checkpoint.runId,
         finalModel: checkpoint.finalModel, preflightModel: checkpoint.preflightModel } : {}),
-      manual: { svg: 'pending', browser: 'pending', protocol: 'pending' } };
+      manual: manualChecks() };
     if (state.workspace !== workspace) throw new Error('Resume workspace mismatch');
     state.events.push({ kind: resume ? 'resume' : 'start', at: now(), pid: process.pid });
     state.status = 'running'; state.pid = process.pid; state.head = headMetadata(workspace); state.updatedAt = now();
@@ -279,7 +296,7 @@ export async function runMaintenance({ workspace, resume, debugdumpDirectory, pi
 export async function maintenanceStatus({ workspace, runId } = {}) {
   workspace = requireWorkspace(workspace);
   const state = loadRun(workspace, runId);
-  if (!state) return { schemaVersion: 1, workspace, status: 'not-started', manual: { svg: 'pending', browser: 'pending', protocol: 'pending' } };
+  if (!state) return { schemaVersion: 1, workspace, status: 'not-started', manual: manualChecks() };
   const result = structuredClone(state), tools = toolsForRun();
   const latest = new Map(state.stages.map(stage => [stage.id, stage]));
   result.invalidated = [];
@@ -305,8 +322,12 @@ export async function maintenanceReport({ workspace, runId, format = 'json' } = 
   const lines = [`# ECS 架构图维护`, '', `自动检查：${state.status}`, `工作区：${state.workspace}`, `运行：${state.runId || '未开始'}`, '',
     '| 阶段 | 结果 | PID | 开始 | 结束 | 退出码 | 原始日志 |', '| --- | --- | --- | --- | --- | --- | --- |',
     ...[...stages.values()].map(stage => `| ${stage.id} | ${stage.status} | ${stage.pid ?? '—'} | ${stage.startedAt || '—'} | ${stage.endedAt || '—'} | ${stage.exitCode ?? '—'} | ${[stage.stdout, stage.stderr].filter(Boolean).join(', ') || '—'} |`), '',
-    'SVG 目测、浏览器与协议验收：待实际执行；自动成功不代表人工验收通过。'];
+    `SVG 目测 ${state.manual.svg}。HTTP／浏览器与 VS Code 协议无需验收（not-required）。`];
   if (state.error) lines.push('', `失败：${state.error}`);
+  const cache = stages.get('extract')?.validation?.cache;
+  if (cache) lines.push('', `编译报告：新编译 ${cache.compiled}，复用 ${cache.reused}，局部恢复包 ${cache.recovered}；Cargo ${cache.cargoMs} ms，证据绑定 ${cache.bindingMs} ms，总计 ${cache.totalMs} ms。`);
+  const purpose = stages.get('model')?.validation?.purpose;
+  if (purpose) lines.push('', `用途证据：局部证明 ${purpose.certified}，保守回退 ${purpose.fallback}，有效说明命中 ${purpose.annotationHits}，待补 ${purpose.pending}。`);
   const modelSummary = state.finalModel?.summary || state.preflightModel;
   if (modelSummary?.analysisGaps) {
     const gaps = modelSummary.analysisGaps;

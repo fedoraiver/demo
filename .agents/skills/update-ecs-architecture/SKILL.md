@@ -22,7 +22,7 @@ description: 维护本项目基于 rustc 事实和真实 Schedule 的 ECS 架构
 2. 取得事实：涉及 Schedule 时读取[调度快照与筛选模型](references/schedules.md)；涉及对象身份、类型、关系、源码或用途时读取[对象模型与源码](references/object-model.md)。核验并复用匹配构建的编译器事实、完整调用图及真实运行时快照，不为呈现修改重复提取。
 3. 补全中文用途：模型返回待补说明时，读取 `pending-descriptions.json` 中的确切声明、冻结源码和必要 helper，由大模型在 `catalog/annotations.json` 补写中文用途与短说明，再恢复模型阶段。不得修改提取事实来消除说明缺项。
 4. 生成与交互：涉及对象投影、Mermaid 几何、样式或图例时读取[绘图规则](references/rendering.md)；涉及详情、搜索、筛选、选择、历史、焦点或资源加载时读取[查看器规则](references/viewer.md)。
-5. 验收与交付：读取[验收范围与证据](references/visual-validation.md)，完成受影响范围的自动检查；SVG 视觉验证默认关闭，仅用户明确启用时组织目测。正式 HTML、编辑器实际打开与自动编译分别记录，不把跳过或访问受限计为通过。
+5. 验收与交付：读取[验收范围与证据](references/visual-validation.md)，完成受影响范围的自动检查。HTTP 浏览器与 VS Code 协议验收不再执行，不列为待验收项或交付缺项；仅用户明确重新要求时启用。SVG 视觉验证继续默认关闭，仅用户明确启用时组织目测。
 
 ## 关键边界
 

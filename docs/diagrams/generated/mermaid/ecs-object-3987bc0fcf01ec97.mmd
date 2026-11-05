@@ -49,7 +49,7 @@ flowchart LR
   class n2 node_resource
   n3@{ shape: lin-rect, label: "**NarrowPhase**<br/>组织一次物理模拟步的主要阶段。" }
   class n3 node_system_set
-  n4@{ shape: cyl, label: "**SolverConfig**<br/>配置接触与关节约束求解参数。" }
+  n4@{ shape: cyl, label: "**SolverConfig**<br/>配置接触约束的柔度、热启动与碰撞恢复。" }
   class n4 node_resource
   n5@{ shape: cyl, label: "**Time#lt;Substeps#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
   class n5 node_resource

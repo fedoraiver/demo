@@ -134,7 +134,7 @@ flowchart LR
   class n35 external_node
   n36@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>在请求未命中焦点目标时清除焦点。" }
   class n36 node_observer
-  n37@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
+  n37@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：将当前可访问<br/>性树同步给已激活的原生适配器。" }
   class n37 node_system
   class n37 external_node
   n1 e0@-->|"赋值"| n0

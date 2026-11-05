@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: bevy::bevy_ecs::message::Messages#lt;collision::collision_events::CollisionEnd#gt; · 对象关系
+  accTitle: bevy::bevy_ecs::message::Messages#lt;avian3d::prelude::CollisionEnd#gt; · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -50,7 +50,7 @@ flowchart LR
   n3@{ shape: hex, label: "**remove​_​collider​_​on**<br/>来自crate:avian3d ↗：清理碰撞体接触与<br/>对端碰撞记录。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: hex, label: "**remove​_​body​_​on**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>接触图记录。" }
+  n4@{ shape: hex, label: "**remove​_​body​_​on**<br/>来自crate:avian3d ↗：在刚体插入或移除<br/>时清理旧接触。" }
   class n4 node_observer
   class n4 external_node
   n5@{ shape: hex, label: "**on​_​remove​_​sensor**<br/>来自crate:avian3d ↗：清除传感器转回普<br/>通碰撞体的旧接触。" }
@@ -68,7 +68,7 @@ flowchart LR
   n9@{ shape: hex, label: "**on​_​disable​_​body**<br/>来自crate:avian3d ↗：清理被禁用刚体的<br/>接触。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: hex, label: "**remove​_​body​_​on**<br/>来自crate:avian3d ↗：清理已移除刚体的<br/>接触图记录。" }
+  n10@{ shape: hex, label: "**remove​_​body​_​on**<br/>来自crate:avian3d ↗：在刚体插入或移除<br/>时清理旧接触。" }
   class n10 node_observer
   class n10 external_node
   n11@{ shape: hex, label: "**on​_​add​_​sensor**<br/>来自crate:avian3d ↗：清除转为传感器前<br/>的旧接触。" }

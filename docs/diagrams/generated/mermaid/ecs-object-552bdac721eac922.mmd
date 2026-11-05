@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: bevy_ecs::hierarchy::ChildOf · 对象关系
+  accTitle: bevy::bevy_ecs::hierarchy::ChildOf · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -82,7 +82,7 @@ flowchart LR
   n13@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: hex, label: "**validate​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：检查父实体是否<br/>满足组件层级要求。" }
+  n14@{ shape: hex, label: "**validate​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：为父实体组件缺<br/>失安排延后复查。" }
   class n14 node_observer
   class n14 external_node
   n15@{ shape: hex, label: "**handle​_​tab​_​navigation**<br/>来自crate:bevy​_​input​_​focus ↗：处理正<br/>向和反向键盘焦点遍历。" }
@@ -286,7 +286,7 @@ flowchart LR
   n81@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>来自crate:avian3d ↗：随层级变化更新碰<br/>撞体刚体归属。" }
   class n81 node_observer
   class n81 external_node
-  n82@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
+  n82@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：将当前可访问<br/>性树同步给已激活的原生适配器。" }
   class n82 node_system
   class n82 external_node
   n83@{ shape: rounded, label: "**extract​_​uinode​_​changes**<br/>来自crate:bevy​_​ui​_​render ↗：使变化或<br/>移除的 UI 数据失效并清理旧渲染实体。" }

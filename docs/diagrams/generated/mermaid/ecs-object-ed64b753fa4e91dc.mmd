@@ -67,7 +67,7 @@ flowchart LR
   n9@{ shape: rounded, label: "**image​_​changed**<br/>来自crate:bevy​_​ui ↗：为非按钮图像生成<br/>或更新无障碍标签。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：把变化的可访<br/>问性节点同步给原生适配器。" }
+  n10@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：将当前可访问<br/>性树同步给已激活的原生适配器。" }
   class n10 node_system
   class n10 external_node
   n0 e0@-->|"先于"| n1

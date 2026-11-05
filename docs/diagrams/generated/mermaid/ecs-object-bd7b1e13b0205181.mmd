@@ -44,7 +44,7 @@ flowchart LR
   class n1 node_system_set
   n2@{ shape: rounded, label: "**enable​_​entities​_​on​_​enter​_​state**<br/>进入指定状态时重新启用实体子树。" }
   class n2 node_system
-  n3@{ shape: lin-rect, label: "**EnterSchedules(PhantomData#lt;AppState#gt;**<br/>**)**<br/>执行新状态的进入调度和进入生命周期。" }
+  n3@{ shape: lin-rect, label: "**EnterSchedules(PhantomData#lt;AppState#gt;**<br/>**)**<br/>执行指定状态新值的进入调度。" }
   class n3 node_system_set
   n4@{ shape: rounded, label: "**disable​_​entities​_​on​_​enter​_​state**<br/>进入指定状态时禁用实体子树。" }
   class n4 node_system

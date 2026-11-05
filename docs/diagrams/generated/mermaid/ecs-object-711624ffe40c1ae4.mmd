@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: button::Button · 对象关系
+  accTitle: bevy::bevy_ui_widgets::Button · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_observer fill:#F4F1F9,stroke:#7B4DB2,stroke-width:1.6px,color:#1F3340
@@ -74,12 +74,12 @@ flowchart LR
   n12@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在音频设置页触发测试音效。" }
   class n12 node_entity
   class n12 external_node
-  n13@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>取消按钮的指针按压状态。" }
+  n13@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>取消可用按钮的指针按压状态。" }
   class n13 node_observer
   n14@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
   class n14 node_entity
   class n14 external_node
-  n15@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除按钮按压。" }
+  n15@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>在可用按钮拖动结束时清除按压。" }
   class n15 node_observer
   n16@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
   class n16 node_entity
@@ -87,7 +87,7 @@ flowchart LR
   n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
   class n17 node_entity
   class n17 external_node
-  n18@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>取消按钮的指针按压状态。" }
+  n18@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>取消可用按钮的指针按压状态。" }
   class n18 node_observer
   n19@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
   class n19 node_entity
@@ -101,7 +101,7 @@ flowchart LR
   n22@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
   class n22 node_entity
   class n22 external_node
-  n23@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>在指针释放时清除按钮按压。" }
+  n23@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>在可用按钮释放时清除按压。" }
   class n23 node_observer
   n24@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
   class n24 node_entity
@@ -112,7 +112,7 @@ flowchart LR
   n26@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
   class n26 node_entity
   class n26 external_node
-  n27@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>在指针释放时清除按钮按压。" }
+  n27@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>在可用按钮释放时清除按压。" }
   class n27 node_observer
   n28@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
   class n28 node_entity
@@ -147,7 +147,7 @@ flowchart LR
   class n38 external_node
   n39@{ shape: hex, label: "**button​_​on​_​pointer​_​click**<br/>通过有效指针点击激活按钮。" }
   class n39 node_observer
-  n40@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>在指针释放时清除按钮按压。" }
+  n40@{ shape: hex, label: "**button​_​on​_​pointer​_​up**<br/>在可用按钮释放时清除按压。" }
   class n40 node_observer
   n41@{ shape: hex, label: "**button​_​on​_​key​_​event**<br/>通过确认键激活焦点按钮。" }
   class n41 node_observer
@@ -169,7 +169,7 @@ flowchart LR
   n47@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
   class n47 node_entity
   class n47 external_node
-  n48@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>取消按钮的指针按压状态。" }
+  n48@{ shape: hex, label: "**button​_​on​_​pointer​_​cancel**<br/>取消可用按钮的指针按压状态。" }
   class n48 node_observer
   n49@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
   class n49 node_entity
@@ -203,7 +203,7 @@ flowchart LR
   n59@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
   class n59 node_entity
   class n59 external_node
-  n60@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除按钮按压。" }
+  n60@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>在可用按钮拖动结束时清除按压。" }
   class n60 node_observer
   n61@{ shape: hex, label: "**button​_​on​_​pointer​_​click**<br/>通过有效指针点击激活按钮。" }
   class n61 node_observer
@@ -216,7 +216,7 @@ flowchart LR
   n64@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
   class n64 node_entity
   class n64 external_node
-  n65@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>在拖动结束时清除按钮按压。" }
+  n65@{ shape: hex, label: "**button​_​on​_​pointer​_​drag​_​end**<br/>在可用按钮拖动结束时清除按压。" }
   class n65 node_observer
   n66@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
   class n66 node_entity

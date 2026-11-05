@@ -52,7 +52,7 @@ flowchart LR
   class n1 external_node
   n2@{ shape: rounded, label: "**poll​_​receivers**<br/>将原生无障碍动作请求转为应用消息。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>把变化的可访问性节点同步给原生适配器。" }
+  n3@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>将当前可访问性树同步给已激活的原生适配<br/>器。" }
   class n3 node_system
   n4@{ shape: cyl, label: "**Messages#lt;WindowClosed#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n4 node_resource
@@ -78,11 +78,9 @@ flowchart LR
   class e5 edge_registration
   n7 e6@--> n0
   class e6 edge_consume
-  n2 layout_output_0@~~~ n3
-  n3 layout_output_1@~~~ n5
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e2@{ curve: bumpX }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }

@@ -43,6 +43,8 @@ Schedule 始终保留右侧说明栏，未选择对象时显示当前调度的�
 
 [annotations.json](catalog/annotations.json)保存中文用途与短说明。模型缺少必要说明时输出 `pending-descriptions.json`，CLI 返回 `3`，维护入口记录 `needs-descriptions`。维护 Skill 阅读待补项的确切声明、冻结源码和必要 helper，按 `key` 填写 `description`、`summary` 及 `evidenceHash`，然后恢复模型阶段；事实和配置未变时不重复编译器提取。已有有效用途或源码中文文档可复用，说明证据变化时重新核对。本地用途哈希排除纯行号移动，并覆盖函数体及可达 helper；同路径声明的注释键与分类缺口规则见[编译器对象模型](../../.agents/skills/update-ecs-architecture/references/object-model.md)。
 
+关联常量与 `const` 方法的用途证据分别保存声明局部语义和 trait 成员依赖。只有参与 crate 的实际元数据视图、完整显式 impl 集合、成员默认体及 helper 证据均可核实时，才使用局部用途指纹；同一 crate 不同视图的完整清单冲突、内建实现、动态调用或缺失初始化体继续使用完整编译单元证据保守回退。原生元数据摘要只认证报告之间的视图，不进入局部用途指纹；当前按相关 trait 的完整成员集合失效，尚未缩小到单一成员。源码位置始终从本轮模型取得。
+
 系统用途说明主要输入输出、条件与清理行为；类型用途说明承载的数据；Local 按函数与参数槽区分职责；集合按类型、可确认的枚举项和实际配置说明。名称翻译、参数枚举或通用 API 模板不能替代用途。中文注释不覆盖类型、访问、操作、注册或源码位置；必要绑定有歧义时修正提取器或报告缺口。
 
 节点的 `description` 保留完整架构说明；过长或技术细节密集时，在同一记录添加可选 `display_summary`，写一句完整的中文用途，系统说明实际做什么，资源和组件说明承载什么。图内优先使用该短句，否则复用简洁的 `description`；不机械截句或增加省略号。组件使用[短显示名](#节点与连线视觉规范)和实际用途，不由生成器注入所属实体前缀；实体身份由包含关系及右侧详情表达，外部提供插件的来源说明仍保留。短句无需重复读写或运行条件，右侧详情始终使用完整说明。`view.summary` 保留为视图元数据，不在画布顶部显示。
@@ -309,11 +311,11 @@ Graphviz 调度图使用 DOT 的原生布局，不适用本节的 Mermaid 排版
 
 连线标签以 Mermaid 原生背景轮廓参与同一套避让检查，不得压住无关卡片、Entity 轮廓或 Schedule 标题。有可见标签的 Mermaid 视图使用与画布同色的不透明标签背景，避免连线透过文字。标签换行保留完整字符和标签语义；布局、曲线及标签策略回退均须重新通过相同严格检查。缓存同样核对可见节点文字；只有实际文字损坏时才扩大原生自动换行宽度并重新编译，保留输入中的显式换行。标签避让失败时重新编译原生布局，不手工移动 SVG 文字。
 
-编译、文字与几何检查核对完整显示文本、节点唯一性、连线起止、箭头方向及遮挡。箭头应连接真实目标，线型和标签须与契约含义一致；业务边须避开无关节点及容器标题。发现问题时修改 Mermaid 定义、分组、标签或配置并重新编译，保留真实节点和关系。SVG 视觉验证默认关闭，只有用户明确要求时才按[视觉检查](../testing/README.md#架构图视觉检查)执行；HTML 浏览器交互验收单独记录。
+编译、文字与几何检查核对完整显示文本、节点唯一性、连线起止、箭头方向及遮挡。箭头应连接真实目标，线型和标签须与契约含义一致；业务边须避开无关节点及容器标题。发现问题时修改 Mermaid 定义、分组、标签或配置并重新编译，保留真实节点和关系。SVG 视觉验证默认关闭，HTTP 浏览器与 VS Code 协议验收不再执行，范围见[验证参考](../testing/README.md#架构图视觉检查)。
 
 ## 项目 Skill 维护
 
-架构图维护使用 [update-ecs-architecture](../../.agents/skills/update-ecs-architecture/SKILL.md)。普通代码修改和 Git 提交不自动刷新图。结构事实由编译器与真实快照负责，Skill 负责维护分析与呈现入口、补写中文用途，以及执行实际图形验收。
+架构图维护使用 [update-ecs-architecture](../../.agents/skills/update-ecs-architecture/SKILL.md)。普通代码修改和 Git 提交不自动刷新图。结构事实由编译器与真实快照负责，Skill 负责维护分析与呈现入口、补写中文用途及执行相关自动检查；实际 SVG 目测仅在用户明确要求时执行。
 
 生成覆盖两份 HTML、外部索引与逐视图 JSON、完整模型、源码快照、独立图例、Schedule 清单与 DOT／SVG，以及每个对象的 Mermaid／SVG。生成和校验按当前契约检查覆盖、身份、关系及来源。开始前检查已有修改，生成不会自动暂存或提交。
 
@@ -341,7 +343,17 @@ npm run maintain --prefix docs/diagrams -- report --format markdown
 
 默认工作区由入口所在仓库确定，`--workspace PATH` 可明确选择其他 worktree；完整 `run` 使用目标 worktree 内的入口。在上述维护命令中，`--debugdump` 仅对 `preflight` 生效，选择与编译器模型匹配的真实导出；`run` 使用固定路径 `tmp/ecs-architecture/compiler/debugdump`，不允许用单独 DOT 替代模型。相对路径以指定工作区为准，未知命令和选项直接失败。
 
-运行记录保存在 `tmp/ecs-architecture/maintenance/<run-id>/`，编译器输入输出保存在 `tmp/ecs-architecture/compiler/`，工具产物保存在根 `tmp/rustc-analysis/`，Cargo 分析缓存与报告保存在短目录 `tmp/ra/`。缓存依据编译器提交、工具实现、Cargo 配置、target、features、锁文件、源码内容及输出哈希复用。Cargo 跳过编译时仍须有对应且源码有效的分析报告；缺失报告仅使专用缓存中的相关包失效重编。
+运行记录保存在 `tmp/ecs-architecture/maintenance/<run-id>/`，编译器输入输出保存在 `tmp/ecs-architecture/compiler/`，工具产物保存在根 `tmp/rustc-analysis/`，Cargo 分析缓存与报告保存在短目录 `tmp/ra/`。架构提取、实体命名和具名字段入口默认设置 `CARGO_INCREMENTAL=1`，不在启动时清理根包或整个缓存。原生编译目录按编译器、契约版本、规则和实际 Cargo workspace 隔离，避免不同工作区的分析配置相互替换。Rust 增量用于 workspace/path crate，注册表依赖主要复用 Cargo 产物，具体范围遵循 [Cargo 增量规则](https://doc.rust-lang.org/cargo/reference/profiles.html#incremental)。各编译目录的编译、报告绑定及专用 Schedule 导出由排他锁保护。
+
+通用报告与内部事实采用 v2 契约；旧报告缺少完整输入证明，不能直接复用。稳定配置绑定工具链、驱动、规则和实际编译设置，每轮 run、请求路径和报告目录不参与配置摘要。原生 Cargo unit graph 证明依赖闭包，报告按实际 package ID、目标、harness、profile、features、平台、模式及产物分别绑定。Cargo 的 `profile.test`、目标支持测试标记和 rustc 原生 harness 独立保存，不能由 `cfg(test)` 或其中一个字段推断另一个。图中等价节点只共享依赖证明，普通编译和测试报告仍分开保存。
+
+自身配置相同而依赖闭包不同的候选，通过实际 metadata／extern 路径与当前 Cargo 产物的唯一归属消歧。完整输入报告的实际 `extern` 名表还可排除要求额外 Rust 可链接库的候选；二进制、示例／测试／基准目标、构建脚本及仅产出 `cdylib`／`staticlib` 的 artifact 单元不作此要求，不完整报告的缺项不能作为排除证据。缓存输入预检不表示复用成功，选定全部单元后仍须比较完整依赖证明。公开可执行文件没有文件名哈希时，通过唯一原生产物及实际字节绑定，不依赖数组顺序。
+
+本轮唯一报告优先，只有 Cargo 标记 `fresh` 时才读取精确缓存，并核对读时源码、文件存在性探测及路径映射、环境依赖、原生 dep-info、实际外部库、构建脚本和产物摘要。所有被包装的真实编译单元都采集输入报告；不在规则范围内的依赖只保存输入证据，不产生该规则的诊断或架构事实。输入报告与完整规则报告分别索引，依赖以后进入检查范围时必须取得完整报告。无法证明输入字节的单元不缓存；违规结果可缓存且保持原退出码。缺失、损坏或失配时只恢复对应包一次，仍缺报或歧义则失败。恢复其他包后，同轮已有报告仅在单元仍为 `fresh`、原始报告 SHA 与首次核验的完整输入及产物快照均未变化时保留；重新编译的单元必须使用新报告。编译失败保留已有有效缓存，不发布新的完整事实和运行时快照。
+
+具名字段检查的嵌套工具按各请求实际 Cargo unit graph 的根可达依赖排序，依赖包先行；图反映 dev 依赖、默认 features 及 `build.target`。包级环导致无法排序的剩余成员保留原序，最终单元绑定仍核验完整证明。
+
+每轮 `tmp/ra/r/<run>/` 保存 Cargo 原始输出、unit graph、完整单元索引和各包的 `*-cache-summary.json`。架构输出目录的 `analysis-summary.json` 记录新编译、报告复用、局部恢复及阶段耗时；编译与复用数量按本次运行的各次恢复尝试累计，局部恢复按唯一包计数。`purpose-summary.json` 保存局部证明、保守回退、逐声明回退原因和有效说明命中，维护状态与报告只摘要其计数。图形命中以生成阶段的实际缓存统计为准，不由依赖是否重编推定。
 
 Mermaid 原生几何先查当前工作树的 `tmp/ecs-architecture/mermaid-build/geometry-cache/`，再查 Git 主工作树同路径的共享缓存；有效本地命中会补入共享池，共享池不可写时回退到本地。正式视图元数据和清单保存原始绘图输入的 `renderFingerprint`，没有临时缓存的 checkout 可在输入完全匹配且元数据、SVG、Mermaid 的 SHA-256 与字节数校验通过后复用正式产物。缺少输入指纹的旧产物不作为后备缓存，不凭 SVG 相同推定输入相同。所有命中仍执行当前文字、几何和路由检查，且使用当前模型的源码与关系证据。
 
@@ -373,7 +385,7 @@ Graphviz 使用锁定的 `@viz-js/viz`，浏览器 Worker 使用同一版本筛�
 
 编译器以 `view.id` 作为 `svgId`，独立编译 Mermaid 时使用相同 ID 或复用项目入口。原生反向箭头和 CSS marker 的检查沿用[布局规则](#mermaid-布局与连线)；SVG 归一化只附加身份与交互元数据，不移动路径或替换箭头。
 
-源码位置及完整快照来自语义模型，生成器使用[源码查看页](src/source-viewer.mjs)和[编辑器入口](src/source-editor.mjs)分发。校验允许 CRLF／LF 换行差异，不忽略其他源码变化，并核对锁定包根目录和快照完整性。按[源码定位验证](../testing/README.md#架构图源码定位验证)检查 URI、根目录及生成页交互；静态检查不能代替实际浏览器、VS Code 协议及下面的 SVG 观察。
+源码位置及完整快照来自语义模型，生成器使用[源码查看页](src/source-viewer.mjs)和[编辑器入口](src/source-editor.mjs)分发。校验允许 CRLF／LF 换行差异，不忽略其他源码变化，并核对锁定包根目录和快照完整性。按[源码定位验证](../testing/README.md#架构图源码定位验证)检查 URI、根目录及生成页交互，正式浏览器、VS Code 协议与 SVG 目测按[验证范围](../testing/README.md#架构图视觉检查)处理。
 
 ### SVG 证据命令
 
@@ -395,11 +407,11 @@ npm run maintain --prefix docs/diagrams -- visual report --plan <plan.json>
 
 `visual record` 的输入为单条观察或 `{ "observations": [...] }`。每条必须提供清单中的 `path`、`status`（`passed`／`failed`）、`reviewer: { "id": "检查者", "role": "child", "model": "模型", "reasoningEffort": "强度" }`、`actualInspection: true`、带时区的 `checkedAt`、具体 `notes`、`observedWith`，以及渲染记录中的完整 `images: [{ "path": "绝对图片路径", "sha256": "完整哈希" }]`。子代理实际查看全部对应预览及分块后才可提交；字段是观察声明，脚本不能证明人或模型确实看过。索引以锁及原子替换更新，相同观察幂等，不重写历史事实。
 
-`visual bind` 要求目标 Git 提交的 manifest 及全部引用文件与当前产物字节一致，以独立事件绑定当前图身份及哈希匹配的有效观察；来源工作区或旧 manifest 不妨碍复用，历史未匹配的版本记录保留。使用一次 Git 树读取和文件 blob 身份核对，避免逐文件创建进程；绑定历史提交时需切换到其对应产物。`visual report` 分别列复用、新通过、失败、待检和抽样未覆盖，不把截图、自动检查或绑定事件算作实际目测。清单、SVG、图片、图身份或渲染证据变化均须重新核对。HTTP 浏览器、协议、网络模拟及真实离线分发验收继续按下面的步骤实际执行并分别记录；统一命令不会自动将它们勾为通过。
+`visual bind` 要求目标 Git 提交的 manifest 及全部引用文件与当前产物字节一致，以独立事件绑定当前图身份及哈希匹配的有效观察；来源工作区或旧 manifest 不妨碍复用，历史未匹配的版本记录保留。使用一次 Git 树读取和文件 blob 身份核对，避免逐文件创建进程；绑定历史提交时需切换到其对应产物。`visual report` 分别列复用、新通过、失败、待检和抽样未覆盖，不把截图、自动检查或绑定事件算作实际目测。清单、SVG、图片、图身份或渲染证据变化均须重新核对。HTTP 浏览器与 VS Code 协议验收不列入默认维护任务，实际预览步骤保留在下面供按需使用。
 
 ### 本地自动预览
 
-生成与校验完成后，在仓库根运行：
+需要本地预览时，在仓库根运行；日常维护不为 HTTP 或 VS Code 验收自动启动服务：
 
 ```powershell
 node docs/diagrams/serve.mjs
@@ -409,4 +421,4 @@ node docs/diagrams/serve.mjs
 
 离线分发需要完整的生成目录和本地服务，断网后仍可切图、搜索、查看源码及重新布局筛选。直接打开主 HTML 时显示启动服务的说明。页面只请求本地 SVG、JSON 和按需关系绘图模块，不访问 CDN，也不下载额外字体或 WASM。
 
-Agent 记录实际 URL 与服务会话或进程标识，日志留在根 `tmp/ecs-architecture/` 的任务目录；验收结束后停止本次新建的服务，前台服务使用 Ctrl+C 停止。浏览器工具若拒绝目标，停止该目标的浏览器验收并记录原因，不通过更换协议、端口、服务或浏览器绕过拒绝；HTTP 检查与静态包检查分别记录。
+用户明确要求 Agent 预览时，记录实际 URL 与服务会话或进程标识，日志留在根 `tmp/ecs-architecture/` 的任务目录；预览结束后停止本次新建的服务，前台服务使用 Ctrl+C 停止。浏览器工具若拒绝目标，停止该目标的访问并记录原因，不通过更换协议、端口、服务或浏览器绕过拒绝。HTTP 浏览器与 VS Code 协议验收的停用范围见[验证参考](../testing/README.md#架构图视觉检查)。

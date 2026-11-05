@@ -52,7 +52,7 @@ flowchart LR
   class n3 node_component
   n4@{ shape: rounded, label: "**ColliderTreeProxyKey**<br/>定位特定碰撞体树中的代理。" }
   class n4 node_component
-  n5@{ shape: cyl, label: "**LastDynamicKinematicAabbUpdate**<br/>记录动态与运动学 AABB 更新刻度。" }
+  n5@{ shape: cyl, label: "**LastDynamicKinematicAabbUpdate**<br/>记录活跃刚体 AABB 更新的完成刻度。" }
   class n5 node_resource
   n6@{ shape: rounded, label: "**Rotation**<br/>保存刚体或碰撞体的世界旋转。" }
   class n6 node_component
@@ -78,7 +78,7 @@ flowchart LR
   class n16 node_component
   n17@{ shape: rounded, label: "**Position**<br/>保存刚体或碰撞体的世界位置。" }
   class n17 node_component
-  n18@{ shape: cyl, label: "**EnlargedProxies**<br/>标记需要扩大边界的碰撞代理。" }
+  n18@{ shape: cyl, label: "**EnlargedProxies**<br/>标记各类空间树中需要更新边界的代理。" }
   class n18 node_resource
   n19@{ shape: rounded, label: "**SolverBodyIndex**<br/>定位实体对应的求解器刚体。" }
   class n19 node_component
