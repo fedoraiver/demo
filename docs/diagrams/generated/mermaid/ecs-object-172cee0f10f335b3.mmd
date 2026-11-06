@@ -55,24 +55,27 @@ flowchart LR
   n6@{ shape: rounded, label: "**add​_​mesh**<br/>来自crate:bevy​_​sprite​_​render ↗：为新<br/>增精灵安装共享单位矩形网格。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**spawn​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：创建<br/>变换操作器各轴网格、材质和覆盖相机。" }
+  n7@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**update​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​camera ↗：依据当前关节<br/>姿态更新动态蒙皮包围盒。" }
+  n8@{ shape: rounded, label: "**spawn​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：创建<br/>变换操作器各轴网格、材质和覆盖相机。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**draw​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制带独立显<br/>示标记的动态蒙皮包围区域。" }
+  n9@{ shape: rounded, label: "**update​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​camera ↗：依据当前关节<br/>姿态更新动态蒙皮包围盒。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**prepare​_​island**<br/>来自scene​_​assembly ↗：在资源 CPU 几<br/>何可用时构建碰撞；全部成功后才提交，失败<br/>时不创建动态玩家。" }
+  n10@{ shape: rounded, label: "**draw​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制带独立显<br/>示标记的动态蒙皮包围区域。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  n11@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
+  n12@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n12 node_system
   class n12 external_node
+  n13@{ shape: rounded, label: "**calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
+  class n13 node_system
+  class n13 external_node
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"可变访问"| n0
@@ -87,28 +90,27 @@ flowchart LR
   class e5 edge_write
   n7 e6@-->|"可变访问"| n0
   class e6 edge_write
-  n0 e7@--> n8
-  class e7 edge_read
+  n8 e7@-->|"可变访问"| n0
+  class e7 edge_write
   n0 e8@--> n9
   class e8 edge_read
   n0 e9@--> n10
   class e9 edge_read
   n11 e10@-->|"可变访问"| n0
   class e10 edge_write
-  n0 e11@--> n12
-  class e11 edge_read
-  n2 layout_input_0@~~~ n3
-  n3 layout_input_1@~~~ n6
-  n6 layout_input_2@~~~ n7
-  n7 layout_input_3@~~~ n11
+  n12 e11@-->|"可变访问"| n0
+  class e11 edge_write
+  n0 e12@--> n13
+  class e12 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: basis }
+  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
+  e12@{ curve: basis }

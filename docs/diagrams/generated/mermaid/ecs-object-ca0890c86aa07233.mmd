@@ -42,39 +42,31 @@ flowchart LR
   class n0 node_non_send
   n1@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>执行指定类型音频通道的命令队列。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**update​_​instance​_​states**<br/>把实际播放状态回写到类型通道。" }
+  n2@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>执行指定类型音频通道的命令队列。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>执行指定类型音频通道的命令队列。" }
+  n3@{ shape: rounded, label: "**update​_​instance​_​states**<br/>把实际播放状态回写到类型通道。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>执行指定类型音频通道的命令队列。" }
+  n4@{ shape: rounded, label: "**cleanup​_​stopped​_​instances**<br/>释放已停止播放实例的内部引用。" }
   class n4 node_system
   n5@{ shape: rounded, label: "**play​_​dynamic​_​channels**<br/>执行按名称创建的动态音频通道命令。" }
   class n5 node_system
   n6@{ shape: rounded, label: "**update​_​instance​_​states**<br/>把实际播放状态回写到类型通道。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**cleanup​_​stopped​_​instances**<br/>释放已停止播放实例的内部引用。" }
-  class n7 node_system
-  n8@{ shape: rounded, label: "**update​_​instance​_​states**<br/>把实际播放状态回写到类型通道。" }
-  class n8 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
-  n0 e1@--> n2
-  class e1 edge_read
-  n3 e2@-->|"可变访问"| n0
-  class e2 edge_write
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write
+  n0 e2@--> n3
+  class e2 edge_read
   n4 e3@-->|"可变访问"| n0
   class e3 edge_write
   n5 e4@-->|"可变访问"| n0
   class e4 edge_write
   n0 e5@--> n6
   class e5 edge_read
-  n7 e6@-->|"可变访问"| n0
-  class e6 edge_write
-  n0 e7@--> n8
-  class e7 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: basis }
-  e6@{ curve: basis }
-  e7@{ curve: basis }
+  e5@{ curve: basis }

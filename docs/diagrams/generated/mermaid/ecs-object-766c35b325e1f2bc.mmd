@@ -46,11 +46,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>箱实体被销毁时关系钩子会清空反向索引，人<br/>物仍存活则归还其原质量。" }
   class n0 node_system
-  n1@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  n1@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期及物理与呈现同步；<br/>物理插件由调用方显式安装。" }
   class n1 node_plugin
   n2@{ shape: rounded, label: "**CarryBaseMass**<br/>独立箱根不属于人物的 Children，显式保存<br/>原质量供挂接和解除时恢复。" }
   class n2 node_component
-  n3@{ shape: lin-rect, label: "**Attachment**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
+  n3@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n3 node_system_set
   class n3 external_node
   n4@{ shape: rounded, label: "**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
@@ -62,11 +62,11 @@ flowchart LR
   class n6 node_component
   n7@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
   class n7 node_system
-  n8@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
-  class n8 node_system_set
+  n8@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
+  class n8 node_component
   class n8 external_node
-  n9@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
-  class n9 node_component
+  n9@{ shape: lin-rect, label: "**Attachment**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
+  class n9 node_system_set
   class n9 external_node
   n1 e0@-->|"调用"| n0
   class e0 edge_registration
@@ -86,10 +86,10 @@ flowchart LR
   class e7 edge_order
   n0 e8@-->|"可变访问"| n5
   class e8 edge_write
-  n8 e9@-->|"集合成员"| n0
-  class e9 edge_set_membership
-  n9 e10@-->|"存在性约束"| n0
-  class e10 edge_reference
+  n8 e9@-->|"存在性约束"| n0
+  class e9 edge_reference
+  n9 e10@-->|"集合成员"| n0
+  class e10 edge_set_membership
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

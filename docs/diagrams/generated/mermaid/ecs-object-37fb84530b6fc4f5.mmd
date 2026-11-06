@@ -46,19 +46,19 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ColliderOf**<br/>来自crate:avian3d ↗：指定碰撞体附着的<br/>刚体。" }
-  class n1 node_component
+  n1@{ shape: lin-rect, label: "**Attachment**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
+  class n1 node_system_set
   class n1 external_node
-  n2@{ shape: lin-rect, label: "**Attachment**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
+  n2@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
-  class n3 node_plugin
-  n4@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>箱实体被销毁时关系钩子会清空反向索引，人<br/>物仍存活则归还其原质量。" }
-  class n4 node_system
-  n5@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
-  class n5 node_system_set
-  class n5 external_node
+  n3@{ shape: rounded, label: "**ColliderOf**<br/>来自crate:avian3d ↗：指定碰撞体附着的<br/>刚体。" }
+  class n3 node_component
+  class n3 external_node
+  n4@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期及物理与呈现同步；<br/>物理插件由调用方显式安装。" }
+  class n4 node_plugin
+  n5@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>箱实体被销毁时关系钩子会清空反向索引，人<br/>物仍存活则归还其原质量。" }
+  class n5 node_system
   n6@{ shape: rounded, label: "**release​_​orphaned​_​items**<br/>关系被外部解除或人物销毁时，独立箱实体仍<br/>能恢复自由刚体，不产生残留附属碰撞。" }
   class n6 node_system
   n7@{ shape: rounded, label: "**HeldCollider**<br/>无视觉碰撞代理对应的物品身份；代理随组合<br/>体清理，业务根始终独立。" }
@@ -68,16 +68,16 @@ flowchart LR
   class n8 external_node
   n9@{ shape: rounded, label: "**Pickable**<br/>允许被拾取的能力标签。" }
   class n9 node_component
-  n0 e0@-->|"移除"| n1
-  class e0 edge_write
+  n1 e0@-->|"集合成员"| n0
+  class e0 edge_set_membership
   n2 e1@-->|"集合成员"| n0
   class e1 edge_set_membership
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
-  n0 e3@-->|"先于"| n4
-  class e3 edge_order
-  n5 e4@-->|"集合成员"| n0
-  class e4 edge_set_membership
+  n0 e2@-->|"移除"| n3
+  class e2 edge_write
+  n4 e3@-->|"调用"| n0
+  class e3 edge_registration
+  n0 e4@-->|"先于"| n5
+  class e4 edge_order
   n6 e5@-->|"先于"| n0
   class e5 edge_order
   n7 e6@--> n0
@@ -89,7 +89,7 @@ flowchart LR
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e4@{ curve: basis }
+  e3@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }

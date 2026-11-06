@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-a75ab54a54d7a702-e1{marker-start:url(#object-a75ab54a54d7a702_flowchart-v2-pointStart)!important}\n#object-a75ab54a54d7a702_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-a75ab54a54d7a702-e5{marker-start:url(#object-a75ab54a54d7a702_flowchart-v2-pointStart)!important}\n#object-a75ab54a54d7a702_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -45,17 +45,17 @@ flowchart LR
   n1@{ shape: hex, label: "**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: rounded, label: "**generate​_​environment​_​map​_​light**<br/>来自crate:bevy​_​pbr ↗：为环境光生成分<br/>配漫反射和镜面目标图像。" }
+  n2@{ shape: rounded, label: "**automatically​_​add​_​parallax​_​**<br/>**correction​_​components**<br/>为局部反射探针补入默认视差校正。" }
   class n2 node_system
-  class n2 external_node
-  n3@{ shape: rounded, label: "**automatically​_​add​_​parallax​_​**<br/>**correction​_​components**<br/>为局部反射探针补入默认视差校正。" }
+  n3@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>将灯光、探针及贴花分配到视图分簇。" }
-  class n4 node_system
-  n5@{ shape: hex, label: "**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
-  class n5 node_observer
+  n4@{ shape: hex, label: "**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: rounded, label: "**extract​_​all**<br/>来自crate:bevy​_​extract ↗：重新提取并<br/>索引主世界的实例数据。" }
+  class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**extract​_​all**<br/>来自crate:bevy​_​extract ↗：重新提取并<br/>索引主世界的实例数据。" }
+  n6@{ shape: rounded, label: "**generate​_​environment​_​map​_​light**<br/>来自crate:bevy​_​pbr ↗：为环境光生成分<br/>配漫反射和镜面目标图像。" }
   class n6 node_system
   class n6 external_node
   n7@{ shape: hex, label: "**on​_​remove​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：清理已关闭的大<br/>气环境光组件。" }
@@ -81,16 +81,16 @@ flowchart LR
   class n13 external_node
   n1 e0@-->|"移除"| n0
   class e0 edge_write
-  n2 e1@---|"存在性约束"| n0
+  n0 e1@-->|"存在性约束"| n2
   class e1 edge_reference
   n0 e2@-->|"存在性约束"| n3
   class e2 edge_reference
-  n0 e3@-->|"存在性约束"| n4
-  class e3 edge_reference
-  n5 e4@-->|"移除"| n0
-  class e4 edge_write
-  n0 e5@--> n6
-  class e5 edge_read
+  n4 e3@-->|"移除"| n0
+  class e3 edge_write
+  n0 e4@--> n5
+  class e4 edge_read
+  n6 e5@---|"存在性约束"| n0
+  class e5 edge_reference
   n7 e6@-->|"移除"| n0
   class e6 edge_write
   n0 e7@--> n8
@@ -103,9 +103,9 @@ flowchart LR
   class e10 edge_write
   n12 e11@-->|"移除"| n0
   class e11 edge_write
-  n2 e12@-->|"插入"| n0
+  n13 e12@-->|"移除"| n0
   class e12 edge_write
-  n13 e13@-->|"移除"| n0
+  n6 e13@-->|"插入"| n0
   class e13 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -114,7 +114,7 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
+  e7@{ curve: bumpX }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

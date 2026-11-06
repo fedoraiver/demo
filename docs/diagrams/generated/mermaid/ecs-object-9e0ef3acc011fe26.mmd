@@ -55,18 +55,15 @@ flowchart LR
   class n5 node_observer
   n6@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
-  class n7 node_entity
-  class n7 external_node
-  n8@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
-  class n8 node_system
-  n9@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
-  class n9 node_entity
-  class n9 external_node
-  n10@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
+  n7@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
+  class n7 node_system
+  n8@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
+  class n8 node_entity
+  class n8 external_node
+  n9@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
+  class n9 node_observer
+  n10@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化碰撞体包围盒与边距缓存。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化碰撞体包围盒与边距缓存。" }
-  class n11 node_observer
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
@@ -79,20 +76,18 @@ flowchart LR
   class e4 edge_read
   n6 e5@--- n0
   class e5 edge_read
-  n7 e6@-->|"可能包含"| n0
-  class e6 edge_reference
-  n0 e7@--> n8
-  class e7 edge_read
-  n4 e8@-->|"可变访问"| n0
-  class e8 edge_write
-  n9 e9@-->|"可能包含"| n0
-  class e9 edge_reference
-  n0 e10@--> n10
-  class e10 edge_read
-  n6 e11@-->|"可变访问"| n0
+  n0 e6@--> n7
+  class e6 edge_read
+  n4 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n8 e8@-->|"可能包含"| n0
+  class e8 edge_reference
+  n0 e9@--> n9
+  class e9 edge_read
+  n6 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n10 e11@-->|"可变访问"| n0
   class e11 edge_write
-  n11 e12@-->|"可变访问"| n0
-  class e12 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -105,4 +100,3 @@ flowchart LR
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
-  e12@{ curve: basis }

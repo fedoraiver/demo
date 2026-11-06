@@ -45,11 +45,11 @@ flowchart LR
   class n1 node_system
   n2@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​end**<br/>把当前缩放记录为插值终点。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**reset​_​scale​_​easing**<br/>清除旧缩放平滑的起点和终点。" }
+  n3@{ shape: rounded, label: "**complete​_​scale​_​easing**<br/>在新一轮插值前完成上一段缩放。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**complete​_​scale​_​easing**<br/>在新一轮插值前完成上一段缩放。" }
+  n4@{ shape: rounded, label: "**reset​_​easing​_​states​_​on​_​transform​_​**<br/>**change**<br/>在外部直接改变变换时取消失效的平滑区间。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**reset​_​easing​_​states​_​on​_​transform​_​**<br/>**change**<br/>在外部直接改变变换时取消失效的平滑区间。" }
+  n5@{ shape: rounded, label: "**reset​_​scale​_​easing**<br/>清除旧缩放平滑的起点和终点。" }
   class n5 node_system
   n6@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​start**<br/>把当前缩放记录为插值起点。" }
   class n6 node_system
@@ -57,23 +57,23 @@ flowchart LR
   class e0 edge_read
   n2 e1@-->|"赋值"| n0
   class e1 edge_write
-  n3 e2@-->|"可变访问"| n0
-  class e2 edge_write
-  n0 e3@--> n4
-  class e3 edge_read
-  n5 e4@-->|"可变访问"| n0
+  n0 e2@--> n3
+  class e2 edge_read
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n5 e4@-->|"赋值"| n0
   class e4 edge_write
-  n5 e5@---|"存在性约束"| n0
+  n4 e5@---|"存在性约束"| n0
   class e5 edge_reference
   n2 e6@-->|"可变访问"| n0
   class e6 edge_write
-  n6 e7@-->|"可变访问"| n0
+  n5 e7@-->|"可变访问"| n0
   class e7 edge_write
-  n6 e8@-->|"赋值"| n0
+  n6 e8@-->|"可变访问"| n0
   class e8 edge_write
-  n5 e9@-->|"赋值"| n0
+  n6 e9@-->|"赋值"| n0
   class e9 edge_write
-  n3 e10@-->|"赋值"| n0
+  n4 e10@-->|"赋值"| n0
   class e10 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

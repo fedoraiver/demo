@@ -52,7 +52,7 @@ flowchart LR
   class n2 node_component
   n3@{ shape: rounded, label: "**HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
   class n3 node_component
-  n4@{ shape: rounded, label: "**CarryGrip**<br/>模型对应的手前偏移；未指定时继续使用原型<br/>配置，纸箱对齐持箱动作的双手。" }
+  n4@{ shape: rounded, label: "**CarryGrip**<br/>物品相对持有者的局部握点；未指定时使用原<br/>型配置。" }
   class n4 node_component
   n5@{ shape: rounded, label: "**gameplay​_​running**<br/>来自game​_​flow ↗：独立功能测试没有应用<br/>状态；真实游戏只在 Running 推进玩法。" }
   class n5 node_system
@@ -62,7 +62,7 @@ flowchart LR
   n7@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n7 node_component
   class n7 external_node
-  n8@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  n8@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期及物理与呈现同步；<br/>物理插件由调用方显式安装。" }
   class n8 node_plugin
   n9@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n9 node_component

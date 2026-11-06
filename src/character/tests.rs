@@ -65,7 +65,7 @@ fn spawn_item(app: &mut App, position: Vec3) -> Entity {
     let config = app.world().resource::<PrototypeConfig>().clone();
     app.world_mut()
         .spawn((
-            Item::StandardParcel,
+            Item,
             Pickable,
             Transform::from_translation(position),
             item_body(&config),

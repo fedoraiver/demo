@@ -41,21 +41,17 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**VolumeSlider**<br/>滑条仍是普通菜单按钮，左右导航共用字段，<br/>鼠标数值由局部坐标决定。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供可导航和指针拖动的音量调节入口。" }
+  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>将滑条指针位置转换为音量请求。" }
   class n1 node_entity
-  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供可导航和指针拖动的音量调节入口。" }
-  class n2 node_entity
-  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>提供可导航和指针拖动的音量调节入口。" }
+  n2@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>将滑条指针位置转换为音量请求。" }
   class n3 node_entity
-  n4@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
-  class n4 node_system
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
-  n2 e1@-->|"可能包含"| n0
-  class e1 edge_reference
+  n0 e1@--> n2
+  class e1 edge_read
   n3 e2@-->|"可能包含"| n0
   class e2 edge_reference
-  n0 e3@--> n4
-  class e3 edge_read
   e0@{ curve: basis }
   e2@{ curve: basis }

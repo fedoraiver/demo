@@ -42,48 +42,48 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**HeldCollider**<br/>无视觉碰撞代理对应的物品身份；代理随组合<br/>体清理，业务根始终独立。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
-  class n1 node_system
-  class n1 external_node
-  n2@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
+  n1@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>Despawn 观察先排队停用代理，再让<br/>Avian 的刚体卸载与 linked​_​spawn 清理<br/>运行。" }
+  class n1 node_observer
+  n2@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
   class n2 node_system
+  class n2 external_node
   n3@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
+  n4@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
   class n4 node_system
-  n5@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>Despawn 观察先排队停用代理，再让<br/>Avian 的刚体卸载与 linked​_​spawn 清理<br/>运行。" }
-  class n5 node_observer
+  n5@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
+  class n5 node_system
   n6@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>Despawn 观察先排队停用代理，再让<br/>Avian 的刚体卸载与 linked​_​spawn 清理<br/>运行。" }
   class n6 node_observer
   n7@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
-  class n8 node_system
-  n9@{ shape: rounded, label: "**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
+  n8@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>Despawn 观察先排队停用代理，再让<br/>Avian 的刚体卸载与 linked​_​spawn 清理<br/>运行。" }
+  class n8 node_observer
+  n9@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
   class n9 node_system
-  n10@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>Despawn 观察先排队停用代理，再让<br/>Avian 的刚体卸载与 linked​_​spawn 清理<br/>运行。" }
-  class n10 node_observer
+  n10@{ shape: rounded, label: "**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
+  class n10 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
   n0 e1@-->|"存在性约束"| n2
   class e1 edge_reference
   n0 e2@-->|"存在性约束"| n3
   class e2 edge_reference
-  n0 e3@--> n4
-  class e3 edge_read
-  n0 e4@-->|"存在性约束"| n5
-  class e4 edge_reference
+  n0 e3@-->|"存在性约束"| n4
+  class e3 edge_reference
+  n0 e4@--> n5
+  class e4 edge_read
   n0 e5@-->|"存在性约束"| n6
   class e5 edge_reference
   n0 e6@-->|"存在性约束"| n7
   class e6 edge_reference
   n0 e7@-->|"存在性约束"| n8
   class e7 edge_reference
-  n9 e8@-->|"插入"| n0
-  class e8 edge_write
-  n0 e9@-->|"存在性约束"| n10
-  class e9 edge_reference
+  n0 e8@-->|"存在性约束"| n9
+  class e8 edge_reference
+  n10 e9@-->|"插入"| n0
+  class e9 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -91,4 +91,4 @@ flowchart LR
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e9@{ curve: basis }
+  e8@{ curve: basis }

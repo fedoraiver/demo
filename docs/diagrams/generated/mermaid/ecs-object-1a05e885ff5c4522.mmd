@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-1a05e885ff5c4522-e10{marker-start:url(#object-1a05e885ff5c4522_flowchart-v2-pointStart)!important}\n#object-1a05e885ff5c4522_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-1a05e885ff5c4522-e9{marker-start:url(#object-1a05e885ff5c4522_flowchart-v2-pointStart)!important}\n#object-1a05e885ff5c4522_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -40,9 +40,12 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**AccumulatedLocalAcceleration**<br/>累积物理步前的局部加速度。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
   class n1 node_entity
   class n1 external_node
   n2@{ shape: rounded, label: "**apply​_​constant​_​local​_​forces**<br/>按总质量把局部恒力转成局部线加速度。" }
@@ -60,12 +63,9 @@ flowchart LR
   class n7 node_system
   n8@{ shape: rounded, label: "**apply​_​constant​_​local​_​torques**<br/>按局部惯量把恒定局部扭矩转成角加速度。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
-  class n9 node_entity
+  n9@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
+  class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
-  class n10 node_system
-  class n10 external_node
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
   n2 e1@-->|"可变访问"| n0
@@ -84,12 +84,10 @@ flowchart LR
   class e7 edge_write
   n8 e8@-->|"可变访问"| n0
   class e8 edge_write
-  n9 e9@-->|"可能包含"| n0
+  n6 e9@---|"存在性约束"| n0
   class e9 edge_reference
-  n6 e10@---|"存在性约束"| n0
-  class e10 edge_reference
-  n10 e11@-->|"可变访问"| n0
-  class e11 edge_write
+  n9 e10@-->|"可变访问"| n0
+  class e10 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e3@{ curve: basis }
@@ -100,4 +98,3 @@ flowchart LR
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e11@{ curve: basis }

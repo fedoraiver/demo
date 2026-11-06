@@ -83,7 +83,7 @@ pub(super) fn setting_value(draft: &SettingsDraft, key: SettingKey) -> String {
         ),
         SettingKey::InvertY => if draft.invert_y { "On" } else { "Off" }.into(),
         // 音量控件由 volume 模块更新，此处仍保持枚举格式匹配完整。
-        key @ (SettingKey::MasterVolume | SettingKey::SfxVolume | SettingKey::UiVolume) => {
+        key @ (SettingKey::MasterVolume | SettingKey::UiVolume) => {
             format!("{}%", draft.volume(key).unwrap())
         }
     }

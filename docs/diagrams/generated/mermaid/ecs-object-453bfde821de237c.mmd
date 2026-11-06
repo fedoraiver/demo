@@ -30,10 +30,11 @@
 }
 ---
 flowchart LR
-  accTitle: bevy_pbr::MeshMaterial3d#lt;bevy_pbr::StandardMaterial#gt; · 对象关系
+  accTitle: bevy::bevy_pbr::MeshMaterial3d#lt;bevy::bevy_pbr::StandardMaterial#gt; · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
@@ -47,8 +48,14 @@ flowchart LR
   n3@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**mark​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>材质组件或资产变化时请求网格重新提取。" }
-  class n4 node_system
+  n4@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
+  class n4 node_entity
+  class n4 external_node
+  n5@{ shape: rounded, label: "**mark​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>材质组件或资产变化时请求网格重新提取。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：创建可拾取并参<br/>与物理的灰盒方块。" }
+  class n6 node_entity
+  class n6 external_node
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@-->|"存在性约束"| n1
@@ -59,10 +66,14 @@ flowchart LR
   class e3 edge_read
   n0 e4@--> n2
   class e4 edge_read
-  n0 e5@--> n4
-  class e5 edge_read
-  n0 e6@-->|"存在性约束"| n4
-  class e6 edge_reference
+  n4 e5@-->|"可能包含"| n0
+  class e5 edge_reference
+  n0 e6@--> n5
+  class e6 edge_read
+  n6 e7@-->|"可能包含"| n0
+  class e7 edge_reference
+  n0 e8@-->|"存在性约束"| n5
+  class e8 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -70,3 +81,5 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: basis }

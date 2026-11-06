@@ -1,0 +1,48 @@
+---
+{
+  "config": {
+    "theme": "base",
+    "look": "classic",
+    "layout": "dagre",
+    "maxTextSize": 200000,
+    "htmlLabels": false,
+    "fontFamily": "Segoe UI, Microsoft YaHei, sans-serif",
+    "themeVariables": {
+      "primaryTextColor": "#1F3340",
+      "lineColor": "#64748B",
+      "clusterBkg": "#F8FAFC",
+      "clusterBorder": "#DDE4ED",
+      "edgeLabelBackground": "#FFFFFF",
+      "fontSize": "14px"
+    },
+    "flowchart": {
+      "htmlLabels": false,
+      "nodeSpacing": 16,
+      "rankSpacing": 48,
+      "padding": 16,
+      "wrappingWidth": 280,
+      "minNodeWidth": 180,
+      "useMaxWidth": false,
+      "curve": "linear"
+    },
+    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+  }
+}
+---
+flowchart LR
+  accTitle: rebuild_page · 创建模板 · 对象关系
+  accDescr: 实体创建模板与直接关联的非组件对象。
+  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
+  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
+  classDef edge_relationship stroke:#7B4DB2,stroke-width:1.8px
+  classDef external_node stroke-dasharray:6 4
+  n0@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>排列音量设置行的控件与数值。" }
+  class n0 node_entity
+  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示音量百分比或静音提示。" }
+  class n1 node_entity
+  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>排列音量设置行的控件与数值。" }
+  class n2 node_entity
+  n0 e0@-->|"子实体"| n1
+  class e0 edge_relationship
+  n2 e1@-->|"子实体"| n0
+  class e1 edge_relationship

@@ -45,112 +45,97 @@ flowchart LR
   class n0 node_component
   end
   style layout_card_n0 fill:none,stroke:none
-  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并拖动设置正文的滚动位<br/>置。" }
+  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现并响应设置滚动条滑块。" }
   class n1 node_entity
   class n1 external_node
-  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在音量填充末端绘制当前位置手<br/>柄。" }
-  class n2 node_entity
+  n2@{ shape: rounded, label: "**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
+  class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置正文提供按溢出显隐的垂<br/>直滚动轨道。" }
-  class n3 node_entity
+  n3@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步设置滚动条的有效范围和交<br/>互状态。" }
+  class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
-  class n4 node_system
+  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道或手柄。" }
+  class n4 node_entity
   class n4 external_node
   n5@{ shape: rounded, label: "**ui​_​picking**<br/>来自crate:bevy​_​ui ↗：按 UI 堆叠与相机<br/>视口计算指针命中。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置正文提供按溢出显隐的垂<br/>直滚动轨道。" }
+  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按草稿音量绘制滑条填充。" }
   class n6 node_entity
   class n6 external_node
-  n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并拖动设置正文的滚动位<br/>置。" }
+  n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载设置面板的纵向滚动轨道。" }
   class n7 node_entity
   class n7 external_node
   n8@{ shape: rounded, label: "**generate​_​hovermap**<br/>汇总拾取命中并应用指针捕获。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：用填充宽度显示对应音量的当前<br/>百分比。" }
+  n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载设置面板的纵向滚动轨道。" }
   class n9 node_entity
   class n9 external_node
-  n10@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步设置滚动条的有效范围和交<br/>互状态。" }
-  class n10 node_system
+  n10@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载设置面板的纵向滚动轨道。" }
+  class n10 node_entity
   class n10 external_node
-  n11@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置正文提供按溢出显隐的垂<br/>直滚动轨道。" }
+  n11@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按草稿音量绘制滑条填充。" }
   class n11 node_entity
   class n11 external_node
-  n12@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置正文提供按溢出显隐的垂<br/>直滚动轨道。" }
+  n12@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现并响应设置滚动条滑块。" }
   class n12 node_entity
   class n12 external_node
-  n13@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：用填充宽度显示对应音量的当前<br/>百分比。" }
+  n13@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现并响应设置滚动条滑块。" }
   class n13 node_entity
   class n13 external_node
-  n14@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：用填充宽度显示对应音量的当前<br/>百分比。" }
+  n14@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道或手柄。" }
   class n14 node_entity
   class n14 external_node
-  n15@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并拖动设置正文的滚动位<br/>置。" }
+  n15@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载设置面板的纵向滚动轨道。" }
   class n15 node_entity
   class n15 external_node
-  n16@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并拖动设置正文的滚动位<br/>置。" }
+  n16@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现并响应设置滚动条滑块。" }
   class n16 node_entity
   class n16 external_node
-  n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在音量填充末端绘制当前位置手<br/>柄。" }
+  n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道或手柄。" }
   class n17 node_entity
   class n17 external_node
-  n18@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道底并容纳音<br/>量填充。" }
+  n18@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道或手柄。" }
   class n18 node_entity
   class n18 external_node
-  n19@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在音量填充末端绘制当前位置手<br/>柄。" }
-  class n19 node_entity
-  class n19 external_node
-  n20@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道底并容纳音<br/>量填充。" }
-  class n20 node_entity
-  class n20 external_node
-  n21@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道底并容纳音<br/>量填充。" }
-  class n21 node_entity
-  class n21 external_node
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
-  n2 e1@-->|"可能包含"| n0
-  class e1 edge_reference
-  n3 e2@-->|"可能包含"| n0
-  class e2 edge_reference
-  n0 e3@--> n4
-  class e3 edge_read
+  n0 e1@--> n2
+  class e1 edge_read
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n4 e3@-->|"可能包含"| n0
+  class e3 edge_reference
   n0 e4@--> n5
   class e4 edge_read
-  n6 e5@-->|"可能包含"| n0
-  class e5 edge_reference
-  n7 e6@-->|"可能包含"| n0
+  n3 e5@-->|"赋值"| n0
+  class e5 edge_write
+  n6 e6@-->|"可能包含"| n0
   class e6 edge_reference
-  n0 e7@--> n8
-  class e7 edge_read
-  n9 e8@-->|"可能包含"| n0
-  class e8 edge_reference
-  n10 e9@-->|"可变访问"| n0
-  class e9 edge_write
-  n11 e10@-->|"可能包含"| n0
+  n7 e7@-->|"可能包含"| n0
+  class e7 edge_reference
+  n0 e8@--> n8
+  class e8 edge_read
+  n9 e9@-->|"可能包含"| n0
+  class e9 edge_reference
+  n10 e10@-->|"可能包含"| n0
   class e10 edge_reference
-  n12 e11@-->|"可能包含"| n0
+  n11 e11@-->|"可能包含"| n0
   class e11 edge_reference
-  n13 e12@-->|"可能包含"| n0
+  n12 e12@-->|"可能包含"| n0
   class e12 edge_reference
-  n14 e13@-->|"可能包含"| n0
+  n13 e13@-->|"可能包含"| n0
   class e13 edge_reference
-  n15 e14@-->|"可能包含"| n0
+  n14 e14@-->|"可能包含"| n0
   class e14 edge_reference
-  n16 e15@-->|"可能包含"| n0
+  n15 e15@-->|"可能包含"| n0
   class e15 edge_reference
-  n17 e16@-->|"可能包含"| n0
+  n16 e16@-->|"可能包含"| n0
   class e16 edge_reference
-  n18 e17@-->|"可能包含"| n0
+  n17 e17@-->|"可能包含"| n0
   class e17 edge_reference
-  n19 e18@-->|"可能包含"| n0
+  n18 e18@-->|"可能包含"| n0
   class e18 edge_reference
-  n20 e19@-->|"可能包含"| n0
-  class e19 edge_reference
-  n21 e20@-->|"可能包含"| n0
-  class e20 edge_reference
-  n10 e21@-->|"赋值"| n0
-  class e21 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -164,11 +149,9 @@ flowchart LR
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
+  e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }
   e17@{ curve: basis }
   e18@{ curve: basis }
-  e19@{ curve: basis }
-  e20@{ curve: basis }
-  e21@{ curve: basis }

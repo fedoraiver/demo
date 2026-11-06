@@ -43,32 +43,27 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**ColliderDensity**<br/>以密度参与碰撞体质量计算。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
-  class n1 node_entity
-  class n1 external_node
-  n2@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
-  class n2 node_entity
-  class n2 external_node
-  n3@{ shape: rounded, label: "**update​_​collider​_​mass​_​properties**<br/>按变化的形状和密度重算碰撞体质量。" }
-  class n3 node_system
-  n4@{ shape: rounded, label: "**init​_​collider​_​constructor​_​**<br/>**hierarchies**<br/>按层级构造配置为后代生成碰撞体。" }
-  class n4 node_system
-  n5@{ shape: hex, label: "**build::{closure#35;6}**<br/>恢复非传感器碰撞体的质量属性。" }
-  class n5 node_observer
-  n1 e0@-->|"可能包含"| n0
-  class e0 edge_reference
-  n2 e1@-->|"可能包含"| n0
-  class e1 edge_reference
-  n0 e2@--> n3
-  class e2 edge_read
-  n4 e3@-->|"插入"| n0
-  class e3 edge_write
-  n0 e4@--> n5
-  class e4 edge_read
-  n0 e5@-->|"存在性约束"| n3
-  class e5 edge_reference
+  n1@{ shape: rounded, label: "**update​_​collider​_​mass​_​properties**<br/>按变化的形状和密度重算碰撞体质量。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**init​_​collider​_​constructor​_​**<br/>**hierarchies**<br/>按层级构造配置为后代生成碰撞体。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
+  class n3 node_entity
+  class n3 external_node
+  n4@{ shape: hex, label: "**build::{closure#35;6}**<br/>恢复非传感器碰撞体的质量属性。" }
+  class n4 node_observer
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"插入"| n0
+  class e1 edge_write
+  n3 e2@-->|"可能包含"| n0
+  class e2 edge_reference
+  n0 e3@--> n4
+  class e3 edge_read
+  n0 e4@-->|"存在性约束"| n1
+  class e4 edge_reference
   e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: bumpX }

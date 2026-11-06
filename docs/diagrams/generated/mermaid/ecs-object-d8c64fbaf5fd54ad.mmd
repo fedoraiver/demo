@@ -46,14 +46,11 @@ flowchart LR
   class n2 node_system_set
   n3@{ shape: rounded, label: "**update​_​scale​_​interpolation​_​start**<br/>把当前缩放记录为插值起点。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**resume​_​interpolation**<br/>来自bounds​_​recovery ↗：下一固定步从恢<br/>复后的位置重新采样插值，只移除本模块临时<br/>添加的暂停项。" }
+  n4@{ shape: rounded, label: "**resume​_​interpolation**<br/>来自item​_​interaction ↗：下一固定步在<br/>旧端点清除后恢复自由箱插值，保留原本由其<br/>他模块设置的暂停项。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**resume​_​interpolation**<br/>来自item​_​interaction ↗：下一固定步在<br/>旧端点清除后恢复自由箱插值，保留原本由其<br/>他模块设置的暂停项。" }
+  n5@{ shape: rounded, label: "**update​_​rotation​_​interpolation​_​start**<br/>把当前旋转记录为插值起点。" }
   class n5 node_system
-  class n5 external_node
-  n6@{ shape: rounded, label: "**update​_​rotation​_​interpolation​_​start**<br/>把当前旋转记录为插值起点。" }
-  class n6 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership
   n2 e1@-->|"先于"| n0
@@ -62,12 +59,9 @@ flowchart LR
   class e2 edge_set_membership
   n4 e3@-->|"先于"| n0
   class e3 edge_order
-  n5 e4@-->|"先于"| n0
-  class e4 edge_order
-  n0 e5@-->|"集合成员"| n6
-  class e5 edge_set_membership
+  n0 e4@-->|"集合成员"| n5
+  class e4 edge_set_membership
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }

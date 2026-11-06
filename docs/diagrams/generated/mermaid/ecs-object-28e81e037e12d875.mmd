@@ -45,7 +45,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>Despawn 观察先排队停用代理，再让<br/>Avian 的刚体卸载与 linked​_​spawn 清理<br/>运行。" }
   class n0 node_observer
-  n1@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  n1@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期及物理与呈现同步；<br/>物理插件由调用方显式安装。" }
   class n1 node_plugin
   n2@{ shape: rounded, label: "**ColliderOf**<br/>来自crate:avian3d ↗：指定碰撞体附着的<br/>刚体。" }
   class n2 node_component

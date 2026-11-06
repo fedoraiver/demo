@@ -41,22 +41,22 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**SettingsScrollbar**<br/>轨道和滚动区域为同一 BSN 容器的子实体，<br/>绑定系统只为设置控件建立原生 target。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>为设置正文提供按溢出显隐的垂直滚动轨道。" }
-  class n1 node_entity
-  n2@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>把设置滚动轨道绑定到实际内容视口。" }
-  class n2 node_system
+  n1@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>把设置滚动轨道绑定到实际内容视口。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载设置面板的纵向滚动轨道。" }
+  class n2 node_entity
   n3@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>同步设置滚动条的有效范围和交互状态。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>为设置正文提供按溢出显隐的垂直滚动轨道。" }
+  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载设置面板的纵向滚动轨道。" }
   class n4 node_entity
-  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>为设置正文提供按溢出显隐的垂直滚动轨道。" }
+  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载设置面板的纵向滚动轨道。" }
   class n5 node_entity
-  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>为设置正文提供按溢出显隐的垂直滚动轨道。" }
+  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>承载设置面板的纵向滚动轨道。" }
   class n6 node_entity
-  n1 e0@-->|"可能包含"| n0
-  class e0 edge_reference
-  n0 e1@--> n2
-  class e1 edge_read
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"可能包含"| n0
+  class e1 edge_reference
   n0 e2@-->|"存在性约束"| n3
   class e2 edge_reference
   n4 e3@-->|"可能包含"| n0

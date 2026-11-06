@@ -3,33 +3,17 @@
 use avian3d::prelude::RigidBody;
 use bevy::prelude::*;
 
-/// 物品身份与种类；拾取能力由 Pickable 单独表达。
+/// 通用测试物身份；拾取能力由 Pickable 单独表达。
 #[derive(Component, Reflect, Clone, Copy, Default, Debug, PartialEq, Eq)]
 #[reflect(Component)]
-pub enum Item {
-    #[default]
-    StandardParcel,
-    FragileParcel,
-    WoodenCrate,
-}
-
-impl Item {
-    /// 用于实体名称与日志的稳定种类标识。
-    pub(crate) fn name(self) -> &'static str {
-        match self {
-            Self::StandardParcel => "standard_parcel",
-            Self::FragileParcel => "fragile_parcel",
-            Self::WoodenCrate => "wooden_crate",
-        }
-    }
-}
+pub struct Item;
 
 /// 允许被拾取的能力标签。
 #[derive(Component, Reflect, Default, Clone)]
 #[reflect(Component)]
 pub struct Pickable;
 
-/// 模型对应的手前偏移；未指定时继续使用原型配置，纸箱对齐持箱动作的双手。
+/// 物品相对持有者的局部握点；未指定时使用原型配置。
 #[derive(Component, Reflect, Default, Clone, Copy)]
 #[reflect(Component)]
 pub(crate) struct CarryGrip {

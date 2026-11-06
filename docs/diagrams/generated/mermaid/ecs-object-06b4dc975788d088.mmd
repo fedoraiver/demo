@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-06b4dc975788d088-e4{marker-start:url(#object-06b4dc975788d088_flowchart-v2-pointStart)!important}\n#object-06b4dc975788d088-e10{marker-start:url(#object-06b4dc975788d088_flowchart-v2-pointStart)!important}\n#object-06b4dc975788d088-e12{marker-start:url(#object-06b4dc975788d088_flowchart-v2-pointStart)!important}\n#object-06b4dc975788d088_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-06b4dc975788d088-e5{marker-start:url(#object-06b4dc975788d088_flowchart-v2-pointStart)!important}\n#object-06b4dc975788d088-e11{marker-start:url(#object-06b4dc975788d088_flowchart-v2-pointStart)!important}\n#object-06b4dc975788d088-e13{marker-start:url(#object-06b4dc975788d088_flowchart-v2-pointStart)!important}\n#object-06b4dc975788d088_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -44,105 +44,105 @@ flowchart LR
   class n0 node_component
   n1@{ shape: rounded, label: "**run​_​egui​_​context​_​pass​_​loop​_​system**<br/>运行每个自动 Egui 上下文的专属调度。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**write​_​non​_​window​_​touch​_​messages​_​**<br/>**system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
-  class n2 node_system
-  n3@{ shape: rounded, label: "**world​_​inspector​_​ui**<br/>来自crate:bevy​_​inspector​_​egui ↗：在<br/>主 Egui 上下文展示可编辑的 World 检视<br/>器。" }
+  n2@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
+  class n2 node_entity
+  class n2 external_node
+  n3@{ shape: rounded, label: "**write​_​non​_​window​_​touch​_​messages​_​**<br/>**system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
   class n3 node_system
-  class n3 external_node
-  n4@{ shape: rounded, label: "**update​_​ui​_​screen​_​rect**<br/>把相机视口换算为 Egui 逻辑屏幕区域。" }
+  n4@{ shape: rounded, label: "**world​_​inspector​_​ui**<br/>来自crate:bevy​_​inspector​_​egui ↗：在<br/>主 Egui 上下文展示可编辑的 World 检视<br/>器。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**setup​_​primary​_​egui​_​context​_​system**<br/>为首个合适相机建立主 Egui 上下文。" }
+  class n4 external_node
+  n5@{ shape: rounded, label: "**update​_​ui​_​screen​_​rect**<br/>把相机视口换算为 Egui 逻辑屏幕区域。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
+  n6@{ shape: rounded, label: "**setup​_​primary​_​egui​_​context​_​system**<br/>为首个合适相机建立主 Egui 上下文。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**on​_​egui​_​context​_​added​_​system**<br/>登记新建 Egui 上下文的窗口映射。" }
+  n7@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
-  class n8 node_entity
-  class n8 external_node
-  n9@{ shape: rounded, label: "**write​_​keyboard​_​input​_​messages​_​system**<br/>把键盘文本与按键转换为 Egui 输入。" }
-  class n9 node_system
-  n10@{ shape: rounded, label: "**read​_​egui​_​zoom​_​factor​_​system**<br/>记录 Egui 当前界面缩放因子。" }
+  n8@{ shape: rounded, label: "**on​_​egui​_​context​_​added​_​system**<br/>登记新建 Egui 上下文的窗口映射。" }
+  class n8 node_system
+  n9@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
+  class n9 node_entity
+  class n9 external_node
+  n10@{ shape: rounded, label: "**write​_​keyboard​_​input​_​messages​_​system**<br/>把键盘文本与按键转换为 Egui 输入。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**write​_​ime​_​messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
+  n11@{ shape: rounded, label: "**read​_​egui​_​zoom​_​factor​_​system**<br/>记录 Egui 当前界面缩放因子。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**setup​_​primary​_​egui​_​context​_​system**<br/>为首个合适相机建立主 Egui 上下文。" }
+  n12@{ shape: rounded, label: "**write​_​ime​_​messages​_​system**<br/>向聚焦的 Egui 上下文传递输入法文本。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**write​_​file​_​dnd​_​messages​_​system**<br/>把文件拖放路由到对应 Egui 上下文。" }
+  n13@{ shape: rounded, label: "**setup​_​primary​_​egui​_​context​_​system**<br/>为首个合适相机建立主 Egui 上下文。" }
   class n13 node_system
-  n14@{ shape: rounded, label: "**update​_​ui​_​screen​_​rect**<br/>把相机视口换算为 Egui 逻辑屏幕区域。" }
+  n14@{ shape: rounded, label: "**write​_​file​_​dnd​_​messages​_​system**<br/>把文件拖放路由到对应 Egui 上下文。" }
   class n14 node_system
-  n15@{ shape: rounded, label: "**process​_​output​_​system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
+  n15@{ shape: rounded, label: "**update​_​ui​_​screen​_​rect**<br/>把相机视口换算为 Egui 逻辑屏幕区域。" }
   class n15 node_system
-  n16@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  n16@{ shape: rounded, label: "**process​_​output​_​system**<br/>拆分 Egui 绘制输出并执行平台命令。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**begin​_​pass​_​system**<br/>把本轮输入交给 Egui 并开始界面帧。" }
+  n17@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
   class n17 node_system
-  n18@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n18@{ shape: rounded, label: "**begin​_​pass​_​system**<br/>把本轮输入交给 Egui 并开始界面帧。" }
   class n18 node_system
-  n19@{ shape: rounded, label: "**end​_​pass​_​system**<br/>结束 Egui 界面帧并保存完整输出。" }
+  n19@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
   class n19 node_system
-  n20@{ shape: rounded, label: "**process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
+  n20@{ shape: rounded, label: "**end​_​pass​_​system**<br/>结束 Egui 界面帧并保存完整输出。" }
   class n20 node_system
-  n21@{ shape: rounded, label: "**write​_​non​_​window​_​pointer​_​moved​_​**<br/>**messages​_​system**<br/>刷新非窗口 Egui 界面的指针位置。" }
+  n21@{ shape: rounded, label: "**process​_​ime​_​system**<br/>同步 Egui 编辑区域的原生输入法状态。" }
   class n21 node_system
-  n22@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
-  class n22 node_entity
-  class n22 external_node
+  n22@{ shape: rounded, label: "**write​_​non​_​window​_​pointer​_​moved​_​**<br/>**messages​_​system**<br/>刷新非窗口 Egui 界面的指针位置。" }
+  class n22 node_system
   n23@{ shape: rounded, label: "**write​_​mouse​_​wheel​_​messages​_​system**<br/>向悬停 Egui 上下文传递滚轮输入。" }
   class n23 node_system
   n24@{ shape: rounded, label: "**write​_​egui​_​wants​_​input​_​system**<br/>汇总所有 Egui 上下文的输入占用。" }
   class n24 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
-  n0 e1@-->|"存在性约束"| n2
+  n2 e1@-->|"可能包含"| n0
   class e1 edge_reference
-  n0 e2@--> n3
-  class e2 edge_read
-  n4 e3@-->|"可变访问"| n0
-  class e3 edge_write
-  n5 e4@--- n0
-  class e4 edge_read
-  n0 e5@-->|"存在性约束"| n6
-  class e5 edge_reference
-  n7 e6@-->|"可变访问"| n0
-  class e6 edge_write
-  n8 e7@-->|"可能包含"| n0
-  class e7 edge_reference
-  n0 e8@-->|"存在性约束"| n9
+  n0 e2@-->|"存在性约束"| n3
+  class e2 edge_reference
+  n0 e3@--> n4
+  class e3 edge_read
+  n5 e4@-->|"可变访问"| n0
+  class e4 edge_write
+  n6 e5@--- n0
+  class e5 edge_read
+  n0 e6@-->|"存在性约束"| n7
+  class e6 edge_reference
+  n8 e7@-->|"可变访问"| n0
+  class e7 edge_write
+  n9 e8@-->|"可能包含"| n0
   class e8 edge_reference
-  n10 e9@-->|"可变访问"| n0
-  class e9 edge_write
-  n7 e10@---|"存在性约束"| n0
-  class e10 edge_reference
-  n0 e11@-->|"存在性约束"| n11
+  n0 e9@-->|"存在性约束"| n10
+  class e9 edge_reference
+  n11 e10@-->|"可变访问"| n0
+  class e10 edge_write
+  n8 e11@---|"存在性约束"| n0
   class e11 edge_reference
-  n12 e12@--- n0
-  class e12 edge_read
-  n0 e13@-->|"存在性约束"| n13
-  class e13 edge_reference
-  n14 e14@-->|"可变访问"| n0
-  class e14 edge_write
+  n0 e12@-->|"存在性约束"| n12
+  class e12 edge_reference
+  n13 e13@--- n0
+  class e13 edge_read
+  n0 e14@-->|"存在性约束"| n14
+  class e14 edge_reference
   n15 e15@-->|"可变访问"| n0
   class e15 edge_write
-  n0 e16@-->|"存在性约束"| n16
-  class e16 edge_reference
-  n17 e17@-->|"可变访问"| n0
-  class e17 edge_write
-  n5 e18@-->|"插入"| n0
+  n16 e16@-->|"可变访问"| n0
+  class e16 edge_write
+  n0 e17@-->|"存在性约束"| n17
+  class e17 edge_reference
+  n18 e18@-->|"可变访问"| n0
   class e18 edge_write
-  n18 e19@-->|"可变访问"| n0
+  n6 e19@-->|"插入"| n0
   class e19 edge_write
   n19 e20@-->|"可变访问"| n0
   class e20 edge_write
   n20 e21@-->|"可变访问"| n0
   class e21 edge_write
-  n0 e22@-->|"存在性约束"| n21
-  class e22 edge_reference
-  n12 e23@-->|"插入"| n0
-  class e23 edge_write
-  n22 e24@-->|"可能包含"| n0
-  class e24 edge_reference
+  n21 e22@-->|"可变访问"| n0
+  class e22 edge_write
+  n0 e23@-->|"存在性约束"| n22
+  class e23 edge_reference
+  n13 e24@-->|"插入"| n0
+  class e24 edge_write
   n0 e25@-->|"存在性约束"| n23
   class e25 edge_reference
   n24 e26@-->|"可变访问"| n0

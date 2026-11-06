@@ -46,7 +46,7 @@ flowchart LR
   n2@{ shape: rounded, label: "**run​_​substep​_​schedule**<br/>来自crate:avian3d ↗：按子步数划分物理<br/>时间并运行子步调度。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**enter​_​main​_​menu**<br/>来自game​_​flow ↗：保留主菜单展示时间并<br/>冻结物理模拟。" }
+  n3@{ shape: rounded, label: "**enter​_​main​_​menu**<br/>来自game​_​flow ↗：保留主菜单虚拟时间并<br/>冻结物理模拟。" }
   class n3 node_system
   class n3 external_node
   n4@{ shape: rounded, label: "**run​_​physics​_​schedule**<br/>来自crate:avian3d ↗：使用物理时钟推<br/>进 PhysicsSchedule 并恢复原时钟。" }

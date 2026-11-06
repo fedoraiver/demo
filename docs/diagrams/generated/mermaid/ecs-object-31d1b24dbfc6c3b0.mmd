@@ -40,10 +40,10 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**LockedAxes**<br/>锁定刚体的平移或旋转轴。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n1@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
+  n2@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
   class n2 node_system
   class n2 external_node
   n3@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
@@ -53,17 +53,24 @@ flowchart LR
   class n4 node_system
   n5@{ shape: rounded, label: "**pre​_​process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
   class n5 node_system
-  n1 e0@-->|"插入"| n0
-  class e0 edge_write
-  n0 e1@--> n2
-  class e1 edge_read
+  n6@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
+  class n6 node_system
+  class n6 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"插入"| n0
+  class e1 edge_write
   n0 e2@--> n3
   class e2 edge_read
   n0 e3@--> n4
   class e3 edge_read
   n0 e4@--> n5
   class e4 edge_read
+  n6 e5@-->|"插入"| n0
+  class e5 edge_write
+  e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }

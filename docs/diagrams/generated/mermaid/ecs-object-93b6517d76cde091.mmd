@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-93b6517d76cde091-e44{marker-start:url(#object-93b6517d76cde091_flowchart-v2-pointStart)!important}\n#object-93b6517d76cde091-e72{marker-start:url(#object-93b6517d76cde091_flowchart-v2-pointStart)!important}\n#object-93b6517d76cde091-e73{marker-start:url(#object-93b6517d76cde091_flowchart-v2-pointStart)!important}\n#object-93b6517d76cde091-e89{marker-start:url(#object-93b6517d76cde091_flowchart-v2-pointStart)!important}\n#object-93b6517d76cde091_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-93b6517d76cde091-e40{marker-start:url(#object-93b6517d76cde091_flowchart-v2-pointStart)!important}\n#object-93b6517d76cde091-e60{marker-start:url(#object-93b6517d76cde091_flowchart-v2-pointStart)!important}\n#object-93b6517d76cde091-e61{marker-start:url(#object-93b6517d76cde091_flowchart-v2-pointStart)!important}\n#object-93b6517d76cde091-e75{marker-start:url(#object-93b6517d76cde091_flowchart-v2-pointStart)!important}\n#object-93b6517d76cde091_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -52,56 +52,55 @@ flowchart LR
   end
   style layout_card_n1 fill:none,stroke:none
   subgraph layout_card_n2[" "]
-  n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
   class n2 node_entity
   class n2 external_node
   end
   style layout_card_n2 fill:none,stroke:none
   subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n3 node_entity
+  n3@{ shape: rounded, label: "**update​_​frusta**<br/>来自crate:bevy​_​camera ↗：根据相机投影<br/>和世界变换更新视锥。" }
+  class n3 node_system
   class n3 external_node
   end
   style layout_card_n3 fill:none,stroke:none
   subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**update​_​frusta**<br/>来自crate:bevy​_​camera ↗：根据相机投影<br/>和世界变换更新视锥。" }
+  n4@{ shape: rounded, label: "**update​_​spot​_​light​_​bounding​_​spheres**<br/>来自crate:bevy​_​light ↗：按聚光灯位置<br/>和范围更新剔除包围球。" }
   class n4 node_system
   class n4 external_node
   end
   style layout_card_n4 fill:none,stroke:none
   subgraph layout_card_n5[" "]
-  n5@{ shape: rounded, label: "**update​_​spot​_​light​_​bounding​_​spheres**<br/>来自crate:bevy​_​light ↗：按聚光灯位置<br/>和范围更新剔除包围球。" }
+  n5@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
   class n5 node_system
-  class n5 external_node
   end
   style layout_card_n5 fill:none,stroke:none
   subgraph layout_card_n6[" "]
-  n6@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
-  class n6 node_system
+  n6@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：组织主菜单背景相机及其生命周<br/>期。" }
+  class n6 node_entity
+  class n6 external_node
   end
   style layout_card_n6 fill:none,stroke:none
   subgraph layout_card_n7[" "]
-  n7@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：组织主菜单海岛展示舞台，并在<br/>退出主菜单时清理。" }
-  class n7 node_entity
+  n7@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>来自crate:bevy​_​light ↗：为投射阴影的<br/>方向光构建逐相机级联。" }
+  class n7 node_system
   class n7 external_node
   end
   style layout_card_n7 fill:none,stroke:none
   subgraph layout_card_n8[" "]
-  n8@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>来自crate:bevy​_​light ↗：为投射阴影的<br/>方向光构建逐相机级联。" }
+  n8@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
   class n8 node_system
   class n8 external_node
   end
   style layout_card_n8 fill:none,stroke:none
   subgraph layout_card_n9[" "]
-  n9@{ shape: rounded, label: "**check​_​point​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算点光与聚<br/>光灯阴影可见的网格。" }
+  n9@{ shape: rounded, label: "**draw​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制带独立显<br/>示标记的动态蒙皮包围区域。" }
   class n9 node_system
   class n9 external_node
   end
   style layout_card_n9 fill:none,stroke:none
   subgraph layout_card_n10[" "]
-  n10@{ shape: rounded, label: "**draw​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制带独立显<br/>示标记的动态蒙皮包围区域。" }
+  n10@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
   class n10 node_system
-  class n10 external_node
   end
   style layout_card_n10 fill:none,stroke:none
   subgraph layout_card_n11[" "]
@@ -110,8 +109,9 @@ flowchart LR
   end
   style layout_card_n11 fill:none,stroke:none
   subgraph layout_card_n12[" "]
-  n12@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
-  class n12 node_system
+  n12@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
+  class n12 node_entity
+  class n12 external_node
   end
   style layout_card_n12 fill:none,stroke:none
   subgraph layout_card_n13[" "]
@@ -186,323 +186,233 @@ flowchart LR
   end
   style layout_card_n24 fill:none,stroke:none
   subgraph layout_card_n25[" "]
-  n25@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  n25@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
   class n25 node_entity
   class n25 external_node
   end
   style layout_card_n25 fill:none,stroke:none
   subgraph layout_card_n26[" "]
-  n26@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
-  class n26 node_entity
+  n26@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
+  class n26 node_system
   class n26 external_node
   end
   style layout_card_n26 fill:none,stroke:none
   subgraph layout_card_n27[" "]
-  n27@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：加载并承载所属<br/>物品种类对应的模型外观。" }
-  class n27 node_entity
-  class n27 external_node
+  n27@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n27 node_system
   end
   style layout_card_n27 fill:none,stroke:none
   subgraph layout_card_n28[" "]
-  n28@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n28 node_entity
+  n28@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  class n28 node_system
   class n28 external_node
   end
   style layout_card_n28 fill:none,stroke:none
   subgraph layout_card_n29[" "]
-  n29@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
+  n29@{ shape: rounded, label: "**propagate​_​transforms​_​for**<br/>按指定查询过滤器即时计算世界变换。" }
   class n29 node_system
-  class n29 external_node
   end
   style layout_card_n29 fill:none,stroke:none
   subgraph layout_card_n30[" "]
-  n30@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  n30@{ shape: rounded, label: "**extract​_​atmosphere**<br/>来自crate:bevy​_​pbr ↗：为三维相机选择<br/>并提取最近的大气。" }
   class n30 node_system
+  class n30 external_node
   end
   style layout_card_n30 fill:none,stroke:none
   subgraph layout_card_n31[" "]
-  n31@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  n31@{ shape: rounded, label: "**update​_​point​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见点光<br/>的六面阴影视锥。" }
   class n31 node_system
   class n31 external_node
   end
   style layout_card_n31 fill:none,stroke:none
   subgraph layout_card_n32[" "]
-  n32@{ shape: rounded, label: "**propagate​_​transforms​_​for**<br/>按指定查询过滤器即时计算世界变换。" }
+  n32@{ shape: rounded, label: "**update​_​spot​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见聚光<br/>灯的阴影视锥。" }
   class n32 node_system
+  class n32 external_node
   end
   style layout_card_n32 fill:none,stroke:none
   subgraph layout_card_n33[" "]
-  n33@{ shape: rounded, label: "**extract​_​atmosphere**<br/>来自crate:bevy​_​pbr ↗：为三维相机选择<br/>并提取最近的大气。" }
+  n33@{ shape: rounded, label: "**extract​_​linegizmos**<br/>来自crate:bevy​_​gizmos​_​render ↗：从保<br/>留式 Gizmo 实体提取线条渲染数据。" }
   class n33 node_system
   class n33 external_node
   end
   style layout_card_n33 fill:none,stroke:none
   subgraph layout_card_n34[" "]
-  n34@{ shape: rounded, label: "**update​_​point​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见点光<br/>的六面阴影视锥。" }
+  n34@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
   class n34 node_system
-  class n34 external_node
   end
   style layout_card_n34 fill:none,stroke:none
   subgraph layout_card_n35[" "]
-  n35@{ shape: rounded, label: "**update​_​spot​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见聚光<br/>灯的阴影视锥。" }
+  n35@{ shape: rounded, label: "**repopulate**<br/>来自crate:bevy​_​picking ↗：重建指针与<br/>相机组合的拾取射线。" }
   class n35 node_system
   class n35 external_node
   end
   style layout_card_n35 fill:none,stroke:none
   subgraph layout_card_n36[" "]
-  n36@{ shape: rounded, label: "**extract​_​linegizmos**<br/>来自crate:bevy​_​gizmos​_​render ↗：从保<br/>留式 Gizmo 实体提取线条渲染数据。" }
+  n36@{ shape: rounded, label: "**extract​_​volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：从主世界提取体<br/>积雾、雾体积及体积光配置。" }
   class n36 node_system
   class n36 external_node
   end
   style layout_card_n36 fill:none,stroke:none
   subgraph layout_card_n37[" "]
-  n37@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  n37@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：把各视图和雾体<br/>积组合转换为体积雾 Uniform。" }
   class n37 node_system
+  class n37 external_node
   end
   style layout_card_n37 fill:none,stroke:none
   subgraph layout_card_n38[" "]
-  n38@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：照亮主菜单海岛展示舞台。" }
-  class n38 node_entity
+  n38@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  class n38 node_system
   class n38 external_node
   end
   style layout_card_n38 fill:none,stroke:none
   subgraph layout_card_n39[" "]
-  n39@{ shape: rounded, label: "**repopulate**<br/>来自crate:bevy​_​picking ↗：重建指针与<br/>相机组合的拾取射线。" }
+  n39@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
   class n39 node_system
-  class n39 external_node
   end
   style layout_card_n39 fill:none,stroke:none
   subgraph layout_card_n40[" "]
-  n40@{ shape: rounded, label: "**extract​_​volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：从主世界提取体<br/>积雾、雾体积及体积光配置。" }
+  n40@{ shape: rounded, label: "**extract​_​decals**<br/>来自crate:bevy​_​pbr ↗：从主世界提取可<br/>见聚簇贴花及点光、聚光和平行光的光照纹<br/>理，重建渲染贴花缓冲，并记录真正参与聚簇<br/>计算的贴花数量。" }
   class n40 node_system
   class n40 external_node
   end
   style layout_card_n40 fill:none,stroke:none
   subgraph layout_card_n41[" "]
-  n41@{ shape: rounded, label: "**begin​_​island · 创建模板**<br/>来自scene​_​assembly ↗：挂载玩法海岛场<br/>景，作为地图准备和会话清理入口。" }
-  class n41 node_entity
-  class n41 external_node
+  n41@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n41 node_system
   end
   style layout_card_n41 fill:none,stroke:none
   subgraph layout_card_n42[" "]
-  n42@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：承载主菜单快递员模型、展示动<br/>画与持握附件。" }
-  class n42 node_entity
-  class n42 external_node
+  n42@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  class n42 node_system
   end
   style layout_card_n42 fill:none,stroke:none
   subgraph layout_card_n43[" "]
-  n43@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：把各视图和雾体<br/>积组合转换为体积雾 Uniform。" }
-  class n43 node_system
+  n43@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：创建可拾取并参<br/>与物理的灰盒方块。" }
+  class n43 node_entity
   class n43 external_node
   end
   style layout_card_n43 fill:none,stroke:none
   subgraph layout_card_n44[" "]
-  n44@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  n44@{ shape: rounded, label: "**extract​_​shadow​_​lod​_​origin**<br/>来自crate:bevy​_​pbr ↗：解析点光与聚光<br/>阴影 LOD 的距离参考位置。" }
   class n44 node_system
   class n44 external_node
   end
   style layout_card_n44 fill:none,stroke:none
   subgraph layout_card_n45[" "]
-  n45@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  n45@{ shape: rounded, label: "**draw​_​all​_​lights**<br/>来自crate:bevy​_​light ↗：按配置颜色模<br/>式绘制全部灯光调试图形。" }
   class n45 node_system
+  class n45 external_node
   end
   style layout_card_n45 fill:none,stroke:none
   subgraph layout_card_n46[" "]
-  n46@{ shape: rounded, label: "**extract​_​decals**<br/>来自crate:bevy​_​pbr ↗：从主世界提取可<br/>见聚簇贴花及点光、聚光和平行光的光照纹<br/>理，重建渲染贴花缓冲，并记录真正参与聚簇<br/>计算的贴花数量。" }
+  n46@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
   class n46 node_system
   class n46 external_node
   end
   style layout_card_n46 fill:none,stroke:none
   subgraph layout_card_n47[" "]
-  n47@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  n47@{ shape: rounded, label: "**update​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​camera ↗：依据当前关节<br/>姿态更新动态蒙皮包围盒。" }
   class n47 node_system
+  class n47 external_node
   end
   style layout_card_n47 fill:none,stroke:none
   subgraph layout_card_n48[" "]
-  n48@{ shape: rounded, label: "**sync​_​simple​_​transforms**<br/>同步没有父子层级的独立实体世界变换。" }
+  n48@{ shape: rounded, label: "**draw​_​lights**<br/>来自crate:bevy​_​light ↗：为显式标记的<br/>各类光源绘制调试轮廓。" }
   class n48 node_system
+  class n48 external_node
   end
   style layout_card_n48 fill:none,stroke:none
   subgraph layout_card_n49[" "]
-  n49@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n49 node_entity
+  n49@{ shape: rounded, label: "**update​_​mesh​_​previous​_​global​_​**<br/>**transforms**<br/>来自crate:bevy​_​pbr ↗：为下帧保存网格<br/>的当前世界变换。" }
+  class n49 node_system
   class n49 external_node
   end
   style layout_card_n49 fill:none,stroke:none
   subgraph layout_card_n50[" "]
-  n50@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n50 node_entity
+  n50@{ shape: rounded, label: "**draw​_​all​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的可见 AABB 调试线框。" }
+  class n50 node_system
   class n50 external_node
   end
   style layout_card_n50 fill:none,stroke:none
   subgraph layout_card_n51[" "]
-  n51@{ shape: rounded, label: "**extract​_​shadow​_​lod​_​origin**<br/>来自crate:bevy​_​pbr ↗：解析点光与聚光<br/>阴影 LOD 的距离参考位置。" }
+  n51@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
   class n51 node_system
   class n51 external_node
   end
   style layout_card_n51 fill:none,stroke:none
   subgraph layout_card_n52[" "]
-  n52@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n52 node_entity
+  n52@{ shape: rounded, label: "**update​_​shape​_​caster​_​positions**<br/>来自crate:avian3d ↗：把形状扫掠的原<br/>点、方向和形状朝向换到世界空间。" }
+  class n52 node_system
   class n52 external_node
   end
   style layout_card_n52 fill:none,stroke:none
   subgraph layout_card_n53[" "]
-  n53@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  n53@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：保存灰盒玩家身<br/>份与运动状态。" }
   class n53 node_entity
   class n53 external_node
   end
   style layout_card_n53 fill:none,stroke:none
   subgraph layout_card_n54[" "]
-  n54@{ shape: rounded, label: "**draw​_​all​_​lights**<br/>来自crate:bevy​_​light ↗：按配置颜色模<br/>式绘制全部灯光调试图形。" }
-  class n54 node_system
+  n54@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：照亮灰盒地面与<br/>方块。" }
+  class n54 node_entity
   class n54 external_node
   end
   style layout_card_n54 fill:none,stroke:none
   subgraph layout_card_n55[" "]
-  n55@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：承载海岛物品的<br/>种类、拾取能力、握点和出生姿态。" }
-  class n55 node_entity
+  n55@{ shape: rounded, label: "**position​_​to​_​transform**<br/>来自crate:avian3d ↗：把物理世界位姿转<br/>换为显示用局部变换。" }
+  class n55 node_system
   class n55 external_node
   end
   style layout_card_n55 fill:none,stroke:none
   subgraph layout_card_n56[" "]
-  n56@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n56 node_entity
+  n56@{ shape: rounded, label: "**update​_​ray​_​caster​_​positions**<br/>来自crate:avian3d ↗：把射线发射器的局<br/>部原点和方向换到世界空间。" }
+  class n56 node_system
   class n56 external_node
   end
   style layout_card_n56 fill:none,stroke:none
   subgraph layout_card_n57[" "]
-  n57@{ shape: rounded, label: "**gather​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：按相机可见集合<br/>和距离分配已就绪光照探针。" }
+  n57@{ shape: rounded, label: "**draw​_​all​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记的动态蒙皮网格包围区域。" }
   class n57 node_system
   class n57 external_node
   end
   style layout_card_n57 fill:none,stroke:none
   subgraph layout_card_n58[" "]
-  n58@{ shape: rounded, label: "**update​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​camera ↗：依据当前关节<br/>姿态更新动态蒙皮包围盒。" }
+  n58@{ shape: rounded, label: "**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
   class n58 node_system
   class n58 external_node
   end
   style layout_card_n58 fill:none,stroke:none
   subgraph layout_card_n59[" "]
-  n59@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：为玩法海岛提供<br/>随会话清理的日光照明。" }
-  class n59 node_entity
+  n59@{ shape: rounded, label: "**update​_​previous​_​view​_​data**<br/>来自crate:bevy​_​pbr ↗：记录三维及阴影<br/>视图未抖动的变换矩阵。" }
+  class n59 node_system
   class n59 external_node
   end
   style layout_card_n59 fill:none,stroke:none
-  subgraph layout_card_n60[" "]
-  n60@{ shape: rounded, label: "**draw​_​lights**<br/>来自crate:bevy​_​light ↗：为显式标记的<br/>各类光源绘制调试轮廓。" }
-  class n60 node_system
-  class n60 external_node
-  end
-  style layout_card_n60 fill:none,stroke:none
-  subgraph layout_card_n61[" "]
-  n61@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
-  class n61 node_entity
-  class n61 external_node
-  end
-  style layout_card_n61 fill:none,stroke:none
-  subgraph layout_card_n62[" "]
-  n62@{ shape: rounded, label: "**update​_​mesh​_​previous​_​global​_​**<br/>**transforms**<br/>来自crate:bevy​_​pbr ↗：为下帧保存网格<br/>的当前世界变换。" }
-  class n62 node_system
-  class n62 external_node
-  end
-  style layout_card_n62 fill:none,stroke:none
-  subgraph layout_card_n63[" "]
-  n63@{ shape: rounded, label: "**draw​_​all​_​aabbs**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的可见 AABB 调试线框。" }
-  class n63 node_system
-  class n63 external_node
-  end
-  style layout_card_n63 fill:none,stroke:none
-  subgraph layout_card_n64[" "]
-  n64@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
-  class n64 node_system
-  class n64 external_node
-  end
-  style layout_card_n64 fill:none,stroke:none
-  subgraph layout_card_n65[" "]
-  n65@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n65 node_entity
-  class n65 external_node
-  end
-  style layout_card_n65 fill:none,stroke:none
-  subgraph layout_card_n66[" "]
-  n66@{ shape: rounded, label: "**update​_​shape​_​caster​_​positions**<br/>来自crate:avian3d ↗：把形状扫掠的原<br/>点、方向和形状朝向换到世界空间。" }
-  class n66 node_system
-  class n66 external_node
-  end
-  style layout_card_n66 fill:none,stroke:none
-  subgraph layout_card_n67[" "]
-  n67@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n67 node_entity
-  class n67 external_node
-  end
-  style layout_card_n67 fill:none,stroke:none
-  subgraph layout_card_n68[" "]
-  n68@{ shape: rounded, label: "**position​_​to​_​transform**<br/>来自crate:avian3d ↗：把物理世界位姿转<br/>换为显示用局部变换。" }
-  class n68 node_system
-  class n68 external_node
-  end
-  style layout_card_n68 fill:none,stroke:none
-  subgraph layout_card_n69[" "]
-  n69@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：挂载主角模型，<br/>承接动画绑定和自身视觉隐藏。" }
-  class n69 node_entity
-  class n69 external_node
-  end
-  style layout_card_n69 fill:none,stroke:none
-  subgraph layout_card_n70[" "]
-  n70@{ shape: rounded, label: "**update​_​ray​_​caster​_​positions**<br/>来自crate:avian3d ↗：把射线发射器的局<br/>部原点和方向换到世界空间。" }
-  class n70 node_system
-  class n70 external_node
-  end
-  style layout_card_n70 fill:none,stroke:none
-  subgraph layout_card_n71[" "]
-  n71@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：承载可控制快递<br/>员的玩法状态与角色层级。" }
-  class n71 node_entity
-  class n71 external_node
-  end
-  style layout_card_n71 fill:none,stroke:none
-  subgraph layout_card_n72[" "]
-  n72@{ shape: rounded, label: "**draw​_​all​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记的动态蒙皮网格包围区域。" }
-  class n72 node_system
-  class n72 external_node
-  end
-  style layout_card_n72 fill:none,stroke:none
-  subgraph layout_card_n73[" "]
-  n73@{ shape: rounded, label: "**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
-  class n73 node_system
-  class n73 external_node
-  end
-  style layout_card_n73 fill:none,stroke:none
-  subgraph layout_card_n74[" "]
-  n74@{ shape: rounded, label: "**update​_​previous​_​view​_​data**<br/>来自crate:bevy​_​pbr ↗：记录三维及阴影<br/>视图未抖动的变换矩阵。" }
-  class n74 node_system
-  class n74 external_node
-  end
-  style layout_card_n74 fill:none,stroke:none
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
   n2 e1@-->|"可能包含"| n0
   class e1 edge_reference
-  n3 e2@-->|"可能包含"| n0
+  n0 e2@-->|"存在性约束"| n3
   class e2 edge_reference
-  n0 e3@-->|"存在性约束"| n4
-  class e3 edge_reference
-  n0 e4@--> n5
-  class e4 edge_read
-  n6 e5@-->|"赋值"| n0
-  class e5 edge_write
-  n7 e6@-->|"可能包含"| n0
-  class e6 edge_reference
+  n0 e3@--> n4
+  class e3 edge_read
+  n5 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n6 e5@-->|"可能包含"| n0
+  class e5 edge_reference
+  n0 e6@--> n7
+  class e6 edge_read
   n0 e7@--> n8
   class e7 edge_read
   n0 e8@--> n9
   class e8 edge_read
-  n0 e9@--> n10
-  class e9 edge_read
-  n11 e10@-->|"赋值"| n0
+  n10 e9@-->|"赋值"| n0
+  class e9 edge_write
+  n11 e10@-->|"可变访问"| n0
   class e10 edge_write
-  n12 e11@-->|"可变访问"| n0
-  class e11 edge_write
+  n12 e11@-->|"可能包含"| n0
+  class e11 edge_reference
   n0 e12@-->|"存在性约束"| n13
   class e12 edge_reference
   n0 e13@--> n14
@@ -521,7 +431,7 @@ flowchart LR
   class e19 edge_reference
   n0 e20@--> n21
   class e20 edge_read
-  n0 e21@--> n4
+  n0 e21@--> n3
   class e21 edge_read
   n0 e22@-->|"存在性约束"| n22
   class e22 edge_reference
@@ -531,148 +441,118 @@ flowchart LR
   class e24 edge_read
   n25 e25@-->|"可能包含"| n0
   class e25 edge_reference
-  n26 e26@-->|"可能包含"| n0
+  n0 e26@-->|"存在性约束"| n14
   class e26 edge_reference
-  n27 e27@-->|"可能包含"| n0
-  class e27 edge_reference
-  n28 e28@-->|"可能包含"| n0
+  n0 e27@--> n26
+  class e27 edge_read
+  n0 e28@-->|"存在性约束"| n27
   class e28 edge_reference
-  n0 e29@-->|"存在性约束"| n14
-  class e29 edge_reference
-  n0 e30@--> n29
-  class e30 edge_read
-  n0 e31@-->|"存在性约束"| n30
-  class e31 edge_reference
-  n0 e32@--> n31
+  n0 e29@--> n28
+  class e29 edge_read
+  n29 e30@-->|"可变访问"| n0
+  class e30 edge_write
+  n10 e31@-->|"可变访问"| n0
+  class e31 edge_write
+  n0 e32@--> n30
   class e32 edge_read
-  n32 e33@-->|"可变访问"| n0
-  class e33 edge_write
-  n11 e34@-->|"可变访问"| n0
-  class e34 edge_write
-  n0 e35@--> n33
+  n0 e33@--> n31
+  class e33 edge_read
+  n0 e34@--> n32
+  class e34 edge_read
+  n0 e35@--> n18
   class e35 edge_read
-  n0 e36@--> n34
+  n0 e36@--> n33
   class e36 edge_read
-  n0 e37@--> n35
-  class e37 edge_read
-  n0 e38@--> n18
+  n34 e37@-->|"赋值"| n0
+  class e37 edge_write
+  n0 e38@--> n35
   class e38 edge_read
-  n0 e39@--> n36
-  class e39 edge_read
-  n37 e40@-->|"赋值"| n0
-  class e40 edge_write
-  n38 e41@-->|"可能包含"| n0
-  class e41 edge_reference
-  n0 e42@--> n39
+  n29 e39@-->|"赋值"| n0
+  class e39 edge_write
+  n36 e40@--- n0
+  class e40 edge_read
+  n0 e41@--> n37
+  class e41 edge_read
+  n0 e42@--> n38
   class e42 edge_read
-  n32 e43@-->|"赋值"| n0
-  class e43 edge_write
-  n40 e44@--- n0
+  n0 e43@-->|"存在性约束"| n39
+  class e43 edge_reference
+  n0 e44@--> n40
   class e44 edge_read
-  n41 e45@-->|"可能包含"| n0
-  class e45 edge_reference
-  n42 e46@-->|"可能包含"| n0
-  class e46 edge_reference
-  n0 e47@--> n43
+  n41 e45@-->|"可变访问"| n0
+  class e45 edge_write
+  n42 e46@-->|"可变访问"| n0
+  class e46 edge_write
+  n0 e47@--> n1
   class e47 edge_read
-  n0 e48@--> n44
-  class e48 edge_read
-  n0 e49@-->|"存在性约束"| n45
-  class e49 edge_reference
-  n0 e50@--> n46
-  class e50 edge_read
-  n47 e51@-->|"可变访问"| n0
-  class e51 edge_write
-  n48 e52@-->|"可变访问"| n0
-  class e52 edge_write
-  n49 e53@-->|"可能包含"| n0
+  n43 e48@-->|"可能包含"| n0
+  class e48 edge_reference
+  n5 e49@-->|"可变访问"| n0
+  class e49 edge_write
+  n36 e50@-->|"插入"| n0
+  class e50 edge_write
+  n0 e51@--> n44
+  class e51 edge_read
+  n0 e52@--> n45
+  class e52 edge_read
+  n0 e53@-->|"存在性约束"| n4
   class e53 edge_reference
-  n0 e54@--> n1
-  class e54 edge_read
-  n6 e55@-->|"可变访问"| n0
-  class e55 edge_write
-  n40 e56@-->|"插入"| n0
-  class e56 edge_write
-  n50 e57@-->|"可能包含"| n0
-  class e57 edge_reference
-  n0 e58@--> n51
-  class e58 edge_read
-  n52 e59@-->|"可能包含"| n0
-  class e59 edge_reference
-  n53 e60@-->|"可能包含"| n0
+  n0 e54@-->|"存在性约束"| n19
+  class e54 edge_reference
+  n0 e55@--> n46
+  class e55 edge_read
+  n0 e56@--> n47
+  class e56 edge_read
+  n0 e57@--> n20
+  class e57 edge_read
+  n42 e58@-->|"赋值"| n0
+  class e58 edge_write
+  n0 e59@--> n48
+  class e59 edge_read
+  n11 e60@---|"存在性约束"| n0
   class e60 edge_reference
-  n0 e61@--> n54
-  class e61 edge_read
-  n55 e62@-->|"可能包含"| n0
-  class e62 edge_reference
-  n0 e63@-->|"存在性约束"| n5
-  class e63 edge_reference
-  n0 e64@-->|"存在性约束"| n19
-  class e64 edge_reference
-  n56 e65@-->|"可能包含"| n0
-  class e65 edge_reference
-  n0 e66@--> n57
+  n10 e61@---|"存在性约束"| n0
+  class e61 edge_reference
+  n0 e62@--> n39
+  class e62 edge_read
+  n0 e63@--> n49
+  class e63 edge_read
+  n0 e64@--> n27
+  class e64 edge_read
+  n0 e65@--> n13
+  class e65 edge_read
+  n0 e66@--> n50
   class e66 edge_read
-  n0 e67@--> n58
+  n0 e67@--> n51
   class e67 edge_read
-  n0 e68@--> n20
+  n0 e68@--> n52
   class e68 edge_read
-  n48 e69@-->|"赋值"| n0
-  class e69 edge_write
-  n59 e70@-->|"可能包含"| n0
+  n53 e69@-->|"可能包含"| n0
+  class e69 edge_reference
+  n54 e70@-->|"可能包含"| n0
   class e70 edge_reference
-  n0 e71@--> n60
-  class e71 edge_read
-  n12 e72@---|"存在性约束"| n0
-  class e72 edge_reference
-  n11 e73@---|"存在性约束"| n0
-  class e73 edge_reference
-  n0 e74@--> n45
-  class e74 edge_read
-  n61 e75@-->|"可能包含"| n0
+  n0 e71@-->|"存在性约束"| n32
+  class e71 edge_reference
+  n0 e72@--> n55
+  class e72 edge_read
+  n41 e73@-->|"赋值"| n0
+  class e73 edge_write
+  n0 e74@-->|"存在性约束"| n31
+  class e74 edge_reference
+  n42 e75@---|"存在性约束"| n0
   class e75 edge_reference
-  n0 e76@--> n62
+  n0 e76@--> n56
   class e76 edge_read
-  n0 e77@--> n30
-  class e77 edge_read
-  n0 e78@--> n13
+  n11 e77@-->|"赋值"| n0
+  class e77 edge_write
+  n0 e78@--> n57
   class e78 edge_read
-  n0 e79@--> n63
-  class e79 edge_read
-  n0 e80@--> n64
+  n34 e79@-->|"可变访问"| n0
+  class e79 edge_write
+  n0 e80@--> n58
   class e80 edge_read
-  n65 e81@-->|"可能包含"| n0
-  class e81 edge_reference
-  n0 e82@--> n66
-  class e82 edge_read
-  n67 e83@-->|"可能包含"| n0
-  class e83 edge_reference
-  n0 e84@-->|"存在性约束"| n35
-  class e84 edge_reference
-  n0 e85@--> n68
-  class e85 edge_read
-  n47 e86@-->|"赋值"| n0
-  class e86 edge_write
-  n69 e87@-->|"可能包含"| n0
-  class e87 edge_reference
-  n0 e88@-->|"存在性约束"| n34
-  class e88 edge_reference
-  n48 e89@---|"存在性约束"| n0
-  class e89 edge_reference
-  n0 e90@--> n70
-  class e90 edge_read
-  n71 e91@-->|"可能包含"| n0
-  class e91 edge_reference
-  n12 e92@-->|"赋值"| n0
-  class e92 edge_write
-  n0 e93@--> n72
-  class e93 edge_read
-  n37 e94@-->|"可变访问"| n0
-  class e94 edge_write
-  n0 e95@--> n73
-  class e95 edge_read
-  n0 e96@--> n74
-  class e96 edge_read
+  n0 e81@--> n59
+  class e81 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -755,18 +635,3 @@ flowchart LR
   e79@{ curve: basis }
   e80@{ curve: basis }
   e81@{ curve: basis }
-  e82@{ curve: basis }
-  e83@{ curve: basis }
-  e84@{ curve: basis }
-  e85@{ curve: basis }
-  e86@{ curve: basis }
-  e87@{ curve: basis }
-  e88@{ curve: basis }
-  e89@{ curve: basis }
-  e90@{ curve: basis }
-  e91@{ curve: basis }
-  e92@{ curve: basis }
-  e93@{ curve: basis }
-  e94@{ curve: basis }
-  e95@{ curve: basis }
-  e96@{ curve: basis }

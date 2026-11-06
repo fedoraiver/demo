@@ -50,15 +50,15 @@ flowchart LR
   n4@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步设置滚动条的有效范围和交<br/>互状态。" }
+  n5@{ shape: rounded, label: "**menu​_​on​_​lose​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：关闭不<br/>再持有内部焦点的菜单。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**menu​_​on​_​lose​_​focus**<br/>来自crate:bevy​_​ui​_​widgets ↗：关闭不<br/>再持有内部焦点的菜单。" }
-  class n6 node_system
-  class n6 external_node
-  n7@{ shape: lin-rect, label: "**CheckVisibility**<br/>组织相机与实体可见性更新。" }
-  class n7 node_system_set
-  n8@{ shape: rounded, label: "**propagate​_​transforms​_​for**<br/>来自crate:bevy​_​transform ↗：按指定查<br/>询过滤器即时计算世界变换。" }
+  n6@{ shape: lin-rect, label: "**CheckVisibility**<br/>组织相机与实体可见性更新。" }
+  class n6 node_system_set
+  n7@{ shape: rounded, label: "**propagate​_​transforms​_​for**<br/>来自crate:bevy​_​transform ↗：按指定查<br/>询过滤器即时计算世界变换。" }
+  class n7 node_system
+  class n7 external_node
+  n8@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步设置滚动条的有效范围和交<br/>互状态。" }
   class n8 node_system
   class n8 external_node
   n9@{ shape: lin-rect, label: "**Propagate**<br/>来自crate:bevy​_​transform ↗：组织实体<br/>层级变换传播。" }
@@ -72,13 +72,13 @@ flowchart LR
   class e2 edge_order
   n0 e3@-->|"先于"| n4
   class e3 edge_order
-  n5 e4@-->|"先于"| n0
+  n0 e4@-->|"先于"| n5
   class e4 edge_order
   n0 e5@-->|"先于"| n6
   class e5 edge_order
   n0 e6@-->|"先于"| n7
   class e6 edge_order
-  n0 e7@-->|"先于"| n8
+  n8 e7@-->|"先于"| n0
   class e7 edge_order
   n9 e8@-->|"先于"| n0
   class e8 edge_order

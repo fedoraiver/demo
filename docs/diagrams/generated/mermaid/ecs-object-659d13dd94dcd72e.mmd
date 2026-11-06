@@ -43,20 +43,20 @@ flowchart LR
   n1@{ shape: rounded, label: "**pointer​_​events**<br/>来自crate:bevy​_​picking ↗：根据悬停与<br/>按钮状态派发指针交互事件。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>来自ui ↗：Enhanced Input 负责菜单语义<br/>动作，但无法表示 UI 命中后的局部绝对横<br/>坐标。" }
+  n2@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  n3@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>来自ui ↗：Enhanced Input 负责菜单语义<br/>动作，但无法表示 UI 命中后的局部绝对横<br/>坐标。" }
   class n3 node_system
   class n3 external_node
   n1 e0@-->|"赋值"| n0
   class e0 edge_write
   n0 e1@--> n2
   class e1 edge_read
-  n0 e2@--> n3
-  class e2 edge_read
-  n1 e3@-->|"可变访问"| n0
-  class e3 edge_write
+  n1 e2@-->|"可变访问"| n0
+  class e2 edge_write
+  n0 e3@--> n3
+  class e3 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

@@ -24,48 +24,15 @@
       "minNodeWidth": 180,
       "useMaxWidth": false,
       "curve": "linear"
-    },
-    "themeCSS": ".edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    }
   }
 }
 ---
 flowchart LR
-  accTitle: bevy_kira_audio::audio_output::play_audio_channel#lt;demo::audio::SfxTrack#gt; · 对象关系
+  accTitle: bevy_ecs::apply_deferred · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
-  classDef node_non_send fill:#F8F3EF,stroke:#A5633A,stroke-width:1.6px,color:#1F3340
-  classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
-  classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
-  classDef edge_write stroke:#2F7161,stroke-width:1.8px
-  classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>执行指定类型音频通道的命令队列。" }
+  n0@{ shape: rounded, label: "**apply​_​deferred**<br/>标识由执行器刷新延迟命令的同步点。" }
   class n0 node_system
-  n1@{ shape: tag-rect, label: "**AudioOutput**<br/>持有 Kira 音频管理器及实例、通道、轨道<br/>状态" }
-  class n1 node_non_send
-  n2@{ shape: cyl, label: "**Assets#lt;AudioSource#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n2 node_resource
-  class n2 external_node
-  n3@{ shape: cyl, label: "**AudioChannel#lt;SfxTrack#gt;**<br/>保存特定通道类型的音频命令队列及实例播放<br/>状态" }
-  class n3 node_resource
-  n4@{ shape: lin-rect, label: "**PlayTypedChannels**<br/>组织音频实例清理与通道播放。" }
-  class n4 node_system_set
-  n5@{ shape: cyl, label: "**Assets#lt;AudioInstance#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
-  class n5 node_resource
-  class n5 external_node
-  n0 e0@-->|"可变访问"| n1
-  class e0 edge_write
-  n2 e1@--> n0
-  class e1 edge_read
-  n3 e2@--> n0
-  class e2 edge_read
-  n4 e3@-->|"集合成员"| n0
-  class e3 edge_set_membership
-  n0 e4@-->|"可变访问"| n5
-  class e4 edge_write
-  e0@{ curve: basis }
-  e1@{ curve: basis }
-  e3@{ curve: basis }
-  e4@{ curve: basis }

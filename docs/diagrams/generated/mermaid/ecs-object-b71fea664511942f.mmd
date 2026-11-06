@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-b71fea664511942f-e1{marker-start:url(#object-b71fea664511942f_flowchart-v2-pointStart)!important}\n#object-b71fea664511942f-e3{marker-start:url(#object-b71fea664511942f_flowchart-v2-pointStart)!important}\n#object-b71fea664511942f-e22{marker-start:url(#object-b71fea664511942f_flowchart-v2-pointStart)!important}\n#object-b71fea664511942f_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-b71fea664511942f-e1{marker-start:url(#object-b71fea664511942f_flowchart-v2-pointStart)!important}\n#object-b71fea664511942f-e3{marker-start:url(#object-b71fea664511942f_flowchart-v2-pointStart)!important}\n#object-b71fea664511942f-e21{marker-start:url(#object-b71fea664511942f_flowchart-v2-pointStart)!important}\n#object-b71fea664511942f_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -55,36 +55,33 @@ flowchart LR
   n6@{ shape: rounded, label: "**wake​_​changed​_​bodies**<br/>来自physics ↗：Avian 的自动唤醒在求解<br/>之后；外部冲量和施力应在本步准备求解器之<br/>前生效。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
-  class n7 node_system
-  class n7 external_node
-  n8@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
-  class n8 node_observer
-  n9@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
-  class n9 node_system
-  n10@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n7@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  class n7 node_observer
+  n8@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
+  class n8 node_system
+  n9@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  class n9 node_observer
+  n10@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n11@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
+  n12@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
-  class n13 node_observer
-  n14@{ shape: rounded, label: "**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
-  class n14 node_system
-  n15@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
-  class n15 node_observer
-  n16@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  n13@{ shape: rounded, label: "**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
+  class n13 node_system
+  n14@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  class n14 node_observer
+  n15@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  class n15 node_system
+  n16@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
+  class n16 external_node
+  n17@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
   class n17 node_system
-  class n17 external_node
-  n18@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
-  class n18 node_system
-  n19@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  n18@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  class n18 node_observer
+  n19@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n19 node_observer
-  n20@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
-  class n20 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
   n2 e1@---|"存在性约束"| n0
@@ -99,38 +96,36 @@ flowchart LR
   class e5 edge_reference
   n0 e6@-->|"存在性约束"| n6
   class e6 edge_reference
-  n7 e7@-->|"移除"| n0
-  class e7 edge_write
+  n0 e7@-->|"存在性约束"| n7
+  class e7 edge_reference
   n0 e8@-->|"存在性约束"| n8
   class e8 edge_reference
   n0 e9@-->|"存在性约束"| n9
   class e9 edge_reference
   n0 e10@-->|"存在性约束"| n10
   class e10 edge_reference
-  n0 e11@-->|"存在性约束"| n11
-  class e11 edge_reference
-  n12 e12@-->|"移除"| n0
-  class e12 edge_write
+  n11 e11@-->|"移除"| n0
+  class e11 edge_write
+  n0 e12@-->|"存在性约束"| n12
+  class e12 edge_reference
   n0 e13@-->|"存在性约束"| n13
   class e13 edge_reference
   n0 e14@-->|"存在性约束"| n14
   class e14 edge_reference
   n0 e15@-->|"存在性约束"| n15
   class e15 edge_reference
-  n0 e16@-->|"存在性约束"| n16
-  class e16 edge_reference
-  n2 e17@-->|"移除"| n0
-  class e17 edge_write
+  n2 e16@-->|"移除"| n0
+  class e16 edge_write
+  n0 e17@-->|"存在性约束"| n16
+  class e17 edge_reference
   n0 e18@-->|"存在性约束"| n17
   class e18 edge_reference
   n0 e19@-->|"存在性约束"| n18
   class e19 edge_reference
   n0 e20@-->|"存在性约束"| n19
   class e20 edge_reference
-  n0 e21@-->|"存在性约束"| n20
+  n11 e21@---|"存在性约束"| n0
   class e21 edge_reference
-  n12 e22@---|"存在性约束"| n0
-  class e22 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -148,9 +143,8 @@ flowchart LR
   e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }
-  e17@{ curve: bumpX }
+  e17@{ curve: basis }
   e18@{ curve: basis }
   e19@{ curve: basis }
   e20@{ curve: basis }
   e21@{ curve: basis }
-  e22@{ curve: basis }

@@ -25,7 +25,7 @@ Each fact has one complete home. Elsewhere, summarize briefly and link there. Th
 | [architecture.md](architecture.md) | Current composition, ECS responsibilities, relationships, scheduling, and data flow | Historical evolution, decision debates, investigation transcripts |
 | [testing/README.md](testing/README.md) | Developer check methods, headless coverage, artifact checks, and acceptance entry points | Full game walkthroughs, individual execution results, and debugging journals |
 | [testing/game-acceptance.md](testing/game-acceptance.md) | User-performed game checks, expected behavior, and session-log acceptance | Headless test internals or individual execution results |
-| [audio.md](audio.md) and asset guides | Their own pipeline, authoring, integration, and usage contracts | Duplicated source manifests, attribution records, or unrelated gameplay decisions |
+| [audio.md](audio.md) | Sound authoring, integration, and usage contracts | Duplicated source manifests, attribution records, or unrelated gameplay decisions |
 | [diagrams/](diagrams/README.md) | Generated architecture views and their maintenance workflow | Hand-edited generated outputs or independent copies of source contracts |
 | [domain.md](domain.md), [issue-tracker.md](issue-tracker.md), and [triage-labels.md](triage-labels.md) | Issue-tracker, label, and domain-reading conventions | Task progress or a second copy of domain architecture |
 | [Agent Notes](../.agents/notes/README.md) | Durable decisions, motivation, alternatives, consequences, and verification requirements | Complete runtime references or task journals |

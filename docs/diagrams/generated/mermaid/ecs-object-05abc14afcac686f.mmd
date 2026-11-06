@@ -42,26 +42,26 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**log​_​load​_​failures**<br/>记录声音资源加载失败的路径与错误。" }
+  n2@{ shape: rounded, label: "**sync​_​audio​_​mix**<br/>合成设置预览或正式配置的有效音量。" }
   class n2 node_system
-  n3@{ shape: lin-rect, label: "**Style**<br/>来自ui ↗：请求在 PreUpdate 消费<br/>后，Update 依次生成 BSN 页面并更新视觉<br/>焦点。" }
-  class n3 node_system_set
-  class n3 external_node
-  n4@{ shape: rounded, label: "**sync​_​audio​_​mix**<br/>合成设置预览或正式配置的有效音量。" }
-  class n4 node_system
+  n3@{ shape: rounded, label: "**log​_​load​_​failures**<br/>记录声音资源加载失败的路径与错误。" }
+  class n3 node_system
+  n4@{ shape: lin-rect, label: "**Style**<br/>来自ui ↗：请求在 PreUpdate 消费<br/>后，Update 依次生成 BSN 页面并更新视觉<br/>焦点。" }
+  class n4 node_system_set
+  class n4 external_node
   n5@{ shape: lin-rect, label: "**Playback**<br/>跨功能只约束混音与播放阶段，具体资源和实<br/>例处理顺序留在音频内部。" }
   class n5 node_system_set
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership
   n0 e1@-->|"集合成员"| n2
   class e1 edge_set_membership
-  n3 e2@-->|"先于"| n0
-  class e2 edge_order
-  n0 e3@-->|"集合成员"| n4
-  class e3 edge_set_membership
+  n0 e2@-->|"集合成员"| n3
+  class e2 edge_set_membership
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
   n0 e4@-->|"先于"| n5
   class e4 edge_order
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e3@{ curve: basis }
+  e2@{ curve: basis }
   e4@{ curve: basis }

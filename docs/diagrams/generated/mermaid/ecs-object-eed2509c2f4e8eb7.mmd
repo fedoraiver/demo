@@ -40,19 +40,19 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**SettingsStatus**<br/>保存结果和草稿提示原位更新，不改变滚动区<br/>域或按钮的实体身份。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**update​_​settings​_​text**<br/>原位更新设置草稿数值与保存提示。" }
-  class n1 node_system
-  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示并原位刷新设置保存状态与草稿提示。" }
-  class n2 node_entity
-  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示并原位刷新设置保存状态与草稿提示。" }
+  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示设置保存状态与操作提示。" }
+  class n1 node_entity
+  n2@{ shape: rounded, label: "**update​_​settings​_​text**<br/>原位更新设置草稿数值与保存提示。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示设置保存状态与操作提示。" }
   class n3 node_entity
-  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示并原位刷新设置保存状态与草稿提示。" }
+  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示设置保存状态与操作提示。" }
   class n4 node_entity
-  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示并原位刷新设置保存状态与草稿提示。" }
+  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示设置保存状态与操作提示。" }
   class n5 node_entity
-  n0 e0@-->|"存在性约束"| n1
+  n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
-  n2 e1@-->|"可能包含"| n0
+  n0 e1@-->|"存在性约束"| n2
   class e1 edge_reference
   n3 e2@-->|"可能包含"| n0
   class e2 edge_reference
@@ -60,7 +60,7 @@ flowchart LR
   class e3 edge_reference
   n5 e4@-->|"可能包含"| n0
   class e4 edge_reference
-  e1@{ curve: basis }
+  e0@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

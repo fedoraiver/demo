@@ -53,67 +53,67 @@ flowchart LR
   n4@{ shape: hex, label: "**click​_​to​_​focus**<br/>来自crate:bevy​_​input​_​focus ↗：根据指<br/>针按下请求获取输入焦点。" }
   class n4 node_observer
   class n4 external_node
-  n5@{ shape: rounded, label: "**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
+  n5@{ shape: rounded, label: "**rebuild​_​page**<br/>来自ui ↗：只在页面结构或视口变化时重<br/>建；数值、提示与焦点变化保留现有滚动控<br/>件。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  n6@{ shape: rounded, label: "**sprite​_​picking**<br/>来自crate:bevy​_​sprite ↗：按精灵图像和<br/>拾取配置计算指针命中。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n7@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
-  class n8 node_observer
+  n8@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**set​_​initial​_​focus**<br/>来自crate:bevy​_​input​_​focus ↗：在没有<br/>焦点目标时使用主窗口。" }
-  class n9 node_system
+  n9@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  class n9 node_observer
   class n9 external_node
-  n10@{ shape: rounded, label: "**propagate​_​ui​_​target​_​cameras**<br/>来自crate:bevy​_​ui ↗：为 UI 根配置目标<br/>相机和视口信息传播源。" }
+  n10@{ shape: rounded, label: "**set​_​initial​_​focus**<br/>来自crate:bevy​_​input​_​focus ↗：在没有<br/>焦点目标时使用主窗口。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>来自crate:bevy​_​input​_​focus ↗：向有效<br/>焦点或主窗口派发输入。" }
+  n11@{ shape: rounded, label: "**propagate​_​ui​_​target​_​cameras**<br/>来自crate:bevy​_​ui ↗：为 UI 根配置目标<br/>相机和视口信息传播源。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: hex, label: "**click​_​to​_​focus**<br/>来自crate:bevy​_​input​_​focus ↗：根据指<br/>针按下请求获取输入焦点。" }
-  class n12 node_observer
+  n12@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>来自crate:bevy​_​input​_​focus ↗：向有效<br/>焦点或主窗口派发输入。" }
+  class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**install​_​native​_​policy**<br/>来自window​_​policy ↗：安装并维护原生窗<br/>口比例与尺寸策略。" }
-  class n13 node_system
+  n13@{ shape: hex, label: "**click​_​to​_​focus**<br/>来自crate:bevy​_​input​_​focus ↗：根据指<br/>针按下请求获取输入焦点。" }
+  class n13 node_observer
   class n13 external_node
-  n14@{ shape: rounded, label: "**ui​_​focus​_​system**<br/>来自crate:bevy​_​ui ↗：按鼠标和触摸更新<br/>旧式 UI 交互状态。" }
+  n14@{ shape: rounded, label: "**install​_​native​_​policy**<br/>来自window​_​policy ↗：安装并维护原生窗<br/>口比例与尺寸策略。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**sync​_​context**<br/>来自ui ↗：按主窗口焦点启停菜单输入上下<br/>文。" }
+  n15@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
-  class n16 node_observer
+  n16@{ shape: rounded, label: "**ui​_​focus​_​system**<br/>来自crate:bevy​_​ui ↗：按鼠标和触摸更新<br/>旧式 UI 交互状态。" }
+  class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**listen​_​for​_​ime​_​input​_​when​_​text​_​**<br/>**input​_​focused**<br/>来自crate:bevy​_​ui​_​widgets ↗：按可编<br/>辑焦点控制主窗口输入法。" }
+  n17@{ shape: rounded, label: "**sync​_​context**<br/>来自ui ↗：按主窗口焦点启停菜单输入上下<br/>文。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：将当前可访问<br/>性树同步给已激活的原生适配器。" }
-  class n18 node_system
+  n18@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  class n18 node_observer
   class n18 external_node
-  n19@{ shape: rounded, label: "**rebuild​_​page**<br/>来自ui ↗：只在页面结构或视口变化时重<br/>建；数值、提示与焦点变化保留现有滚动控<br/>件。" }
+  n19@{ shape: rounded, label: "**listen​_​for​_​ime​_​input​_​when​_​text​_​**<br/>**input​_​focused**<br/>来自crate:bevy​_​ui​_​widgets ↗：按可编<br/>辑焦点控制主窗口输入法。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>来自crate:bevy​_​input​_​focus ↗：向有效<br/>焦点或主窗口派发输入。" }
+  n20@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：将当前可访问<br/>性树同步给已激活的原生适配器。" }
   class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**on​_​egui​_​context​_​added​_​system**<br/>来自crate:bevy​_​egui ↗：登记新建<br/>Egui 上下文的窗口映射。" }
+  n21@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>来自crate:bevy​_​input​_​focus ↗：向有效<br/>焦点或主窗口派发输入。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>来自crate:bevy​_​input​_​focus ↗：向有效<br/>焦点或主窗口派发输入。" }
+  n22@{ shape: rounded, label: "**on​_​egui​_​context​_​added​_​system**<br/>来自crate:bevy​_​egui ↗：登记新建<br/>Egui 上下文的窗口映射。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  n23@{ shape: rounded, label: "**dispatch​_​focused​_​input**<br/>来自crate:bevy​_​input​_​focus ↗：向有效<br/>焦点或主窗口派发输入。" }
   class n23 node_system
   class n23 external_node
-  n24@{ shape: rounded, label: "**touch​_​pick​_​events**<br/>来自crate:bevy​_​picking ↗：把触摸阶段<br/>转换为独立拾取指针。" }
+  n24@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  n25@{ shape: rounded, label: "**touch​_​pick​_​events**<br/>来自crate:bevy​_​picking ↗：把触摸阶段<br/>转换为独立拾取指针。" }
   class n25 node_system
   class n25 external_node
   n26@{ shape: hex, label: "**click​_​to​_​focus**<br/>来自crate:bevy​_​input​_​focus ↗：根据指<br/>针按下请求获取输入焦点。" }
@@ -163,10 +163,10 @@ flowchart LR
   class e8 edge_reference
   n0 e9@-->|"存在性约束"| n10
   class e9 edge_reference
-  n2 e10@-->|"移除"| n0
-  class e10 edge_write
-  n0 e11@-->|"存在性约束"| n11
-  class e11 edge_reference
+  n0 e10@-->|"存在性约束"| n11
+  class e10 edge_reference
+  n2 e11@-->|"移除"| n0
+  class e11 edge_write
   n0 e12@-->|"存在性约束"| n12
   class e12 edge_reference
   n0 e13@-->|"存在性约束"| n13
@@ -175,12 +175,12 @@ flowchart LR
   class e14 edge_reference
   n0 e15@-->|"存在性约束"| n15
   class e15 edge_reference
-  n2 e16@-->|"插入"| n0
-  class e16 edge_write
-  n0 e17@-->|"存在性约束"| n16
+  n0 e16@-->|"存在性约束"| n16
+  class e16 edge_reference
+  n0 e17@-->|"存在性约束"| n17
   class e17 edge_reference
-  n0 e18@-->|"存在性约束"| n17
-  class e18 edge_reference
+  n2 e18@-->|"插入"| n0
+  class e18 edge_write
   n0 e19@-->|"存在性约束"| n18
   class e19 edge_reference
   n0 e20@-->|"存在性约束"| n19
@@ -225,7 +225,7 @@ flowchart LR
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
-  e11@{ curve: basis }
+  e10@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }

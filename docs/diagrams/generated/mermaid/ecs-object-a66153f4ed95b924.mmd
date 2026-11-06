@@ -42,40 +42,40 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**EguiContextPointerPosition**<br/>缓存当前 Egui 指针坐标" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
   class n1 node_entity
   class n1 external_node
   n2@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
-  class n3 node_entity
-  class n3 external_node
-  n4@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  n3@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
+  class n3 node_system
+  n4@{ shape: rounded, label: "**write​_​non​_​window​_​touch​_​messages​_​**<br/>**system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**write​_​non​_​window​_​touch​_​messages​_​**<br/>**system**<br/>向聚焦的非窗口 Egui 界面传递触摸。" }
+  n5@{ shape: rounded, label: "**write​_​non​_​window​_​pointer​_​moved​_​**<br/>**messages​_​system**<br/>刷新非窗口 Egui 界面的指针位置。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**write​_​non​_​window​_​pointer​_​moved​_​**<br/>**messages​_​system**<br/>刷新非窗口 Egui 界面的指针位置。" }
-  class n6 node_system
+  n6@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
+  class n6 node_entity
+  class n6 external_node
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
   n2 e1@-->|"可变访问"| n0
   class e1 edge_write
   n2 e2@-->|"赋值"| n0
   class e2 edge_write
-  n3 e3@-->|"可能包含"| n0
-  class e3 edge_reference
-  n4 e4@-->|"赋值"| n0
-  class e4 edge_write
+  n3 e3@-->|"赋值"| n0
+  class e3 edge_write
+  n0 e4@--> n4
+  class e4 edge_read
   n0 e5@--> n5
   class e5 edge_read
-  n0 e6@--> n6
-  class e6 edge_read
-  n4 e7@-->|"可变访问"| n0
-  class e7 edge_write
+  n3 e6@-->|"可变访问"| n0
+  class e6 edge_write
+  n6 e7@-->|"可能包含"| n0
+  class e7 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
-  e3@{ curve: basis }
+  e2@{ curve: bumpX }
+  e3@{ curve: bumpX }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

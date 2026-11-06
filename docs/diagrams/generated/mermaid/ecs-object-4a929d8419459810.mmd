@@ -37,15 +37,15 @@ flowchart LR
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**SoundBank**<br/>短音的句柄生命周期与播放状态集中维护；只<br/>保留每种事件最后一次获准的播放时间。" }
+  n0@{ shape: cyl, label: "**SoundBank**<br/>集中维护声音句柄与播放状态，记录每种事件<br/>最近一次获准播放的时间。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**preload​_​sounds**<br/>校验音效清单并预加载短音映射与策略。" }
+  n1@{ shape: rounded, label: "**preload​_​sounds**<br/>校验音效清单并预加载事件映射与策略。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
+  n3@{ shape: rounded, label: "**play​_​requests**<br/>按有效混音和播放限额处理声音请求。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**play​_​requests**<br/>按有效混音和播放限额处理声音请求。" }
+  n4@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
   class n4 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write

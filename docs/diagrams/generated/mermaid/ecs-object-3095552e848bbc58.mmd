@@ -34,18 +34,12 @@ flowchart LR
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**CharacterVisual**<br/>相机仅隐藏受控角色的视觉子树。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**sync​_​character​_​visibility**<br/>第一人称只隐藏自身视觉子树，保留业务根与<br/>独立木箱。" }
+  n1@{ shape: rounded, label: "**sync​_​character​_​visibility**<br/>第一人称只隐藏自身视觉子树，保留业务根与<br/>独立物品。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：挂载主角模型，<br/>承接动画绑定和自身视觉隐藏。" }
-  class n2 node_entity
-  class n2 external_node
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
-  n2 e1@-->|"可能包含"| n0
-  class e1 edge_reference

@@ -40,16 +40,16 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**AudioPreview**<br/>设置界面发布的临时音量；清空后立即使用最<br/>近成功应用的配置。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**publish​_​audio​_​preview**<br/>来自ui ↗：向音频功能发布或清除临时音量<br/>预览。" }
+  n1@{ shape: rounded, label: "**sync​_​audio​_​mix**<br/>合成设置预览或正式配置的有效音量。" }
   class n1 node_system
-  class n1 external_node
-  n2@{ shape: rounded, label: "**sync​_​audio​_​mix**<br/>合成设置预览或正式配置的有效音量。" }
+  n2@{ shape: rounded, label: "**publish​_​audio​_​preview**<br/>来自ui ↗：向音频功能发布或清除临时音量<br/>预览。" }
   class n2 node_system
-  n1 e0@-->|"赋值"| n0
-  class e0 edge_write
-  n1 e1@-->|"可变访问"| n0
+  class n2 external_node
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"赋值"| n0
   class e1 edge_write
-  n0 e2@--> n2
-  class e2 edge_read
-  e0@{ curve: basis }
+  n2 e2@-->|"可变访问"| n0
+  class e2 edge_write
   e1@{ curve: basis }
+  e2@{ curve: basis }

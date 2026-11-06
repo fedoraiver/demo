@@ -1,4 +1,4 @@
-//! 菜单共用的纸张、制服和包裹配色，以及预加载字体。
+//! 菜单面板、文字、高亮配色与预加载字体。
 
 use bevy::prelude::*;
 
@@ -59,7 +59,7 @@ impl UiTheme {
     }
 }
 
-/// 低模风格使用清楚的下投影，保证浅色控件在海天背景上可辨认。
+/// 低模风格使用清楚的下投影，保证浅色控件在菜单背景上可辨认。
 pub(super) fn paper_shadow(scale: f32) -> BoxShadow {
     BoxShadow(vec![ShadowStyle {
         color: Color::srgba(0.07, 0.11, 0.18, 0.25),

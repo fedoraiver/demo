@@ -122,16 +122,16 @@ flowchart LR
   class e12 edge_reference
   n0 e13@--> n14
   class e13 edge_read
-  n0 e14@-->|"存在性约束"| n11
-  class e14 edge_reference
-  n0 e15@--> n15
+  n0 e14@--> n15
+  class e14 edge_read
+  n0 e15@--> n16
   class e15 edge_read
-  n0 e16@--> n16
-  class e16 edge_read
-  n17 e17@-->|"可能包含"| n0
-  class e17 edge_reference
-  n0 e18@--> n18
-  class e18 edge_read
+  n17 e16@-->|"可能包含"| n0
+  class e16 edge_reference
+  n0 e17@--> n18
+  class e17 edge_read
+  n0 e18@-->|"存在性约束"| n11
+  class e18 edge_reference
   n0 e19@--> n19
   class e19 edge_read
   n20 e20@-->|"可能包含"| n0

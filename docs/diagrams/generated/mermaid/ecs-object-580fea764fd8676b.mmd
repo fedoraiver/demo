@@ -38,21 +38,21 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: cyl, label: "**SettingsDraft**<br/>菜单独立编辑的草稿；音量可以临时预览，只<br/>有应用成功才替换已保存设置。" }
+  n0@{ shape: cyl, label: "**SettingsDraft**<br/>菜单独立编辑的草稿，音量供临时预览，应用<br/>成功后替换已保存设置。" }
   class n0 node_resource
   n1@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**publish​_​audio​_​preview**<br/>来自ui ↗：向音频功能发布或清除临时音量<br/>预览。" }
+  n2@{ shape: rounded, label: "**update​_​settings​_​text**<br/>来自ui ↗：原位更新设置草稿数值与保存提<br/>示。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**update​_​volume​_​visuals**<br/>来自ui ↗：草稿由请求系统在 PreUpdate<br/>修改，随后同帧更新已有数字和轨道填充。" }
+  n3@{ shape: rounded, label: "**rebuild​_​page**<br/>来自ui ↗：只在页面结构或视口变化时重<br/>建；数值、提示与焦点变化保留现有滚动控<br/>件。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**update​_​settings​_​text**<br/>来自ui ↗：原位更新设置草稿数值与保存提<br/>示。" }
+  n4@{ shape: rounded, label: "**update​_​volume​_​visuals**<br/>来自ui ↗：草稿由请求系统在 PreUpdate<br/>修改，随后同帧更新已有数字和轨道填充。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**rebuild​_​page**<br/>来自ui ↗：只在页面结构或视口变化时重<br/>建；数值、提示与焦点变化保留现有滚动控<br/>件。" }
+  n5@{ shape: rounded, label: "**publish​_​audio​_​preview**<br/>来自ui ↗：向音频功能发布或清除临时音量<br/>预览。" }
   class n5 node_system
   class n5 external_node
   n1 e0@-->|"可变访问"| n0
@@ -63,10 +63,10 @@ flowchart LR
   class e2 edge_read
   n0 e3@--> n4
   class e3 edge_read
-  n0 e4@--> n5
-  class e4 edge_read
-  n1 e5@-->|"赋值"| n0
-  class e5 edge_write
+  n1 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n0 e5@--> n5
+  class e5 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

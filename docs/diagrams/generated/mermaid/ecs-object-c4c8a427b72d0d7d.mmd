@@ -62,25 +62,22 @@ flowchart LR
   class n8 node_observer
   n9@{ shape: rounded, label: "**warn​_​invalid​_​mass**<br/>报告动态刚体无效的总质量或总惯量。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
-  class n10 node_entity
-  class n10 external_node
-  n11@{ shape: rounded, label: "**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
+  n10@{ shape: rounded, label: "**integrate​_​velocities**<br/>为活跃动态刚体积分速度与阻尼。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**move​_​characters**<br/>来自character ↗：用有上限的加速度趋近<br/>目标水平速度，保留碰撞和外部冲量造成的实<br/>际运动。" }
-  class n12 node_system
-  class n12 external_node
-  n13@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
-  class n13 node_observer
+  class n11 external_node
+  n12@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  class n12 node_observer
+  n13@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
+  class n13 node_entity
+  class n13 external_node
   n14@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
   class n14 node_observer
   n15@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
   class n15 node_observer
   n16@{ shape: rounded, label: "**apply​_​constant​_​local​_​torques**<br/>按局部惯量把恒定局部扭矩转成角加速度。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
-  class n17 node_entity
-  class n17 external_node
   n1 e0@-->|"赋值"| n0
   class e0 edge_write
   n0 e1@-->|"存在性约束"| n2
@@ -99,16 +96,16 @@ flowchart LR
   class e7 edge_write
   n0 e8@-->|"存在性约束"| n9
   class e8 edge_reference
-  n10 e9@-->|"可能包含"| n0
-  class e9 edge_reference
-  n0 e10@--> n11
+  n0 e9@--> n10
+  class e9 edge_read
+  n0 e10@--> n9
   class e10 edge_read
-  n0 e11@--> n9
+  n0 e11@--> n11
   class e11 edge_read
-  n0 e12@--> n12
-  class e12 edge_read
-  n13 e13@-->|"赋值"| n0
-  class e13 edge_write
+  n12 e12@-->|"赋值"| n0
+  class e12 edge_write
+  n13 e13@-->|"可能包含"| n0
+  class e13 edge_reference
   n14 e14@-->|"可变访问"| n0
   class e14 edge_write
   n15 e15@-->|"可变访问"| n0
@@ -121,12 +118,10 @@ flowchart LR
   class e18 edge_write
   n6 e19@-->|"可变访问"| n0
   class e19 edge_write
-  n13 e20@-->|"可变访问"| n0
+  n12 e20@-->|"可变访问"| n0
   class e20 edge_write
   n0 e21@--> n16
   class e21 edge_read
-  n17 e22@-->|"可能包含"| n0
-  class e22 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -149,4 +144,3 @@ flowchart LR
   e19@{ curve: basis }
   e20@{ curve: basis }
   e21@{ curve: basis }
-  e22@{ curve: basis }

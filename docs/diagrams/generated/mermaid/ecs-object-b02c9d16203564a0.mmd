@@ -50,7 +50,7 @@ flowchart LR
   n1@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n1 node_resource
   class n1 external_node
-  n2@{ shape: lean-r, label: "**SoundRequest**<br/>来自audio ↗：业务实体只用于日志和节<br/>流，不持有其组件引用，实体销毁后消息仍可<br/>被消费。" }
+  n2@{ shape: lean-r, label: "**SoundRequest**<br/>来自audio ↗：声音请求保存用于日志定位<br/>的来源实体标识，来源实体销毁后仍可消费。" }
   class n2 node_message
   class n2 external_node
   n3@{ shape: stadium, label: "**Fire#lt;NextAction#gt;**<br/>来自crate:bevy​_​enhanced​_​input ↗：持<br/>续通知处于触发状态的动作。" }

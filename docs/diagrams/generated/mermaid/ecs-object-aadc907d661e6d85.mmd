@@ -42,9 +42,9 @@ flowchart LR
   n1@{ shape: rounded, label: "**asset​_​events**<br/>来自crate:bevy​_​asset ↗：发布累计的资<br/>产变化消息。" }
   class n1 node_system
   class n1 external_node
-  n1 e0@-->|"赋值"| n0
+  n1 e0@-->|"可变访问"| n0
   class e0 edge_write
-  n1 e1@-->|"可变访问"| n0
+  n1 e1@-->|"赋值"| n0
   class e1 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-26c24070885ff734-e3{marker-start:url(#object-26c24070885ff734_flowchart-v2-pointStart)!important}\n#object-26c24070885ff734_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-26c24070885ff734-e4{marker-start:url(#object-26c24070885ff734_flowchart-v2-pointStart)!important}\n#object-26c24070885ff734_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -45,17 +45,23 @@ flowchart LR
   n2@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n3@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
   class n3 node_system
   class n3 external_node
+  n4@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
+  class n4 node_system
+  class n4 external_node
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"插入"| n0
   class e1 edge_write
   n3 e2@-->|"插入"| n0
   class e2 edge_write
-  n2 e3@--- n0
-  class e3 edge_read
+  n4 e3@-->|"插入"| n0
+  class e3 edge_write
+  n2 e4@--- n0
+  class e4 edge_read
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
+  e4@{ curve: basis }

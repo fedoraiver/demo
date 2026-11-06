@@ -40,96 +40,93 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**TransformTreeChanged**<br/>以变化检测标记存在变换变化的层级分支" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：为玩法海岛提供<br/>随会话清理的日光照明。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
+  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
   class n1 node_entity
   class n1 external_node
-  n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：照亮主菜单海岛展示舞台。" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：创建可拾取并参<br/>与物理的灰盒方块。" }
   class n2 node_entity
   class n2 external_node
-  n3@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：加载并承载所属<br/>物品种类对应的模型外观。" }
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
   class n3 node_entity
   class n3 external_node
-  n4@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
-  class n4 node_entity
-  class n4 external_node
-  n5@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：挂载主角模型，<br/>承接动画绑定和自身视觉隐藏。" }
-  class n5 node_entity
-  class n5 external_node
-  n6@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n4 node_system
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  class n5 node_system
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：照亮灰盒地面与<br/>方块。" }
   class n6 node_entity
   class n6 external_node
-  n7@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
+  n7@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
   class n7 node_entity
   class n7 external_node
-  n8@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：承载主菜单快递员模型、展示动<br/>画与持握附件。" }
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
+  n8@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：组织主菜单背景相机及其生命周<br/>期。" }
   class n8 node_entity
   class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
   n9@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：保存灰盒玩家身<br/>份与运动状态。" }
   class n10 node_entity
   class n10 external_node
-  n11@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
+  n11@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
-  class n12 node_entity
-  class n12 external_node
-  n13@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n13 node_entity
-  class n13 external_node
-  n14@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n14 node_entity
-  class n14 external_node
-  n15@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n15 node_entity
-  class n15 external_node
-  n16@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：组织主菜单海岛展示舞台，并在<br/>退出主菜单时清理。" }
-  class n16 node_entity
-  class n16 external_node
-  n17@{ shape: rounded, label: "**mark​_​dirty​_​trees**<br/>沿祖先链标记需要重算变换的子树。" }
-  class n17 node_system
-  n18@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n18 node_entity
-  class n18 external_node
-  n19@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n19 node_entity
-  class n19 external_node
-  n20@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：承载海岛物品的<br/>种类、拾取能力、握点和出生姿态。" }
-  class n20 node_entity
-  class n20 external_node
-  n21@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：承载可控制快递<br/>员的玩法状态与角色层级。" }
-  class n21 node_entity
-  class n21 external_node
-  n22@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
-  class n22 node_system
-  n23@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n23 node_entity
-  class n23 external_node
-  n24@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
-  class n24 node_system
-  n25@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n25 node_entity
-  class n25 external_node
-  n26@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
-  class n26 node_system
-  n27@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n27 node_entity
-  class n27 external_node
-  n28@{ shape: rounded, label: "**begin​_​island · 创建模板**<br/>来自scene​_​assembly ↗：挂载玩法海岛场<br/>景，作为地图准备和会话清理入口。" }
-  class n28 node_entity
-  class n28 external_node
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
+  n12@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n12 node_system
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
+  n13@{ shape: rounded, label: "**propagate​_​parent​_​transforms**<br/>沿父子层级并行合成世界变换。" }
+  class n13 node_system
+  end
+  style layout_card_n13 fill:none,stroke:none
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
   n2 e1@-->|"可能包含"| n0
   class e1 edge_reference
   n3 e2@-->|"可能包含"| n0
   class e2 edge_reference
-  n4 e3@-->|"可能包含"| n0
-  class e3 edge_reference
-  n5 e4@-->|"可能包含"| n0
-  class e4 edge_reference
+  n4 e3@-->|"可变访问"| n0
+  class e3 edge_write
+  n5 e4@-->|"可变访问"| n0
+  class e4 edge_write
   n6 e5@-->|"可能包含"| n0
   class e5 edge_reference
   n7 e6@-->|"可能包含"| n0
@@ -140,42 +137,12 @@ flowchart LR
   class e8 edge_write
   n10 e9@-->|"可能包含"| n0
   class e9 edge_reference
-  n11 e10@-->|"可变访问"| n0
-  class e10 edge_write
-  n12 e11@-->|"可能包含"| n0
-  class e11 edge_reference
-  n13 e12@-->|"可能包含"| n0
-  class e12 edge_reference
-  n14 e13@-->|"可能包含"| n0
-  class e13 edge_reference
-  n15 e14@-->|"可能包含"| n0
-  class e14 edge_reference
-  n16 e15@-->|"可能包含"| n0
-  class e15 edge_reference
-  n17 e16@-->|"可变访问"| n0
-  class e16 edge_write
-  n18 e17@-->|"可能包含"| n0
-  class e17 edge_reference
-  n19 e18@-->|"可能包含"| n0
-  class e18 edge_reference
-  n20 e19@-->|"可能包含"| n0
-  class e19 edge_reference
-  n21 e20@-->|"可能包含"| n0
-  class e20 edge_reference
-  n0 e21@--> n22
-  class e21 edge_read
-  n23 e22@-->|"可能包含"| n0
-  class e22 edge_reference
-  n0 e23@--> n24
-  class e23 edge_read
-  n25 e24@-->|"可能包含"| n0
-  class e24 edge_reference
-  n0 e25@--> n26
-  class e25 edge_read
-  n27 e26@-->|"可能包含"| n0
-  class e26 edge_reference
-  n28 e27@-->|"可能包含"| n0
-  class e27 edge_reference
+  n0 e10@--> n11
+  class e10 edge_read
+  n0 e11@--> n12
+  class e11 edge_read
+  n0 e12@--> n13
+  class e12 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -187,18 +154,4 @@ flowchart LR
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e11@{ curve: basis }
-  e13@{ curve: basis }
-  e14@{ curve: basis }
-  e15@{ curve: basis }
-  e16@{ curve: basis }
-  e17@{ curve: basis }
-  e18@{ curve: basis }
-  e19@{ curve: basis }
-  e20@{ curve: basis }
-  e21@{ curve: basis }
-  e22@{ curve: basis }
-  e24@{ curve: basis }
-  e25@{ curve: basis }
-  e26@{ curve: basis }
-  e27@{ curve: basis }
+  e12@{ curve: basis }

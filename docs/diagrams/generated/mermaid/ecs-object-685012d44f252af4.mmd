@@ -41,20 +41,20 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**SettingValue**<br/>数值文字只保存对应字段；草稿变化时原位更<br/>新 Text，不销毁滚动区域和焦点实体。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**update​_​settings​_​text**<br/>原位更新设置草稿数值与保存提示。" }
-  class n1 node_system
-  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>原位显示并刷新对应设置字段的当前草稿值。" }
-  class n2 node_entity
-  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>原位显示并刷新对应设置字段的当前草稿值。" }
+  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示并更新设置草稿的当前值。" }
+  class n1 node_entity
+  n2@{ shape: rounded, label: "**update​_​settings​_​text**<br/>原位更新设置草稿数值与保存提示。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示并更新设置草稿的当前值。" }
   class n3 node_entity
-  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>原位显示并刷新对应设置字段的当前草稿值。" }
+  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示并更新设置草稿的当前值。" }
   class n4 node_entity
-  n0 e0@-->|"存在性约束"| n1
+  n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
-  n0 e1@--> n1
-  class e1 edge_read
-  n2 e2@-->|"可能包含"| n0
-  class e2 edge_reference
+  n0 e1@-->|"存在性约束"| n2
+  class e1 edge_reference
+  n0 e2@--> n2
+  class e2 edge_read
   n3 e3@-->|"可能包含"| n0
   class e3 edge_reference
   n4 e4@-->|"可能包含"| n0

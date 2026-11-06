@@ -123,12 +123,9 @@ flowchart LR
   n29@{ shape: lin-rect, label: "**UpdateFrusta**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
   class n29 node_system_set
   class n29 external_node
-  n30@{ shape: rounded, label: "**compensate​_​courier​_​sole​_​penetration**<br/>来自character​_​animation ↗：方向混合<br/>可能把弯腿插值成更直的腿；逐帧按真实鞋底<br/>边界修正最终视觉高度。" }
-  class n30 node_system
+  n30@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
+  class n30 node_system_set
   class n30 external_node
-  n31@{ shape: lin-rect, label: "**VisibilityPropagate**<br/>来自crate:bevy​_​camera ↗：组织相机与实<br/>体可见性更新。" }
-  class n31 node_system_set
-  class n31 external_node
   n0 e0@-->|"先于"| n1
   class e0 edge_order
   n0 e1@-->|"先于"| n2
@@ -187,16 +184,8 @@ flowchart LR
   class e27 edge_order
   n0 e28@-->|"先于"| n29
   class e28 edge_order
-  n30 e29@-->|"先于"| n0
+  n0 e29@-->|"先于"| n30
   class e29 edge_order
-  n0 e30@-->|"先于"| n31
-  class e30 edge_order
-  n4 layout_input_0@~~~ n7
-  n7 layout_input_1@~~~ n9
-  n9 layout_input_2@~~~ n14
-  n14 layout_input_3@~~~ n22
-  n22 layout_input_4@~~~ n28
-  n28 layout_input_5@~~~ n30
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -227,4 +216,3 @@ flowchart LR
   e27@{ curve: basis }
   e28@{ curve: basis }
   e29@{ curve: basis }
-  e30@{ curve: basis }

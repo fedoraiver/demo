@@ -38,69 +38,13 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_relationship stroke:#7B4DB2,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>组织主菜单海岛展示舞台，并在退出主菜单时<br/>清理。" }
+  n0@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>组织主菜单背景相机及其生命周期。" }
   class n0 node_entity
-  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>承载主菜单快递员模型、展示动画与持握附<br/>件。" }
+  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>以纯色背景绘制主菜单与默认 UI。" }
   class n1 node_entity
-  n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>绘制主菜单展示舞台并承接菜单 UI。" }
-  class n2 node_entity
-  n3@{ shape: rounded, label: "**spawn​_​backdrop**<br/>装配主菜单海岛展示舞台、相机与日光。" }
-  class n3 node_system
-  n4@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>把海岛环境与包裹道具布置到菜单展示舞台。" }
-  class n4 node_entity
-  n5@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>把海岛环境与包裹道具布置到菜单展示舞台。" }
-  class n5 node_entity
-  n6@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>把海岛环境与包裹道具布置到菜单展示舞台。" }
-  class n6 node_entity
-  n7@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>把海岛环境与包裹道具布置到菜单展示舞台。" }
-  class n7 node_entity
-  n8@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>把海岛环境与包裹道具布置到菜单展示舞台。" }
-  class n8 node_entity
-  n9@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>把海岛环境与包裹道具布置到菜单展示舞台。" }
-  class n9 node_entity
-  n10@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>把海岛环境与包裹道具布置到菜单展示舞台。" }
-  class n10 node_entity
-  n11@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>把海岛环境与包裹道具布置到菜单展示舞台。" }
-  class n11 node_entity
-  n12@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>把海岛环境与包裹道具布置到菜单展示舞台。" }
-  class n12 node_entity
-  n13@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>照亮主菜单海岛展示舞台。" }
-  class n13 node_entity
+  n2@{ shape: rounded, label: "**spawn​_​backdrop**<br/>创建主菜单纯色背景与独立相机。" }
+  class n2 node_system
   n0 e0@-->|"子实体"| n1
   class e0 edge_relationship
-  n0 e1@-->|"子实体"| n2
-  class e1 edge_relationship
-  n3 e2@-->|"创建模板"| n0
-  class e2 edge_write
-  n0 e3@-->|"子实体"| n4
-  class e3 edge_relationship
-  n0 e4@-->|"子实体"| n5
-  class e4 edge_relationship
-  n0 e5@-->|"子实体"| n6
-  class e5 edge_relationship
-  n0 e6@-->|"子实体"| n7
-  class e6 edge_relationship
-  n0 e7@-->|"子实体"| n8
-  class e7 edge_relationship
-  n0 e8@-->|"子实体"| n9
-  class e8 edge_relationship
-  n0 e9@-->|"子实体"| n10
-  class e9 edge_relationship
-  n0 e10@-->|"子实体"| n11
-  class e10 edge_relationship
-  n0 e11@-->|"子实体"| n12
-  class e11 edge_relationship
-  n0 e12@-->|"子实体"| n13
-  class e12 edge_relationship
-  e0@{ curve: basis }
-  e1@{ curve: basis }
-  e3@{ curve: basis }
-  e4@{ curve: basis }
-  e5@{ curve: basis }
-  e6@{ curve: basis }
-  e7@{ curve: basis }
-  e8@{ curve: basis }
-  e9@{ curve: basis }
-  e10@{ curve: basis }
-  e11@{ curve: basis }
-  e12@{ curve: basis }
+  n2 e1@-->|"创建模板"| n0
+  class e1 edge_write

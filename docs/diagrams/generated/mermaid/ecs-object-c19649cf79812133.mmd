@@ -41,64 +41,64 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
   class n0 node_resource
-  n1@{ shape: hex, label: "**left**<br/>向当前设置字段提交减值请求。" }
-  class n1 node_observer
-  n2@{ shape: rounded, label: "**publish​_​audio​_​preview**<br/>向音频功能发布或清除临时音量预览。" }
-  class n2 node_system
-  n3@{ shape: rounded, label: "**update​_​settings​_​text**<br/>原位更新设置草稿数值与保存提示。" }
+  n1@{ shape: rounded, label: "**update​_​settings​_​text**<br/>原位更新设置草稿数值与保存提示。" }
+  class n1 node_system
+  n2@{ shape: hex, label: "**confirm**<br/>提交当前聚焦按钮的菜单动作。" }
+  class n2 node_observer
+  n3@{ shape: rounded, label: "**handle​_​requests**<br/>每帧只消费一项语义请求，避免鼠标与确认键<br/>同时激活，或旧页面动作穿过页面切换。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**handle​_​requests**<br/>每帧只消费一项语义请求，避免鼠标与确认键<br/>同时激活，或旧页面动作穿过页面切换。" }
-  class n4 node_system
+  n4@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
+  class n4 node_observer
   n5@{ shape: rounded, label: "**hide​_​menu**<br/>隐藏菜单并清除提示。" }
   class n5 node_system
-  n6@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
-  class n6 node_observer
-  n7@{ shape: rounded, label: "**pointer​_​interaction**<br/>Bevy 原生 UI 已完成按钮命中；这里只读取<br/>缓冲的按下事件，不另读 MouseButton。" }
-  class n7 node_system
-  n8@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
+  n6@{ shape: rounded, label: "**rebuild​_​page**<br/>只在页面结构或视口变化时重建；数值、提示<br/>与焦点变化保留现有滚动控件。" }
+  class n6 node_system
+  n7@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
+  class n7 node_observer
+  n8@{ shape: hex, label: "**left**<br/>向当前设置字段提交减值请求。" }
   class n8 node_observer
-  n9@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>同步设置滚动条的有效范围和交互状态。" }
-  class n9 node_system
-  n10@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
+  n9@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
+  class n9 node_observer
+  n10@{ shape: rounded, label: "**publish​_​audio​_​preview**<br/>向音频功能发布或清除临时音量预览。" }
   class n10 node_system
-  n11@{ shape: hex, label: "**confirm**<br/>提交当前聚焦按钮的菜单动作。" }
+  n11@{ shape: hex, label: "**right**<br/>向当前设置字段提交增值请求。" }
   class n11 node_observer
   n12@{ shape: hex, label: "**left**<br/>向当前设置字段提交减值请求。" }
   class n12 node_observer
   n13@{ shape: hex, label: "**right**<br/>向当前设置字段提交增值请求。" }
   class n13 node_observer
-  n14@{ shape: rounded, label: "**rebuild​_​page**<br/>只在页面结构或视口变化时重建；数值、提示<br/>与焦点变化保留现有滚动控件。" }
-  class n14 node_system
+  n14@{ shape: hex, label: "**confirm**<br/>提交当前聚焦按钮的菜单动作。" }
+  class n14 node_observer
   n15@{ shape: rounded, label: "**show​_​main​_​menu**<br/>打开主菜单并重置页面、返回来源与焦点。" }
   class n15 node_system
-  n16@{ shape: hex, label: "**confirm**<br/>提交当前聚焦按钮的菜单动作。" }
+  n16@{ shape: hex, label: "**right**<br/>向当前设置字段提交增值请求。" }
   class n16 node_observer
-  n17@{ shape: rounded, label: "**show​_​pause​_​menu**<br/>打开暂停菜单并重置焦点。" }
-  class n17 node_system
-  n18@{ shape: hex, label: "**left**<br/>向当前设置字段提交减值请求。" }
-  class n18 node_observer
-  n19@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
-  class n19 node_observer
-  n20@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
+  n17@{ shape: hex, label: "**confirm**<br/>提交当前聚焦按钮的菜单动作。" }
+  class n17 node_observer
+  n18@{ shape: rounded, label: "**show​_​pause​_​menu**<br/>打开暂停菜单并重置焦点。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
+  class n19 node_system
+  n20@{ shape: hex, label: "**left**<br/>向当前设置字段提交减值请求。" }
   class n20 node_observer
-  n21@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
+  n21@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
   class n21 node_observer
-  n22@{ shape: hex, label: "**right**<br/>向当前设置字段提交增值请求。" }
+  n22@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
   class n22 node_observer
-  n23@{ shape: hex, label: "**right**<br/>向当前设置字段提交增值请求。" }
-  class n23 node_observer
-  n24@{ shape: hex, label: "**previous**<br/>循环选择上一个可操作菜单按钮。" }
+  n23@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>同步设置滚动条的有效范围和交互状态。" }
+  class n23 node_system
+  n24@{ shape: hex, label: "**next**<br/>循环选择下一个可操作菜单按钮。" }
   class n24 node_observer
-  n25@{ shape: hex, label: "**confirm**<br/>提交当前聚焦按钮的菜单动作。" }
-  class n25 node_observer
+  n25@{ shape: rounded, label: "**pointer​_​interaction**<br/>Bevy 原生 UI 已完成按钮命中；这里只读取<br/>缓冲的按下事件，不另读 MouseButton。" }
+  class n25 node_system
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
   class e1 edge_read
-  n0 e2@--> n3
-  class e2 edge_read
-  n4 e3@-->|"赋值"| n0
-  class e3 edge_write
+  n3 e2@-->|"赋值"| n0
+  class e2 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
   n5 e4@-->|"可变访问"| n0
   class e4 edge_write
   n0 e5@--> n6
@@ -123,24 +123,24 @@ flowchart LR
   class e14 edge_write
   n0 e15@--> n16
   class e15 edge_read
-  n17 e16@-->|"赋值"| n0
-  class e16 edge_write
-  n15 e17@-->|"赋值"| n0
+  n0 e16@--> n17
+  class e16 edge_read
+  n18 e17@-->|"赋值"| n0
   class e17 edge_write
-  n4 e18@-->|"可变访问"| n0
+  n15 e18@-->|"赋值"| n0
   class e18 edge_write
-  n0 e19@--> n18
+  n0 e19@--> n19
   class e19 edge_read
-  n0 e20@--> n19
-  class e20 edge_read
+  n3 e20@-->|"可变访问"| n0
+  class e20 edge_write
   n0 e21@--> n20
   class e21 edge_read
-  n5 e22@-->|"赋值"| n0
-  class e22 edge_write
-  n17 e23@-->|"可变访问"| n0
+  n0 e22@--> n21
+  class e22 edge_read
+  n5 e23@-->|"赋值"| n0
   class e23 edge_write
-  n0 e24@--> n21
-  class e24 edge_read
+  n18 e24@-->|"可变访问"| n0
+  class e24 edge_write
   n0 e25@--> n22
   class e25 edge_read
   n0 e26@--> n23
@@ -165,8 +165,8 @@ flowchart LR
   e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }
-  e17@{ curve: bumpX }
-  e18@{ curve: basis }
+  e17@{ curve: basis }
+  e18@{ curve: bumpX }
   e19@{ curve: basis }
   e20@{ curve: basis }
   e21@{ curve: basis }

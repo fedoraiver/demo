@@ -52,21 +52,18 @@ flowchart LR
   n4@{ shape: rounded, label: "**expire​_​completed​_​transitions**<br/>来自crate:bevy​_​animation ↗：结束已完<br/>全淡出的动画过渡。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**compensate​_​courier​_​sole​_​penetration**<br/>来自character​_​animation ↗：方向混合<br/>可能把弯腿插值成更直的腿；逐帧按真实鞋底<br/>边界修正最终视觉高度。" }
+  n5@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  n6@{ shape: rounded, label: "**advance​_​animations**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>播放器中活动动画的播放时间。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**advance​_​animations**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>播放器中活动动画的播放时间。" }
+  n7@{ shape: rounded, label: "**advance​_​transitions**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>过渡并归一化混合权重。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**advance​_​transitions**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>过渡并归一化混合权重。" }
+  n8@{ shape: rounded, label: "**thread​_​animation​_​graphs**<br/>来自crate:bevy​_​animation ↗：维护动画<br/>图的快速求值结构。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**thread​_​animation​_​graphs**<br/>来自crate:bevy​_​animation ↗：维护动画<br/>图的快速求值结构。" }
-  class n9 node_system
-  class n9 external_node
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership
   n0 e1@-->|"先于"| n2
@@ -77,19 +74,17 @@ flowchart LR
   class e3 edge_set_membership
   n0 e4@-->|"先于"| n5
   class e4 edge_order
-  n0 e5@-->|"先于"| n6
-  class e5 edge_order
+  n0 e5@-->|"集合成员"| n6
+  class e5 edge_set_membership
   n0 e6@-->|"集合成员"| n7
   class e6 edge_set_membership
   n0 e7@-->|"集合成员"| n8
   class e7 edge_set_membership
-  n0 e8@-->|"集合成员"| n9
-  class e8 edge_set_membership
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
+  e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }

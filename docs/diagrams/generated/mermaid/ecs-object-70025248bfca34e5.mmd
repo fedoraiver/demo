@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: Recover · 对象关系
+  accTitle: Facing · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -38,12 +38,12 @@ flowchart LR
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: lin-rect, label: "**Recover**<br/>固定模拟阶段；结构变更在依赖阶段之间提<br/>交。" }
+  n0@{ shape: lin-rect, label: "**Facing**<br/>固定模拟阶段；结构变更在依赖阶段之间提<br/>交。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**recover​_​from​_​water**<br/>来自bounds​_​recovery ↗：恢复实体自身的<br/>出生姿态；角色落水只释放手中物品，物品落<br/>水时再独立恢复。" }
+  n1@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: lin-rect, label: "**Facing**<br/>固定模拟阶段；结构变更在依赖阶段之间提<br/>交。" }
+  n2@{ shape: lin-rect, label: "**Motion**<br/>固定模拟阶段；结构变更在依赖阶段之间提<br/>交。" }
   class n2 node_system_set
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership

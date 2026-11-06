@@ -42,15 +42,15 @@ flowchart LR
   class n0 node_system_set
   n1@{ shape: rounded, label: "**play​_​requests**<br/>按有效混音和播放限额处理声音请求。" }
   class n1 node_system
-  n2@{ shape: lin-rect, label: "**Mix**<br/>跨功能只约束混音与播放阶段，具体资源和实<br/>例处理顺序留在音频内部。" }
-  class n2 node_system_set
-  n3@{ shape: rounded, label: "**stop​_​on​_​exit**<br/>停止音频通道并记录退出。" }
-  class n3 node_system
+  n2@{ shape: rounded, label: "**stop​_​on​_​exit**<br/>停止当前 UI 音频通道并记录退出。" }
+  class n2 node_system
+  n3@{ shape: lin-rect, label: "**Mix**<br/>跨功能只约束混音与播放阶段，具体资源和实<br/>例处理顺序留在音频内部。" }
+  class n3 node_system_set
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership
-  n2 e1@-->|"先于"| n0
-  class e1 edge_order
-  n0 e2@-->|"集合成员"| n3
-  class e2 edge_set_membership
+  n0 e1@-->|"集合成员"| n2
+  class e1 edge_set_membership
+  n3 e2@-->|"先于"| n0
+  class e2 edge_order
   e0@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: basis }

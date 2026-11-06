@@ -43,21 +43,21 @@ flowchart LR
   class n0 node_component
   n1@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
-  class n2 node_observer
-  n3@{ shape: hex, label: "**unregister​_​modifier**<br/>清除已移除输入修饰器的处理入口。" }
+  n2@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>求值上下文输入并更新动作状态。" }
+  class n2 node_system
+  n3@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
+  n4@{ shape: hex, label: "**unregister​_​modifier**<br/>清除已移除输入修饰器的处理入口。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**unregister​_​modifier**<br/>清除已移除输入修饰器的处理入口。" }
+  n5@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
+  n6@{ shape: hex, label: "**unregister​_​modifier**<br/>清除已移除输入修饰器的处理入口。" }
   class n6 node_observer
   n7@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
   class n7 node_observer
   n8@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**unregister​_​modifier**<br/>清除已移除输入修饰器的处理入口。" }
+  n9@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
   class n9 node_observer
   n10@{ shape: hex, label: "**unregister​_​modifier**<br/>清除已移除输入修饰器的处理入口。" }
   class n10 node_observer
@@ -67,7 +67,7 @@ flowchart LR
   class n12 node_observer
   n13@{ shape: hex, label: "**unregister​_​modifier**<br/>清除已移除输入修饰器的处理入口。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
+  n14@{ shape: hex, label: "**unregister​_​modifier**<br/>清除已移除输入修饰器的处理入口。" }
   class n14 node_observer
   n15@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
   class n15 node_observer
@@ -75,8 +75,8 @@ flowchart LR
   class n16 node_observer
   n17@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
   class n17 node_observer
-  n18@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>求值上下文输入并更新动作状态。" }
-  class n18 node_system
+  n18@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
+  class n18 node_observer
   n19@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
   class n19 node_observer
   n20@{ shape: hex, label: "**register​_​modifier**<br/>登记新增输入修饰器的处理入口。" }
@@ -129,8 +129,8 @@ flowchart LR
   class n43 node_observer
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
-  n2 e1@-->|"可变访问"| n0
-  class e1 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
   n3 e2@-->|"可变访问"| n0
   class e2 edge_write
   n4 e3@-->|"可变访问"| n0
@@ -161,8 +161,8 @@ flowchart LR
   class e15 edge_write
   n17 e16@-->|"可变访问"| n0
   class e16 edge_write
-  n0 e17@--> n18
-  class e17 edge_read
+  n18 e17@-->|"可变访问"| n0
+  class e17 edge_write
   n19 e18@-->|"可变访问"| n0
   class e18 edge_write
   n20 e19@-->|"可变访问"| n0
@@ -214,7 +214,6 @@ flowchart LR
   n43 e42@-->|"可变访问"| n0
   class e42 edge_write
   e0@{ curve: basis }
-  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
@@ -230,6 +229,7 @@ flowchart LR
   e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }
+  e17@{ curve: basis }
   e18@{ curve: basis }
   e19@{ curve: basis }
   e20@{ curve: basis }

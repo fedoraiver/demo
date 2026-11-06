@@ -41,21 +41,17 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**VolumeValue**<br/>数字与填充各自保存设置键，草稿更新不需要<br/>重建实体树。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>随音量草稿刷新百分比或静音文字。" }
+  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示音量百分比或静音提示。" }
   class n1 node_entity
-  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>随音量草稿刷新百分比或静音文字。" }
+  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示音量百分比或静音提示。" }
   class n2 node_entity
   n3@{ shape: rounded, label: "**update​_​volume​_​visuals**<br/>草稿由请求系统在 PreUpdate 修改，随后<br/>同帧更新已有数字和轨道填充。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>随音量草稿刷新百分比或静音文字。" }
-  class n4 node_entity
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
   n2 e1@-->|"可能包含"| n0
   class e1 edge_reference
   n0 e2@--> n3
   class e2 edge_read
-  n4 e3@-->|"可能包含"| n0
-  class e3 edge_reference
   e0@{ curve: basis }
-  e3@{ curve: basis }
+  e1@{ curve: basis }

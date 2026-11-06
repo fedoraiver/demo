@@ -45,7 +45,7 @@ flowchart LR
   n1@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>来自crate:bevy​_​core​_​pipeline ↗：允<br/>许 OIT 相机采样自己的深度纹理。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  n2@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
   class n2 node_entity
   class n2 external_node
   n3@{ shape: rounded, label: "**configure​_​camera​_​depth​_​usages**<br/>来自crate:bevy​_​pbr ↗：允许大气相机的<br/>深度纹理被着色器采样。" }
@@ -72,23 +72,23 @@ flowchart LR
   n10@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>来自crate:bevy​_​ui​_​render ↗：为活动二<br/>维或三维相机维护独立 UI 视图。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
-  class n11 node_entity
+  n11@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n12@{ shape: rounded, label: "**prepare​_​view​_​depth​_​textures​_​for​_​**<br/>**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：允许体积雾着色<br/>器读取三维相机深度纹理。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**prepare​_​view​_​depth​_​textures​_​for​_​**<br/>**volumetric​_​fog**<br/>来自crate:bevy​_​pbr ↗：允许体积雾着色<br/>器读取三维相机深度纹理。" }
+  n13@{ shape: rounded, label: "**configure​_​depth​_​of​_​field​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​post​_​process ↗：允许<br/>景深相机采样自己的深度纹理。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**configure​_​depth​_​of​_​field​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​post​_​process ↗：允许<br/>景深相机采样自己的深度纹理。" }
+  n14@{ shape: rounded, label: "**configure​_​occlusion​_​culling​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​core​_​pipeline ↗：让遮<br/>挡剔除相机的深度纹理可被采样。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**configure​_​occlusion​_​culling​_​view​_​**<br/>**targets**<br/>来自crate:bevy​_​core​_​pipeline ↗：让遮<br/>挡剔除相机的深度纹理可被采样。" }
+  n15@{ shape: rounded, label: "**update​_​mesh​_​previous​_​global​_​**<br/>**transforms**<br/>来自crate:bevy​_​pbr ↗：为下帧保存网格<br/>的当前世界变换。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**update​_​mesh​_​previous​_​global​_​**<br/>**transforms**<br/>来自crate:bevy​_​pbr ↗：为下帧保存网格<br/>的当前世界变换。" }
-  class n16 node_system
+  n16@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
+  class n16 node_entity
   class n16 external_node
   n17@{ shape: rounded, label: "**extract​_​camera​_​prepass​_​phase**<br/>来自crate:bevy​_​core​_​pipeline ↗：同步<br/>三维相机的预通道标记与渲染阶段。" }
   class n17 node_system
@@ -142,20 +142,20 @@ flowchart LR
   class e9 edge_reference
   n0 e10@-->|"存在性约束"| n10
   class e10 edge_reference
-  n11 e11@-->|"可能包含"| n0
-  class e11 edge_reference
-  n12 e12@-->|"移除"| n0
+  n11 e11@-->|"移除"| n0
+  class e11 edge_write
+  n12 e12@-->|"可变访问"| n0
   class e12 edge_write
-  n13 e13@-->|"可变访问"| n0
+  n13 e13@-->|"赋值"| n0
   class e13 edge_write
   n14 e14@-->|"赋值"| n0
   class e14 edge_write
-  n15 e15@-->|"赋值"| n0
-  class e15 edge_write
-  n0 e16@-->|"存在性约束"| n16
-  class e16 edge_reference
-  n15 e17@-->|"可变访问"| n0
-  class e17 edge_write
+  n0 e15@-->|"存在性约束"| n15
+  class e15 edge_reference
+  n14 e16@-->|"可变访问"| n0
+  class e16 edge_write
+  n16 e17@-->|"可能包含"| n0
+  class e17 edge_reference
   n0 e18@-->|"存在性约束"| n17
   class e18 edge_reference
   n18 e19@-->|"可变访问"| n0
@@ -174,17 +174,17 @@ flowchart LR
   class e25 edge_read
   n0 e26@-->|"存在性约束"| n23
   class e26 edge_reference
-  n14 e27@-->|"可变访问"| n0
+  n13 e27@-->|"可变访问"| n0
   class e27 edge_write
   n0 e28@-->|"存在性约束"| n24
   class e28 edge_reference
-  n12 e29@--- n0
+  n11 e29@--- n0
   class e29 edge_read
   n1 e30@-->|"可变访问"| n0
   class e30 edge_write
   n0 e31@-->|"存在性约束"| n25
   class e31 edge_reference
-  n13 e32@-->|"赋值"| n0
+  n12 e32@-->|"赋值"| n0
   class e32 edge_write
   n1 e33@-->|"赋值"| n0
   class e33 edge_write

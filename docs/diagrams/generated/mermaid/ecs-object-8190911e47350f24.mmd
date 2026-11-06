@@ -40,27 +40,27 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**DescriptionBody**<br/>标识设置项说明正文。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示当前聚焦设置项的详细说明。" }
+  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示当前聚焦设置的说明正文。" }
   class n1 node_entity
-  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示当前聚焦设置项的详细说明。" }
-  class n2 node_entity
-  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示当前聚焦设置项的详细说明。" }
+  n2@{ shape: rounded, label: "**update​_​description**<br/>更新当前聚焦设置的说明标题与正文。" }
+  class n2 node_system
+  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示当前聚焦设置的说明正文。" }
   class n3 node_entity
-  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示当前聚焦设置项的详细说明。" }
+  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示当前聚焦设置的说明正文。" }
   class n4 node_entity
-  n5@{ shape: rounded, label: "**update​_​description**<br/>更新当前聚焦设置的说明标题与正文。" }
-  class n5 node_system
+  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示当前聚焦设置的说明正文。" }
+  class n5 node_entity
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
-  n2 e1@-->|"可能包含"| n0
+  n0 e1@-->|"存在性约束"| n2
   class e1 edge_reference
   n3 e2@-->|"可能包含"| n0
   class e2 edge_reference
   n4 e3@-->|"可能包含"| n0
   class e3 edge_reference
-  n0 e4@-->|"存在性约束"| n5
+  n5 e4@-->|"可能包含"| n0
   class e4 edge_reference
   e0@{ curve: basis }
-  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
+  e4@{ curve: basis }

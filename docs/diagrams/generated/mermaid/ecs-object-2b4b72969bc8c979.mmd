@@ -50,11 +50,8 @@ flowchart LR
   n4@{ shape: rounded, label: "**log​_​collisions**<br/>来自physics ↗：接触开始和结束属于离散<br/>变化，通过现有文件日志设施记录碰撞双方。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**emit​_​item​_​land**<br/>来自item​_​interaction ↗：检测自由物品<br/>支撑撞击并锁存一次落地音效。" }
-  class n5 node_system
-  class n5 external_node
-  n6@{ shape: lin-rect, label: "**Writeback**<br/>划分物理准备、模拟与回写边界。" }
-  class n6 node_system_set
+  n5@{ shape: lin-rect, label: "**Writeback**<br/>划分物理准备、模拟与回写边界。" }
+  class n5 node_system_set
   n1 e0@-->|"先于"| n0
   class e0 edge_order
   n0 e1@-->|"集合成员"| n2
@@ -65,9 +62,7 @@ flowchart LR
   class e3 edge_order
   n0 e4@-->|"先于"| n5
   class e4 edge_order
-  n0 e5@-->|"先于"| n6
-  class e5 edge_order
   e1@{ curve: basis }
   e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }

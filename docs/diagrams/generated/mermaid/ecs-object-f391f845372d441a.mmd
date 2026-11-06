@@ -39,8 +39,15 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**PlayerId**<br/>独立于本次运行实体标识的玩家身份。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n1@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
   class n1 node_system
   class n1 external_node
+  n2@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
+  class n2 node_system
+  class n2 external_node
   n1 e0@-->|"插入"| n0
   class e0 edge_write
+  n2 e1@-->|"插入"| n0
+  class e1 edge_write
+  e0@{ curve: basis }
+  e1@{ curve: basis }

@@ -38,9 +38,12 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: cyl, label: "**Assets#lt;AudioInstance#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**update​_​instance​_​states**<br/>来自crate:bevy​_​kira​_​audio ↗：把实际<br/>播放状态回写到类型通道。" }
+  end
+  style layout_card_n0 fill:none,stroke:none
+  n1@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>来自audio ↗：将有效混音与素材音量同步<br/>到播放实例。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: rounded, label: "**update​_​instance​_​states**<br/>来自crate:bevy​_​kira​_​audio ↗：把实际<br/>播放状态回写到类型通道。" }
@@ -48,36 +51,30 @@ flowchart LR
   class n2 external_node
   n3@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
+  n4@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n4 node_system
-  class n4 external_node
-  n5@{ shape: rounded, label: "**play​_​dynamic​_​channels**<br/>来自crate:bevy​_​kira​_​audio ↗：执行按<br/>名称创建的动态音频通道命令。" }
+  n5@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
+  n6@{ shape: rounded, label: "**play​_​dynamic​_​channels**<br/>来自crate:bevy​_​kira​_​audio ↗：执行按<br/>名称创建的动态音频通道命令。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
+  class n6 external_node
+  n7@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
+  class n7 external_node
+  n8@{ shape: rounded, label: "**cleanup​_​stopped​_​instances**<br/>来自crate:bevy​_​kira​_​audio ↗：释放已<br/>停止播放实例的内部引用。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**cleanup​_​stopped​_​instances**<br/>来自crate:bevy​_​kira​_​audio ↗：释放已<br/>停止播放实例的内部引用。" }
+  n9@{ shape: rounded, label: "**update​_​instance​_​states**<br/>来自crate:bevy​_​kira​_​audio ↗：把实际<br/>播放状态回写到类型通道。" }
   class n9 node_system
   class n9 external_node
   n10@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>来自audio ↗：将有效混音与素材音量同步<br/>到播放实例。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**update​_​instance​_​states**<br/>来自crate:bevy​_​kira​_​audio ↗：把实际<br/>播放状态回写到类型通道。" }
+  n11@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n11 node_system
-  class n11 external_node
-  n12@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
-  class n12 node_system
-  class n12 external_node
-  n13@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>来自audio ↗：将有效混音与素材音量同步<br/>到播放实例。" }
-  class n13 node_system
-  class n13 external_node
-  n0 e0@--> n1
-  class e0 edge_read
+  n1 e0@-->|"可变访问"| n0
+  class e0 edge_write
   n0 e1@--> n2
   class e1 edge_read
   n3 e2@-->|"可变访问"| n0
@@ -88,20 +85,16 @@ flowchart LR
   class e4 edge_write
   n6 e5@-->|"可变访问"| n0
   class e5 edge_write
-  n0 e6@--> n7
-  class e6 edge_read
+  n7 e6@-->|"可变访问"| n0
+  class e6 edge_write
   n8 e7@-->|"可变访问"| n0
   class e7 edge_write
-  n9 e8@-->|"可变访问"| n0
-  class e8 edge_write
+  n0 e8@--> n9
+  class e8 edge_read
   n10 e9@-->|"可变访问"| n0
   class e9 edge_write
   n0 e10@--> n11
   class e10 edge_read
-  n12 e11@-->|"可变访问"| n0
-  class e11 edge_write
-  n13 e12@-->|"可变访问"| n0
-  class e12 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -109,8 +102,7 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e8@{ curve: basis }
+  e7@{ curve: basis }
+  e8@{ curve: bumpX }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e11@{ curve: basis }
-  e12@{ curve: basis }

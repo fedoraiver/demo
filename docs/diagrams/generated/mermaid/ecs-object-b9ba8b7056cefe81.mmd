@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: bevy::bevy_asset::Assets#lt;bevy::bevy_gltf::Gltf#gt; · 对象关系
+  accTitle: bevy_asset::Assets#lt;assets::Gltf#gt; · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -42,39 +42,15 @@ flowchart LR
   class n0 node_resource
   n1@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
+  n2@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n2 node_system
-  class n2 external_node
-  n3@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
+  n3@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n3 node_system
-  class n3 external_node
-  n4@{ shape: rounded, label: "**play​_​courier​_​animation**<br/>来自ui ↗：仅遍历已展开的展示角色子树，<br/>命名资产尚未就绪时保留 pending 供下一帧<br/>重试。" }
-  class n4 node_system
-  class n4 external_node
-  n5@{ shape: rounded, label: "**begin​_​island**<br/>来自scene​_​assembly ↗：资源就绪后请求<br/>海岛地图实例。" }
-  class n5 node_system
-  class n5 external_node
-  n6@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
-  class n6 node_system
-  n7@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
-  class n7 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
   n0 e1@--> n2
   class e1 edge_read
-  n0 e2@--> n3
-  class e2 edge_read
-  n0 e3@--> n4
-  class e3 edge_read
-  n0 e4@--> n5
-  class e4 edge_read
-  n0 e5@--> n6
-  class e5 edge_read
-  n7 e6@-->|"可变访问"| n0
-  class e6 edge_write
+  n3 e2@-->|"可变访问"| n0
+  class e2 edge_write
   e0@{ curve: basis }
-  e1@{ curve: basis }
   e2@{ curve: basis }
-  e4@{ curve: basis }
-  e5@{ curve: basis }
-  e6@{ curve: basis }

@@ -55,11 +55,11 @@ flowchart LR
   n3@{ shape: cyl, label: "**PrototypeConfig**<br/>来自settings ↗：原型的运动、平地和持箱<br/>参数。" }
   class n3 node_resource
   class n3 external_node
-  n4@{ shape: lin-rect, label: "**Motion**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
-  class n4 node_system_set
+  n4@{ shape: rounded, label: "**Sleeping**<br/>来自crate:avian3d ↗：标记暂不参与模拟<br/>的休眠刚体。" }
+  class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**Sleeping**<br/>来自crate:avian3d ↗：标记暂不参与模拟<br/>的休眠刚体。" }
-  class n5 node_component
+  n5@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
+  class n5 node_system_set
   class n5 external_node
   n6@{ shape: rounded, label: "**ComputedMass**<br/>来自crate:avian3d ↗：保存汇总后的刚体<br/>总质量。" }
   class n6 node_component
@@ -79,32 +79,32 @@ flowchart LR
   n11@{ shape: rounded, label: "**LockedAxes**<br/>来自crate:avian3d ↗：锁定刚体的平移或<br/>旋转轴。" }
   class n11 node_component
   class n11 external_node
-  n12@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
-  class n12 node_system_set
+  n12@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
+  class n12 node_component
   class n12 external_node
-  n13@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
+  n13@{ shape: rounded, label: "**CharacterIntent**<br/>来自控制者的玩法意图；输入状态跨帧保留，<br/>供固定步模拟读取。" }
   class n13 node_component
-  class n13 external_node
-  n14@{ shape: rounded, label: "**CharacterIntent**<br/>来自控制者的玩法意图；输入状态跨帧保留，<br/>供固定步模拟读取。" }
+  n14@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
   class n14 node_component
-  n15@{ shape: rounded, label: "**Transform**<br/>来自crate:bevy​_​transform ↗：保存实体<br/>相对父实体的平移、旋转和缩放" }
+  class n14 external_node
+  n15@{ shape: rounded, label: "**SleepTimer**<br/>来自crate:avian3d ↗：累计刚体持续低速<br/>的时间。" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: rounded, label: "**SleepTimer**<br/>来自crate:avian3d ↗：累计刚体持续低速<br/>的时间。" }
-  class n16 node_component
+  n16@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
+  class n16 node_resource
   class n16 external_node
-  n17@{ shape: cyl, label: "**Time#lt;Fixed#gt;**<br/>来自crate:bevy​_​time ↗：保存时钟上下<br/>文、帧间隔及累计时间" }
-  class n17 node_resource
+  n17@{ shape: rounded, label: "**ComputedAngularInertia**<br/>来自crate:avian3d ↗：保存汇总后的刚体<br/>局部角惯量。" }
+  class n17 node_component
   class n17 external_node
-  n18@{ shape: rounded, label: "**ComputedAngularInertia**<br/>来自crate:avian3d ↗：保存汇总后的刚体<br/>局部角惯量。" }
-  class n18 node_component
-  class n18 external_node
-  n19@{ shape: rounded, label: "**update​_​grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
-  class n19 node_system
-  n20@{ shape: rounded, label: "**CharacterMotion**<br/>接地状态由物理查询派生；实际速度直接读<br/>取 Avian 的 LinearVelocity。" }
+  n18@{ shape: rounded, label: "**update​_​grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
+  class n18 node_system
+  n19@{ shape: rounded, label: "**CharacterMotion**<br/>接地状态由物理查询派生；实际速度直接读<br/>取 Avian 的 LinearVelocity。" }
+  class n19 node_component
+  n20@{ shape: rounded, label: "**Character**<br/>具有移动和跳跃能力的角色。" }
   class n20 node_component
-  n21@{ shape: rounded, label: "**Character**<br/>具有移动和跳跃能力的角色。" }
-  class n21 node_component
+  n21@{ shape: lin-rect, label: "**Motion**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
+  class n21 node_system_set
+  class n21 external_node
   n22@{ shape: rounded, label: "**AccumulatedLocalAcceleration**<br/>来自crate:avian3d ↗：累积物理步前的局<br/>部加速度。" }
   class n22 node_component
   class n22 external_node
@@ -116,10 +116,10 @@ flowchart LR
   class e1 edge_order
   n3 e2@--> n0
   class e2 edge_read
-  n4 e3@-->|"集合成员"| n0
-  class e3 edge_set_membership
-  n5 e4@-->|"存在性约束"| n0
-  class e4 edge_reference
+  n4 e3@-->|"存在性约束"| n0
+  class e3 edge_reference
+  n5 e4@-->|"集合成员"| n0
+  class e4 edge_set_membership
   n6 e5@--> n0
   class e5 edge_read
   n7 e6@--> n0
@@ -132,26 +132,26 @@ flowchart LR
   class e9 edge_write
   n11 e10@--> n0
   class e10 edge_read
-  n12 e11@-->|"集合成员"| n0
-  class e11 edge_set_membership
-  n0 e12@-->|"可变访问"| n13
-  class e12 edge_write
+  n0 e11@-->|"可变访问"| n12
+  class e11 edge_write
+  n13 e12@--> n0
+  class e12 edge_read
   n14 e13@--> n0
   class e13 edge_read
-  n15 e14@--> n0
-  class e14 edge_read
-  n0 e15@-->|"可变访问"| n16
-  class e15 edge_write
+  n0 e14@-->|"可变访问"| n15
+  class e14 edge_write
+  n16 e15@--> n0
+  class e15 edge_read
   n17 e16@--> n0
   class e16 edge_read
-  n18 e17@--> n0
-  class e17 edge_read
-  n19 e18@-->|"先于"| n0
-  class e18 edge_order
-  n20 e19@--> n0
-  class e19 edge_read
-  n21 e20@-->|"存在性约束"| n0
-  class e20 edge_reference
+  n18 e17@-->|"先于"| n0
+  class e17 edge_order
+  n19 e18@--> n0
+  class e18 edge_read
+  n20 e19@-->|"存在性约束"| n0
+  class e19 edge_reference
+  n21 e20@-->|"集合成员"| n0
+  class e20 edge_set_membership
   n0 e21@-->|"可变访问"| n22
   class e21 edge_write
   n23 e22@-->|"调用"| n0
@@ -167,7 +167,7 @@ flowchart LR
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e12@{ curve: basis }
+  e11@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }

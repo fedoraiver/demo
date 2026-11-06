@@ -40,11 +40,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**AudioChannel#lt;MainTrack#gt;**<br/>保存特定通道类型的音频命令队列及实例播放<br/>状态" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**update​_​instance​_​states**<br/>把实际播放状态回写到类型通道。" }
+  n1@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>执行指定类型音频通道的命令队列。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>执行指定类型音频通道的命令队列。" }
+  n2@{ shape: rounded, label: "**update​_​instance​_​states**<br/>把实际播放状态回写到类型通道。" }
   class n2 node_system
-  n1 e0@-->|"可变访问"| n0
-  class e0 edge_write
-  n0 e1@--> n2
-  class e1 edge_read
+  n0 e0@--> n1
+  class e0 edge_read
+  n2 e1@-->|"可变访问"| n0
+  class e1 edge_write

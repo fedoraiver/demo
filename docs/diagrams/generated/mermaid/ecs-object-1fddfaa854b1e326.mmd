@@ -60,11 +60,11 @@ flowchart LR
   n5@{ shape: rounded, label: "**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**SleepTimer**<br/>来自crate:avian3d ↗：累计刚体持续低速<br/>的时间。" }
-  class n6 node_component
+  n6@{ shape: lin-rect, label: "**Motion**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
+  class n6 node_system_set
   class n6 external_node
-  n7@{ shape: lin-rect, label: "**Motion**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
-  class n7 node_system_set
+  n7@{ shape: rounded, label: "**SleepTimer**<br/>来自crate:avian3d ↗：累计刚体持续低速<br/>的时间。" }
+  class n7 node_component
   class n7 external_node
   n8@{ shape: rounded, label: "**ComputedAngularInertia**<br/>来自crate:avian3d ↗：保存汇总后的刚体<br/>局部角惯量。" }
   class n8 node_component
@@ -94,14 +94,14 @@ flowchart LR
   n17@{ shape: rounded, label: "**LinearVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界线<br/>速度。" }
   class n17 node_component
   class n17 external_node
-  n18@{ shape: cyl, label: "**PrototypeConfig**<br/>来自settings ↗：原型的运动、平地和持箱<br/>参数。" }
-  class n18 node_resource
+  n18@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
+  class n18 node_system_set
   class n18 external_node
-  n19@{ shape: rounded, label: "**Character**<br/>具有移动和跳跃能力的角色。" }
-  class n19 node_component
-  n20@{ shape: lin-rect, label: "**AnonymousSet(0)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
-  class n20 node_system_set
-  class n20 external_node
+  n19@{ shape: cyl, label: "**PrototypeConfig**<br/>来自settings ↗：原型的运动、平地和持箱<br/>参数。" }
+  class n19 node_resource
+  class n19 external_node
+  n20@{ shape: rounded, label: "**Character**<br/>具有移动和跳跃能力的角色。" }
+  class n20 node_component
   n0 e0@-->|"可变访问"| n1
   class e0 edge_write
   n2 e1@-->|"先于"| n0
@@ -112,10 +112,10 @@ flowchart LR
   class e3 edge_registration
   n5 e4@--> n0
   class e4 edge_read
-  n0 e5@-->|"可变访问"| n6
-  class e5 edge_write
-  n7 e6@-->|"集合成员"| n0
-  class e6 edge_set_membership
+  n6 e5@-->|"集合成员"| n0
+  class e5 edge_set_membership
+  n0 e6@-->|"可变访问"| n7
+  class e6 edge_write
   n8 e7@--> n0
   class e7 edge_read
   n9 e8@--> n0
@@ -136,12 +136,12 @@ flowchart LR
   class e15 edge_reference
   n0 e16@-->|"可变访问"| n17
   class e16 edge_write
-  n18 e17@--> n0
-  class e17 edge_read
-  n19 e18@-->|"存在性约束"| n0
-  class e18 edge_reference
-  n20 e19@-->|"集合成员"| n0
-  class e19 edge_set_membership
+  n18 e17@-->|"集合成员"| n0
+  class e17 edge_set_membership
+  n19 e18@--> n0
+  class e18 edge_read
+  n20 e19@-->|"存在性约束"| n0
+  class e19 edge_reference
   n0 e20@-->|"可变访问"| n10
   class e20 edge_write
   e0@{ curve: basis }

@@ -19,7 +19,7 @@ const MIN_FPS_LIMIT: u32 = 60;
 /// 默认每像素旋转弧度，也是菜单灵敏度百分比的显示基准。
 pub const DEFAULT_MOUSE_SENSITIVITY: f32 = 0.003;
 
-/// 音量整数百分比的上限；默认值、校验、菜单和混音共用此边界。
+/// 音量整数百分比上限，默认值、校验、菜单和混音共用此边界。
 pub const MAX_AUDIO_VOLUME: u8 = 100;
 
 /// 全局玩家设置；非零类型保证帧率上限始终能够转换为等待间隔。
@@ -31,29 +31,24 @@ pub struct GameSettings {
     pub max_fps: NonZeroU32,
     /// 自由视角的鼠标灵敏度与纵轴方向。
     pub camera: CameraSettings,
-    /// 全局音量及 UI、玩法音效分类音量；百分比以现有混音基准为上限。
+    /// 音频总音量及已接入的分类音量，均为整数百分比。
     pub audio: AudioSettings,
 }
 
 impl Default for GameSettings {
     fn default() -> Self {
         Self {
-            max_fps: NonZeroU32::new(DEFAULT_FPS_LIMIT).unwrap(),
+            max_fps: default_max_fps(),
             camera: CameraSettings::default(),
             audio: AudioSettings::default(),
         }
     }
 }
 
-/// 音量采用整数百分比，旧配置缺少本节或字段时保持原有响度。
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
-#[serde(default, deny_unknown_fields)]
+/// 音频混音设置，缺省字段采用完整音量。
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub struct AudioSettings {
-    #[serde(deserialize_with = "deserialize_volume")]
     pub master_volume: u8,
-    #[serde(deserialize_with = "deserialize_volume")]
-    pub sfx_volume: u8,
-    #[serde(deserialize_with = "deserialize_volume")]
     pub ui_volume: u8,
 }
 
@@ -61,9 +56,39 @@ impl Default for AudioSettings {
     fn default() -> Self {
         Self {
             master_volume: MAX_AUDIO_VOLUME,
-            sfx_volume: MAX_AUDIO_VOLUME,
             ui_volume: MAX_AUDIO_VOLUME,
         }
+    }
+}
+
+impl<'de> Deserialize<'de> for AudioSettings {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        // 兼容读取此前配置中的 sfx_volume，其他未知音频字段仍报错。
+        #[derive(Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct StoredAudioSettings {
+            #[serde(
+                default = "default_audio_volume",
+                deserialize_with = "deserialize_volume"
+            )]
+            master_volume: u8,
+            #[serde(
+                default = "default_audio_volume",
+                deserialize_with = "deserialize_volume"
+            )]
+            ui_volume: u8,
+            #[serde(default, rename = "sfx_volume")]
+            _legacy_sfx_volume: Option<serde::de::IgnoredAny>,
+        }
+
+        let stored = StoredAudioSettings::deserialize(deserializer)?;
+        Ok(Self {
+            master_volume: stored.master_volume,
+            ui_volume: stored.ui_volume,
+        })
     }
 }
 
@@ -99,6 +124,14 @@ impl Default for SettingsFile {
             path: PathBuf::from("settings.json"),
         }
     }
+}
+
+fn default_max_fps() -> NonZeroU32 {
+    NonZeroU32::new(DEFAULT_FPS_LIMIT).unwrap()
+}
+
+fn default_audio_volume() -> u8 {
+    MAX_AUDIO_VOLUME
 }
 
 fn deserialize_volume<'de, D>(deserializer: D) -> Result<u8, D::Error>
@@ -152,14 +185,7 @@ impl GameSettings {
                 "camera mouse_sensitivity must be finite and greater than zero",
             ));
         }
-        if [
-            self.audio.master_volume,
-            self.audio.sfx_volume,
-            self.audio.ui_volume,
-        ]
-        .into_iter()
-        .any(|value| value > MAX_AUDIO_VOLUME)
-        {
+        if self.audio.master_volume > MAX_AUDIO_VOLUME || self.audio.ui_volume > MAX_AUDIO_VOLUME {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidInput,
                 "audio volume must be between 0 and 100",
@@ -191,7 +217,6 @@ impl GameSettings {
                     fallback_camera_mouse_sensitivity = CameraSettings::default().mouse_sensitivity,
                     fallback_camera_invert_y = CameraSettings::default().invert_y,
                     fallback_audio_master_volume = AudioSettings::default().master_volume,
-                    fallback_audio_sfx_volume = AudioSettings::default().sfx_volume,
                     fallback_audio_ui_volume = AudioSettings::default().ui_volume,
                     reason = "settings_load_failed",
                     "Failed to load game settings; using defaults"
@@ -206,7 +231,6 @@ impl GameSettings {
             camera_mouse_sensitivity = settings.camera.mouse_sensitivity,
             camera_invert_y = settings.camera.invert_y,
             audio_master_volume = settings.audio.master_volume,
-            audio_sfx_volume = settings.audio.sfx_volume,
             audio_ui_volume = settings.audio.ui_volume,
             "Game settings initialized"
         );
@@ -248,7 +272,6 @@ impl GameSettings {
             camera_mouse_sensitivity = self.camera.mouse_sensitivity,
             camera_invert_y = self.camera.invert_y, reason = "settings_saved",
             audio_master_volume = self.audio.master_volume,
-            audio_sfx_volume = self.audio.sfx_volume,
             audio_ui_volume = self.audio.ui_volume,
             "Game settings saved");
         Ok(())

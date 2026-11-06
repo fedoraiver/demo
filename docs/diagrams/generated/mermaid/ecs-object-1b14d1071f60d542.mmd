@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: bevy::bevy_asset::Assets#lt;bevy::bevy_animation::graph::AnimationGraph#gt; · 对象关系
+  accTitle: bevy_asset::Assets#lt;graph::AnimationGraph#gt; · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -58,12 +58,6 @@ flowchart LR
   n7@{ shape: rounded, label: "**thread​_​animation​_​graphs**<br/>来自crate:bevy​_​animation ↗：维护动画<br/>图的快速求值结构。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
-  class n8 node_system
-  class n8 external_node
-  n9@{ shape: rounded, label: "**play​_​courier​_​animation**<br/>来自ui ↗：仅遍历已展开的展示角色子树，<br/>命名资产尚未就绪时保留 pending 供下一帧<br/>重试。" }
-  class n9 node_system
-  class n9 external_node
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"可变访问"| n0
@@ -78,15 +72,9 @@ flowchart LR
   class e5 edge_read
   n0 e6@--> n7
   class e6 edge_read
-  n8 e7@-->|"可变访问"| n0
-  class e7 edge_write
-  n9 e8@-->|"可变访问"| n0
-  class e8 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
-  e8@{ curve: basis }

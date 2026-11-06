@@ -40,45 +40,45 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**Style**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**style​_​buttons**<br/>按输入来源、焦点和主键按压更新按钮样式。" }
+  n1@{ shape: rounded, label: "**publish​_​audio​_​preview**<br/>向音频功能发布或清除临时音量预览。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**update​_​description**<br/>更新当前聚焦设置的说明标题与正文。" }
+  n2@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>把设置滚动轨道绑定到实际内容视口。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**update​_​settings​_​text**<br/>原位更新设置草稿数值与保存提示。" }
+  n3@{ shape: rounded, label: "**style​_​buttons**<br/>按输入来源、焦点和主键按压更新按钮样式。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**publish​_​audio​_​preview**<br/>向音频功能发布或清除临时音量预览。" }
-  class n4 node_system
+  n4@{ shape: lin-rect, label: "**Pointer**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
+  class n4 node_system_set
   n5@{ shape: lin-rect, label: "**Mix**<br/>来自audio ↗：跨功能只约束混音与播放阶<br/>段，具体资源和实例处理顺序留在音频内部。" }
   class n5 node_system_set
   class n5 external_node
-  n6@{ shape: rounded, label: "**update​_​volume​_​visuals**<br/>草稿由请求系统在 PreUpdate 修改，随后<br/>同帧更新已有数字和轨道填充。" }
+  n6@{ shape: rounded, label: "**update​_​description**<br/>更新当前聚焦设置的说明标题与正文。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
+  n7@{ shape: rounded, label: "**update​_​settings​_​text**<br/>原位更新设置草稿数值与保存提示。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**scroll​_​focused​_​button**<br/>短窗口中键盘仍能访问所有按钮；新页面先等<br/>布局完成，再滚到焦点所在区域。" }
+  n8@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>把设置滚动轨道绑定到实际内容视口。" }
+  n9@{ shape: rounded, label: "**scroll​_​focused​_​button**<br/>短窗口中键盘仍能访问所有按钮；新页面先等<br/>布局完成，再滚到焦点所在区域。" }
   class n9 node_system
-  n10@{ shape: lin-rect, label: "**Pointer**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
-  class n10 node_system_set
+  n10@{ shape: rounded, label: "**update​_​volume​_​visuals**<br/>草稿由请求系统在 PreUpdate 修改，随后<br/>同帧更新已有数字和轨道填充。" }
+  class n10 node_system
   n0 e0@-->|"集合成员"| n1
   class e0 edge_set_membership
-  n0 e1@-->|"集合成员"| n2
-  class e1 edge_set_membership
+  n2 e1@-->|"先于"| n0
+  class e1 edge_order
   n0 e2@-->|"集合成员"| n3
   class e2 edge_set_membership
-  n0 e3@-->|"集合成员"| n4
-  class e3 edge_set_membership
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
   n0 e4@-->|"先于"| n5
   class e4 edge_order
-  n6 e5@-->|"先于"| n0
-  class e5 edge_order
-  n7 e6@-->|"先于"| n0
-  class e6 edge_order
-  n0 e7@-->|"集合成员"| n8
-  class e7 edge_set_membership
-  n9 e8@-->|"先于"| n0
-  class e8 edge_order
+  n0 e5@-->|"集合成员"| n6
+  class e5 edge_set_membership
+  n0 e6@-->|"集合成员"| n7
+  class e6 edge_set_membership
+  n8 e7@-->|"先于"| n0
+  class e7 edge_order
+  n0 e8@-->|"集合成员"| n9
+  class e8 edge_set_membership
   n10 e9@-->|"先于"| n0
   class e9 edge_order
   e0@{ curve: basis }

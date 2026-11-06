@@ -39,7 +39,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**DespawnOnExit#lt;AppState#gt;**<br/>指定离开某状态时自动销毁的实体。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：组织主菜单海岛展示舞台，并在<br/>退出主菜单时清理。" }
+  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：组织主菜单背景相机及其生命周<br/>期。" }
   class n1 node_entity
   class n1 external_node
   n1 e0@-->|"可能包含"| n0

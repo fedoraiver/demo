@@ -22,7 +22,6 @@ cargo run --locked
 - [当前架构](docs/architecture.md)：模块职责、ECS 数据与系统流程。
 - [验证参考](docs/testing/README.md)：开发检查、无窗口验证和架构图检查。
 - [游戏手动验收](docs/testing/game-acceptance.md)：由用户执行的游戏、窗口、声音和会话日志检查。
-- [美术资产](art/ASSET_GUIDE.md)与[道具美术资产](art/items/README.md)：制作源、资源清单与离线检查方法。
 - [音频管线](docs/audio.md)：声音素材、事件接口与试听方式。
 
 面向 Agent 的执行要求见 [AGENTS.md](AGENTS.md)。

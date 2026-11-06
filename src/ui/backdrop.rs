@@ -1,239 +1,45 @@
-//! 主菜单的独立海岛展示舞台；只复用美术模型，不创建玩法角色或物理实体。
+//! 主菜单使用纯色背景；暂停菜单沿用当前玩法相机。
 
-use bevy::{
-    asset::{HandleTemplate, UntypedAssetLoadFailedEvent},
-    prelude::*,
-    render::view::Tonemapping,
-    world_serialization::WorldInstanceReady,
-};
+use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::PrimaryEguiContext;
 
 use crate::game_flow::AppState;
 
-/// 菜单展示角色使用的独立 GLB。
-pub(super) const COURIER_PATH: &str = "models/characters/chr_courier.glb";
-/// 展示角色固定播放的具名持箱动作。
-pub(super) const COURIER_ANIMATION: &str = "Carry_Idle";
-/// 展示角色在菜单舞台中的位置。
-pub(super) const COURIER_POSITION: Vec3 = Vec3::new(3.2, 0.02, 2.6);
-/// 物流站在菜单舞台中的位置。
-pub(super) const STATION_POSITION: Vec3 = Vec3::new(4.5, 0.02, -4.5);
+const MENU_BACKGROUND: Color = Color::srgb(0.15, 0.17, 0.20);
 
-// 展示舞台的构图、天空与光照独立于玩法场景，位置与目标以米计。
-const MENU_CAMERA_POSITION_M: Vec3 = Vec3::new(-2.0, 4.2, 10.0);
-const MENU_CAMERA_TARGET_M: Vec3 = Vec3::new(0.0, 1.5, -4.0);
-const MENU_CAMERA_FOV_DEGREES: f32 = 46.0;
-const MENU_SKY_COLOR: Color = Color::srgb(0.50, 0.68, 0.79);
-const MENU_DAYLIGHT_POSITION_M: Vec3 = Vec3::new(-8.0, 14.0, 9.0);
-const MENU_DAYLIGHT_ILLUMINANCE_LUX: f32 = 12_000.0;
-const MENU_AMBIENT_COLOR: Color = Color::srgb(1.0, 0.95, 0.84);
-const MENU_AMBIENT_BRIGHTNESS: f32 = 450.0;
-
-/// 标记整个展示舞台的根，状态退出时连同相机、灯光和模型一起清理。
+/// 菜单相机随主菜单退出清理，设置和帮助页面沿用该相机。
 #[derive(Component, Default, Clone)]
 pub(super) struct MenuBackdrop;
 
-/// 持有 GLB 父资产，展示动作按名字绑定，不依赖导出后的动画排列顺序。
-#[derive(Component, FromTemplate)]
-pub(super) struct CourierAnimation {
-    // 资产句柄使用 Bevy 的专用模板，不依赖要求 Unpin 的默认克隆模板。
-    #[template(HandleTemplate<Gltf>)]
-    pub(super) gltf: Handle<Gltf>,
-}
-
-/// 子场景就绪后继续等待父 GLB 与命名片段，避免异步加载顺序漏掉展示动画。
-#[derive(Component)]
-pub(super) struct CourierAnimationPending;
-
-/// 注册主菜单展示舞台与资产失败日志，暂停菜单继续使用玩法相机。
 pub(super) fn register(app: &mut App) {
-    app.add_systems(OnEnter(AppState::MainMenu), spawn_backdrop)
-        .add_systems(Update, (play_courier_animation, log_asset_failures));
+    app.add_systems(OnEnter(AppState::MainMenu), spawn_backdrop);
 }
 
-fn spawn_backdrop(mut commands: Commands, asset_server: Res<AssetServer>) {
-    // 组合地图没有动画，独立角色的父 GLB 提供命名动作表。
-    let gltf = asset_server.load(COURIER_PATH);
-
+fn spawn_backdrop(mut commands: Commands) {
     let backdrop = commands
         .spawn_scene(bsn! {
             #MenuBackdrop
             MenuBackdrop
             DespawnOnExit::<AppState>(AppState::MainMenu)
             Transform
-            Visibility
             Children [
                 @menu_camera()
-                --
-                #MenuDaylight
-                DirectionalLight {
-                    illuminance: MENU_DAYLIGHT_ILLUMINANCE_LUX,
-                    shadow_maps_enabled: true,
-                }
-                Transform::from_translation(MENU_DAYLIGHT_POSITION_M)
-                .looking_at(Vec3::ZERO, Vec3::Y)
-                --
-                // 地形与海水保持原来的相对位置，把北岸移到据点后方形成真实海岸线。
-                @model("MenuIsland", "models/environment/env_island_terrain.glb#Scene0",
-                    Vec3::new(-8.0, 0.0, 31.0), 0.0)
-                --
-                @model("MenuOcean", "models/environment/env_ocean.glb#Scene0",
-                    Vec3::new(-8.0, 0.0, 31.0), 0.0)
-                --
-                @model("MenuCourierStation", "models/buildings/bld_courier_station.glb#Scene0",
-                    STATION_POSITION, -0.12)
-                --
-                #MenuCourier
-                WorldAssetRoot("models/characters/chr_courier.glb#Scene0")
-                CourierAnimation { gltf: {HandleTemplate::Handle(gltf)} }
-                Transform {
-                    translation: COURIER_POSITION,
-                    rotation: {Quat::from_rotation_y(2.85)},
-                }
-                on(mark_courier_animation_ready)
-                // 包裹是独立资产；动作没有根运动，附件保持角色本地的持握位置。
-                Children [
-                    @model("MenuCarriedParcel",
-                        "models/props/prop_parcel_standard.glb#Scene0",
-                        Vec3::new(0.0, 1.3, -0.48), 0.0)
-                ]
-                --
-                @model("MenuPalmBehindStation", "models/environment/prop_palm_leaning.glb#Scene0",
-                    Vec3::new(9.5, 0.02, -7.0), -0.5)
-                --
-                @model("MenuPalmAtShore", "models/environment/prop_palm_crooked.glb#Scene0",
-                    Vec3::new(1.0, 0.02, -9.0), 0.8)
-                --
-                @model("MenuYoungPalm", "models/environment/prop_palm_young.glb#Scene0",
-                    Vec3::new(11.0, 0.02, -2.0), -0.3)
-                --
-                @model("MenuGrass", "models/environment/prop_wild_grass_patch.glb#Scene0",
-                    Vec3::new(7.5, 0.02, -1.0), 0.4)
-                --
-                @model("MenuParcelOnSand", "models/props/prop_parcel_fragile.glb#Scene0",
-                    Vec3::new(5.0, 0.32, 1.5), -0.2)
-                --
-                @model("MenuCrate", "models/props/prop_crate.glb#Scene0",
-                    Vec3::new(6.0, 0.37, 1.0), 0.15)
             ]
         })
         .id();
-
     info!(target: "demo::ui::backdrop", ?backdrop, state = "main_menu",
-        character_asset = COURIER_PATH, reason = "state_enter",
-        "Menu backdrop spawned");
+        reason = "state_enter", "Menu backdrop spawned");
 }
 
-/// 镜头与环境光只属于菜单；左半边留给菜单，角色和物流站在右侧。
+/// 菜单界面的独立相机用纯色清屏。
 pub(super) fn menu_camera() -> impl Scene {
     bsn! {
         #MenuCamera
         Camera3d
         Camera {
-            clear_color: {ClearColorConfig::Custom(MENU_SKY_COLOR)},
+            clear_color: {ClearColorConfig::Custom(MENU_BACKGROUND)},
         }
         IsDefaultUiCamera
         PrimaryEguiContext
-        AmbientLight {
-            color: MENU_AMBIENT_COLOR,
-            brightness: MENU_AMBIENT_BRIGHTNESS,
-        }
-        Projection::Perspective({PerspectiveProjection {
-                    fov: MENU_CAMERA_FOV_DEGREES.to_radians(),
-                    ..default()
-        }})
-        Tonemapping::AcesFitted
-        camera_transform()
-    }
-}
-
-/// 菜单镜头统一朝向舞台右侧的角色与物流站。
-pub(super) fn camera_transform() -> Transform {
-    Transform::from_translation(MENU_CAMERA_POSITION_M).looking_at(MENU_CAMERA_TARGET_M, Vec3::Y)
-}
-
-/// 可复用的 BSN 模型声明；WorldAssetRoot 在场景资产加载后展开其子树。
-fn model(name: &'static str, path: &'static str, position: Vec3, yaw: f32) -> impl Scene {
-    bsn! {
-        Name(name)
-        WorldAssetRoot(path)
-        Transform {
-            translation: position,
-            rotation: {Quat::from_rotation_y(yaw)},
-        }
-    }
-}
-
-/// 子场景就绪后标记展示角色，随后等待具名动画资产。
-pub(super) fn mark_courier_animation_ready(
-    ready: On<WorldInstanceReady>,
-    mut commands: Commands,
-    animations: Query<(), With<CourierAnimation>>,
-) {
-    if animations.contains(ready.entity) {
-        commands
-            .entity(ready.entity)
-            .insert(CourierAnimationPending);
-    }
-}
-
-/// 仅遍历已展开的展示角色子树，命名资产尚未就绪时保留 pending 供下一帧重试。
-pub(super) fn play_courier_animation(
-    mut commands: Commands,
-    animations: Query<(Entity, &CourierAnimation), With<CourierAnimationPending>>,
-    gltfs: Res<Assets<Gltf>>,
-    clips: Res<Assets<AnimationClip>>,
-    mut graphs: ResMut<Assets<AnimationGraph>>,
-    children: Query<&Children>,
-    mut players: Query<&mut AnimationPlayer>,
-) {
-    for (entity, animation) in &animations {
-        let Some(gltf) = gltfs.get(&animation.gltf) else {
-            continue;
-        };
-        let Some(clip) = gltf.named_animations.get(COURIER_ANIMATION) else {
-            error!(target: "demo::ui::backdrop", ?entity, path = COURIER_PATH,
-                animation = COURIER_ANIMATION, reason = "animation_clip_missing",
-                "Menu courier animation could not start");
-            commands.entity(entity).remove::<CourierAnimationPending>();
-            continue;
-        };
-        if !clips.contains(clip) {
-            continue;
-        }
-        let (graph, node) = AnimationGraph::from_clip(clip.clone());
-        let graph = graphs.add(graph);
-        let mut player_count = 0;
-        // GLB 的 AnimationPlayer 在骨架子实体上，不能把动画组件加到展示根上代替。
-        for descendant in children.iter_descendants(entity) {
-            if let Ok(mut player) = players.get_mut(descendant) {
-                player.play(node).repeat();
-                commands
-                    .entity(descendant)
-                    .insert(AnimationGraphHandle(graph.clone()));
-                player_count += 1;
-            }
-        }
-        commands.entity(entity).remove::<CourierAnimationPending>();
-        if player_count == 0 {
-            warn!(target: "demo::ui::backdrop", ?entity,
-                path = COURIER_PATH, reason = "animation_player_missing",
-                "Menu courier animation could not start");
-        } else {
-            info!(target: "demo::ui::backdrop", ?entity,
-                animation = COURIER_ANIMATION, player_count, reason = "named_animation_ready",
-                "Menu courier animation started");
-        }
-    }
-}
-
-fn log_asset_failures(mut failures: MessageReader<UntypedAssetLoadFailedEvent>) {
-    for failure in failures.read() {
-        let path = failure.path.path().to_string_lossy();
-        if path.starts_with("models/") || path.starts_with("ui/") {
-            error!(target: "demo::ui::backdrop", path = %failure.path,
-                error = %failure.error, reason = "asset_load_failed",
-                "Menu asset failed to load");
-        }
     }
 }

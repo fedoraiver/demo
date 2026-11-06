@@ -25,16 +25,15 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-ee07b85f9825f5a7-e9{marker-start:url(#object-ee07b85f9825f5a7_flowchart-v2-pointStart)!important}\n#object-ee07b85f9825f5a7_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-ee07b85f9825f5a7-e8{marker-start:url(#object-ee07b85f9825f5a7_flowchart-v2-pointStart)!important}\n#object-ee07b85f9825f5a7_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
 flowchart LR
-  accTitle: bevy::bevy_core_pipeline::tonemapping::Tonemapping · 对象关系
+  accTitle: bevy_core_pipeline::tonemapping::Tonemapping · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
@@ -54,30 +53,27 @@ flowchart LR
   n4@{ shape: rounded, label: "**queue​_​sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
-  class n5 node_entity
+  n5@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
+  class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
+  n6@{ shape: rounded, label: "**prepare​_​view​_​tonemapping​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按视<br/>图实际颜色分级需求专用化色调映射。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**prepare​_​view​_​tonemapping​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按视<br/>图实际颜色分级需求专用化色调映射。" }
+  n7@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n8@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  n9@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
+  n10@{ shape: rounded, label: "**prepare​_​sprite​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为精<br/>灵视图绑定参数和色调映射 LUT。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**prepare​_​sprite​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为精<br/>灵视图绑定参数和色调映射 LUT。" }
+  n11@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
-  class n12 node_system
-  class n12 external_node
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
@@ -86,36 +82,33 @@ flowchart LR
   class e2 edge_read
   n0 e3@--> n4
   class e3 edge_read
-  n5 e4@-->|"可能包含"| n0
-  class e4 edge_reference
+  n0 e4@--> n5
+  class e4 edge_read
   n0 e5@--> n6
   class e5 edge_read
-  n0 e6@--> n7
-  class e6 edge_read
-  n8 e7@-->|"移除"| n0
-  class e7 edge_write
-  n0 e8@--> n9
+  n7 e6@-->|"移除"| n0
+  class e6 edge_write
+  n0 e7@--> n8
+  class e7 edge_read
+  n7 e8@--- n0
   class e8 edge_read
-  n8 e9@--- n0
+  n0 e9@--> n9
   class e9 edge_read
   n0 e10@--> n10
   class e10 edge_read
-  n0 e11@--> n11
-  class e11 edge_read
-  n0 e12@-->|"存在性约束"| n2
-  class e12 edge_reference
-  n0 e13@--> n12
-  class e13 edge_read
+  n0 e11@-->|"存在性约束"| n2
+  class e11 edge_reference
+  n0 e12@--> n11
+  class e12 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: bumpX }
+  e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
-  e13@{ curve: basis }

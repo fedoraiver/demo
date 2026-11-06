@@ -83,7 +83,7 @@ flowchart LR
   n14@{ shape: lin-rect, label: "**HeldPhysics**<br/>来自game​_​flow ↗：固定循环后的呈现阶<br/>段，零固定步的帧也执行同一顺序。" }
   class n14 node_system_set
   class n14 external_node
-  n15@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  n15@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期及物理与呈现同步；<br/>物理插件由调用方显式安装。" }
   class n15 node_plugin
   n1 e0@-->|"存在性约束"| n0
   class e0 edge_reference

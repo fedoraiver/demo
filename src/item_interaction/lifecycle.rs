@@ -11,7 +11,7 @@ use bevy::{
     prelude::*,
 };
 
-/// 相机受阻、主动松手与落水共用卸载入口，调用方提供解除前的安全世界姿态和真实速度。
+/// 转向受阻与主动松手共用卸载入口，调用方提供解除前的安全世界姿态和真实速度。
 pub(crate) fn release_item(
     commands: &mut Commands,
     item: Entity,

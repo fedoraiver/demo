@@ -46,22 +46,29 @@ flowchart LR
   class n2 node_entity
   n3@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>将 E 键按下转换为所控角色的一次交互请<br/>求。" }
   class n3 node_entity
-  n4@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
-  class n4 node_system
-  class n4 external_node
-  n5@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>汇总鼠标位移，驱动所属玩家的相机观察。" }
-  class n5 node_entity
+  n4@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>汇总鼠标位移，驱动所属玩家的相机观察。" }
+  class n4 node_entity
+  n5@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
+  class n5 node_system
+  class n5 external_node
+  n6@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
+  class n6 node_system
+  class n6 external_node
   n0 e0@-->|"子实体"| n1
   class e0 edge_relationship
   n0 e1@-->|"子实体"| n2
   class e1 edge_relationship
   n0 e2@-->|"子实体"| n3
   class e2 edge_relationship
-  n4 e3@-->|"创建模板"| n0
-  class e3 edge_write
-  n0 e4@-->|"子实体"| n5
-  class e4 edge_relationship
+  n0 e3@-->|"子实体"| n4
+  class e3 edge_relationship
+  n5 e4@-->|"创建模板"| n0
+  class e4 edge_write
+  n6 e5@-->|"创建模板"| n0
+  class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }

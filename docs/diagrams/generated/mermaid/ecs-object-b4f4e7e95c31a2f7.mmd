@@ -42,2058 +42,1833 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**Name**<br/>保存供调试和界面展示的实体名称及缓存哈希" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n1 node_entity
   class n1 external_node
-  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提示设置页的会话来源。" }
   class n2 node_entity
   class n2 external_node
-  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单页脚显示物流公司品牌短<br/>句。" }
+  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织当前菜单页面与固定页脚。" }
   class n3 node_entity
   class n3 external_node
-  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置正文提供按溢出显隐的垂<br/>直滚动轨道。" }
+  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n4 node_entity
   class n4 external_node
-  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把帮助卡片的按键与对应操作组<br/>成提示行。" }
+  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单标志的开发沙盒说明。" }
   class n5 node_entity
   class n5 external_node
-  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n6 node_entity
   class n6 external_node
-  n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并原位更新当前设置项的说<br/>明标题。" }
+  n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n7 node_entity
   class n7 external_node
-  n8@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n8@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助页的玩法介绍。" }
   class n8 node_entity
   class n8 external_node
-  n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列主菜单与暂停页的内容分<br/>组。" }
   class n9 node_entity
   class n9 external_node
-  n10@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载帮助页底部提醒与返回入<br/>口。" }
+  n10@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置滚动内容的视觉强调。" }
   class n10 node_entity
   class n10 external_node
-  n11@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
-  class n11 node_entity
+  n11@{ shape: rounded, label: "**animate​_​targets**<br/>来自crate:bevy​_​animation ↗：评估动画<br/>图并把结果应用到动画目标。" }
+  class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
-  class n12 node_system
+  n12@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到当前聚焦菜单按<br/>钮的确认操作。" }
+  class n12 node_entity
   class n12 external_node
-  n13@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n13@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：将键盘与手柄返回输入统一为菜<br/>单返回请求。" }
   class n13 node_entity
   class n13 external_node
-  n14@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道底并容纳音<br/>量填充。" }
+  n14@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置分类与侧栏提示。" }
   class n14 node_entity
   class n14 external_node
-  n15@{ shape: rounded, label: "**animate​_​targets**<br/>来自crate:bevy​_​animation ↗：评估动画<br/>图并把结果应用到动画目标。" }
-  class n15 node_system
+  n15@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单会话状态的视觉标记。" }
+  class n15 node_entity
   class n15 external_node
-  n16@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供可导航和指针拖动的音量调<br/>节入口。" }
+  n16@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道或手柄。" }
   class n16 node_entity
   class n16 external_node
-  n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n17 node_entity
   class n17 external_node
-  n18@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n18@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n18 node_entity
   class n18 external_node
-  n19@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在音量填充末端绘制当前位置手<br/>柄。" }
+  n19@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到当前聚焦菜单按<br/>钮的确认操作。" }
   class n19 node_entity
   class n19 external_node
-  n20@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到当前聚焦菜单按<br/>钮的确认操作。" }
+  n20@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n20 node_entity
   class n20 external_node
-  n21@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：将键盘与手柄返回输入统一为菜<br/>单返回请求。" }
+  n21@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助页操作提示的键帽。" }
   class n21 node_entity
   class n21 external_node
-  n22@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n22@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
   class n22 node_entity
   class n22 external_node
-  n23@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  n23@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载固定菜单内容的背景布局。" }
   class n23 node_entity
   class n23 external_node
-  n24@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n24@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n24 node_entity
   class n24 external_node
-  n25@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  n25@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助卡片中的标题与操作说<br/>明。" }
   class n25 node_entity
   class n25 external_node
-  n26@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单页脚显示物流公司品牌短<br/>句。" }
+  n26@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置数值与两侧调整按钮。" }
   class n26 node_entity
   class n26 external_node
-  n27@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到当前聚焦菜单按<br/>钮的确认操作。" }
+  n27@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n27 node_entity
   class n27 external_node
-  n28@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单品牌标志中显示公司名<br/>称。" }
+  n28@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n28 node_entity
   class n28 external_node
-  n29@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：纵向排列设置页的四个分类导航<br/>按钮。" }
+  n29@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n29 node_entity
   class n29 external_node
-  n30@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n30@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n30 node_entity
   class n30 external_node
-  n31@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载固定的设置品牌区、分类导<br/>航与会话提示。" }
+  n31@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示音量百分比或静音提示。" }
   class n31 node_entity
   class n31 external_node
-  n32@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  n32@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单会话提示与说明文字。" }
   class n32 node_entity
   class n32 external_node
-  n33@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标识设置页面或当前设置分类。" }
+  n33@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前聚焦设置的说明正文。" }
   class n33 node_entity
   class n33 external_node
-  n34@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按窗口布局排列设置内容与说明<br/>面板。" }
+  n34@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n34 node_entity
   class n34 external_node
-  n35@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n35@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到聚焦设置项的减<br/>少操作。" }
   class n35 node_entity
   class n35 external_node
-  n36@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在设置总标题下绘制金色强调<br/>线。" }
+  n36@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道或手柄。" }
   class n36 node_entity
   class n36 external_node
-  n37@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
-  class n37 node_system
+  n37@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：分配固定菜单内容区域的空间。" }
+  class n37 node_entity
   class n37 external_node
-  n38@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n38@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制待实现功能的提示标识。" }
   class n38 node_entity
   class n38 external_node
-  n39@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织随设置视口整体滚动的标<br/>题、选项、说明和状态。" }
+  n39@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n39 node_entity
   class n39 external_node
-  n40@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n40@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示主菜单中的待实现功能占<br/>位。" }
   class n40 node_entity
   class n40 external_node
-  n41@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单品牌行中绘制纸箱图标。" }
+  n41@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置分类与侧栏提示。" }
   class n41 node_entity
   class n41 external_node
-  n42@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组合当前设置分类的标题与设置<br/>行。" }
+  n42@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n42 node_entity
   class n42 external_node
-  n43@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n43@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置滚动内容的视觉强调。" }
   class n43 node_entity
   class n43 external_node
-  n44@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n44@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示音量百分比或静音提示。" }
   class n44 node_entity
   class n44 external_node
-  n45@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n45@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n45 node_entity
   class n45 external_node
-  n46@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明音量行对应的音频通道。" }
+  n46@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n46 node_entity
   class n46 external_node
-  n47@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n47@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n47 node_entity
   class n47 external_node
-  n48@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到聚焦设置项的减<br/>少操作。" }
+  n48@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n48 node_entity
   class n48 external_node
-  n49@{ shape: rounded, label: "**begin​_​island · 创建模板**<br/>来自scene​_​assembly ↗：挂载玩法海岛场<br/>景，作为地图准备和会话清理入口。" }
+  n49@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n49 node_entity
   class n49 external_node
-  n50@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n50@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n50 node_entity
   class n50 external_node
-  n51@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n51@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n51 node_entity
   class n51 external_node
-  n52@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n52@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n52 node_entity
   class n52 external_node
-  n53@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n53@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现并响应设置滚动条滑块。" }
   class n53 node_entity
   class n53 external_node
-  n54@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提醒音量可即时预览并需<br/>Apply 保存。" }
+  n54@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n54 node_entity
   class n54 external_node
-  n55@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n55@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n55 node_entity
   class n55 external_node
-  n56@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n56@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并更新设置草稿的当前值。" }
   class n56 node_entity
   class n56 external_node
-  n57@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
+  n57@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n57 node_entity
   class n57 external_node
-  n58@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在设置侧栏组织品牌标志、标题<br/>与短句。" }
+  n58@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n58 node_entity
   class n58 external_node
-  n59@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n59@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n59 node_entity
   class n59 external_node
-  n60@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n60@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单标志的开发沙盒说明。" }
   class n60 node_entity
   class n60 external_node
-  n61@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n61@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载设置面板的纵向滚动轨道。" }
   class n61 node_entity
   class n61 external_node
-  n62@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：加载并承载所属<br/>物品种类对应的模型外观。" }
+  n62@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n62 node_entity
   class n62 external_node
-  n63@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：并排展示菜单的会话状态指示点<br/>与文字。" }
+  n63@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
   class n63 node_entity
   class n63 external_node
-  n64@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n64@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单标志的开发沙盒说明。" }
   class n64 node_entity
   class n64 external_node
-  n65@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排布帮助卡片的序号徽章与玩法<br/>标题。" }
+  n65@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n65 node_entity
   class n65 external_node
-  n66@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n66@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n66 node_entity
   class n66 external_node
-  n67@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n67@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：分组呈现帮助页的操作说明。" }
   class n67 node_entity
   class n67 external_node
-  n68@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置说明区的纸箱图章。" }
+  n68@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n68 node_entity
   class n68 external_node
-  n69@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n69@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n69 node_entity
   class n69 external_node
-  n70@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n70@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助页操作提示的键帽。" }
   class n70 node_entity
   class n70 external_node
-  n71@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n71@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n71 node_entity
   class n71 external_node
-  n72@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n72@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：将滑条指针位置转换为音量请<br/>求。" }
   class n72 node_entity
   class n72 external_node
-  n73@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的顺序编号。" }
+  n73@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载固定菜单内容的背景布局。" }
   class n73 node_entity
   class n73 external_node
-  n74@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：横向排布帮助页的三张玩法说明<br/>卡片。" }
+  n74@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制待实现功能的提示标识。" }
   class n74 node_entity
   class n74 external_node
-  n75@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：并排组织设置页的 Apply 与<br/>Back 按钮。" }
+  n75@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n75 node_entity
   class n75 external_node
-  n76@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  n76@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列主菜单与暂停页的内容分<br/>组。" }
   class n76 node_entity
   class n76 external_node
-  n77@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页的两行标<br/>语。" }
+  n77@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置数值与两侧调整按钮。" }
   class n77 node_entity
   class n77 external_node
-  n78@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：裁切并滚动设置面板内的正文内<br/>容。" }
+  n78@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音频设置的待实现标识。" }
   class n78 node_entity
   class n78 external_node
-  n79@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n79@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到聚焦设置项的增<br/>加操作。" }
   class n79 node_entity
   class n79 external_node
-  n80@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n80@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单页脚的项目说明。" }
   class n80 node_entity
   class n80 external_node
-  n81@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n81@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n81 node_entity
   class n81 external_node
-  n82@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n82@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n82 node_entity
   class n82 external_node
-  n83@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n83@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n83 node_entity
   class n83 external_node
-  n84@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n84@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前聚焦设置的说明正文。" }
   class n84 node_entity
   class n84 external_node
-  n85@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示控制设置页的移动与观察提<br/>示。" }
+  n85@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页可滚动的内容分组。" }
   class n85 node_entity
   class n85 external_node
-  n86@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示主菜单或暂停页的状态与标<br/>语。" }
+  n86@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列主菜单与暂停页的内容分<br/>组。" }
   class n86 node_entity
   class n86 external_node
-  n87@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列辅助选项占位与补充提示。" }
+  n87@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列菜单标志的说明文字。" }
   class n87 node_entity
   class n87 external_node
-  n88@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n88@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：分组呈现帮助页的操作说明。" }
   class n88 node_entity
   class n88 external_node
-  n89@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n89@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n89 node_entity
   class n89 external_node
-  n90@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载一项玩法的标题、键位与操<br/>作说明。" }
+  n90@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n90 node_entity
   class n90 external_node
-  n91@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n91@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n91 node_entity
   class n91 external_node
-  n92@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列音量减少按钮、滑条、增加<br/>按钮和数值区。" }
+  n92@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置保存状态与操作提示。" }
   class n92 node_entity
   class n92 external_node
-  n93@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n93@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n93 node_entity
   class n93 external_node
-  n94@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的操作主题。" }
+  n94@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n94 node_entity
   class n94 external_node
-  n95@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：汇集页脚的导航、确认与返回提<br/>示。" }
+  n95@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n95 node_entity
   class n95 external_node
-  n96@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n96@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n96 node_entity
   class n96 external_node
-  n97@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n97@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n97 node_entity
   class n97 external_node
-  n98@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：并排组织设置页的 Apply 与<br/>Back 按钮。" }
+  n98@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n98 node_entity
   class n98 external_node
-  n99@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承接当前菜单页面的主体内容并<br/>为页脚保留空间。" }
+  n99@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n99 node_entity
   class n99 external_node
-  n100@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单会话状态前的金色圆<br/>点。" }
+  n100@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：分配固定菜单内容区域的空间。" }
   class n100 node_entity
   class n100 external_node
-  n101@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承接当前菜单页面的主体内容并<br/>为页脚保留空间。" }
+  n101@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助卡片中的标题与操作说<br/>明。" }
   class n101 node_entity
   class n101 external_node
-  n102@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n102@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助卡片中的标题与操作说<br/>明。" }
   class n102 node_entity
   class n102 external_node
-  n103@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n103@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前聚焦设置的说明标题。" }
   class n103 node_entity
   class n103 external_node
-  n104@{ shape: rounded, label: "**spawn​_​actors**<br/>来自scene​_​assembly ↗：为就绪海岛创建<br/>玩法实体并复用加载相机。" }
-  class n104 node_system
+  n104@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助卡片的编号标识。" }
+  class n104 node_entity
   class n104 external_node
-  n105@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n105@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n105 node_entity
   class n105 external_node
-  n106@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标识设置页面或当前设置分类。" }
+  n106@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n106 node_entity
   class n106 external_node
-  n107@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
+  n107@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n107 node_entity
   class n107 external_node
-  n108@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示主菜单或暂停页的状态与标<br/>语。" }
+  n108@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列音量设置行的控件与数值。" }
   class n108 node_entity
   class n108 external_node
-  n109@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n109@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页可滚动的内容分组。" }
   class n109 node_entity
   class n109 external_node
-  n110@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示主菜单或暂停页的状态与标<br/>语。" }
+  n110@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n110 node_entity
   class n110 external_node
-  n111@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在设置总标题下绘制金色强调<br/>线。" }
+  n111@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列主菜单与暂停页的内容分<br/>组。" }
   class n111 node_entity
   class n111 external_node
-  n112@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
+  n112@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助卡片的编号标识。" }
   class n112 node_entity
   class n112 external_node
-  n113@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：挂载主角模型，<br/>承接动画绑定和自身视觉隐藏。" }
+  n113@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单页脚的项目说明。" }
   class n113 node_entity
   class n113 external_node
-  n114@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n114@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示图形设置中的待实现选项。" }
   class n114 node_entity
   class n114 external_node
-  n115@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n115@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助卡片中的标题与操作说<br/>明。" }
   class n115 node_entity
   class n115 external_node
-  n116@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n116@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n116 node_entity
   class n116 external_node
-  n117@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到聚焦设置项的增<br/>加操作。" }
+  n117@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页可滚动的内容分组。" }
   class n117 node_entity
   class n117 external_node
-  n118@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：容纳随焦点更新的设置说明与包<br/>裹提示。" }
+  n118@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示图形设置中的待实现选项。" }
   class n118 node_entity
   class n118 external_node
-  n119@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n119@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n119 node_entity
   class n119 external_node
-  n120@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n120@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n120 node_entity
   class n120 external_node
-  n121@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n121@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页可滚动的内容分组。" }
   class n121 node_entity
   class n121 external_node
-  n122@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n122@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n122 node_entity
   class n122 external_node
-  n123@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n123@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n123 node_entity
   class n123 external_node
-  n124@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n124@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n124 node_entity
   class n124 external_node
-  n125@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把帮助卡片的按键与对应操作组<br/>成提示行。" }
+  n125@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n125 node_entity
   class n125 external_node
-  n126@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n126@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制待实现功能的提示标识。" }
   class n126 node_entity
   class n126 external_node
-  n127@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标识设置页面或当前设置分类。" }
+  n127@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n127 node_entity
   class n127 external_node
-  n128@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的顺序编号。" }
+  n128@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n128 node_entity
   class n128 external_node
-  n129@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：承载可控制快递<br/>员的玩法状态与角色层级。" }
+  n129@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页可滚动的内容分组。" }
   class n129 node_entity
   class n129 external_node
-  n130@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置正文提供按溢出显隐的垂<br/>直滚动轨道。" }
+  n130@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列主菜单与暂停页的内容分<br/>组。" }
   class n130 node_entity
   class n130 external_node
-  n131@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织鼠标灵敏度或 Y 轴反转的<br/>调整控件。" }
+  n131@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助卡片的编号标识。" }
   class n131 node_entity
   class n131 external_node
-  n132@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示尚未开放的图形设置选项。" }
+  n132@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制待实现功能的提示标识。" }
   class n132 node_entity
   class n132 external_node
-  n133@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n133@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n133 node_entity
   class n133 external_node
-  n134@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n134@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助卡片中的标题与操作说<br/>明。" }
   class n134 node_entity
   class n134 external_node
-  n135@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：照亮主菜单海岛展示舞台。" }
+  n135@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n135 node_entity
   class n135 external_node
-  n136@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n136@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n136 node_entity
   class n136 external_node
-  n137@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n137@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：通过键盘或手柄移到上一个菜单<br/>按钮。" }
   class n137 node_entity
   class n137 external_node
-  n138@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制未开放菜单选项的<br/>Coming Soon 徽章底板。" }
+  n138@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列菜单标志的说明文字。" }
   class n138 node_entity
   class n138 external_node
-  n139@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织随设置视口整体滚动的标<br/>题、选项、说明和状态。" }
+  n139@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n139 node_entity
   class n139 external_node
-  n140@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n140@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n140 node_entity
   class n140 external_node
-  n141@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示无障碍分类中尚未接通的设<br/>置项。" }
+  n141@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制待实现功能的提示标识。" }
   class n141 node_entity
   class n141 external_node
-  n142@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：限定设置正文的可视高度，容纳<br/>内部滚动内容。" }
-  class n142 node_entity
+  n142@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>来自crate:bevy​_​enhanced​_​input ↗：求<br/>值上下文输入并更新动作状态。" }
+  class n142 node_system
   class n142 external_node
-  n143@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n143@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到统一菜单返回与<br/>暂停入口。" }
   class n143 node_entity
   class n143 external_node
-  n144@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  n144@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步调整对应的设置草稿字段。" }
   class n144 node_entity
   class n144 external_node
-  n145@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标识设置页面或当前设置分类。" }
+  n145@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n145 node_entity
   class n145 external_node
-  n146@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n146@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织当前菜单页面与固定页脚。" }
   class n146 node_entity
   class n146 external_node
-  n147@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n147@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n147 node_entity
   class n147 external_node
-  n148@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置说明区的品牌落款。" }
+  n148@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n148 node_entity
   class n148 external_node
-  n149@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：并排组织设置页的 Apply 与<br/>Back 按钮。" }
+  n149@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把空格按下转换为<br/>角色跳跃请求。" }
   class n149 node_entity
   class n149 external_node
-  n150@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单品牌标志中显示公司名<br/>称。" }
+  n150@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n150 node_entity
   class n150 external_node
-  n151@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承接当前菜单页面的主体内容并<br/>为页脚保留空间。" }
+  n151@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示可编辑设置字段的名称。" }
   class n151 node_entity
   class n151 external_node
-  n152@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单页脚显示物流公司品牌短<br/>句。" }
+  n152@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单页脚的项目说明。" }
   class n152 node_entity
   class n152 external_node
-  n153@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列主菜单左侧的品牌、按钮和<br/>会话状态。" }
+  n153@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n153 node_entity
   class n153 external_node
-  n154@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n154@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到菜单上一项导<br/>航。" }
   class n154 node_entity
   class n154 external_node
-  n155@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载菜单底部品牌说明与操作提<br/>示。" }
+  n155@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n155 node_entity
   class n155 external_node
-  n156@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示尚未开放的图形设置选项。" }
+  n156@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n156 node_entity
   class n156 external_node
-  n157@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n157@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n157 node_entity
   class n157 external_node
-  n158@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n158@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n158 node_entity
   class n158 external_node
-  n159@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：汇集页脚的导航、确认与返回提<br/>示。" }
+  n159@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n159 node_entity
   class n159 external_node
-  n160@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n160@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载设置面板的纵向滚动轨道。" }
   class n160 node_entity
   class n160 external_node
-  n161@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n161@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置页面与分类标题。" }
   class n161 node_entity
   class n161 external_node
-  n162@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n162@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n162 node_entity
   class n162 external_node
-  n163@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n163@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助卡片中的标题与操作说<br/>明。" }
   class n163 node_entity
   class n163 external_node
-  n164@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n164@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步减少或增加对应音量。" }
   class n164 node_entity
   class n164 external_node
-  n165@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n165@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n165 node_entity
   class n165 external_node
-  n166@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n166@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n166 node_entity
   class n166 external_node
-  n167@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制未开放菜单选项的<br/>Coming Soon 徽章底板。" }
+  n167@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单页脚的项目说明。" }
   class n167 node_entity
   class n167 external_node
-  n168@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：原位显示并刷新对应设置字段的<br/>当前草稿值。" }
+  n168@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n168 node_entity
   class n168 external_node
-  n169@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：通过键盘或手柄移到上一个菜单<br/>按钮。" }
+  n169@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n169 node_entity
   class n169 external_node
-  n170@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单品牌标志中显示公司名<br/>称。" }
+  n170@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前聚焦设置的说明正文。" }
   class n170 node_entity
   class n170 external_node
-  n171@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n171@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n171 node_entity
   class n171 external_node
-  n172@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n172@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助页的键位与动作名称。" }
   class n172 node_entity
   class n172 external_node
-  n173@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n173@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置分类与侧栏提示。" }
   class n173 node_entity
   class n173 external_node
-  n174@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：用金色编号区分帮助页的操作卡<br/>片。" }
+  n174@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现并响应设置滚动条滑块。" }
   class n174 node_entity
   class n174 external_node
-  n175@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到统一菜单返回与<br/>暂停入口。" }
+  n175@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制控制设置的待实现标识。" }
   class n175 node_entity
   class n175 external_node
-  n176@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  n176@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步减少或增加对应音量。" }
   class n176 node_entity
   class n176 external_node
-  n177@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n177@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：将滑条指针位置转换为音量请<br/>求。" }
   class n177 node_entity
   class n177 external_node
-  n178@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n178@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助页操作提示的键帽。" }
   class n178 node_entity
   class n178 external_node
-  n179@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示主菜单未开放功能及<br/>Coming Soon 状态。" }
+  n179@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n179 node_entity
   class n179 external_node
-  n180@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  n180@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示可编辑设置字段的名称。" }
   class n180 node_entity
   class n180 external_node
-  n181@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把空格按下转换为<br/>角色跳跃请求。" }
+  n181@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把空格键输入接到<br/>所属角色的跳跃动作。" }
   class n181 node_entity
   class n181 external_node
-  n182@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n182@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单会话状态的视觉标记。" }
   class n182 node_entity
   class n182 external_node
-  n183@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：限定设置正文的可视高度，容纳<br/>内部滚动内容。" }
+  n183@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示重新绑定按键的占位行。" }
   class n183 node_entity
   class n183 external_node
-  n184@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明帮助卡片中各键位对应的玩<br/>家操作。" }
+  n184@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n184 node_entity
   class n184 external_node
-  n185@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n185@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提示设置页的会话来源。" }
   class n185 node_entity
   class n185 external_node
-  n186@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到菜单上一项导<br/>航。" }
+  n186@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步减少或增加对应音量。" }
   class n186 node_entity
   class n186 external_node
-  n187@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n187@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置数值与两侧调整按钮。" }
   class n187 node_entity
   class n187 external_node
-  n188@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n188@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置分类与侧栏提示。" }
   class n188 node_entity
   class n188 external_node
-  n189@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n189@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n189 node_entity
   class n189 external_node
-  n190@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  n190@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n190 node_entity
   class n190 external_node
-  n191@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n191@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n191 node_entity
   class n191 external_node
-  n192@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按窗口布局排列设置内容与说明<br/>面板。" }
+  n192@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n192 node_entity
   class n192 external_node
-  n193@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并原位更新当前设置项的说<br/>明标题。" }
+  n193@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示可编辑设置字段的名称。" }
   class n193 node_entity
   class n193 external_node
-  n194@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在设置侧栏组织品牌标志、标题<br/>与短句。" }
+  n194@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：分配固定菜单内容区域的空间。" }
   class n194 node_entity
   class n194 external_node
-  n195@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n195@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置页面与分类标题。" }
   class n195 node_entity
   class n195 external_node
-  n196@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  n196@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n196 node_entity
   class n196 external_node
-  n197@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载固定的设置品牌区、分类导<br/>航与会话提示。" }
+  n197@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n197 node_entity
   class n197 external_node
-  n198@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把帮助卡片的按键与对应操作组<br/>成提示行。" }
+  n198@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置滚动内容的视觉强调。" }
   class n198 node_entity
   class n198 external_node
-  n199@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n199@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n199 node_entity
   class n199 external_node
-  n200@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n200@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n200 node_entity
   class n200 external_node
-  n201@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单页脚显示物流公司品牌短<br/>句。" }
+  n201@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n201 node_entity
   class n201 external_node
-  n202@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n202@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到统一菜单返回与<br/>暂停入口。" }
   class n202 node_entity
   class n202 external_node
-  n203@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列音量减少按钮、滑条、增加<br/>按钮和数值区。" }
+  n203@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n203 node_entity
   class n203 external_node
-  n204@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  n204@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n204 node_entity
   class n204 external_node
-  n205@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n205@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n205 node_entity
   class n205 external_node
-  n206@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n206@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：照亮灰盒地面与<br/>方块。" }
   class n206 node_entity
   class n206 external_node
-  n207@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n207@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并更新设置草稿的当前值。" }
   class n207 node_entity
   class n207 external_node
-  n208@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单品牌行中绘制纸箱图标。" }
+  n208@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：分配固定菜单内容区域的空间。" }
   class n208 node_entity
   class n208 external_node
-  n209@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n209@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n209 node_entity
   class n209 external_node
-  n210@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n210@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的主题与操作说<br/>明。" }
   class n210 node_entity
   class n210 external_node
-  n211@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n211@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n211 node_entity
   class n211 external_node
-  n212@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n212@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n212 node_entity
   class n212 external_node
-  n213@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制未开放菜单选项的<br/>Coming Soon 徽章底板。" }
+  n213@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把向左导航输入转成聚焦设置项<br/>的减少请求。" }
   class n213 node_entity
   class n213 external_node
-  n214@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n214@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的主题与操作说<br/>明。" }
   class n214 node_entity
   class n214 external_node
-  n215@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n215@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n215 node_entity
   class n215 external_node
-  n216@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n216@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n216 node_entity
   class n216 external_node
-  n217@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把帮助卡片的按键与对应操作组<br/>成提示行。" }
+  n217@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n217 node_entity
   class n217 external_node
-  n218@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  n218@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n218 node_entity
   class n218 external_node
-  n219@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置说明面板底部的包裹标<br/>志与提示语。" }
+  n219@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n219 node_entity
   class n219 external_node
-  n220@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n220@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前聚焦设置的说明正文。" }
   class n220 node_entity
   class n220 external_node
-  n221@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助卡片内的操作键帽外<br/>框。" }
+  n221@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n221 node_entity
   class n221 external_node
-  n222@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明帮助卡片中各键位对应的玩<br/>家操作。" }
+  n222@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n222 node_entity
   class n222 external_node
-  n223@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n223@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载固定菜单内容的背景布局。" }
   class n223 node_entity
   class n223 external_node
-  n224@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：纵向排列设置页的四个分类导航<br/>按钮。" }
+  n224@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音频设置的待实现标识。" }
   class n224 node_entity
   class n224 external_node
-  n225@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并原位刷新设置保存状态与<br/>草稿提示。" }
+  n225@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助页标题与操作卡片。" }
   class n225 node_entity
   class n225 external_node
-  n226@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置说明面板底部的包裹标<br/>志与提示语。" }
+  n226@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n226 node_entity
   class n226 external_node
-  n227@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n227@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n227 node_entity
   class n227 external_node
-  n228@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按窗口布局排列设置内容与说明<br/>面板。" }
+  n228@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n228 node_entity
   class n228 external_node
-  n229@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把空格键输入接到<br/>所属角色的跳跃动作。" }
+  n229@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n229 node_entity
   class n229 external_node
-  n230@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  n230@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示图形设置中的待实现选项。" }
   class n230 node_entity
   class n230 external_node
-  n231@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n231@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n231 node_entity
   class n231 external_node
-  n232@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织主菜单品牌标题、公司行与<br/>品牌短语。" }
+  n232@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n232 node_entity
   class n232 external_node
-  n233@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n233@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n233 node_entity
   class n233 external_node
-  n234@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：固定排列恢复默认与保存／返回<br/>操作。" }
+  n234@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页可滚动的内容分组。" }
   class n234 node_entity
   class n234 external_node
-  n235@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：横排组合纸箱品牌图形与公司<br/>名。" }
+  n235@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
   class n235 node_entity
   class n235 external_node
-  n236@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n236@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n236 node_entity
   class n236 external_node
-  n237@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n237@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n237 node_entity
   class n237 external_node
-  n238@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载菜单底部品牌说明与操作提<br/>示。" }
+  n238@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制图形设置的待实现标识。" }
   class n238 node_entity
   class n238 external_node
-  n239@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单品牌行中绘制纸箱图标。" }
+  n239@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n239 node_entity
   class n239 external_node
-  n240@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n240@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制待实现功能的提示标识。" }
   class n240 node_entity
   class n240 external_node
-  n241@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n241@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织设置内容视口与滚动轨道。" }
   class n241 node_entity
   class n241 external_node
-  n242@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置侧栏的暂停或欢迎提<br/>示。" }
+  n242@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n242 node_entity
   class n242 external_node
-  n243@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置滚动面板与固定底部操作<br/>分配高度。" }
+  n243@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n243 node_entity
   class n243 external_node
-  n244@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n244@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：汇总鼠标位移，驱<br/>动所属玩家的相机观察。" }
   class n244 node_entity
   class n244 external_node
-  n245@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n245@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助页的键位与动作名称。" }
   class n245 node_entity
   class n245 external_node
-  n246@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：裁切并滚动设置面板内的正文内<br/>容。" }
+  n246@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n246 node_entity
   class n246 external_node
-  n247@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把一个音频通道的标题、滑条和<br/>数值组织为设置行。" }
+  n247@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n247 node_entity
   class n247 external_node
-  n248@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n248@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n248 node_entity
   class n248 external_node
-  n249@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n249@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载设置面板的纵向滚动轨道。" }
   class n249 node_entity
   class n249 external_node
-  n250@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n250@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步调整对应的设置草稿字段。" }
   class n250 node_entity
   class n250 external_node
-  n251@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示音乐音量的未实现占位提<br/>示。" }
+  n251@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n251 node_entity
   class n251 external_node
-  n252@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n252@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n252 node_entity
   class n252 external_node
-  n253@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n253@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单标志的开发沙盒说明。" }
   class n253 node_entity
   class n253 external_node
-  n254@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n254@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n254 node_entity
   class n254 external_node
-  n255@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n255@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n255 node_entity
   class n255 external_node
-  n256@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n256@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助页的玩法介绍。" }
   class n256 node_entity
   class n256 external_node
-  n257@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n257@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示无障碍设置的规划提示。" }
   class n257 node_entity
   class n257 external_node
-  n258@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n258@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列菜单标志的说明文字。" }
   class n258 node_entity
   class n258 external_node
-  n259@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n259@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n259 node_entity
   class n259 external_node
-  n260@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把帮助卡片的按键与对应操作组<br/>成提示行。" }
+  n260@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n260 node_entity
   class n260 external_node
-  n261@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到统一菜单返回与<br/>暂停入口。" }
+  n261@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n261 node_entity
   class n261 external_node
-  n262@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n262@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按草稿音量绘制滑条填充。" }
   class n262 node_entity
   class n262 external_node
-  n263@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明帮助卡片中各键位对应的玩<br/>家操作。" }
+  n263@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n263 node_entity
   class n263 external_node
-  n264@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n264@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n264 node_entity
   class n264 external_node
-  n265@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在设置总标题下绘制金色强调<br/>线。" }
+  n265@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n265 node_entity
   class n265 external_node
-  n266@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制未开放菜单选项的<br/>Coming Soon 徽章底板。" }
+  n266@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助页标题与操作卡片。" }
   class n266 node_entity
   class n266 external_node
-  n267@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n267@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示控制设置的基础操作提示。" }
   class n267 node_entity
   class n267 external_node
-  n268@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n268@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载并裁切设置页的滚动内容。" }
   class n268 node_entity
   class n268 external_node
-  n269@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制未开放菜单选项的<br/>Coming Soon 徽章底板。" }
+  n269@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n269 node_entity
   class n269 external_node
-  n270@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n270@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置页面与分类标题。" }
   class n270 node_entity
   class n270 external_node
-  n271@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  n271@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n271 node_entity
   class n271 external_node
-  n272@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置说明区的纸箱图章。" }
+  n272@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n272 node_entity
   class n272 external_node
-  n273@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列镜头操作设置、重绑占位和<br/>操作提示。" }
+  n273@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列主菜单与暂停页的内容分<br/>组。" }
   class n273 node_entity
   class n273 external_node
-  n274@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n274@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：保存设置内容的滚动位置与视<br/>口。" }
   class n274 node_entity
   class n274 external_node
-  n275@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：裁切并滚动设置面板内的正文内<br/>容。" }
+  n275@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置页面与分类标题。" }
   class n275 node_entity
   class n275 external_node
-  n276@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把向左导航输入转成聚焦设置项<br/>的减少请求。" }
+  n276@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织设置内容视口与滚动轨道。" }
   class n276 node_entity
   class n276 external_node
-  n277@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：汇集页脚的导航、确认与返回提<br/>示。" }
+  n277@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n277 node_entity
   class n277 external_node
-  n278@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单品牌标志中显示公司名<br/>称。" }
+  n278@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助页操作提示的键帽。" }
   class n278 node_entity
   class n278 external_node
-  n279@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载当前菜单正文、页脚和暂停<br/>遮罩。" }
+  n279@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n279 node_entity
   class n279 external_node
-  n280@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前聚焦设置项的详细说<br/>明。" }
+  n280@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助卡片中的标题与操作说<br/>明。" }
   class n280 node_entity
   class n280 external_node
-  n281@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  n281@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的主题与操作说<br/>明。" }
   class n281 node_entity
   class n281 external_node
-  n282@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n282@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道或手柄。" }
   class n282 node_entity
   class n282 external_node
-  n283@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n283@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n283 node_entity
   class n283 external_node
-  n284@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n284@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n284 node_entity
   class n284 external_node
-  n285@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助页的标题、开场介绍或<br/>底部提示。" }
+  n285@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到菜单下一项导<br/>航。" }
   class n285 node_entity
   class n285 external_node
-  n286@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n286@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织当前菜单页面与固定页脚。" }
   class n286 node_entity
   class n286 external_node
-  n287@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列图形设置中的帧率上限名称<br/>与调整控件。" }
+  n287@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置数值文字提供稳定显示区<br/>域。" }
   class n287 node_entity
   class n287 external_node
-  n288@{ shape: rounded, label: "**prepare​_​island**<br/>来自scene​_​assembly ↗：在资源 CPU 几<br/>何可用时构建碰撞；全部成功后才提交，失败<br/>时不创建动态玩家。" }
-  class n288 node_system
+  n288@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前聚焦设置的说明标题。" }
+  class n288 node_entity
   class n288 external_node
-  n289@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单品牌标志中显示公司名<br/>称。" }
+  n289@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n289 node_entity
   class n289 external_node
-  n290@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为普通设置值提供独立居中的显<br/>示区域。" }
+  n290@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n290 node_entity
   class n290 external_node
-  n291@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n291@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n291 node_entity
   class n291 external_node
-  n292@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：汇集页脚的导航、确认与返回提<br/>示。" }
+  n292@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n292 node_entity
   class n292 external_node
-  n293@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的操作主题。" }
+  n293@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：保存设置内容的滚动位置与视<br/>口。" }
   class n293 node_entity
   class n293 external_node
-  n294@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n294@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n294 node_entity
   class n294 external_node
-  n295@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n295@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单页脚的项目说明。" }
   class n295 node_entity
   class n295 external_node
-  n296@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：随音量草稿刷新百分比或静音文<br/>字。" }
+  n296@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n296 node_entity
   class n296 external_node
-  n297@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单品牌行中绘制纸箱图标。" }
+  n297@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n297 node_entity
   class n297 external_node
-  n298@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n298@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n298 node_entity
   class n298 external_node
-  n299@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：解释帮助卡片对应操作的条件与<br/>行为。" }
+  n299@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n299 node_entity
   class n299 external_node
-  n300@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：横向组织设置值及两侧的增减按<br/>钮。" }
+  n300@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制待实现功能的提示标识。" }
   class n300 node_entity
   class n300 external_node
-  n301@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：裁切并滚动设置面板内的正文内<br/>容。" }
+  n301@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n301 node_entity
   class n301 external_node
-  n302@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把一个音频通道的标题、滑条和<br/>数值组织为设置行。" }
+  n302@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n302 node_entity
   class n302 external_node
-  n303@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：纵向排列设置页的四个分类导航<br/>按钮。" }
+  n303@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n303 node_entity
   class n303 external_node
-  n304@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：横排组合纸箱品牌图形与公司<br/>名。" }
+  n304@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助页操作提示的键帽。" }
   class n304 node_entity
   class n304 external_node
-  n305@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并原位更新当前设置项的说<br/>明标题。" }
+  n305@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n305 node_entity
   class n305 external_node
-  n306@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n306@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n306 node_entity
   class n306 external_node
-  n307@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n307@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单会话提示与说明文字。" }
   class n307 node_entity
   class n307 external_node
-  n308@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  n308@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助卡片中的标题与操作说<br/>明。" }
   class n308 node_entity
   class n308 external_node
-  n309@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：汇总鼠标位移，驱<br/>动所属玩家的相机观察。" }
+  n309@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助页的键位与动作名称。" }
   class n309 node_entity
   class n309 external_node
-  n310@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制未开放菜单选项的<br/>Coming Soon 徽章底板。" }
+  n310@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n310 node_entity
   class n310 external_node
-  n311@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  n311@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n311 node_entity
   class n311 external_node
-  n312@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n312@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列主菜单与暂停页的内容分<br/>组。" }
   class n312 node_entity
   class n312 external_node
-  n313@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n313@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：分组呈现帮助页的操作说明。" }
   class n313 node_entity
   class n313 external_node
-  n314@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n314@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单会话提示与说明文字。" }
   class n314 node_entity
   class n314 external_node
-  n315@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置说明面板底部的包裹标<br/>志与提示语。" }
+  n315@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n315 node_entity
   class n315 external_node
-  n316@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：纵向汇集帮助卡片的两条操作提<br/>示。" }
+  n316@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n316 node_entity
   class n316 external_node
-  n317@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明音量行对应的音频通道。" }
+  n317@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n317 node_entity
   class n317 external_node
-  n318@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：用填充宽度显示对应音量的当前<br/>百分比。" }
+  n318@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织设置内容视口与滚动轨道。" }
   class n318 node_entity
   class n318 external_node
-  n319@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n319@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置滚动内容的视觉强调。" }
   class n319 node_entity
   class n319 external_node
-  n320@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n320@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步调整对应的设置草稿字段。" }
   class n320 node_entity
   class n320 external_node
-  n321@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助卡片内的操作键帽外<br/>框。" }
+  n321@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置分类与侧栏提示。" }
   class n321 node_entity
   class n321 external_node
-  n322@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列音量控制、音效试听与保存<br/>提示。" }
+  n322@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n322 node_entity
   class n322 external_node
-  n323@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n323@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置滚动内容的视觉强调。" }
   class n323 node_entity
   class n323 external_node
-  n324@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n324@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：将键盘或手柄确认输入交给当前<br/>菜单按钮。" }
   class n324 node_entity
   class n324 external_node
-  n325@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织主菜单品牌标题、公司行与<br/>品牌短语。" }
+  n325@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n325 node_entity
   class n325 external_node
-  n326@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n326@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n326 node_entity
   class n326 external_node
-  n327@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
-  class n327 node_entity
+  n327@{ shape: rounded, label: "**gamepad​_​connection​_​system**<br/>来自crate:bevy​_​input ↗：按连接消息添<br/>加或移除手柄组件。" }
+  class n327 node_system
   class n327 external_node
-  n328@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：容纳随焦点更新的设置说明与包<br/>裹提示。" }
+  n328@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n328 node_entity
   class n328 external_node
-  n329@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n329@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n329 node_entity
   class n329 external_node
-  n330@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示尚未开放的图形设置选项。" }
+  n330@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织当前菜单页面与固定页脚。" }
   class n330 node_entity
   class n330 external_node
-  n331@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织随设置视口整体滚动的标<br/>题、选项、说明和状态。" }
-  class n331 node_entity
+  n331@{ shape: rounded, label: "**init​_​collider​_​constructors**<br/>来自crate:avian3d ↗：把就绪的碰撞构造<br/>配置变成实际形状。" }
+  class n331 node_system
   class n331 external_node
-  n332@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到菜单下一项导<br/>航。" }
+  n332@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示主菜单中的待实现功能占<br/>位。" }
   class n332 node_entity
   class n332 external_node
-  n333@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：纵向组织主菜单或暂停页的操作<br/>按钮。" }
+  n333@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页可滚动的内容分组。" }
   class n333 node_entity
   class n333 external_node
-  n334@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承接当前菜单页面的主体内容并<br/>为页脚保留空间。" }
+  n334@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步减少或增加对应音量。" }
   class n334 node_entity
   class n334 external_node
-  n335@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置滚动视口和滚动条分配共<br/>同空间。" }
-  class n335 node_entity
+  n335@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  class n335 node_system
   class n335 external_node
-  n336@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n336@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n336 node_entity
   class n336 external_node
-  n337@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载一项玩法的标题、键位与操<br/>作说明。" }
+  n337@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n337 node_entity
   class n337 external_node
-  n338@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n338@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n338 node_entity
   class n338 external_node
-  n339@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前聚焦设置项的详细说<br/>明。" }
+  n339@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步调整对应的设置草稿字段。" }
   class n339 node_entity
   class n339 external_node
-  n340@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n340@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n340 node_entity
   class n340 external_node
-  n341@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n341@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明音量预览与保存方式。" }
   class n341 node_entity
   class n341 external_node
-  n342@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n342@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n342 node_entity
   class n342 external_node
-  n343@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前聚焦设置项的详细说<br/>明。" }
+  n343@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n343 node_entity
   class n343 external_node
-  n344@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：纵向汇集帮助卡片的两条操作提<br/>示。" }
+  n344@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n344 node_entity
   class n344 external_node
-  n345@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：解释帮助卡片对应操作的条件与<br/>行为。" }
+  n345@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：用向下导航输入切换到下一个菜<br/>单按钮。" }
   class n345 node_entity
   class n345 external_node
-  n346@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示尚未开放的图形设置选项。" }
+  n346@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助页的玩法介绍。" }
   class n346 node_entity
   class n346 external_node
-  n347@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n347@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n347 node_entity
   class n347 external_node
-  n348@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：并排展示菜单的会话状态指示点<br/>与文字。" }
+  n348@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n348 node_entity
   class n348 external_node
-  n349@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n349@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n349 node_entity
   class n349 external_node
-  n350@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n350@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n350 node_entity
   class n350 external_node
-  n351@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供离开帮助页的返回入口。" }
+  n351@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n351 node_entity
   class n351 external_node
-  n352@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n352@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n352 node_entity
   class n352 external_node
-  n353@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为音量百分比或静音文字提供居<br/>中显示空间。" }
+  n353@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的主题与操作说<br/>明。" }
   class n353 node_entity
   class n353 external_node
-  n354@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单页脚显示物流公司品牌短<br/>句。" }
+  n354@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置页面与分类标题。" }
   class n354 node_entity
   class n354 external_node
-  n355@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明普通设置行正在调整的字<br/>段。" }
+  n355@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n355 node_entity
   class n355 external_node
-  n356@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助卡片内的操作键帽外<br/>框。" }
+  n356@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：将 E 键按下转换为<br/>所控角色的一次交互请求。" }
   class n356 node_entity
   class n356 external_node
-  n357@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n357@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n357 node_entity
   class n357 external_node
-  n358@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n358@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n358 node_entity
   class n358 external_node
-  n359@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n359@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n359 node_entity
   class n359 external_node
-  n360@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n360@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n360 node_entity
   class n360 external_node
-  n361@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n361@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载固定菜单内容的背景布局。" }
   class n361 node_entity
   class n361 external_node
-  n362@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助卡片内的操作键帽外<br/>框。" }
+  n362@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n362 node_entity
   class n362 external_node
-  n363@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明帮助卡片中各键位对应的玩<br/>家操作。" }
+  n363@{ shape: rounded, label: "**begin​_​attachment · 创建模板**<br/>来自item​_​interaction ↗：承载所持物品<br/>在人物共享刚体上的碰撞形状。" }
   class n363 node_entity
   class n363 external_node
-  n364@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把一个音频通道的标题、滑条和<br/>数值组织为设置行。" }
+  n364@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n364 node_entity
   class n364 external_node
-  n365@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置正文提供按溢出显隐的垂<br/>直滚动轨道。" }
+  n365@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n365 node_entity
   class n365 external_node
-  n366@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n366@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列菜单标志的说明文字。" }
   class n366 node_entity
   class n366 external_node
-  n367@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：将键盘或手柄确认输入交给当前<br/>菜单按钮。" }
+  n367@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n367 node_entity
   class n367 external_node
-  n368@{ shape: rounded, label: "**gamepad​_​connection​_​system**<br/>来自crate:bevy​_​input ↗：按连接消息添<br/>加或移除手柄组件。" }
-  class n368 node_system
+  n368@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置分类与侧栏提示。" }
+  class n368 node_entity
   class n368 external_node
-  n369@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n369@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示图形设置中的待实现选项。" }
   class n369 node_entity
   class n369 external_node
-  n370@{ shape: rounded, label: "**init​_​collider​_​constructors**<br/>来自crate:avian3d ↗：把就绪的碰撞构造<br/>配置变成实际形状。" }
-  class n370 node_system
+  n370@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
+  class n370 node_entity
   class n370 external_node
-  n371@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示主菜单或暂停页的状态与标<br/>语。" }
+  n371@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前音量设置项的名称。" }
   class n371 node_entity
   class n371 external_node
-  n372@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载当前菜单正文、页脚和暂停<br/>遮罩。" }
+  n372@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示图形设置中的待实现选项。" }
   class n372 node_entity
   class n372 external_node
-  n373@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在音量填充末端绘制当前位置手<br/>柄。" }
+  n373@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n373 node_entity
   class n373 external_node
-  n374@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n374@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置分类与侧栏提示。" }
   class n374 node_entity
   class n374 external_node
-  n375@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n375@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n375 node_entity
   class n375 external_node
-  n376@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n376@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n376 node_entity
   class n376 external_node
-  n377@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：固定排列恢复默认与保存／返回<br/>操作。" }
+  n377@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助页操作提示的键帽。" }
   class n377 node_entity
   class n377 external_node
-  n378@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n378@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n378 node_entity
   class n378 external_node
-  n379@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明帮助卡片中各键位对应的玩<br/>家操作。" }
+  n379@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助页的键位与动作名称。" }
   class n379 node_entity
   class n379 external_node
-  n380@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的操作主题。" }
+  n380@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n380 node_entity
   class n380 external_node
-  n381@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：解释帮助卡片对应操作的条件与<br/>行为。" }
+  n381@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n381 node_entity
   class n381 external_node
-  n382@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：用向下导航输入切换到下一个菜<br/>单按钮。" }
+  n382@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列主菜单与暂停页的内容分<br/>组。" }
   class n382 node_entity
   class n382 external_node
-  n383@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n383@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n383 node_entity
   class n383 external_node
-  n384@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n384@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n384 node_entity
   class n384 external_node
-  n385@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n385@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：保存设置内容的滚动位置与视<br/>口。" }
   class n385 node_entity
   class n385 external_node
-  n386@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置侧栏的暂停或欢迎提<br/>示。" }
+  n386@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列音量设置行的控件与数值。" }
   class n386 node_entity
   class n386 external_node
-  n387@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置正文提供按溢出显隐的垂<br/>直滚动轨道。" }
+  n387@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的主题与操作说<br/>明。" }
   class n387 node_entity
   class n387 external_node
-  n388@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：横排组合纸箱品牌图形与公司<br/>名。" }
+  n388@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：保存设置内容的滚动位置与视<br/>口。" }
   class n388 node_entity
   class n388 external_node
-  n389@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n389@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置保存状态与操作提示。" }
   class n389 node_entity
   class n389 external_node
-  n390@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n390@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n390 node_entity
   class n390 external_node
-  n391@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：纵向汇集帮助卡片的两条操作提<br/>示。" }
+  n391@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示图形设置中的待实现选项。" }
   class n391 node_entity
   class n391 external_node
-  n392@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：将 E 键按下转换为<br/>所控角色的一次交互请求。" }
+  n392@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n392 node_entity
   class n392 external_node
-  n393@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示无障碍分类中尚未接通的设<br/>置项。" }
-  class n393 node_entity
+  n393@{ shape: rounded, label: "**init​_​collider​_​constructor​_​**<br/>**hierarchies**<br/>来自crate:avian3d ↗：按层级构造配置为<br/>后代生成碰撞体。" }
+  class n393 node_system
   class n393 external_node
-  n394@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n394@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n394 node_entity
   class n394 external_node
-  n395@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并原位刷新设置保存状态与<br/>草稿提示。" }
+  n395@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单会话提示与说明文字。" }
   class n395 node_entity
   class n395 external_node
-  n396@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n396@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置数值文字提供稳定显示区<br/>域。" }
   class n396 node_entity
   class n396 external_node
-  n397@{ shape: rounded, label: "**begin​_​attachment · 创建模板**<br/>来自item​_​interaction ↗：承载所持物品<br/>在人物共享刚体上的碰撞形状。" }
+  n397@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步调整对应的设置草稿字段。" }
   class n397 node_entity
   class n397 external_node
-  n398@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n398@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n398 node_entity
   class n398 external_node
-  n399@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n399@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n399 node_entity
   class n399 external_node
-  n400@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n400@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n400 node_entity
   class n400 external_node
-  n401@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n401@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n401 node_entity
   class n401 external_node
-  n402@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明帮助卡片中各键位对应的玩<br/>家操作。" }
+  n402@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n402 node_entity
   class n402 external_node
-  n403@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在帮助页标题旁绘制纸箱品牌标<br/>志。" }
+  n403@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n403 node_entity
   class n403 external_node
-  n404@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n404@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置滚动内容的视觉强调。" }
   class n404 node_entity
   class n404 external_node
-  n405@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n405@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n405 node_entity
   class n405 external_node
-  n406@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n406@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列音量设置行的控件与数值。" }
   class n406 node_entity
   class n406 external_node
-  n407@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n407@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提示设置页的会话来源。" }
   class n407 node_entity
   class n407 external_node
-  n408@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列图形设置占位项与帧率上限<br/>控件。" }
+  n408@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n408 node_entity
   class n408 external_node
-  n409@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n409@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n409 node_entity
   class n409 external_node
-  n410@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n410@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步调整对应的设置草稿字段。" }
   class n410 node_entity
   class n410 external_node
-  n411@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n411@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单标志的开发沙盒说明。" }
   class n411 node_entity
   class n411 external_node
-  n412@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列主菜单左侧的品牌、按钮和<br/>会话状态。" }
+  n412@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n412 node_entity
   class n412 external_node
-  n413@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n413@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n413 node_entity
   class n413 external_node
-  n414@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：承载主菜单快递员模型、展示动<br/>画与持握附件。" }
+  n414@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到菜单上一项导<br/>航。" }
   class n414 node_entity
   class n414 external_node
-  n415@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n415@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n415 node_entity
   class n415 external_node
-  n416@{ shape: rounded, label: "**init​_​collider​_​constructor​_​**<br/>**hierarchies**<br/>来自crate:avian3d ↗：按层级构造配置为<br/>后代生成碰撞体。" }
-  class n416 node_system
+  n416@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载并裁切设置页的滚动内容。" }
+  class n416 node_entity
   class n416 external_node
-  n417@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n417@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n417 node_entity
   class n417 external_node
-  n418@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  n418@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：组织主菜单背景相机及其生命周<br/>期。" }
   class n418 node_entity
   class n418 external_node
-  n419@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n419@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n419 node_entity
   class n419 external_node
-  n420@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：为玩法海岛提供<br/>随会话清理的日光照明。" }
+  n420@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把向右导航输入转成聚焦设置项<br/>的增加请求。" }
   class n420 node_entity
   class n420 external_node
-  n421@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n421@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n421 node_entity
   class n421 external_node
-  n422@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并拖动设置正文的滚动位<br/>置。" }
+  n422@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n422 node_entity
   class n422 external_node
-  n423@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：横向组织设置值及两侧的增减按<br/>钮。" }
+  n423@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把 E 键输入接到所<br/>属角色的拾取或放下动作。" }
   class n423 node_entity
   class n423 external_node
-  n424@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n424@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n424 node_entity
   class n424 external_node
-  n425@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n425@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n425 node_entity
   class n425 external_node
-  n426@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n426@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：统一路由菜单键盘与手柄操作。" }
   class n426 node_entity
   class n426 external_node
-  n427@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：纵向组织主菜单或暂停页的操作<br/>按钮。" }
+  n427@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n427 node_entity
   class n427 external_node
-  n428@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：纵向排列设置页的四个分类导航<br/>按钮。" }
+  n428@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n428 node_entity
   class n428 external_node
-  n429@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n429@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n429 node_entity
   class n429 external_node
-  n430@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单品牌标志中显示公司名<br/>称。" }
+  n430@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n430 node_entity
   class n430 external_node
-  n431@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n431@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并更新设置草稿的当前值。" }
   class n431 node_entity
   class n431 external_node
-  n432@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示尚未开放的图形设置选项。" }
-  class n432 node_entity
+  n432@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
+  class n432 node_system
   class n432 external_node
-  n433@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n433@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：分组呈现帮助页的操作说明。" }
   class n433 node_entity
   class n433 external_node
-  n434@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n434@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制待实现功能的提示标识。" }
   class n434 node_entity
   class n434 external_node
-  n435@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n435@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n435 node_entity
   class n435 external_node
-  n436@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把菜单标语面板定位到右下方的<br/>剩余空间。" }
+  n436@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n436 node_entity
   class n436 external_node
-  n437@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n437@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前聚焦设置的说明标题。" }
   class n437 node_entity
   class n437 external_node
-  n438@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到菜单上一项导<br/>航。" }
+  n438@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n438 node_entity
   class n438 external_node
-  n439@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载菜单底部品牌说明与操作提<br/>示。" }
+  n439@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现主菜单或暂停页的说明面<br/>板。" }
   class n439 node_entity
   class n439 external_node
-  n440@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织随设置视口整体滚动的标<br/>题、选项、说明和状态。" }
+  n440@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n440 node_entity
   class n440 external_node
-  n441@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：组织主菜单海岛展示舞台，并在<br/>退出主菜单时清理。" }
+  n441@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n441 node_entity
   class n441 external_node
-  n442@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n442@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n442 node_entity
   class n442 external_node
-  n443@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并拖动设置正文的滚动位<br/>置。" }
+  n443@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载固定菜单内容的背景布局。" }
   class n443 node_entity
   class n443 external_node
-  n444@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n444@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置页面与分类标题。" }
   class n444 node_entity
   class n444 external_node
-  n445@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在音频设置页触发测试音效。" }
+  n445@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道或手柄。" }
   class n445 node_entity
   class n445 external_node
-  n446@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n446@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的主题与操作说<br/>明。" }
   class n446 node_entity
   class n446 external_node
-  n447@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n447@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n447 node_entity
   class n447 external_node
-  n448@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把向右导航输入转成聚焦设置项<br/>的增加请求。" }
+  n448@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到聚焦设置项的增<br/>加操作。" }
   class n448 node_entity
   class n448 external_node
-  n449@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载菜单底部品牌说明与操作提<br/>示。" }
+  n449@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n449 node_entity
   class n449 external_node
-  n450@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n450@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列菜单标志的说明文字。" }
   class n450 node_entity
   class n450 external_node
-  n451@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n451@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n451 node_entity
   class n451 external_node
-  n452@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n452@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列主菜单与暂停页的内容分<br/>组。" }
   class n452 node_entity
   class n452 external_node
-  n453@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n453@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置滚动内容的视觉强调。" }
   class n453 node_entity
   class n453 external_node
-  n454@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把 E 键输入接到所<br/>属角色的拾取或放下动作。" }
+  n454@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：从帮助页返回先前菜单。" }
   class n454 node_entity
   class n454 external_node
-  n455@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n455@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制待实现功能的提示标识。" }
   class n455 node_entity
   class n455 external_node
-  n456@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置滚动面板与固定底部操作<br/>分配高度。" }
+  n456@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n456 node_entity
   class n456 external_node
-  n457@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n457@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n457 node_entity
   class n457 external_node
-  n458@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标识设置页面或当前设置分类。" }
+  n458@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n458 node_entity
   class n458 external_node
-  n459@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标识设置页面或当前设置分类。" }
+  n459@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现并响应设置滚动条滑块。" }
   class n459 node_entity
   class n459 external_node
-  n460@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：统一路由菜单键盘与手柄操作。" }
+  n460@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n460 node_entity
   class n460 external_node
-  n461@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
-  class n461 node_system
+  n461@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
+  class n461 node_entity
   class n461 external_node
-  n462@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n462@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置保存状态与操作提示。" }
   class n462 node_entity
   class n462 external_node
-  n463@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在设置侧栏组织品牌标志、标题<br/>与短句。" }
+  n463@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单会话提示与说明文字。" }
   class n463 node_entity
   class n463 external_node
-  n464@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载当前菜单正文、页脚和暂停<br/>遮罩。" }
+  n464@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n464 node_entity
   class n464 external_node
-  n465@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n465@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n465 node_entity
   class n465 external_node
-  n466@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的顺序编号。" }
+  n466@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载并裁切设置页的滚动内容。" }
   class n466 node_entity
   class n466 external_node
-  n467@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n467@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到聚焦设置项的减<br/>少操作。" }
   class n467 node_entity
   class n467 external_node
-  n468@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：横排组合纸箱品牌图形与公司<br/>名。" }
+  n468@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的主题与操作说<br/>明。" }
   class n468 node_entity
   class n468 external_node
-  n469@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在音量填充末端绘制当前位置手<br/>柄。" }
+  n469@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单页脚的项目说明。" }
   class n469 node_entity
   class n469 external_node
-  n470@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n470@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助卡片中的标题与操作说<br/>明。" }
   class n470 node_entity
   class n470 external_node
-  n471@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n471@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n471 node_entity
   class n471 external_node
-  n472@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n472@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n472 node_entity
   class n472 external_node
-  n473@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制未开放菜单选项的<br/>Coming Soon 徽章底板。" }
-  class n473 node_entity
+  n473@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  class n473 node_system
   class n473 external_node
-  n474@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载菜单底部品牌说明与操作提<br/>示。" }
+  n474@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：分配固定菜单内容区域的空间。" }
   class n474 node_entity
   class n474 external_node
-  n475@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n475@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n475 node_entity
   class n475 external_node
-  n476@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n476@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n476 node_entity
   class n476 external_node
-  n477@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置侧栏的暂停或欢迎提<br/>示。" }
+  n477@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n477 node_entity
   class n477 external_node
-  n478@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：原位显示并刷新对应设置字段的<br/>当前草稿值。" }
+  n478@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页可滚动的内容分组。" }
   class n478 node_entity
   class n478 external_node
-  n479@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n479@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n479 node_entity
   class n479 external_node
-  n480@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到聚焦设置项的增<br/>加操作。" }
+  n480@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页可滚动的内容分组。" }
   class n480 node_entity
   class n480 external_node
-  n481@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：承载海岛物品的<br/>种类、拾取能力、握点和出生姿态。" }
+  n481@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制待实现功能的提示标识。" }
   class n481 node_entity
   class n481 external_node
-  n482@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载菜单底部品牌说明与操作提<br/>示。" }
+  n482@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n482 node_entity
   class n482 external_node
-  n483@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n483@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助页的键位与动作名称。" }
   class n483 node_entity
   class n483 external_node
-  n484@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n484@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n484 node_entity
   class n484 external_node
-  n485@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制未开放菜单选项的<br/>Coming Soon 徽章底板。" }
+  n485@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n485 node_entity
   class n485 external_node
-  n486@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n486@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列主菜单与暂停页的内容分<br/>组。" }
   class n486 node_entity
   class n486 external_node
-  n487@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载当前菜单正文、页脚和暂停<br/>遮罩。" }
+  n487@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按草稿音量绘制滑条填充。" }
   class n487 node_entity
   class n487 external_node
-  n488@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n488@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页可滚动的内容分组。" }
   class n488 node_entity
   class n488 external_node
-  n489@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n489@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：创建可拾取并参<br/>与物理的灰盒方块。" }
   class n489 node_entity
   class n489 external_node
-  n490@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n490@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n490 node_entity
   class n490 external_node
-  n491@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：横排组合纸箱品牌图形与公司<br/>名。" }
+  n491@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n491 node_entity
   class n491 external_node
-  n492@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组合当前设置分类的标题与设置<br/>行。" }
+  n492@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n492 node_entity
   class n492 external_node
-  n493@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：用金色编号区分帮助页的操作卡<br/>片。" }
+  n493@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n493 node_entity
   class n493 external_node
-  n494@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助卡片内的操作键帽外<br/>框。" }
+  n494@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n494 node_entity
   class n494 external_node
-  n495@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n495@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置页面与分类标题。" }
   class n495 node_entity
   class n495 external_node
-  n496@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n496@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置滚动内容的视觉强调。" }
   class n496 node_entity
   class n496 external_node
-  n497@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载菜单底部品牌说明与操作提<br/>示。" }
+  n497@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提示设置页的会话来源。" }
   class n497 node_entity
   class n497 external_node
-  n498@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n498@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n498 node_entity
   class n498 external_node
-  n499@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制纸箱标志内部的胶带与箱体<br/>标记。" }
+  n499@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现主菜单或暂停页的说明面<br/>板。" }
   class n499 node_entity
   class n499 external_node
-  n500@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置说明区的品牌落款。" }
+  n500@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n500 node_entity
   class n500 external_node
-  n501@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到聚焦设置项的减<br/>少操作。" }
+  n501@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n501 node_entity
   class n501 external_node
-  n502@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  n502@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的主题与操作说<br/>明。" }
   class n502 node_entity
   class n502 external_node
-  n503@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n503@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制待实现功能的提示标识。" }
   class n503 node_entity
   class n503 external_node
-  n504@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明音量行对应的音频通道。" }
+  n504@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示音乐音量设置的占位行。" }
   class n504 node_entity
   class n504 external_node
-  n505@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n505@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n505 node_entity
   class n505 external_node
-  n506@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制未开放菜单选项的<br/>Coming Soon 徽章底板。" }
+  n506@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n506 node_entity
   class n506 external_node
-  n507@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把菜单标语面板定位到右下方的<br/>剩余空间。" }
+  n507@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载固定菜单内容的背景布局。" }
   class n507 node_entity
   class n507 external_node
-  n508@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n508@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n508 node_entity
   class n508 external_node
-  n509@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载一项玩法的标题、键位与操<br/>作说明。" }
+  n509@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n509 node_entity
   class n509 external_node
-  n510@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  n510@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织当前菜单页面与固定页脚。" }
   class n510 node_entity
   class n510 external_node
-  n511@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为音量百分比或静音文字提供居<br/>中显示空间。" }
+  n511@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n511 node_entity
   class n511 external_node
-  n512@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示无障碍设置分类的说明文<br/>字。" }
+  n512@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助卡片中的标题与操作说<br/>明。" }
   class n512 node_entity
   class n512 external_node
-  n513@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n513@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织设置内容视口与滚动轨道。" }
   class n513 node_entity
   class n513 external_node
-  n514@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置说明区的品牌落款。" }
+  n514@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助卡片中的标题与操作说<br/>明。" }
   class n514 node_entity
   class n514 external_node
-  n515@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
-  class n515 node_system
+  n515@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列帮助卡片中的标题与操作说<br/>明。" }
+  class n515 node_entity
   class n515 external_node
-  n516@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按窗口布局排列设置内容与说明<br/>面板。" }
+  n516@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n516 node_entity
   class n516 external_node
-  n517@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置滚动面板与固定底部操作<br/>分配高度。" }
+  n517@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n517 node_entity
   class n517 external_node
-  n518@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置滚动面板与固定底部操作<br/>分配高度。" }
+  n518@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n518 node_entity
   class n518 external_node
-  n519@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n519@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：汇总 WASD 输入并<br/>驱动对应角色的移动意图。" }
   class n519 node_entity
   class n519 external_node
-  n520@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n520@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n520 node_entity
   class n520 external_node
-  n521@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n521@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n521 node_entity
   class n521 external_node
-  n522@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承接当前菜单页面的主体内容并<br/>为页脚保留空间。" }
+  n522@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n522 node_entity
   class n522 external_node
-  n523@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织鼠标灵敏度或 Y 轴反转的<br/>调整控件。" }
+  n523@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n523 node_entity
   class n523 external_node
-  n524@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n524@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n524 node_entity
   class n524 external_node
-  n525@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在设置总标题下绘制金色强调<br/>线。" }
+  n525@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n525 node_entity
   class n525 external_node
-  n526@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置滚动视口和滚动条分配共<br/>同空间。" }
+  n526@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列音量设置行的控件与数值。" }
   class n526 node_entity
   class n526 external_node
-  n527@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示主菜单未开放功能及<br/>Coming Soon 状态。" }
+  n527@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n527 node_entity
   class n527 external_node
-  n528@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n528@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页可滚动的内容分组。" }
   class n528 node_entity
   class n528 external_node
-  n529@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排布帮助页顶部标题与导语。" }
+  n529@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的键名。" }
   class n529 node_entity
   class n529 external_node
-  n530@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标识设置页面或当前设置分类。" }
+  n530@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到菜单下一项导<br/>航。" }
   class n530 node_entity
   class n530 external_node
-  n531@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n531@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n531 node_entity
   class n531 external_node
-  n532@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组合当前设置分类的标题与设置<br/>行。" }
-  class n532 node_entity
+  n532@{ shape: rounded, label: "**check​_​tonemapping​_​none**<br/>来自crate:bevy​_​core​_​pipeline ↗：警告<br/>关闭色调映射后仍配置无效效果的相机。" }
+  class n532 node_system
   class n532 external_node
-  n533@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
-  class n533 node_entity
+  n533@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
+  class n533 node_system
   class n533 external_node
-  n534@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  n534@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把鼠标位移接到所<br/>属玩家的观察动作。" }
   class n534 node_entity
   class n534 external_node
-  n535@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：随音量草稿刷新百分比或静音文<br/>字。" }
+  n535@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n535 node_entity
   class n535 external_node
-  n536@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n536@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n536 node_entity
   class n536 external_node
-  n537@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单会话状态前的金色圆<br/>点。" }
+  n537@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n537 node_entity
   class n537 external_node
-  n538@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
+  n538@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到统一菜单返回与<br/>暂停入口。" }
   class n538 node_entity
   class n538 external_node
-  n539@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明普通设置行正在调整的字<br/>段。" }
+  n539@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n539 node_entity
   class n539 external_node
-  n540@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单品牌行中绘制纸箱图标。" }
+  n540@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n540 node_entity
   class n540 external_node
-  n541@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：汇集页脚的导航、确认与返回提<br/>示。" }
+  n541@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置数值文字提供稳定显示区<br/>域。" }
   class n541 node_entity
   class n541 external_node
-  n542@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排布帮助卡片的序号徽章与玩法<br/>标题。" }
+  n542@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n542 node_entity
   class n542 external_node
-  n543@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：容纳随焦点更新的设置说明与包<br/>裹提示。" }
+  n543@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织当前菜单页面与固定页脚。" }
   class n543 node_entity
   class n543 external_node
-  n544@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：汇集页脚的导航、确认与返回提<br/>示。" }
+  n544@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n544 node_entity
   class n544 external_node
-  n545@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n545@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n545 node_entity
   class n545 external_node
-  n546@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n546@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：分配固定菜单内容区域的空间。" }
   class n546 node_entity
   class n546 external_node
-  n547@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n547@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n547 node_entity
   class n547 external_node
-  n548@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n548@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n548 node_entity
   class n548 external_node
-  n549@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示主菜单或暂停页的状态与标<br/>语。" }
+  n549@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列菜单标志的说明文字。" }
   class n549 node_entity
   class n549 external_node
-  n550@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
+  n550@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n550 node_entity
   class n550 external_node
-  n551@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n551@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n551 node_entity
   class n551 external_node
-  n552@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>来自crate:bevy​_​enhanced​_​input ↗：求<br/>值上下文输入并更新动作状态。" }
-  class n552 node_system
+  n552@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置分类与侧栏提示。" }
+  class n552 node_entity
   class n552 external_node
-  n553@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置滚动视口和滚动条分配共<br/>同空间。" }
+  n553@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n553 node_entity
   class n553 external_node
-  n554@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制未开放菜单选项的<br/>Coming Soon 徽章底板。" }
+  n554@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n554 node_entity
   class n554 external_node
-  n555@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标识设置页面或当前设置分类。" }
+  n555@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n555 node_entity
   class n555 external_node
-  n556@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n556@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n556 node_entity
   class n556 external_node
-  n557@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为设置滚动视口和滚动条分配共<br/>同空间。" }
+  n557@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n557 node_entity
   class n557 external_node
-  n558@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置说明区的品牌落款。" }
+  n558@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示无障碍设置的待实现选项。" }
   class n558 node_entity
   class n558 external_node
-  n559@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n559@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置保存状态与操作提示。" }
   class n559 node_entity
   class n559 external_node
-  n560@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n560@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单页脚的项目说明。" }
   class n560 node_entity
   class n560 external_node
-  n561@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n561@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示无障碍设置的待实现选项。" }
   class n561 node_entity
   class n561 external_node
-  n562@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：限定设置正文的可视高度，容纳<br/>内部滚动内容。" }
+  n562@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前音量设置项的名称。" }
   class n562 node_entity
   class n562 external_node
-  n563@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载固定的设置品牌区、分类导<br/>航与会话提示。" }
+  n563@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：分配固定菜单内容区域的空间。" }
   class n563 node_entity
   class n563 external_node
-  n564@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并拖动设置正文的滚动位<br/>置。" }
+  n564@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助卡片的主题与操作说<br/>明。" }
   class n564 node_entity
   class n564 external_node
-  n565@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为普通设置值提供独立居中的显<br/>示区域。" }
+  n565@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制控制设置的待实现标识。" }
   class n565 node_entity
   class n565 external_node
-  n566@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n566@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：分组呈现帮助页的操作说明。" }
   class n566 node_entity
   class n566 external_node
-  n567@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：说明页脚键位提示所对应的菜单<br/>动作。" }
+  n567@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单会话提示与说明文字。" }
   class n567 node_entity
   class n567 external_node
-  n568@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n568@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n568 node_entity
   class n568 external_node
-  n569@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n569@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n569 node_entity
   class n569 external_node
-  n570@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：汇总 WASD 输入并<br/>驱动对应角色的移动意图。" }
+  n570@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n570 node_entity
   class n570 external_node
-  n571@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置说明区的纸箱图章。" }
+  n571@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前聚焦设置的说明标题。" }
   class n571 node_entity
   class n571 external_node
-  n572@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n572@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n572 node_entity
   class n572 external_node
-  n573@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
+  n573@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n573 node_entity
   class n573 external_node
-  n574@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n574@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n574 node_entity
   class n574 external_node
-  n575@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制未开放菜单选项的<br/>Coming Soon 徽章底板。" }
+  n575@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置页面与分类标题。" }
   class n575 node_entity
   class n575 external_node
-  n576@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制帮助卡片内的操作键帽外<br/>框。" }
+  n576@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n576 node_entity
   class n576 external_node
-  n577@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：横排组合纸箱品牌图形与公司<br/>名。" }
+  n577@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助页的键位与动作名称。" }
   class n577 node_entity
   class n577 external_node
-  n578@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到菜单下一项导<br/>航。" }
+  n578@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单标志的开发沙盒说明。" }
   class n578 node_entity
   class n578 external_node
-  n579@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置说明面板底部的包裹标<br/>志与提示语。" }
+  n579@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n579 node_entity
   class n579 external_node
-  n580@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n580@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n580 node_entity
   class n580 external_node
-  n581@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组合当前设置分类的标题与设置<br/>行。" }
+  n581@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载玩家键鼠玩法<br/>输入与角色控制关系。" }
   class n581 node_entity
   class n581 external_node
-  n582@{ shape: rounded, label: "**check​_​tonemapping​_​none**<br/>来自crate:bevy​_​core​_​pipeline ↗：警告<br/>关闭色调映射后仍配置无效效果的相机。" }
-  class n582 node_system
+  n582@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现并响应设置滚动条滑块。" }
+  class n582 node_entity
   class n582 external_node
-  n583@{ shape: rounded, label: "**check​_​parent​_​has​_​component**<br/>来自crate:bevy​_​app ↗：报告仍不满足组<br/>件层级要求的父子关系。" }
-  class n583 node_system
+  n583@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制待实现功能的提示标识。" }
+  class n583 node_entity
   class n583 external_node
-  n584@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把鼠标位移接到所<br/>属玩家的观察动作。" }
+  n584@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n584 node_entity
   class n584 external_node
-  n585@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助页的标题、开场介绍或<br/>底部提示。" }
+  n585@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单品牌标题与操作标语。" }
   class n585 node_entity
   class n585 external_node
-  n586@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：用填充宽度显示对应音量的当前<br/>百分比。" }
+  n586@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n586 node_entity
   class n586 external_node
-  n587@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载帮助页顶部图章、标题与导<br/>语。" }
+  n587@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n587 node_entity
   class n587 external_node
-  n588@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n588@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列固定页脚的品牌与操作提<br/>示。" }
   class n588 node_entity
   class n588 external_node
-  n589@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载固定的设置品牌区、分类导<br/>航与会话提示。" }
+  n589@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n589 node_entity
   class n589 external_node
-  n590@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示主菜单或暂停页的状态与标<br/>语。" }
+  n590@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：保存灰盒玩家身<br/>份与运动状态。" }
   class n590 node_entity
   class n590 external_node
-  n591@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n591@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示待实现功能名称与提示文<br/>字。" }
   class n591 node_entity
   class n591 external_node
-  n592@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把设备输入接到统一菜单返回与<br/>暂停入口。" }
+  n592@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载固定菜单内容的背景布局。" }
   class n592 node_entity
   class n592 external_node
-  n593@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：横向组织设置值及两侧的增减按<br/>钮。" }
+  n593@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：组织当前菜单页面与固定页脚。" }
   class n593 node_entity
   class n593 external_node
-  n594@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n594@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n594 node_entity
   class n594 external_node
-  n595@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示帮助页的标题、开场介绍或<br/>底部提示。" }
+  n595@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n595 node_entity
   class n595 external_node
-  n596@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n596@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单键位与对应操作。" }
   class n596 node_entity
   class n596 external_node
-  n597@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并原位刷新设置保存状态与<br/>草稿提示。" }
+  n597@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载并裁切设置页的滚动内容。" }
   class n597 node_entity
   class n597 external_node
-  n598@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
+  n598@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n598 node_entity
   class n598 external_node
-  n599@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：原位显示并刷新对应设置字段的<br/>当前草稿值。" }
+  n599@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮图标分配独立空间。" }
   class n599 node_entity
   class n599 external_node
-  n600@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
+  n600@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页可滚动的内容分组。" }
   class n600 node_entity
   class n600 external_node
-  n601@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：随音量草稿刷新百分比或静音文<br/>字。" }
+  n601@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n601 node_entity
   class n601 external_node
-  n602@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为音量百分比或静音文字提供居<br/>中显示空间。" }
+  n602@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列设置页外壳与固定操作区。" }
   class n602 node_entity
   class n602 external_node
-  n603@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
+  n603@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n603 node_entity
   class n603 external_node
-  n604@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示当前聚焦设置项的详细说<br/>明。" }
+  n604@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载设置面板的纵向滚动轨道。" }
   class n604 node_entity
   class n604 external_node
-  n605@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
+  n605@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示紧凑菜单操作按钮的文字。" }
   class n605 node_entity
   class n605 external_node
-  n606@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
+  n606@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n606 node_entity
   class n606 external_node
-  n607@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
+  n607@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单操作提示的键帽。" }
   class n607 node_entity
   class n607 external_node
-  n608@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n608@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n608 node_entity
   class n608 external_node
-  n609@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道底并容纳音<br/>量填充。" }
+  n609@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的图标与导航文<br/>字。" }
   class n609 node_entity
   class n609 external_node
-  n610@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并拖动设置正文的滚动位<br/>置。" }
-  class n610 node_entity
-  class n610 external_node
-  n611@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
-  class n611 node_entity
-  class n611 external_node
-  n612@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
-  class n612 node_entity
-  class n612 external_node
-  n613@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
-  class n613 node_entity
-  class n613 external_node
-  n614@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明普通设置行正在调整的字<br/>段。" }
-  class n614 node_entity
-  class n614 external_node
-  n615@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
-  class n615 node_entity
-  class n615 external_node
-  n616@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
-  class n616 node_entity
-  class n616 external_node
-  n617@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载当前菜单正文、页脚和暂停<br/>遮罩。" }
-  class n617 node_entity
-  class n617 external_node
-  n618@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
-  class n618 node_entity
-  class n618 external_node
-  n619@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
-  class n619 node_entity
-  class n619 external_node
-  n620@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
-  class n620 node_entity
-  class n620 external_node
-  n621@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单品牌行中绘制纸箱图标。" }
-  class n621 node_entity
-  class n621 external_node
-  n622@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：固定排列恢复默认与保存／返回<br/>操作。" }
-  class n622 node_entity
-  class n622 external_node
-  n623@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为普通设置值提供独立居中的显<br/>示区域。" }
-  class n623 node_entity
-  class n623 external_node
-  n624@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载当前菜单正文、页脚和暂停<br/>遮罩。" }
-  class n624 node_entity
-  class n624 external_node
-  n625@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
-  class n625 node_entity
-  class n625 external_node
-  n626@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
-  class n626 node_entity
-  class n626 external_node
-  n627@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
-  class n627 node_entity
-  class n627 external_node
-  n628@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：标明未开放功能的名称或<br/>Coming Soon 状态。" }
-  class n628 node_entity
-  class n628 external_node
-  n629@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
-  class n629 node_entity
-  class n629 external_node
-  n630@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在设置侧栏组织品牌标志、标题<br/>与短句。" }
-  class n630 node_entity
-  class n630 external_node
-  n631@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并原位刷新设置保存状态与<br/>草稿提示。" }
-  class n631 node_entity
-  class n631 external_node
-  n632@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
-  class n632 node_entity
-  class n632 external_node
-  n633@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：汇集页脚的导航、确认与返回提<br/>示。" }
-  class n633 node_entity
-  class n633 external_node
-  n634@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
-  class n634 node_entity
-  class n634 external_node
-  n635@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
-  class n635 node_entity
-  class n635 external_node
-  n636@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：固定排列恢复默认与保存／返回<br/>操作。" }
-  class n636 node_entity
-  class n636 external_node
-  n637@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制设置说明区的纸箱图章。" }
-  class n637 node_entity
-  class n637 external_node
-  n638@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
-  class n638 node_entity
-  class n638 external_node
-  n639@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
-  class n639 node_entity
-  class n639 external_node
-  n640@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页的两行标<br/>语。" }
-  class n640 node_entity
-  class n640 external_node
-  n641@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制音量滑条的轨道底并容纳音<br/>量填充。" }
-  class n641 node_entity
-  class n641 external_node
-  n642@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
-  class n642 node_entity
-  class n642 external_node
-  n643@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单页脚显示物流公司品牌短<br/>句。" }
-  class n643 node_entity
-  class n643 external_node
-  n644@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
-  class n644 node_entity
-  class n644 external_node
-  n645@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：把海岛环境与包裹道具布置到菜<br/>单展示舞台。" }
-  class n645 node_entity
-  class n645 external_node
-  n646@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把帮助卡片的按键与对应操作组<br/>成提示行。" }
-  class n646 node_entity
-  class n646 external_node
-  n647@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
-  class n647 node_entity
-  class n647 external_node
-  n648@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：容纳随焦点更新的设置说明与包<br/>裹提示。" }
-  class n648 node_entity
-  class n648 external_node
-  n649@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载当前菜单正文、页脚和暂停<br/>遮罩。" }
-  class n649 node_entity
-  class n649 external_node
-  n650@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：用填充宽度显示对应音量的当前<br/>百分比。" }
-  class n650 node_entity
-  class n650 external_node
-  n651@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：限定设置正文的可视高度，容纳<br/>内部滚动内容。" }
-  class n651 node_entity
-  class n651 external_node
-  n652@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
-  class n652 node_entity
-  class n652 external_node
-  n653@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载玩家键鼠玩法<br/>输入与角色控制关系。" }
-  class n653 node_entity
-  class n653 external_node
-  n654@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
-  class n654 node_entity
-  class n654 external_node
-  n655@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
-  class n655 node_entity
-  class n655 external_node
-  n656@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
-  class n656 node_entity
-  class n656 external_node
-  n657@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制未开放菜单选项的<br/>Coming Soon 徽章底板。" }
-  class n657 node_entity
-  class n657 external_node
-  n658@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排布帮助卡片的序号徽章与玩法<br/>标题。" }
-  class n658 node_entity
-  class n658 external_node
-  n659@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示设置侧栏的暂停或欢迎提<br/>示。" }
-  class n659 node_entity
-  class n659 external_node
-  n660@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
-  class n660 node_entity
-  class n660 external_node
-  n661@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
-  class n661 node_entity
-  class n661 external_node
-  n662@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
-  class n662 node_entity
-  class n662 external_node
-  n663@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示小型操作按钮的标签或调整<br/>箭头。" }
-  class n663 node_entity
-  class n663 external_node
-  n664@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
-  class n664 node_entity
-  class n664 external_node
-  n665@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：排列音量减少按钮、滑条、增加<br/>按钮和数值区。" }
-  class n665 node_entity
-  class n665 external_node
-  n666@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供可导航和指针拖动的音量调<br/>节入口。" }
-  class n666 node_entity
-  class n666 external_node
-  n667@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
-  class n667 node_entity
-  class n667 external_node
-  n668@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示带阴影的菜单品牌标题与标<br/>语。" }
-  class n668 node_entity
-  class n668 external_node
-  n669@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并原位更新当前设置项的说<br/>明标题。" }
-  class n669 node_entity
-  class n669 external_node
-  n670@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：把页脚按键图示与对应动作组成<br/>一条提示。" }
-  class n670 node_entity
-  class n670 external_node
-  n671@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示操作提示键帽中的按键文<br/>字。" }
-  class n671 node_entity
-  class n671 external_node
-  n672@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承接当前菜单页面的主体内容并<br/>为页脚保留空间。" }
-  class n672 node_entity
-  class n672 external_node
-  n673@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
-  class n673 node_entity
-  class n673 external_node
-  n674@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：用金色编号区分帮助页的操作卡<br/>片。" }
-  class n674 node_entity
-  class n674 external_node
-  n675@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：展示按键重绑的未实现占位提<br/>示。" }
-  class n675 node_entity
-  class n675 external_node
-  n676@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示菜单按钮的符号、动作标题<br/>或进入箭头。" }
-  class n676 node_entity
-  class n676 external_node
-  n677@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：为菜单按钮的前置图标保留独立<br/>布局空间。" }
-  class n677 node_entity
-  class n677 external_node
-  n678@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：并排组织设置页的 Apply 与<br/>Back 按钮。" }
-  class n678 node_entity
-  class n678 external_node
-  n679@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
-  class n679 node_entity
-  class n679 external_node
-  n680@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供可导航和指针拖动的音量调<br/>节入口。" }
-  class n680 node_entity
-  class n680 external_node
-  n681@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：绘制菜单页脚操作提示的按键外<br/>框。" }
-  class n681 node_entity
-  class n681 external_node
-  n682@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在菜单页脚显示物流公司品牌短<br/>句。" }
-  class n682 node_entity
-  class n682 external_node
-  n683@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示尚未开放的图形设置选项。" }
-  class n683 node_entity
-  class n683 external_node
-  n684@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承接当前菜单页面的主体内容并<br/>为页脚保留空间。" }
-  class n684 node_entity
-  class n684 external_node
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
   n2 e1@-->|"可能包含"| n0
@@ -2114,16 +1889,16 @@ flowchart LR
   class e8 edge_reference
   n10 e9@-->|"可能包含"| n0
   class e9 edge_reference
-  n11 e10@-->|"可能包含"| n0
-  class e10 edge_reference
-  n0 e11@--> n12
-  class e11 edge_read
+  n0 e10@--> n11
+  class e10 edge_read
+  n12 e11@-->|"可能包含"| n0
+  class e11 edge_reference
   n13 e12@-->|"可能包含"| n0
   class e12 edge_reference
   n14 e13@-->|"可能包含"| n0
   class e13 edge_reference
-  n0 e14@--> n15
-  class e14 edge_read
+  n15 e14@-->|"可能包含"| n0
+  class e14 edge_reference
   n16 e15@-->|"可能包含"| n0
   class e15 edge_reference
   n17 e16@-->|"可能包含"| n0
@@ -2166,8 +1941,8 @@ flowchart LR
   class e34 edge_reference
   n36 e35@-->|"可能包含"| n0
   class e35 edge_reference
-  n0 e36@--> n37
-  class e36 edge_read
+  n37 e36@-->|"可能包含"| n0
+  class e36 edge_reference
   n38 e37@-->|"可能包含"| n0
   class e37 edge_reference
   n39 e38@-->|"可能包含"| n0
@@ -2300,8 +2075,8 @@ flowchart LR
   class e101 edge_reference
   n103 e102@-->|"可能包含"| n0
   class e102 edge_reference
-  n104 e103@-->|"插入"| n0
-  class e103 edge_write
+  n104 e103@-->|"可能包含"| n0
+  class e103 edge_reference
   n105 e104@-->|"可能包含"| n0
   class e104 edge_reference
   n106 e105@-->|"可能包含"| n0
@@ -2376,8 +2151,8 @@ flowchart LR
   class e139 edge_reference
   n141 e140@-->|"可能包含"| n0
   class e140 edge_reference
-  n142 e141@-->|"可能包含"| n0
-  class e141 edge_reference
+  n0 e141@--> n142
+  class e141 edge_read
   n143 e142@-->|"可能包含"| n0
   class e142 edge_reference
   n144 e143@-->|"可能包含"| n0
@@ -2668,8 +2443,8 @@ flowchart LR
   class e285 edge_reference
   n287 e286@-->|"可能包含"| n0
   class e286 edge_reference
-  n0 e287@--> n288
-  class e287 edge_read
+  n288 e287@-->|"可能包含"| n0
+  class e287 edge_reference
   n289 e288@-->|"可能包含"| n0
   class e288 edge_reference
   n290 e289@-->|"可能包含"| n0
@@ -2746,24 +2521,24 @@ flowchart LR
   class e324 edge_reference
   n326 e325@-->|"可能包含"| n0
   class e325 edge_reference
-  n327 e326@-->|"可能包含"| n0
-  class e326 edge_reference
+  n327 e326@-->|"插入"| n0
+  class e326 edge_write
   n328 e327@-->|"可能包含"| n0
   class e327 edge_reference
   n329 e328@-->|"可能包含"| n0
   class e328 edge_reference
   n330 e329@-->|"可能包含"| n0
   class e329 edge_reference
-  n331 e330@-->|"可能包含"| n0
-  class e330 edge_reference
+  n0 e330@--> n331
+  class e330 edge_read
   n332 e331@-->|"可能包含"| n0
   class e331 edge_reference
   n333 e332@-->|"可能包含"| n0
   class e332 edge_reference
   n334 e333@-->|"可能包含"| n0
   class e333 edge_reference
-  n335 e334@-->|"可能包含"| n0
-  class e334 edge_reference
+  n0 e334@--> n335
+  class e334 edge_read
   n336 e335@-->|"可能包含"| n0
   class e335 edge_reference
   n337 e336@-->|"可能包含"| n0
@@ -2828,12 +2603,12 @@ flowchart LR
   class e365 edge_reference
   n367 e366@-->|"可能包含"| n0
   class e366 edge_reference
-  n368 e367@-->|"插入"| n0
-  class e367 edge_write
+  n368 e367@-->|"可能包含"| n0
+  class e367 edge_reference
   n369 e368@-->|"可能包含"| n0
   class e368 edge_reference
-  n0 e369@--> n370
-  class e369 edge_read
+  n370 e369@-->|"可能包含"| n0
+  class e369 edge_reference
   n371 e370@-->|"可能包含"| n0
   class e370 edge_reference
   n372 e371@-->|"可能包含"| n0
@@ -2878,8 +2653,8 @@ flowchart LR
   class e390 edge_reference
   n392 e391@-->|"可能包含"| n0
   class e391 edge_reference
-  n393 e392@-->|"可能包含"| n0
-  class e392 edge_reference
+  n0 e392@--> n393
+  class e392 edge_read
   n394 e393@-->|"可能包含"| n0
   class e393 edge_reference
   n395 e394@-->|"可能包含"| n0
@@ -2924,8 +2699,8 @@ flowchart LR
   class e413 edge_reference
   n415 e414@-->|"可能包含"| n0
   class e414 edge_reference
-  n0 e415@--> n416
-  class e415 edge_read
+  n416 e415@-->|"可能包含"| n0
+  class e415 edge_reference
   n417 e416@-->|"可能包含"| n0
   class e416 edge_reference
   n418 e417@-->|"可能包含"| n0
@@ -2956,8 +2731,8 @@ flowchart LR
   class e429 edge_reference
   n431 e430@-->|"可能包含"| n0
   class e430 edge_reference
-  n432 e431@-->|"可能包含"| n0
-  class e431 edge_reference
+  n0 e431@--> n432
+  class e431 edge_read
   n433 e432@-->|"可能包含"| n0
   class e432 edge_reference
   n434 e433@-->|"可能包含"| n0
@@ -3014,8 +2789,8 @@ flowchart LR
   class e458 edge_reference
   n460 e459@-->|"可能包含"| n0
   class e459 edge_reference
-  n0 e460@--> n461
-  class e460 edge_read
+  n461 e460@-->|"可能包含"| n0
+  class e460 edge_reference
   n462 e461@-->|"可能包含"| n0
   class e461 edge_reference
   n463 e462@-->|"可能包含"| n0
@@ -3038,8 +2813,8 @@ flowchart LR
   class e470 edge_reference
   n472 e471@-->|"可能包含"| n0
   class e471 edge_reference
-  n473 e472@-->|"可能包含"| n0
-  class e472 edge_reference
+  n0 e472@--> n473
+  class e472 edge_read
   n474 e473@-->|"可能包含"| n0
   class e473 edge_reference
   n475 e474@-->|"可能包含"| n0
@@ -3122,8 +2897,8 @@ flowchart LR
   class e512 edge_reference
   n514 e513@-->|"可能包含"| n0
   class e513 edge_reference
-  n0 e514@--> n515
-  class e514 edge_read
+  n515 e514@-->|"可能包含"| n0
+  class e514 edge_reference
   n516 e515@-->|"可能包含"| n0
   class e515 edge_reference
   n517 e516@-->|"可能包含"| n0
@@ -3156,10 +2931,10 @@ flowchart LR
   class e529 edge_reference
   n531 e530@-->|"可能包含"| n0
   class e530 edge_reference
-  n532 e531@-->|"可能包含"| n0
-  class e531 edge_reference
-  n533 e532@-->|"可能包含"| n0
-  class e532 edge_reference
+  n0 e531@--> n532
+  class e531 edge_read
+  n0 e532@--> n533
+  class e532 edge_read
   n534 e533@-->|"可能包含"| n0
   class e533 edge_reference
   n535 e534@-->|"可能包含"| n0
@@ -3196,8 +2971,8 @@ flowchart LR
   class e549 edge_reference
   n551 e550@-->|"可能包含"| n0
   class e550 edge_reference
-  n0 e551@--> n552
-  class e551 edge_read
+  n552 e551@-->|"可能包含"| n0
+  class e551 edge_reference
   n553 e552@-->|"可能包含"| n0
   class e552 edge_reference
   n554 e553@-->|"可能包含"| n0
@@ -3256,10 +3031,10 @@ flowchart LR
   class e579 edge_reference
   n581 e580@-->|"可能包含"| n0
   class e580 edge_reference
-  n0 e581@--> n582
-  class e581 edge_read
-  n0 e582@--> n583
-  class e582 edge_read
+  n582 e581@-->|"可能包含"| n0
+  class e581 edge_reference
+  n583 e582@-->|"可能包含"| n0
+  class e582 edge_reference
   n584 e583@-->|"可能包含"| n0
   class e583 edge_reference
   n585 e584@-->|"可能包含"| n0
@@ -3312,156 +3087,6 @@ flowchart LR
   class e607 edge_reference
   n609 e608@-->|"可能包含"| n0
   class e608 edge_reference
-  n610 e609@-->|"可能包含"| n0
-  class e609 edge_reference
-  n611 e610@-->|"可能包含"| n0
-  class e610 edge_reference
-  n612 e611@-->|"可能包含"| n0
-  class e611 edge_reference
-  n613 e612@-->|"可能包含"| n0
-  class e612 edge_reference
-  n614 e613@-->|"可能包含"| n0
-  class e613 edge_reference
-  n615 e614@-->|"可能包含"| n0
-  class e614 edge_reference
-  n616 e615@-->|"可能包含"| n0
-  class e615 edge_reference
-  n617 e616@-->|"可能包含"| n0
-  class e616 edge_reference
-  n618 e617@-->|"可能包含"| n0
-  class e617 edge_reference
-  n619 e618@-->|"可能包含"| n0
-  class e618 edge_reference
-  n620 e619@-->|"可能包含"| n0
-  class e619 edge_reference
-  n621 e620@-->|"可能包含"| n0
-  class e620 edge_reference
-  n622 e621@-->|"可能包含"| n0
-  class e621 edge_reference
-  n623 e622@-->|"可能包含"| n0
-  class e622 edge_reference
-  n624 e623@-->|"可能包含"| n0
-  class e623 edge_reference
-  n625 e624@-->|"可能包含"| n0
-  class e624 edge_reference
-  n626 e625@-->|"可能包含"| n0
-  class e625 edge_reference
-  n627 e626@-->|"可能包含"| n0
-  class e626 edge_reference
-  n628 e627@-->|"可能包含"| n0
-  class e627 edge_reference
-  n629 e628@-->|"可能包含"| n0
-  class e628 edge_reference
-  n630 e629@-->|"可能包含"| n0
-  class e629 edge_reference
-  n631 e630@-->|"可能包含"| n0
-  class e630 edge_reference
-  n632 e631@-->|"可能包含"| n0
-  class e631 edge_reference
-  n633 e632@-->|"可能包含"| n0
-  class e632 edge_reference
-  n634 e633@-->|"可能包含"| n0
-  class e633 edge_reference
-  n635 e634@-->|"可能包含"| n0
-  class e634 edge_reference
-  n636 e635@-->|"可能包含"| n0
-  class e635 edge_reference
-  n637 e636@-->|"可能包含"| n0
-  class e636 edge_reference
-  n638 e637@-->|"可能包含"| n0
-  class e637 edge_reference
-  n639 e638@-->|"可能包含"| n0
-  class e638 edge_reference
-  n640 e639@-->|"可能包含"| n0
-  class e639 edge_reference
-  n641 e640@-->|"可能包含"| n0
-  class e640 edge_reference
-  n642 e641@-->|"可能包含"| n0
-  class e641 edge_reference
-  n643 e642@-->|"可能包含"| n0
-  class e642 edge_reference
-  n644 e643@-->|"可能包含"| n0
-  class e643 edge_reference
-  n645 e644@-->|"可能包含"| n0
-  class e644 edge_reference
-  n646 e645@-->|"可能包含"| n0
-  class e645 edge_reference
-  n647 e646@-->|"可能包含"| n0
-  class e646 edge_reference
-  n648 e647@-->|"可能包含"| n0
-  class e647 edge_reference
-  n649 e648@-->|"可能包含"| n0
-  class e648 edge_reference
-  n650 e649@-->|"可能包含"| n0
-  class e649 edge_reference
-  n651 e650@-->|"可能包含"| n0
-  class e650 edge_reference
-  n652 e651@-->|"可能包含"| n0
-  class e651 edge_reference
-  n653 e652@-->|"可能包含"| n0
-  class e652 edge_reference
-  n654 e653@-->|"可能包含"| n0
-  class e653 edge_reference
-  n655 e654@-->|"可能包含"| n0
-  class e654 edge_reference
-  n656 e655@-->|"可能包含"| n0
-  class e655 edge_reference
-  n657 e656@-->|"可能包含"| n0
-  class e656 edge_reference
-  n658 e657@-->|"可能包含"| n0
-  class e657 edge_reference
-  n659 e658@-->|"可能包含"| n0
-  class e658 edge_reference
-  n660 e659@-->|"可能包含"| n0
-  class e659 edge_reference
-  n661 e660@-->|"可能包含"| n0
-  class e660 edge_reference
-  n662 e661@-->|"可能包含"| n0
-  class e661 edge_reference
-  n663 e662@-->|"可能包含"| n0
-  class e662 edge_reference
-  n664 e663@-->|"可能包含"| n0
-  class e663 edge_reference
-  n665 e664@-->|"可能包含"| n0
-  class e664 edge_reference
-  n666 e665@-->|"可能包含"| n0
-  class e665 edge_reference
-  n667 e666@-->|"可能包含"| n0
-  class e666 edge_reference
-  n668 e667@-->|"可能包含"| n0
-  class e667 edge_reference
-  n669 e668@-->|"可能包含"| n0
-  class e668 edge_reference
-  n670 e669@-->|"可能包含"| n0
-  class e669 edge_reference
-  n671 e670@-->|"可能包含"| n0
-  class e670 edge_reference
-  n672 e671@-->|"可能包含"| n0
-  class e671 edge_reference
-  n673 e672@-->|"可能包含"| n0
-  class e672 edge_reference
-  n674 e673@-->|"可能包含"| n0
-  class e673 edge_reference
-  n675 e674@-->|"可能包含"| n0
-  class e674 edge_reference
-  n676 e675@-->|"可能包含"| n0
-  class e675 edge_reference
-  n677 e676@-->|"可能包含"| n0
-  class e676 edge_reference
-  n678 e677@-->|"可能包含"| n0
-  class e677 edge_reference
-  n679 e678@-->|"可能包含"| n0
-  class e678 edge_reference
-  n680 e679@-->|"可能包含"| n0
-  class e679 edge_reference
-  n681 e680@-->|"可能包含"| n0
-  class e680 edge_reference
-  n682 e681@-->|"可能包含"| n0
-  class e681 edge_reference
-  n683 e682@-->|"可能包含"| n0
-  class e682 edge_reference
-  n684 e683@-->|"可能包含"| n0
-  class e683 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -3628,7 +3253,7 @@ flowchart LR
   e163@{ curve: basis }
   e164@{ curve: basis }
   e165@{ curve: basis }
-  e166@{ curve: bumpY }
+  e166@{ curve: basis }
   e167@{ curve: basis }
   e168@{ curve: basis }
   e169@{ curve: basis }
@@ -3796,12 +3421,13 @@ flowchart LR
   e331@{ curve: basis }
   e332@{ curve: basis }
   e333@{ curve: basis }
-  e334@{ curve: basis }
+  e334@{ curve: bumpX }
   e335@{ curve: basis }
   e336@{ curve: basis }
   e337@{ curve: basis }
   e338@{ curve: basis }
   e339@{ curve: basis }
+  e340@{ curve: basis }
   e341@{ curve: basis }
   e342@{ curve: basis }
   e343@{ curve: basis }
@@ -3945,7 +3571,7 @@ flowchart LR
   e481@{ curve: basis }
   e482@{ curve: basis }
   e483@{ curve: basis }
-  e484@{ curve: bumpY }
+  e484@{ curve: basis }
   e485@{ curve: basis }
   e486@{ curve: basis }
   e487@{ curve: basis }
@@ -3966,7 +3592,7 @@ flowchart LR
   e502@{ curve: basis }
   e503@{ curve: basis }
   e504@{ curve: basis }
-  e505@{ curve: bumpY }
+  e505@{ curve: basis }
   e506@{ curve: basis }
   e507@{ curve: basis }
   e508@{ curve: basis }
@@ -4014,7 +3640,7 @@ flowchart LR
   e550@{ curve: basis }
   e551@{ curve: basis }
   e552@{ curve: basis }
-  e553@{ curve: bumpY }
+  e553@{ curve: basis }
   e554@{ curve: basis }
   e555@{ curve: basis }
   e556@{ curve: basis }
@@ -4070,78 +3696,3 @@ flowchart LR
   e606@{ curve: basis }
   e607@{ curve: basis }
   e608@{ curve: basis }
-  e609@{ curve: basis }
-  e610@{ curve: basis }
-  e611@{ curve: basis }
-  e612@{ curve: basis }
-  e613@{ curve: basis }
-  e614@{ curve: basis }
-  e615@{ curve: basis }
-  e616@{ curve: basis }
-  e617@{ curve: basis }
-  e618@{ curve: basis }
-  e619@{ curve: basis }
-  e620@{ curve: basis }
-  e621@{ curve: basis }
-  e622@{ curve: basis }
-  e623@{ curve: basis }
-  e624@{ curve: basis }
-  e625@{ curve: basis }
-  e626@{ curve: basis }
-  e627@{ curve: basis }
-  e628@{ curve: basis }
-  e629@{ curve: basis }
-  e630@{ curve: basis }
-  e631@{ curve: basis }
-  e632@{ curve: basis }
-  e633@{ curve: basis }
-  e634@{ curve: basis }
-  e635@{ curve: basis }
-  e636@{ curve: basis }
-  e637@{ curve: basis }
-  e638@{ curve: basis }
-  e639@{ curve: basis }
-  e640@{ curve: basis }
-  e641@{ curve: basis }
-  e642@{ curve: basis }
-  e643@{ curve: basis }
-  e644@{ curve: basis }
-  e645@{ curve: basis }
-  e646@{ curve: basis }
-  e647@{ curve: basis }
-  e648@{ curve: basis }
-  e649@{ curve: basis }
-  e650@{ curve: basis }
-  e651@{ curve: basis }
-  e652@{ curve: basis }
-  e653@{ curve: basis }
-  e654@{ curve: basis }
-  e655@{ curve: basis }
-  e656@{ curve: bumpY }
-  e657@{ curve: basis }
-  e658@{ curve: basis }
-  e659@{ curve: basis }
-  e660@{ curve: basis }
-  e661@{ curve: basis }
-  e662@{ curve: basis }
-  e663@{ curve: basis }
-  e664@{ curve: basis }
-  e665@{ curve: basis }
-  e666@{ curve: basis }
-  e667@{ curve: basis }
-  e668@{ curve: basis }
-  e669@{ curve: basis }
-  e670@{ curve: basis }
-  e671@{ curve: basis }
-  e672@{ curve: basis }
-  e673@{ curve: basis }
-  e674@{ curve: basis }
-  e675@{ curve: basis }
-  e676@{ curve: basis }
-  e677@{ curve: basis }
-  e678@{ curve: basis }
-  e679@{ curve: basis }
-  e680@{ curve: basis }
-  e681@{ curve: basis }
-  e682@{ curve: basis }
-  e683@{ curve: basis }

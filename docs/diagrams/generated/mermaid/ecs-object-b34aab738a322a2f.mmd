@@ -45,24 +45,24 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**release​_​orphaned​_​items**<br/>关系被外部解除或人物销毁时，独立箱实体仍<br/>能恢复自由刚体，不产生残留附属碰撞。" }
   class n0 node_system
-  n1@{ shape: lin-rect, label: "**Attachment**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
-  class n1 node_system_set
-  class n1 external_node
+  n1@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期及物理与呈现同步；<br/>物理插件由调用方显式安装。" }
+  class n1 node_plugin
   n2@{ shape: lin-rect, label: "**AnonymousSet(1)**<br/>来自crate:bevy​_​ecs ↗：保存一组系统的<br/>共同配置。" }
   class n2 node_system_set
   class n2 external_node
-  n3@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
-  class n3 node_plugin
-  n4@{ shape: rounded, label: "**HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
+  n3@{ shape: rounded, label: "**HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
+  class n3 node_component
+  n4@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
   class n4 node_component
-  n5@{ shape: rounded, label: "**AngularVelocity**<br/>来自crate:avian3d ↗：保存刚体的世界角<br/>速度。" }
+  class n4 external_node
+  n5@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n5 node_component
   class n5 external_node
-  n6@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
-  class n6 node_component
-  class n6 external_node
-  n7@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
-  class n7 node_system
+  n6@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>业务箱本身被销毁后清理代理，防止人物带着<br/>不可见的附属碰撞继续运动。" }
+  class n6 node_system
+  n7@{ shape: lin-rect, label: "**Attachment**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
+  class n7 node_system_set
+  class n7 external_node
   n8@{ shape: rounded, label: "**Rotation**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界旋转。" }
   class n8 node_component
   class n8 external_node
@@ -77,20 +77,20 @@ flowchart LR
   n12@{ shape: rounded, label: "**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
   class n12 node_component
   class n12 external_node
-  n1 e0@-->|"集合成员"| n0
-  class e0 edge_set_membership
+  n1 e0@-->|"调用"| n0
+  class e0 edge_registration
   n2 e1@-->|"集合成员"| n0
   class e1 edge_set_membership
-  n3 e2@-->|"调用"| n0
-  class e2 edge_registration
+  n3 e2@--> n0
+  class e2 edge_read
   n4 e3@--> n0
   class e3 edge_read
-  n5 e4@--> n0
-  class e4 edge_read
-  n6 e5@-->|"存在性约束"| n0
-  class e5 edge_reference
-  n0 e6@-->|"先于"| n7
-  class e6 edge_order
+  n5 e4@-->|"存在性约束"| n0
+  class e4 edge_reference
+  n0 e5@-->|"先于"| n6
+  class e5 edge_order
+  n7 e6@-->|"集合成员"| n0
+  class e6 edge_set_membership
   n8 e7@--> n0
   class e7 edge_read
   n9 e8@-->|"存在性约束"| n0

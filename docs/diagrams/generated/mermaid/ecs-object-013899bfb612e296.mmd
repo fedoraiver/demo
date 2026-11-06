@@ -72,18 +72,18 @@ flowchart LR
   class n8 external_node
   n9@{ shape: notch-rect, label: "**Local · reserved**<br/>防止同批延迟拿取重复占用物品。" }
   class n9 node_local
-  n10@{ shape: lin-rect, label: "**Interaction**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
-  class n10 node_system_set
-  class n10 external_node
-  n11@{ shape: rounded, label: "**Pickable**<br/>允许被拾取的能力标签。" }
+  n10@{ shape: rounded, label: "**Pickable**<br/>允许被拾取的能力标签。" }
+  class n10 node_component
+  n11@{ shape: rounded, label: "**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
   class n11 node_component
-  n12@{ shape: rounded, label: "**Position**<br/>来自crate:avian3d ↗：保存刚体或碰撞体<br/>的世界位置。" }
+  class n11 external_node
+  n12@{ shape: rounded, label: "**HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
   class n12 node_component
-  class n12 external_node
-  n13@{ shape: rounded, label: "**HeldBy**<br/>物体的持有者；只由交互系统插入或移除。" }
+  n13@{ shape: rounded, label: "**HeldAttachment**<br/>实际碰撞形状相对组合刚体的姿态；箱实体不<br/>成为人物的 ChildOf，避免异常销毁时连带<br/>消失。" }
   class n13 node_component
-  n14@{ shape: rounded, label: "**HeldAttachment**<br/>实际碰撞形状相对组合刚体的姿态；箱实体不<br/>成为人物的 ChildOf，避免异常销毁时连带<br/>消失。" }
-  class n14 node_component
+  n14@{ shape: lin-rect, label: "**Interaction**<br/>来自game​_​flow ↗：固定模拟阶段；结构变<br/>更在依赖阶段之间提交。" }
+  class n14 node_system_set
+  class n14 external_node
   n15@{ shape: rounded, label: "**begin​_​attachment · 创建模板**<br/>承载所持物品在人物共享刚体上的碰撞形状。" }
   class n15 node_entity
   n16@{ shape: rounded, label: "**CharacterIntent**<br/>来自character ↗：来自控制者的玩法意<br/>图；输入状态跨帧保留，供固定步模拟读取。" }
@@ -104,7 +104,7 @@ flowchart LR
   n21@{ shape: rounded, label: "**Collider**<br/>来自crate:avian3d ↗：保存 Parry 碰撞<br/>后端的几何形状。" }
   class n21 node_component
   class n21 external_node
-  n22@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期、物理与呈现同步及<br/>物品反馈；物理插件由调用方显式安装。" }
+  n22@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>注册交互、持握生命周期及物理与呈现同步；<br/>物理插件由调用方显式安装。" }
   class n22 node_plugin
   n23@{ shape: rounded, label: "**Character**<br/>来自character ↗：具有移动和跳跃能力的<br/>角色。" }
   class n23 node_component
@@ -133,17 +133,17 @@ flowchart LR
   class e7 edge_read
   n0 e8@-->|"可变访问"| n9
   class e8 edge_write
-  n10 e9@-->|"集合成员"| n0
-  class e9 edge_set_membership
-  n11 e10@-->|"存在性约束"| n0
-  class e10 edge_reference
-  n12 e11@--> n0
-  class e11 edge_read
-  n13 e12@-->|"存在性约束"| n0
-  class e12 edge_reference
-  n0 e13@-->|"插入"| n14
-  class e13 edge_write
-  n13 e14@---|"插入"| n0
+  n10 e9@-->|"存在性约束"| n0
+  class e9 edge_reference
+  n11 e10@--> n0
+  class e10 edge_read
+  n12 e11@-->|"存在性约束"| n0
+  class e11 edge_reference
+  n0 e12@-->|"插入"| n13
+  class e12 edge_write
+  n14 e13@-->|"集合成员"| n0
+  class e13 edge_set_membership
+  n12 e14@---|"插入"| n0
   class e14 edge_write
   n0 e15@-->|"创建模板"| n15
   class e15 edge_write
@@ -187,8 +187,8 @@ flowchart LR
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
-  e12@{ curve: basis }
-  e13@{ curve: bumpX }
+  e12@{ curve: bumpX }
+  e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }

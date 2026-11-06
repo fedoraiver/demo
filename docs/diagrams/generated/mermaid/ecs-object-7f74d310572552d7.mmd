@@ -41,7 +41,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: fr-rect, label: "**main / App**<br/>装配应用并导出真实调度。" }
   class n0 node_app
-  n1@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>来自item​_​interaction ↗：注册交互、持<br/>握生命周期、物理与呈现同步及物品反馈；物<br/>理插件由调用方显式安装。" }
+  n1@{ shape: fr-rect, label: "**ItemInteractionPlugin**<br/>来自item​_​interaction ↗：注册交互、持<br/>握生命周期及物理与呈现同步；物理插件由调<br/>用方显式安装。" }
   class n1 node_plugin
   class n1 external_node
   n2@{ shape: fr-rect, label: "**GamePhysicsPlugin**<br/>来自physics ↗：注册固定物理模拟与统一<br/>碰撞日志；不加载场景、窗口或音频设备。" }
@@ -80,30 +80,24 @@ flowchart LR
   n13@{ shape: fr-rect, label: "**GameAudioPlugin**<br/>来自audio ↗：安装 Kira 输出与音频生命<br/>周期；无设备测试直接使用内部纯数据夹具。" }
   class n13 node_plugin
   class n13 external_node
-  n14@{ shape: fr-rect, label: "**CharacterAnimationPlugin**<br/>来自character​_​animation ↗：注册场景<br/>就绪后的动画绑定，以及固定模拟和同帧呈现<br/>朝向同步后的动作混合。" }
+  n14@{ shape: fr-rect, label: "**GameUiPlugin**<br/>来自ui ↗：组装菜单功能，不安装窗口或重<br/>复初始化会话日志。" }
   class n14 node_plugin
   class n14 external_node
-  n15@{ shape: fr-rect, label: "**GameUiPlugin**<br/>来自ui ↗：组装菜单功能，不安装窗口或重<br/>复初始化会话日志。" }
-  class n15 node_plugin
+  n15@{ shape: rounded, label: "**despawn​_​unused​_​registered​_​systems**<br/>来自crate:bevy​_​ecs ↗：安全清理已无句<br/>柄引用的注册系统实体。" }
+  class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**despawn​_​unused​_​registered​_​systems**<br/>来自crate:bevy​_​ecs ↗：安全清理已无句<br/>柄引用的注册系统实体。" }
-  class n16 node_system
+  n16@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>来自scene​_​assembly ↗：直接由几何体生<br/>成灰盒会话，不等待外部模型或地图加载。" }
+  class n16 node_plugin
   class n16 external_node
-  n17@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>来自scene​_​assembly ↗：加载当前场景资<br/>源并装配地图、碰撞与业务实体。" }
-  class n17 node_plugin
+  n17@{ shape: rounded, label: "**message​_​update​_​system**<br/>来自crate:bevy​_​ecs ↗：轮换世界中已注<br/>册的消息缓冲。" }
+  class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**message​_​update​_​system**<br/>来自crate:bevy​_​ecs ↗：轮换世界中已注<br/>册的消息缓冲。" }
-  class n18 node_system
+  n18@{ shape: fr-rect, label: "**SettingsPlugin**<br/>来自settings ↗：注册设置资源、原型参数<br/>反射与渲染限帧，不覆盖调用方已提供的配置<br/>或固定时间步。" }
+  class n18 node_plugin
   class n18 external_node
-  n19@{ shape: fr-rect, label: "**SettingsPlugin**<br/>来自settings ↗：注册设置资源、原型参数<br/>反射与渲染限帧，不覆盖调用方已提供的配置<br/>或固定时间步。" }
+  n19@{ shape: fr-rect, label: "**GameFlowPlugin**<br/>来自game​_​flow ↗：管理游戏状态与时钟，<br/>连接各功能公开的调度阶段。" }
   class n19 node_plugin
   class n19 external_node
-  n20@{ shape: fr-rect, label: "**BoundsRecoveryPlugin**<br/>来自bounds​_​recovery ↗：注册越界恢复和<br/>插值重置，不创建窗口或额外推进模拟。" }
-  class n20 node_plugin
-  class n20 external_node
-  n21@{ shape: fr-rect, label: "**GameFlowPlugin**<br/>来自game​_​flow ↗：管理游戏状态与时钟，<br/>连接各功能公开的调度阶段。" }
-  class n21 node_plugin
-  class n21 external_node
   n0 e0@-->|"调用"| n1
   class e0 edge_registration
   n0 e1@-->|"调用"| n2
@@ -142,10 +136,6 @@ flowchart LR
   class e17 edge_registration
   n0 e18@-->|"调用"| n19
   class e18 edge_registration
-  n0 e19@-->|"调用"| n20
-  class e19 edge_registration
-  n0 e20@-->|"调用"| n21
-  class e20 edge_registration
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -155,7 +145,7 @@ flowchart LR
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
-  e9@{ curve: basis }
+  e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
@@ -164,5 +154,3 @@ flowchart LR
   e16@{ curve: basis }
   e17@{ curve: basis }
   e18@{ curve: basis }
-  e19@{ curve: basis }
-  e20@{ curve: basis }

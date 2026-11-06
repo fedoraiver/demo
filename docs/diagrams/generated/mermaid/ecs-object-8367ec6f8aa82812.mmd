@@ -40,31 +40,28 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**Assets#lt;AudioSource#gt;**<br/>按资产身份存储对象并暂存变化消息。" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
+  n1@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**track​_​assets**<br/>同步资产存活状态并处理句柄释放。" }
+  n2@{ shape: rounded, label: "**play​_​dynamic​_​channels**<br/>来自crate:bevy​_​kira​_​audio ↗：执行按<br/>名称创建的动态音频通道命令。" }
   class n2 node_system
+  class n2 external_node
   n3@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**play​_​dynamic​_​channels**<br/>来自crate:bevy​_​kira​_​audio ↗：执行按<br/>名称创建的动态音频通道命令。" }
+  n4@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
   class n4 node_system
   class n4 external_node
   n5@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
+  n6@{ shape: rounded, label: "**play​_​requests**<br/>来自audio ↗：按有效混音和播放限额处理<br/>声音请求。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**play​_​audio​_​channel**<br/>来自crate:bevy​_​kira​_​audio ↗：执行指<br/>定类型音频通道的命令队列。" }
+  n7@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n7 node_system
-  class n7 external_node
-  n8@{ shape: rounded, label: "**play​_​requests**<br/>来自audio ↗：按有效混音和播放限额处理<br/>声音请求。" }
-  class n8 node_system
-  class n8 external_node
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
-  n2 e1@-->|"可变访问"| n0
-  class e1 edge_write
+  n0 e1@--> n2
+  class e1 edge_read
   n0 e2@--> n3
   class e2 edge_read
   n0 e3@--> n4
@@ -73,15 +70,11 @@ flowchart LR
   class e4 edge_read
   n0 e5@--> n6
   class e5 edge_read
-  n0 e6@--> n7
-  class e6 edge_read
-  n0 e7@--> n8
-  class e7 edge_read
+  n7 e6@-->|"可变访问"| n0
+  class e6 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }

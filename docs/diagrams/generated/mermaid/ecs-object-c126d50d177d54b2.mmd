@@ -61,7 +61,7 @@ flowchart LR
   n4@{ shape: lean-r, label: "**AppExit**<br/>来自crate:bevy​_​app ↗：请求应用结束并<br/>携带退出结果。" }
   class n4 node_message
   class n4 external_node
-  n5@{ shape: cyl, label: "**SettingsDraft**<br/>来自settings ↗：菜单独立编辑的草稿；音<br/>量可以临时预览，只有应用成功才替换已保存<br/>设置。" }
+  n5@{ shape: cyl, label: "**SettingsDraft**<br/>来自settings ↗：菜单独立编辑的草稿，音<br/>量供临时预览，应用成功后替换已保存设置。" }
   class n5 node_resource
   class n5 external_node
   n6@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
@@ -72,7 +72,7 @@ flowchart LR
   n8@{ shape: cyl, label: "**SettingsFile**<br/>来自settings ↗：设置文件的保存位置；测<br/>试可覆盖该资源而不触及玩家的真实配置。" }
   class n8 node_resource
   class n8 external_node
-  n9@{ shape: lean-r, label: "**SoundRequest**<br/>来自audio ↗：业务实体只用于日志和节<br/>流，不持有其组件引用，实体销毁后消息仍可<br/>被消费。" }
+  n9@{ shape: lean-r, label: "**SoundRequest**<br/>来自audio ↗：声音请求保存用于日志定位<br/>的来源实体标识，来源实体销毁后仍可消费。" }
   class n9 node_message
   class n9 external_node
   n10@{ shape: cyl, label: "**Messages#lt;AppExit#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }

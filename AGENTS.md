@@ -10,27 +10,16 @@ src/                   Feature directories, each owning one project Plugin
   game_flow/           Application states, clocks, and cross-feature ordering
   first_person/        Player actions, pointer capture, facing, and camera
   character/           Character identity, movement, grounding, and jumping
-  item_interaction/    Pickup, shared-body carrying, release, and feedback
+  item_interaction/    Pickup, shared-body carrying, and release
   physics/             Avian setup, gravity, and shared collision layers
-  bounds_recovery/     Water recovery and interpolation reset
-  scene_assembly/      Asset loading, map collision, and entity assembly
-  character_animation/ Animation binding, blending, and visual grounding
+  scene_assembly/      Procedural grey-box floor, player, and test blocks
   ui/                  Menus, widgets, navigation, styling, and backdrop
   audio/               Sound contracts, mixing, playback, and device output
   settings/            Settings, drafts, shared prototype parameters, pacing
   inspector/           World inspector integration
   session_log/         Session logging, background output, and exit flush
   window_policy/       Platform-specific window behavior
-art/                   Asset authoring sources and tooling
-  blender/             Blender source projects
-  scripts/             Asset generation, export, validation, and previews
-  previews/            Rendered images and asset catalogs
-  items/               Item asset manifest and guide
-  *.json               Asset manifests and build/validation reports
-  ASSET_GUIDE.md       Art asset guide
-assets/                Runtime assets grouped by resource type
-  maps/                Exported GLB maps
-  models/              Character, prop, building, environment, and item models
+assets/                Runtime resources
   audio/               Sounds, metadata, and source/license records
   ui/                  UI resources
     fonts/             UI fonts, sources, and licenses

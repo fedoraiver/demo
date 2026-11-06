@@ -23,7 +23,6 @@ pub(crate) enum AppState {
 /// 固定模拟阶段；结构变更在依赖阶段之间提交。
 #[derive(SystemSet, Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub(crate) enum FixedGameplaySystems {
-    Recover,
     Facing,
     Motion,
     Interaction,
@@ -60,7 +59,6 @@ pub(crate) fn configure_feature_order(app: &mut App) {
     app.configure_sets(
         FixedUpdate,
         (
-            FixedGameplaySystems::Recover,
             FixedGameplaySystems::Facing,
             FixedGameplaySystems::Motion,
             FixedGameplaySystems::Interaction,

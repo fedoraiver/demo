@@ -45,7 +45,7 @@ flowchart LR
   class n1 node_observer
   n2@{ shape: hex, label: "**register**<br/>按优先级登记输入上下文实例。" }
   class n2 node_observer
-  n3@{ shape: rounded, label: "**(Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityMut#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>把求值结果写入类型化输入动作。" }
+  n3@{ shape: rounded, label: "**(Commands#lt;'​_​, '​_​#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityRef#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>根据求值结果触发输入动作通知。" }
   class n3 node_system
   n4@{ shape: hex, label: "**unregister**<br/>移除失效的输入上下文登记。" }
   class n4 node_observer
@@ -57,7 +57,7 @@ flowchart LR
   class n7 node_observer
   n8@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>求值上下文输入并更新动作状态。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**(Commands#lt;'​_​, '​_​#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityRef#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>根据求值结果触发输入动作通知。" }
+  n9@{ shape: rounded, label: "**(Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityMut#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>把求值结果写入类型化输入动作。" }
   class n9 node_system
   n10@{ shape: hex, label: "**unregister**<br/>移除失效的输入上下文登记。" }
   class n10 node_observer

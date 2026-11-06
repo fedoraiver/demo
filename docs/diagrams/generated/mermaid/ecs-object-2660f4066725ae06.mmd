@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-2660f4066725ae06-e11{marker-start:url(#object-2660f4066725ae06_flowchart-v2-pointStart)!important}\n#object-2660f4066725ae06_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-2660f4066725ae06-e4{marker-start:url(#object-2660f4066725ae06_flowchart-v2-pointStart)!important}\n#object-2660f4066725ae06_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -42,198 +42,186 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**Hovered**<br/>记录自身或后代的鼠标悬停状态。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n1 node_entity
   class n1 external_node
-  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现并响应设置滚动条滑块。" }
   class n2 node_entity
   class n2 external_node
-  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供可导航和指针拖动的音量调<br/>节入口。" }
-  class n3 node_entity
+  n3@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步设置滚动条的有效范围和交<br/>互状态。" }
+  class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n4 node_entity
   class n4 external_node
-  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
-  class n5 node_entity
-  class n5 external_node
-  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：在音频设置页触发测试音效。" }
+  n5@{ shape: rounded, label: "**update​_​is​_​hovered**<br/>把鼠标悬停传播到实体祖先。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n6 node_entity
   class n6 external_node
-  n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n7@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步调整对应的设置草稿字段。" }
   class n7 node_entity
   class n7 external_node
-  n8@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n8@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n8 node_entity
   class n8 external_node
-  n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n9@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n9 node_entity
   class n9 external_node
-  n10@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n10@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n10 node_entity
   class n10 external_node
-  n11@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n11@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n11 node_entity
   class n11 external_node
-  n12@{ shape: rounded, label: "**update​_​is​_​hovered**<br/>把鼠标悬停传播到实体祖先。" }
-  class n12 node_system
-  n13@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n12@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
+  class n12 node_entity
+  class n12 external_node
+  n13@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n13 node_entity
   class n13 external_node
-  n14@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并拖动设置正文的滚动位<br/>置。" }
+  n14@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n14 node_entity
   class n14 external_node
-  n15@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供离开帮助页的返回入口。" }
+  n15@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n15 node_entity
   class n15 external_node
-  n16@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n16@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n16 node_entity
   class n16 external_node
-  n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n17@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n17 node_entity
   class n17 external_node
-  n18@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n18@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n18 node_entity
   class n18 external_node
-  n19@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n19@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步调整对应的设置草稿字段。" }
   class n19 node_entity
   class n19 external_node
-  n20@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n20@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n20 node_entity
   class n20 external_node
-  n21@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n21@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步调整对应的设置草稿字段。" }
   class n21 node_entity
   class n21 external_node
-  n22@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n22@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步调整对应的设置草稿字段。" }
   class n22 node_entity
   class n22 external_node
-  n23@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  n23@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n23 node_entity
   class n23 external_node
-  n24@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n24@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n24 node_entity
   class n24 external_node
-  n25@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n25@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：从帮助页返回先前菜单。" }
   class n25 node_entity
   class n25 external_node
-  n26@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供可导航和指针拖动的音量调<br/>节入口。" }
+  n26@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n26 node_entity
   class n26 external_node
-  n27@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供可导航和指针拖动的音量调<br/>节入口。" }
-  class n27 node_entity
+  n27@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  class n27 node_system
   class n27 external_node
-  n28@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  n28@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n28 node_entity
   class n28 external_node
-  n29@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并拖动设置正文的滚动位<br/>置。" }
+  n29@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n29 node_entity
   class n29 external_node
-  n30@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
-  class n30 node_entity
+  n30@{ shape: rounded, label: "**style​_​buttons**<br/>来自ui ↗：按输入来源、焦点和主键按压更<br/>新按钮样式。" }
+  class n30 node_system
   class n30 external_node
-  n31@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  n31@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现并响应设置滚动条滑块。" }
   class n31 node_entity
   class n31 external_node
-  n32@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  n32@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现并响应设置滚动条滑块。" }
   class n32 node_entity
   class n32 external_node
-  n33@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n33@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：将滑条指针位置转换为音量请<br/>求。" }
   class n33 node_entity
   class n33 external_node
-  n34@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并拖动设置正文的滚动位<br/>置。" }
+  n34@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n34 node_entity
   class n34 external_node
-  n35@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：显示并拖动设置正文的滚动位<br/>置。" }
+  n35@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n35 node_entity
   class n35 external_node
-  n36@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n36@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n36 node_entity
   class n36 external_node
-  n37@{ shape: rounded, label: "**style​_​buttons**<br/>来自ui ↗：按输入来源、焦点和主键按压更<br/>新按钮样式。" }
-  class n37 node_system
+  n37@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步调整对应的设置草稿字段。" }
+  class n37 node_entity
   class n37 external_node
-  n38@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n38@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：将滑条指针位置转换为音量请<br/>求。" }
   class n38 node_entity
   class n38 external_node
-  n39@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n39@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n39 node_entity
   class n39 external_node
-  n40@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n40@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n40 node_entity
   class n40 external_node
-  n41@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n41@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n41 node_entity
   class n41 external_node
-  n42@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n42@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n42 node_entity
   class n42 external_node
-  n43@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n43@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n43 node_entity
   class n43 external_node
-  n44@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n44@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步减少或增加对应音量。" }
   class n44 node_entity
   class n44 external_node
-  n45@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n45@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步调整对应的设置草稿字段。" }
   class n45 node_entity
   class n45 external_node
-  n46@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置页固定的恢复、应用与<br/>返回操作。" }
+  n46@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n46 node_entity
   class n46 external_node
-  n47@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  n47@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n47 node_entity
   class n47 external_node
-  n48@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n48@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步减少或增加对应音量。" }
   class n48 node_entity
   class n48 external_node
-  n49@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  n49@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单或暂停页导航动作。" }
   class n49 node_entity
   class n49 external_node
-  n50@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  n50@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步减少或增加对应音量。" }
   class n50 node_entity
   class n50 external_node
-  n51@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  n51@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：呈现并响应设置滚动条滑块。" }
   class n51 node_entity
   class n51 external_node
-  n52@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n52@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：按步减少或增加对应音量。" }
   class n52 node_entity
   class n52 external_node
-  n53@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n53@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n53 node_entity
   class n53 external_node
-  n54@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：承载主菜单与暂停页的可导航操<br/>作。" }
+  n54@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：切换设置页的当前分类。" }
   class n54 node_entity
   class n54 external_node
-  n55@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：对一个音量字段发出减少或增加<br/>请求。" }
+  n55@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n55 node_entity
   class n55 external_node
-  n56@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
+  n56@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n56 node_entity
   class n56 external_node
-  n57@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
+  n57@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提交设置恢复、保存或返回操<br/>作。" }
   class n57 node_entity
   class n57 external_node
-  n58@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
-  class n58 node_system
-  class n58 external_node
-  n59@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：调整设置草稿数值并提供焦点说<br/>明。" }
-  class n59 node_entity
-  class n59 external_node
-  n60@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>来自ui ↗：同步设置滚动条的有效范围和交<br/>互状态。" }
-  class n60 node_system
-  class n60 external_node
-  n61@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>来自ui ↗：提供设置分类的导航与切换入<br/>口。" }
-  class n61 node_entity
-  class n61 external_node
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
   n2 e1@-->|"可能包含"| n0
   class e1 edge_reference
-  n3 e2@-->|"可能包含"| n0
-  class e2 edge_reference
+  n0 e2@--> n3
+  class e2 edge_read
   n4 e3@-->|"可能包含"| n0
   class e3 edge_reference
-  n5 e4@-->|"可能包含"| n0
-  class e4 edge_reference
+  n5 e4@--- n0
+  class e4 edge_read
   n6 e5@-->|"可能包含"| n0
   class e5 edge_reference
   n7 e6@-->|"可能包含"| n0
@@ -246,46 +234,46 @@ flowchart LR
   class e9 edge_reference
   n11 e10@-->|"可能包含"| n0
   class e10 edge_reference
-  n12 e11@--- n0
-  class e11 edge_read
+  n12 e11@-->|"可能包含"| n0
+  class e11 edge_reference
   n13 e12@-->|"可能包含"| n0
   class e12 edge_reference
   n14 e13@-->|"可能包含"| n0
   class e13 edge_reference
-  n15 e14@-->|"可能包含"| n0
-  class e14 edge_reference
-  n16 e15@-->|"可能包含"| n0
+  n5 e14@-->|"插入"| n0
+  class e14 edge_write
+  n15 e15@-->|"可能包含"| n0
   class e15 edge_reference
-  n17 e16@-->|"可能包含"| n0
+  n16 e16@-->|"可能包含"| n0
   class e16 edge_reference
-  n18 e17@-->|"可能包含"| n0
+  n17 e17@-->|"可能包含"| n0
   class e17 edge_reference
-  n19 e18@-->|"可能包含"| n0
+  n18 e18@-->|"可能包含"| n0
   class e18 edge_reference
-  n20 e19@-->|"可能包含"| n0
+  n19 e19@-->|"可能包含"| n0
   class e19 edge_reference
-  n21 e20@-->|"可能包含"| n0
+  n20 e20@-->|"可能包含"| n0
   class e20 edge_reference
-  n22 e21@-->|"可能包含"| n0
+  n21 e21@-->|"可能包含"| n0
   class e21 edge_reference
-  n23 e22@-->|"可能包含"| n0
+  n22 e22@-->|"可能包含"| n0
   class e22 edge_reference
-  n24 e23@-->|"可能包含"| n0
+  n23 e23@-->|"可能包含"| n0
   class e23 edge_reference
-  n25 e24@-->|"可能包含"| n0
+  n24 e24@-->|"可能包含"| n0
   class e24 edge_reference
-  n26 e25@-->|"可能包含"| n0
+  n25 e25@-->|"可能包含"| n0
   class e25 edge_reference
-  n27 e26@-->|"可能包含"| n0
+  n26 e26@-->|"可能包含"| n0
   class e26 edge_reference
-  n28 e27@-->|"可能包含"| n0
-  class e27 edge_reference
-  n12 e28@-->|"插入"| n0
-  class e28 edge_write
+  n0 e27@--> n27
+  class e27 edge_read
+  n28 e28@-->|"可能包含"| n0
+  class e28 edge_reference
   n29 e29@-->|"可能包含"| n0
   class e29 edge_reference
-  n30 e30@-->|"可能包含"| n0
-  class e30 edge_reference
+  n0 e30@--> n30
+  class e30 edge_read
   n31 e31@-->|"可能包含"| n0
   class e31 edge_reference
   n32 e32@-->|"可能包含"| n0
@@ -298,8 +286,8 @@ flowchart LR
   class e35 edge_reference
   n36 e36@-->|"可能包含"| n0
   class e36 edge_reference
-  n0 e37@--> n37
-  class e37 edge_read
+  n37 e37@-->|"可能包含"| n0
+  class e37 edge_reference
   n38 e38@-->|"可能包含"| n0
   class e38 edge_reference
   n39 e39@-->|"可能包含"| n0
@@ -340,14 +328,6 @@ flowchart LR
   class e56 edge_reference
   n57 e57@-->|"可能包含"| n0
   class e57 edge_reference
-  n0 e58@--> n58
-  class e58 edge_read
-  n59 e59@-->|"可能包含"| n0
-  class e59 edge_reference
-  n0 e60@--> n60
-  class e60 edge_read
-  n61 e61@-->|"可能包含"| n0
-  class e61 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -375,7 +355,6 @@ flowchart LR
   e24@{ curve: basis }
   e25@{ curve: basis }
   e26@{ curve: basis }
-  e27@{ curve: basis }
   e28@{ curve: basis }
   e30@{ curve: basis }
   e31@{ curve: basis }
@@ -405,6 +384,3 @@ flowchart LR
   e55@{ curve: basis }
   e56@{ curve: basis }
   e57@{ curve: basis }
-  e59@{ curve: basis }
-  e60@{ curve: basis }
-  e61@{ curve: basis }

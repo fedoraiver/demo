@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-a39d3eb202ef2de4-e2{marker-start:url(#object-a39d3eb202ef2de4_flowchart-v2-pointStart)!important}\n#object-a39d3eb202ef2de4-e19{marker-start:url(#object-a39d3eb202ef2de4_flowchart-v2-pointStart)!important}\n#object-a39d3eb202ef2de4_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-a39d3eb202ef2de4-e2{marker-start:url(#object-a39d3eb202ef2de4_flowchart-v2-pointStart)!important}\n#object-a39d3eb202ef2de4-e18{marker-start:url(#object-a39d3eb202ef2de4_flowchart-v2-pointStart)!important}\n#object-a39d3eb202ef2de4_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -53,81 +53,75 @@ flowchart LR
   n4@{ shape: rounded, label: "**solve​_​continuous**<br/>来自crate:avian3d ↗：通过连续扫掠限制<br/>快速刚体穿透。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**compensate​_​courier​_​sole​_​penetration**<br/>来自character​_​animation ↗：方向混合<br/>可能把弯腿插值成更直的腿；逐帧按真实鞋底<br/>边界修正最终视觉高度。" }
+  n5@{ shape: rounded, label: "**solve​_​contacts**<br/>来自crate:avian3d ↗：迭代接触冲量以处<br/>理穿透与相对速度。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**solve​_​contacts**<br/>来自crate:avian3d ↗：迭代接触冲量以处<br/>理穿透与相对速度。" }
+  n6@{ shape: rounded, label: "**advance​_​transitions**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>过渡并归一化混合权重。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**advance​_​transitions**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>过渡并归一化混合权重。" }
+  n7@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
+  n8@{ shape: rounded, label: "**update​_​rotation​_​extrapolation​_​states**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：依据当前角速度预测下<br/>一个旋转端点。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
-  class n9 node_system
+  n9@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
+  class n9 node_observer
   class n9 external_node
-  n10@{ shape: rounded, label: "**update​_​rotation​_​extrapolation​_​states**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：依据当前角速度预测下<br/>一个旋转端点。" }
+  n10@{ shape: rounded, label: "**integrate​_​positions**<br/>来自crate:avian3d ↗：按子步速度积分刚<br/>体位姿增量。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
-  class n11 node_observer
+  n11@{ shape: rounded, label: "**solve​_​contacts**<br/>来自crate:avian3d ↗：迭代接触冲量以处<br/>理穿透与相对速度。" }
+  class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**integrate​_​positions**<br/>来自crate:avian3d ↗：按子步速度积分刚<br/>体位姿增量。" }
+  n12@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>来自crate:bevy​_​enhanced​_​input ↗：求<br/>值上下文输入并更新动作状态。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**solve​_​contacts**<br/>来自crate:avian3d ↗：迭代接触冲量以处<br/>理穿透与相对速度。" }
+  n13@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
-  class n14 node_observer
-  class n14 external_node
-  n15@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
-  class n15 node_system
+  n14@{ shape: rounded, label: "**run​_​fixed​_​main​_​schedule**<br/>按累计时间推进固定主调度。" }
+  class n14 node_system
+  n15@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
+  class n15 node_observer
   class n15 external_node
-  n16@{ shape: rounded, label: "**run​_​fixed​_​main​_​schedule**<br/>按累计时间推进固定主调度。" }
+  n16@{ shape: rounded, label: "**extract​_​time**<br/>来自crate:bevy​_​render ↗：将主世界当<br/>前 Time 值复制并插入渲染世界，供渲染侧<br/>全局时间参数使用。" }
   class n16 node_system
-  n17@{ shape: rounded, label: "**extract​_​time**<br/>来自crate:bevy​_​render ↗：将主世界当<br/>前 Time 值复制并插入渲染世界，供渲染侧<br/>全局时间参数使用。" }
+  class n16 external_node
+  n17@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
+  n18@{ shape: rounded, label: "**prepare​_​globals​_​buffer**<br/>来自crate:bevy​_​render ↗：更新并上传着<br/>色器全局时间与帧号。" }
   class n18 node_system
   class n18 external_node
-  n19@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>来自crate:bevy​_​enhanced​_​input ↗：求<br/>值上下文输入并更新动作状态。" }
+  n19@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>来自crate:avian3d ↗：更新窄相接触并输<br/>出碰撞变化消息。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: rounded, label: "**prepare​_​globals​_​buffer**<br/>来自crate:bevy​_​render ↗：更新并上传着<br/>色器全局时间与帧号。" }
+  n20@{ shape: rounded, label: "**check​_​delayed​_​command​_​queues**<br/>提交到期的延迟命令并删除队列实体。" }
   class n20 node_system
-  class n20 external_node
-  n21@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>来自crate:avian3d ↗：更新窄相接触并输<br/>出碰撞变化消息。" }
+  n21@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>来自crate:avian3d ↗：按刚体静止时间判<br/>断物理岛的休眠资格。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**check​_​delayed​_​command​_​queues**<br/>提交到期的延迟命令并删除队列实体。" }
+  n22@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
   class n22 node_system
-  n23@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
-  class n23 node_observer
+  class n22 external_node
+  n23@{ shape: rounded, label: "**update​_​translation​_​extrapolation​_​**<br/>**states**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：依据当前线速度预测下<br/>一个位置端点。" }
+  class n23 node_system
   class n23 external_node
-  n24@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>来自crate:avian3d ↗：按刚体静止时间判<br/>断物理岛的休眠资格。" }
+  n24@{ shape: rounded, label: "**advance​_​animations**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>播放器中活动动画的播放时间。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
+  n25@{ shape: rounded, label: "**time​_​system**<br/>按时间更新策略推进真实与虚拟时钟。" }
   class n25 node_system
-  class n25 external_node
-  n26@{ shape: rounded, label: "**update​_​translation​_​extrapolation​_​**<br/>**states**<br/>来自crate:bevy​_​transform​_​<br/>interpolation ↗：依据当前线速度预测下<br/>一个位置端点。" }
+  n26@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
   class n26 node_system
   class n26 external_node
-  n27@{ shape: rounded, label: "**advance​_​animations**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>播放器中活动动画的播放时间。" }
-  class n27 node_system
+  n27@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
+  class n27 node_observer
   class n27 external_node
-  n28@{ shape: rounded, label: "**time​_​system**<br/>按时间更新策略推进真实与虚拟时钟。" }
+  n28@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>来自crate:avian3d ↗：按物理结果更新活<br/>跃刚体的碰撞边界。" }
   class n28 node_system
-  n29@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
-  class n29 node_system
-  class n29 external_node
-  n30@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>来自crate:avian3d ↗：按物理结果更新活<br/>跃刚体的碰撞边界。" }
-  class n30 node_system
-  class n30 external_node
+  class n28 external_node
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"赋值"| n0
@@ -142,31 +136,31 @@ flowchart LR
   class e5 edge_read
   n0 e6@--> n7
   class e6 edge_read
-  n0 e7@--> n8
-  class e7 edge_read
-  n0 e8@--> n9
+  n3 e7@-->|"赋值"| n0
+  class e7 edge_write
+  n0 e8@--> n8
   class e8 edge_read
-  n3 e9@-->|"赋值"| n0
-  class e9 edge_write
+  n0 e9@--> n9
+  class e9 edge_read
   n0 e10@--> n10
   class e10 edge_read
   n0 e11@--> n11
   class e11 edge_read
-  n0 e12@--> n12
-  class e12 edge_read
-  n0 e13@--> n13
-  class e13 edge_read
-  n0 e14@--> n14
+  n2 e12@-->|"可变访问"| n0
+  class e12 edge_write
+  n3 e13@-->|"可变访问"| n0
+  class e13 edge_write
+  n0 e14@--> n12
   class e14 edge_read
-  n2 e15@-->|"可变访问"| n0
-  class e15 edge_write
-  n3 e16@-->|"可变访问"| n0
+  n0 e15@--> n13
+  class e15 edge_read
+  n14 e16@-->|"赋值"| n0
   class e16 edge_write
   n0 e17@--> n15
   class e17 edge_read
-  n16 e18@-->|"赋值"| n0
-  class e18 edge_write
-  n17 e19@--- n0
+  n16 e18@--- n0
+  class e18 edge_read
+  n0 e19@--> n17
   class e19 edge_read
   n0 e20@--> n18
   class e20 edge_read
@@ -182,24 +176,20 @@ flowchart LR
   class e25 edge_read
   n0 e26@--> n24
   class e26 edge_read
-  n0 e27@--> n25
-  class e27 edge_read
-  n0 e28@--> n26
-  class e28 edge_read
-  n0 e29@--> n27
-  class e29 edge_read
-  n17 e30@-->|"插入"| n0
-  class e30 edge_write
-  n28 e31@-->|"可变访问"| n0
-  class e31 edge_write
-  n28 e32@-->|"赋值"| n0
-  class e32 edge_write
-  n0 e33@--> n29
-  class e33 edge_read
-  n0 e34@--> n30
-  class e34 edge_read
-  n16 e35@-->|"可变访问"| n0
-  class e35 edge_write
+  n16 e27@-->|"插入"| n0
+  class e27 edge_write
+  n25 e28@-->|"可变访问"| n0
+  class e28 edge_write
+  n25 e29@-->|"赋值"| n0
+  class e29 edge_write
+  n0 e30@--> n26
+  class e30 edge_read
+  n0 e31@--> n27
+  class e31 edge_read
+  n0 e32@--> n28
+  class e32 edge_read
+  n14 e33@-->|"可变访问"| n0
+  class e33 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -233,5 +223,3 @@ flowchart LR
   e31@{ curve: basis }
   e32@{ curve: basis }
   e33@{ curve: basis }
-  e34@{ curve: basis }
-  e35@{ curve: basis }

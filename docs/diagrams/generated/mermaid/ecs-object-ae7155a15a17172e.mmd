@@ -91,13 +91,13 @@ flowchart LR
   class n22 node_observer
   n23@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n23 node_observer
-  n24@{ shape: hex, label: "**build::{closure#35;5}**<br/>同步碰撞代理的碰撞层配置。" }
-  class n24 node_observer
-  n25@{ shape: hex, label: "**build::{closure#35;4}**<br/>清除碰撞代理的传感器标志。" }
+  n24@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  class n24 node_system
+  class n24 external_node
+  n25@{ shape: hex, label: "**build::{closure#35;5}**<br/>同步碰撞代理的碰撞层配置。" }
   class n25 node_observer
-  n26@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
-  class n26 node_system
-  class n26 external_node
+  n26@{ shape: hex, label: "**build::{closure#35;4}**<br/>清除碰撞代理的传感器标志。" }
+  class n26 node_observer
   n27@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
   class n27 node_observer
   n28@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
@@ -149,12 +149,12 @@ flowchart LR
   class e21 edge_write
   n23 e22@-->|"可变访问"| n0
   class e22 edge_write
-  n24 e23@-->|"可变访问"| n0
-  class e23 edge_write
+  n0 e23@--> n24
+  class e23 edge_read
   n25 e24@-->|"可变访问"| n0
   class e24 edge_write
-  n0 e25@--> n26
-  class e25 edge_read
+  n26 e25@-->|"可变访问"| n0
+  class e25 edge_write
   n27 e26@-->|"可变访问"| n0
   class e26 edge_write
   n0 e27@--> n28

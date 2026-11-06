@@ -48,12 +48,6 @@ flowchart LR
   class n3 external_node
   n4@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>箱实体被销毁时关系钩子会清空反向索引，人<br/>物仍存活则归还其原质量。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**sync​_​courier​_​animation**<br/>来自character​_​animation ↗：Update 位<br/>于固定模拟与呈现同步之后；零固定步帧也使<br/>用本帧朝向和已有真实速度。" }
-  class n5 node_system
-  class n5 external_node
-  n6@{ shape: rounded, label: "**initialize​_​ready​_​couriers**<br/>来自character​_​animation ↗：场景就绪<br/>后只遍历该视觉根的子树，避免把 NPC 或其<br/>他模型的播放器接到主角上。" }
-  class n6 node_system
-  class n6 external_node
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
@@ -62,13 +56,7 @@ flowchart LR
   class e2 edge_read
   n0 e3@--> n4
   class e3 edge_read
-  n0 e4@--> n5
-  class e4 edge_read
-  n0 e5@--> n6
-  class e5 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }
-  e5@{ curve: basis }

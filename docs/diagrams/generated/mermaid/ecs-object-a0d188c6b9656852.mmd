@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-a0d188c6b9656852-e21{marker-start:url(#object-a0d188c6b9656852_flowchart-v2-pointStart)!important}\n#object-a0d188c6b9656852_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-a0d188c6b9656852-e22{marker-start:url(#object-a0d188c6b9656852_flowchart-v2-pointStart)!important}\n#object-a0d188c6b9656852_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -45,53 +45,53 @@ flowchart LR
   class n1 node_observer
   n2@{ shape: hex, label: "**build::{closure#35;4}**<br/>清除碰撞代理的传感器标志。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
-  class n3 node_observer
+  n3@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
-  class n4 node_system
-  class n4 external_node
-  n5@{ shape: hex, label: "**build::{closure#35;6}**<br/>同步碰撞代理的自定义过滤标志。" }
+  n4@{ shape: hex, label: "**build::{closure#35;6}**<br/>同步碰撞代理的自定义过滤标志。" }
+  class n4 node_observer
+  n5@{ shape: hex, label: "**build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**build::{closure#35;7}**<br/>同步碰撞代理的刚体禁用标志。" }
-  class n6 node_observer
-  n7@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
-  class n7 node_system
+  n6@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
+  class n6 node_system
+  n7@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  class n7 node_observer
   n8@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n9@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
   class n9 node_observer
   n10@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: hex, label: "**remove​_​from​_​tree​_​on**<br/>从空间树移除碰撞体代理。" }
-  class n11 node_observer
-  n12@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
-  class n12 node_system
-  n13@{ shape: hex, label: "**build::{closure#35;5}**<br/>同步碰撞代理的碰撞层配置。" }
+  n11@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>按物理结果更新活跃刚体的碰撞边界。" }
+  class n11 node_system
+  n12@{ shape: hex, label: "**build::{closure#35;5}**<br/>同步碰撞代理的碰撞层配置。" }
+  class n12 node_observer
+  n13@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
-  class n14 node_observer
-  n15@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
-  class n15 node_system
+  n14@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  class n14 node_system
+  class n14 external_node
+  n15@{ shape: hex, label: "**prepare​_​holder​_​despawn**<br/>来自item​_​interaction ↗：Despawn 观察<br/>先排队停用代理，再让 Avian 的刚体卸载<br/>与 linked​_​spawn 清理运行。" }
+  class n15 node_observer
   class n15 external_node
-  n16@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>来自item​_​interaction ↗：业务箱本身被<br/>销毁后清理代理，防止人物带着不可见的附属<br/>碰撞继续运动。" }
+  n16@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
+  n17@{ shape: rounded, label: "**cleanup​_​orphaned​_​colliders**<br/>来自item​_​interaction ↗：业务箱本身被<br/>销毁后清理代理，防止人物带着不可见的附属<br/>碰撞继续运动。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
-  class n18 node_observer
-  n19@{ shape: hex, label: "**build::{closure#35;3}**<br/>同步碰撞代理的传感器启用标志。" }
+  n18@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
+  class n18 node_system
+  class n18 external_node
+  n19@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
   class n19 node_observer
-  n20@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
-  class n20 node_system
-  n21@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
+  n20@{ shape: hex, label: "**build::{closure#35;3}**<br/>同步碰撞代理的传感器启用标志。" }
+  class n20 node_observer
+  n21@{ shape: rounded, label: "**update​_​moved​_​collider​_​aabbs**<br/>重算物理步后被手动改变的碰撞边界。" }
   class n21 node_system
-  class n21 external_node
-  n22@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n22@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
   class n22 node_system
   class n22 external_node
   n0 e0@-->|"存在性约束"| n1
@@ -100,8 +100,8 @@ flowchart LR
   class e1 edge_reference
   n3 e2@-->|"插入"| n0
   class e2 edge_write
-  n4 e3@-->|"插入"| n0
-  class e3 edge_write
+  n0 e3@-->|"存在性约束"| n4
+  class e3 edge_reference
   n0 e4@-->|"存在性约束"| n5
   class e4 edge_reference
   n0 e5@-->|"存在性约束"| n6
@@ -122,28 +122,28 @@ flowchart LR
   class e12 edge_reference
   n0 e13@-->|"存在性约束"| n14
   class e13 edge_reference
-  n0 e14@-->|"存在性约束"| n15
-  class e14 edge_reference
-  n16 e15@-->|"插入"| n0
-  class e15 edge_write
-  n0 e16@-->|"存在性约束"| n17
-  class e16 edge_reference
+  n15 e14@-->|"插入"| n0
+  class e14 edge_write
+  n0 e15@-->|"存在性约束"| n16
+  class e15 edge_reference
+  n17 e16@-->|"插入"| n0
+  class e16 edge_write
   n0 e17@-->|"存在性约束"| n18
   class e17 edge_reference
   n0 e18@-->|"存在性约束"| n19
   class e18 edge_reference
   n0 e19@-->|"存在性约束"| n20
   class e19 edge_reference
-  n21 e20@-->|"插入"| n0
-  class e20 edge_write
-  n4 e21@---|"存在性约束"| n0
-  class e21 edge_reference
-  n0 e22@-->|"存在性约束"| n22
+  n0 e20@-->|"存在性约束"| n21
+  class e20 edge_reference
+  n22 e21@-->|"插入"| n0
+  class e21 edge_write
+  n3 e22@---|"存在性约束"| n0
   class e22 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
@@ -162,4 +162,4 @@ flowchart LR
   e19@{ curve: basis }
   e20@{ curve: basis }
   e21@{ curve: basis }
-  e22@{ curve: basis }
+  e22@{ curve: bumpX }

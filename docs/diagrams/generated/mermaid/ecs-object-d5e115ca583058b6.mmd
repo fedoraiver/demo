@@ -160,55 +160,55 @@ flowchart LR
   end
   style layout_card_n19 fill:none,stroke:none
   subgraph layout_card_n20[" "]
-  n20@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
-  class n20 node_entity
+  n20@{ shape: rounded, label: "**extract​_​taa​_​settings**<br/>来自crate:bevy​_​anti​_​alias ↗：提取有<br/>效相机的 TAA 设置并消费历史重置信号。" }
+  class n20 node_system
   class n20 external_node
   end
   style layout_card_n20 fill:none,stroke:none
   subgraph layout_card_n21[" "]
-  n21@{ shape: rounded, label: "**extract​_​taa​_​settings**<br/>来自crate:bevy​_​anti​_​alias ↗：提取有<br/>效相机的 TAA 设置并消费历史重置信号。" }
+  n21@{ shape: rounded, label: "**extract​_​core​_​2d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动二维相机准备渲染阶段并清理失效视图。" }
   class n21 node_system
   class n21 external_node
   end
   style layout_card_n21 fill:none,stroke:none
   subgraph layout_card_n22[" "]
-  n22@{ shape: rounded, label: "**extract​_​core​_​2d​_​camera​_​phases**<br/>来自crate:bevy​_​core​_​pipeline ↗：为活<br/>动二维相机准备渲染阶段并清理失效视图。" }
+  n22@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n22 node_system
   class n22 external_node
   end
   style layout_card_n22 fill:none,stroke:none
   subgraph layout_card_n23[" "]
-  n23@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n23@{ shape: rounded, label: "**extract​_​transmissive​_​camera​_​phases**<br/>来自crate:bevy​_​pbr ↗：为活动三维相机<br/>准备本帧透射阶段并清理失效视图。" }
   class n23 node_system
   class n23 external_node
   end
   style layout_card_n23 fill:none,stroke:none
   subgraph layout_card_n24[" "]
-  n24@{ shape: rounded, label: "**extract​_​transmissive​_​camera​_​phases**<br/>来自crate:bevy​_​pbr ↗：为活动三维相机<br/>准备本帧透射阶段并清理失效视图。" }
+  n24@{ shape: rounded, label: "**extract​_​egui​_​camera​_​view​_​system**<br/>来自crate:bevy​_​egui ↗：为活动相机提取<br/>独立 Egui 渲染视图。" }
   class n24 node_system
   class n24 external_node
   end
   style layout_card_n24 fill:none,stroke:none
   subgraph layout_card_n25[" "]
-  n25@{ shape: rounded, label: "**extract​_​egui​_​camera​_​view​_​system**<br/>来自crate:bevy​_​egui ↗：为活动相机提取<br/>独立 Egui 渲染视图。" }
+  n25@{ shape: rounded, label: "**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
   class n25 node_system
-  class n25 external_node
   end
   style layout_card_n25 fill:none,stroke:none
   subgraph layout_card_n26[" "]
-  n26@{ shape: rounded, label: "**check​_​visibility​_​ranges**<br/>按视图距离计算实体可见范围位掩码。" }
+  n26@{ shape: rounded, label: "**queue​_​render​_​sky​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：按多重采样和混<br/>合能力选择天空管线。" }
   class n26 node_system
+  class n26 external_node
   end
   style layout_card_n26 fill:none,stroke:none
   subgraph layout_card_n27[" "]
-  n27@{ shape: rounded, label: "**queue​_​render​_​sky​_​pipelines**<br/>来自crate:bevy​_​pbr ↗：按多重采样和混<br/>合能力选择天空管线。" }
+  n27@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
   class n27 node_system
-  class n27 external_node
   end
   style layout_card_n27 fill:none,stroke:none
   subgraph layout_card_n28[" "]
-  n28@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  n28@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n28 node_system
+  class n28 external_node
   end
   style layout_card_n28 fill:none,stroke:none
   subgraph layout_card_n29[" "]
@@ -218,92 +218,92 @@ flowchart LR
   end
   style layout_card_n29 fill:none,stroke:none
   subgraph layout_card_n30[" "]
-  n30@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n30@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：把界面输入和文<br/>件拖放写入 Egui 输入批次。" }
   class n30 node_system
   class n30 external_node
   end
   style layout_card_n30 fill:none,stroke:none
   subgraph layout_card_n31[" "]
-  n31@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：把界面输入和文<br/>件拖放写入 Egui 输入批次。" }
+  n31@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n31 node_system
   class n31 external_node
   end
   style layout_card_n31 fill:none,stroke:none
   subgraph layout_card_n32[" "]
-  n32@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n32@{ shape: rounded, label: "**setup​_​primary​_​egui​_​context​_​system**<br/>来自crate:bevy​_​egui ↗：为首个合适相机<br/>建立主 Egui 上下文。" }
   class n32 node_system
   class n32 external_node
   end
   style layout_card_n32 fill:none,stroke:none
   subgraph layout_card_n33[" "]
-  n33@{ shape: rounded, label: "**setup​_​primary​_​egui​_​context​_​system**<br/>来自crate:bevy​_​egui ↗：为首个合适相机<br/>建立主 Egui 上下文。" }
+  n33@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>来自crate:bevy​_​light ↗：为投射阴影的<br/>方向光构建逐相机级联。" }
   class n33 node_system
   class n33 external_node
   end
   style layout_card_n33 fill:none,stroke:none
   subgraph layout_card_n34[" "]
-  n34@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>来自crate:bevy​_​light ↗：为投射阴影的<br/>方向光构建逐相机级联。" }
+  n34@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n34 node_system
   class n34 external_node
   end
   style layout_card_n34 fill:none,stroke:none
   subgraph layout_card_n35[" "]
-  n35@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n35@{ shape: rounded, label: "**update​_​directional​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：从方向光级联<br/>投影更新阴影视锥。" }
   class n35 node_system
   class n35 external_node
   end
   style layout_card_n35 fill:none,stroke:none
   subgraph layout_card_n36[" "]
-  n36@{ shape: rounded, label: "**update​_​directional​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：从方向光级联<br/>投影更新阴影视锥。" }
+  n36@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
   class n36 node_system
   class n36 external_node
   end
   style layout_card_n36 fill:none,stroke:none
   subgraph layout_card_n37[" "]
-  n37@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
+  n37@{ shape: rounded, label: "**ui​_​focus​_​system**<br/>来自crate:bevy​_​ui ↗：按鼠标和触摸更新<br/>旧式 UI 交互状态。" }
   class n37 node_system
   class n37 external_node
   end
   style layout_card_n37 fill:none,stroke:none
   subgraph layout_card_n38[" "]
-  n38@{ shape: rounded, label: "**ui​_​focus​_​system**<br/>来自crate:bevy​_​ui ↗：按鼠标和触摸更新<br/>旧式 UI 交互状态。" }
+  n38@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n38 node_system
   class n38 external_node
   end
   style layout_card_n38 fill:none,stroke:none
   subgraph layout_card_n39[" "]
-  n39@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
-  class n39 node_system
+  n39@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
+  class n39 node_entity
   class n39 external_node
   end
   style layout_card_n39 fill:none,stroke:none
   subgraph layout_card_n40[" "]
-  n40@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
-  class n40 node_entity
+  n40@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  class n40 node_system
   class n40 external_node
   end
   style layout_card_n40 fill:none,stroke:none
   subgraph layout_card_n41[" "]
-  n41@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  n41@{ shape: rounded, label: "**ui​_​picking**<br/>来自crate:bevy​_​ui ↗：按 UI 堆叠与相机<br/>视口计算指针命中。" }
   class n41 node_system
   class n41 external_node
   end
   style layout_card_n41 fill:none,stroke:none
   subgraph layout_card_n42[" "]
-  n42@{ shape: rounded, label: "**ui​_​picking**<br/>来自crate:bevy​_​ui ↗：按 UI 堆叠与相机<br/>视口计算指针命中。" }
+  n42@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
   class n42 node_system
   class n42 external_node
   end
   style layout_card_n42 fill:none,stroke:none
   subgraph layout_card_n43[" "]
-  n43@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
+  n43@{ shape: rounded, label: "**extract​_​clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：提取视图聚簇配<br/>置并回传上帧 GPU 统计。" }
   class n43 node_system
   class n43 external_node
   end
   style layout_card_n43 fill:none,stroke:none
   subgraph layout_card_n44[" "]
-  n44@{ shape: rounded, label: "**extract​_​clusters​_​for​_​gpu​_​clustering**<br/>来自crate:bevy​_​pbr ↗：提取视图聚簇配<br/>置并回传上帧 GPU 统计。" }
-  class n44 node_system
+  n44@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
+  class n44 node_entity
   class n44 external_node
   end
   style layout_card_n44 fill:none,stroke:none
@@ -407,61 +407,61 @@ flowchart LR
   class e18 edge_reference
   n0 e19@--> n19
   class e19 edge_read
-  n20 e20@-->|"可能包含"| n0
-  class e20 edge_reference
+  n0 e20@--> n20
+  class e20 edge_read
   n0 e21@--> n21
   class e21 edge_read
-  n0 e22@--> n22
-  class e22 edge_read
-  n0 e23@-->|"存在性约束"| n23
-  class e23 edge_reference
+  n0 e22@-->|"存在性约束"| n22
+  class e22 edge_reference
+  n0 e23@--> n23
+  class e23 edge_read
   n0 e24@--> n24
   class e24 edge_read
-  n0 e25@--> n25
-  class e25 edge_read
+  n0 e25@-->|"存在性约束"| n25
+  class e25 edge_reference
   n0 e26@-->|"存在性约束"| n26
   class e26 edge_reference
-  n0 e27@-->|"存在性约束"| n27
-  class e27 edge_reference
+  n0 e27@--> n27
+  class e27 edge_read
   n0 e28@--> n28
   class e28 edge_read
-  n0 e29@--> n29
-  class e29 edge_read
-  n0 e30@-->|"存在性约束"| n30
-  class e30 edge_reference
-  n0 e31@--> n31
-  class e31 edge_read
-  n0 e32@-->|"存在性约束"| n32
-  class e32 edge_reference
+  n0 e29@-->|"存在性约束"| n29
+  class e29 edge_reference
+  n0 e30@--> n30
+  class e30 edge_read
+  n0 e31@-->|"存在性约束"| n31
+  class e31 edge_reference
+  n0 e32@--> n32
+  class e32 edge_read
   n0 e33@--> n33
   class e33 edge_read
-  n0 e34@--> n34
-  class e34 edge_read
+  n0 e34@-->|"存在性约束"| n34
+  class e34 edge_reference
   n0 e35@-->|"存在性约束"| n35
   class e35 edge_reference
-  n0 e36@-->|"存在性约束"| n36
-  class e36 edge_reference
+  n0 e36@--> n36
+  class e36 edge_read
   n0 e37@--> n37
   class e37 edge_read
-  n0 e38@--> n38
-  class e38 edge_read
-  n0 e39@-->|"存在性约束"| n39
+  n0 e38@-->|"存在性约束"| n38
+  class e38 edge_reference
+  n39 e39@-->|"可能包含"| n0
   class e39 edge_reference
-  n40 e40@-->|"可能包含"| n0
+  n0 e40@-->|"存在性约束"| n19
   class e40 edge_reference
-  n0 e41@-->|"存在性约束"| n19
+  n0 e41@-->|"存在性约束"| n40
   class e41 edge_reference
-  n0 e42@-->|"存在性约束"| n41
-  class e42 edge_reference
+  n0 e42@--> n41
+  class e42 edge_read
   n0 e43@--> n42
   class e43 edge_read
   n0 e44@--> n43
   class e44 edge_read
-  n0 e45@--> n44
-  class e45 edge_read
+  n44 e45@-->|"可能包含"| n0
+  class e45 edge_reference
   n17 e46@-->|"可变访问"| n0
   class e46 edge_write
-  n0 e47@-->|"存在性约束"| n33
+  n0 e47@-->|"存在性约束"| n32
   class e47 edge_reference
   n0 e48@--> n45
   class e48 edge_read

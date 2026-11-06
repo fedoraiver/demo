@@ -49,7 +49,7 @@ flowchart LR
   class n0 node_observer
   n1@{ shape: cyl, label: "**MenuInputSource**<br/>输入来源单独决定焦点是否可见；鼠标离开后<br/>仍保留序号供后续导航使用。" }
   class n1 node_resource
-  n2@{ shape: lean-r, label: "**SoundRequest**<br/>来自audio ↗：业务实体只用于日志和节<br/>流，不持有其组件引用，实体销毁后消息仍可<br/>被消费。" }
+  n2@{ shape: lean-r, label: "**SoundRequest**<br/>来自audio ↗：声音请求保存用于日志定位<br/>的来源实体标识，来源实体销毁后仍可消费。" }
   class n2 node_message
   class n2 external_node
   n3@{ shape: cyl, label: "**Messages#lt;SoundRequest#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
@@ -90,7 +90,7 @@ flowchart LR
   class e10 edge_observe
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e2@{ curve: bumpX }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }

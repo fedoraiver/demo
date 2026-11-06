@@ -48,33 +48,27 @@ flowchart LR
   n2@{ shape: rounded, label: "**update​_​directional​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：从方向光级联<br/>投影更新阴影视锥。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：照亮主菜单海岛展示舞台。" }
-  class n3 node_entity
+  n3@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
+  class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：为玩法海岛提供<br/>随会话清理的日光照明。" }
+  n4@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：照亮灰盒地面与<br/>方块。" }
   class n4 node_entity
   class n4 external_node
-  n5@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
-  class n5 node_system
-  class n5 external_node
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"可变访问"| n0
   class e1 edge_write
-  n3 e2@-->|"可能包含"| n0
-  class e2 edge_reference
-  n4 e3@-->|"可能包含"| n0
-  class e3 edge_reference
-  n0 e4@--> n5
-  class e4 edge_read
-  n2 e5@-->|"赋值"| n0
-  class e5 edge_write
-  n0 e6@-->|"存在性约束"| n1
-  class e6 edge_reference
+  n0 e2@--> n3
+  class e2 edge_read
+  n2 e3@-->|"赋值"| n0
+  class e3 edge_write
+  n0 e4@-->|"存在性约束"| n1
+  class e4 edge_reference
+  n4 e5@-->|"可能包含"| n0
+  class e5 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: basis }

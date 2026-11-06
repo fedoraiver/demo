@@ -25,7 +25,7 @@
       "useMaxWidth": false,
       "curve": "linear"
     },
-    "themeCSS": "#object-037b8752dfbc28bc-e7{marker-start:url(#object-037b8752dfbc28bc_flowchart-v2-pointStart)!important}\n#object-037b8752dfbc28bc_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
+    "themeCSS": "#object-037b8752dfbc28bc-e6{marker-start:url(#object-037b8752dfbc28bc_flowchart-v2-pointStart)!important}\n#object-037b8752dfbc28bc_flowchart-v2-pointStart path{fill:context-stroke!important;stroke:context-stroke!important}\n.edgeLabel rect { opacity:1!important; fill:#F6F8FB!important; }"
   }
 }
 ---
@@ -53,11 +53,11 @@ flowchart LR
   class n5 node_system
   n6@{ shape: rounded, label: "**reset​_​easing​_​states​_​on​_​transform​_​**<br/>**change**<br/>在外部直接改变变换时取消失效的平滑区间。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**reset​_​rotation​_​easing**<br/>清除旧旋转平滑的起点和终点。" }
+  n7@{ shape: rounded, label: "**complete​_​rotation​_​easing**<br/>在新一轮插值前完成上一段旋转。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**complete​_​rotation​_​easing**<br/>在新一轮插值前完成上一段旋转。" }
+  n8@{ shape: rounded, label: "**update​_​rotation​_​interpolation​_​start**<br/>把当前旋转记录为插值起点。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**update​_​rotation​_​interpolation​_​start**<br/>把当前旋转记录为插值起点。" }
+  n9@{ shape: rounded, label: "**reset​_​rotation​_​easing**<br/>清除旧旋转平滑的起点和终点。" }
   class n9 node_system
   n0 e0@--> n1
   class e0 edge_read
@@ -71,21 +71,21 @@ flowchart LR
   class e4 edge_write
   n6 e5@-->|"可变访问"| n0
   class e5 edge_write
-  n7 e6@-->|"可变访问"| n0
-  class e6 edge_write
-  n6 e7@---|"存在性约束"| n0
-  class e7 edge_reference
-  n7 e8@-->|"赋值"| n0
+  n6 e6@---|"存在性约束"| n0
+  class e6 edge_reference
+  n0 e7@--> n7
+  class e7 edge_read
+  n8 e8@-->|"赋值"| n0
   class e8 edge_write
-  n0 e9@--> n8
-  class e9 edge_read
-  n9 e10@-->|"赋值"| n0
+  n9 e9@-->|"可变访问"| n0
+  class e9 edge_write
+  n8 e10@-->|"可变访问"| n0
   class e10 edge_write
-  n9 e11@-->|"可变访问"| n0
+  n5 e11@-->|"可变访问"| n0
   class e11 edge_write
-  n5 e12@-->|"可变访问"| n0
+  n6 e12@-->|"赋值"| n0
   class e12 edge_write
-  n6 e13@-->|"赋值"| n0
+  n9 e13@-->|"赋值"| n0
   class e13 edge_write
   n2 e14@-->|"可变访问"| n0
   class e14 edge_write
@@ -94,13 +94,13 @@ flowchart LR
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: bumpX }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
-  e12@{ curve: basis }
+  e12@{ curve: bumpX }
   e13@{ curve: basis }
   e14@{ curve: basis }

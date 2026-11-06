@@ -43,33 +43,33 @@ flowchart LR
   n1@{ shape: rounded, label: "**exit​_​on​_​all​_​closed**<br/>来自crate:bevy​_​window ↗：窗口查询为空<br/>时写入 AppExit::Success，通知应用正常<br/>退出；仍有窗口时不发送退出消息。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
+  n2@{ shape: rounded, label: "**stop​_​on​_​exit**<br/>来自audio ↗：停止当前 UI 音频通道并记<br/>录退出。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**exit​_​on​_​flag**<br/>把终端退出标志转为应用退出消息。" }
+  n3@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
+  class n3 external_node
+  n4@{ shape: rounded, label: "**exit​_​on​_​flag**<br/>把终端退出标志转为应用退出消息。" }
   class n4 node_system
-  class n4 external_node
-  n5@{ shape: rounded, label: "**stop​_​on​_​exit**<br/>来自audio ↗：停止音频通道并记录退出。" }
+  n5@{ shape: rounded, label: "**despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
   class n5 node_system
   class n5 external_node
   n1 e0@-->|"消息"| n0
   class e0 edge_publish
-  n2 e1@-->|"消息"| n0
-  class e1 edge_publish
+  n0 e1@--> n2
+  class e1 edge_consume
   n3 e2@-->|"消息"| n0
   class e2 edge_publish
-  n1 e3@-->|"可变访问"| n0
+  n4 e3@-->|"消息"| n0
   class e3 edge_publish
-  n2 e4@-->|"可变访问"| n0
+  n1 e4@-->|"可变访问"| n0
   class e4 edge_publish
-  n0 e5@--> n4
-  class e5 edge_consume
-  n3 e6@-->|"可变访问"| n0
-  class e6 edge_publish
-  n0 e7@--> n5
-  class e7 edge_consume
+  n3 e5@-->|"可变访问"| n0
+  class e5 edge_publish
+  n0 e6@--> n5
+  class e6 edge_consume
+  n4 e7@-->|"可变访问"| n0
+  class e7 edge_publish
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }

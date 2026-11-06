@@ -44,7 +44,7 @@ flowchart LR
   class n0 node_component
   n1@{ shape: rounded, label: "**build​_​directional​_​light​_​cascades**<br/>为投射阴影的方向光构建逐相机级联。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：为玩法海岛提供<br/>随会话清理的日光照明。" }
+  n2@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：照亮灰盒地面与<br/>方块。" }
   class n2 node_entity
   class n2 external_node
   n3@{ shape: rounded, label: "**update​_​directional​_​light​_​frusta**<br/>从方向光级联投影更新阴影视锥。" }
@@ -52,9 +52,6 @@ flowchart LR
   n4@{ shape: rounded, label: "**extract​_​lights**<br/>来自crate:bevy​_​pbr ↗：提取各类可见光<br/>源及阴影渲染状态。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：照亮主菜单海岛展示舞台。" }
-  class n5 node_entity
-  class n5 external_node
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
   n2 e1@-->|"可能包含"| n0
@@ -65,10 +62,8 @@ flowchart LR
   class e3 edge_reference
   n0 e4@--> n4
   class e4 edge_read
-  n5 e5@-->|"可能包含"| n0
-  class e5 edge_reference
   e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }

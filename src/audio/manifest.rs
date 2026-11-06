@@ -28,7 +28,8 @@ pub(super) struct PlaybackPolicy {
 }
 
 impl Manifest {
-    /// 编译时嵌入清单，但仍检查契约；破损清单只禁用反馈，不改变玩法状态。
+    /// 校验资源策略与已注册事件的映射，分类由各事件的契约决定。
+    /// 校验失败返回错误，加载端记录日志并停止本次声音资源加载。
     pub(super) fn parse(text: &str) -> Result<Self, String> {
         let manifest: Self = serde_json::from_str(text).map_err(|error| error.to_string())?;
         if manifest.schema_version != 1 {
@@ -59,7 +60,7 @@ impl Manifest {
                 .collect();
             if matches.len() != 1
                 || matches[0].playback.looped
-                || !matches!(matches[0].category.as_str(), "ui" | "sfx")
+                || matches[0].category != cue.category()
             {
                 return Err(format!("Invalid one-shot event mapping: {}", cue.id()));
             }

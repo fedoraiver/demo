@@ -34,5 +34,5 @@ flowchart LR
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>加载当前场景资源并装配地图、碰撞与业务实<br/>体。" }
+  n0@{ shape: fr-rect, label: "**SceneAssemblyPlugin**<br/>直接由几何体生成灰盒会话，不等待外部模型<br/>或地图加载。" }
   class n0 node_plugin

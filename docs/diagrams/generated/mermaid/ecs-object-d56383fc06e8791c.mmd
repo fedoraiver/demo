@@ -39,30 +39,24 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**CarryGrip**<br/>模型对应的手前偏移；未指定时继续使用原型<br/>配置，纸箱对齐持箱动作的双手。" }
+  n0@{ shape: rounded, label: "**CarryGrip**<br/>物品相对持有者的局部握点；未指定时使用原<br/>型配置。" }
   class n0 node_component
   n1@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>帧末跟随同一份已呈现人物姿态，零固定步时<br/>也不在箱体上叠加第二份插值。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**warn​_​hold​_​strain**<br/>持续偏离实际握点时提示一次，误差恢复后允<br/>许下一次告警。" }
-  class n2 node_system
+  n2@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：创建可拾取并参<br/>与物理的灰盒方块。" }
+  class n2 node_entity
+  class n2 external_node
   n3@{ shape: rounded, label: "**align​_​attachments**<br/>有限的小步对齐不会积分箱体力；受阻保留安<br/>全姿态，持续受阻则解除持握。" }
   class n3 node_system
   n4@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>帧末跟随同一份已呈现人物姿态，零固定步时<br/>也不在箱体上叠加第二份插值。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**spawn​_​actors · 创建模板**<br/>来自scene​_​assembly ↗：承载海岛物品的<br/>种类、拾取能力、握点和出生姿态。" }
-  class n5 node_entity
-  class n5 external_node
   n0 e0@--> n1
   class e0 edge_read
-  n0 e1@--> n2
-  class e1 edge_read
+  n2 e1@-->|"可能包含"| n0
+  class e1 edge_reference
   n0 e2@--> n3
   class e2 edge_read
   n0 e3@--> n4
   class e3 edge_read
-  n5 e4@-->|"可能包含"| n0
-  class e4 edge_reference
   e0@{ curve: basis }
-  e1@{ curve: basis }
-  e2@{ curve: basis }
   e3@{ curve: basis }

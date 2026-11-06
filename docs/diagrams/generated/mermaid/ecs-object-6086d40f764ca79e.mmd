@@ -39,26 +39,26 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**Bindings**<br/>保存属于当前动作实体的输入绑定实体集合" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>求值上下文输入并更新动作状态。" }
-  class n1 node_system
-  n2@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
+  n1@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
+  class n1 node_observer
+  n2@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n2 node_observer
   n3@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  n4@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
+  n5@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n5 node_observer
   n6@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
+  n7@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
   class n7 node_observer
   n8@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
+  n9@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
-  class n10 node_observer
+  n10@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>求值上下文输入并更新动作状态。" }
+  class n10 node_system
   n11@{ shape: hex, label: "**deactivate**<br/>为停用上下文登记输入释放等待。" }
   class n11 node_observer
   n0 e0@--> n1

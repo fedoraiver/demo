@@ -50,25 +50,25 @@ flowchart LR
   n3@{ shape: rounded, label: "**draw​_​frustum​_​gizmos**<br/>来自crate:bevy​_​gizmos ↗：绘制带标记实<br/>体的视锥调试图形。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**spawn​_​session​_​environment · 创建模板**<br/>来自scene​_​assembly ↗：加载海岛并复用<br/>为角色第一人称视角的相机。" }
-  class n4 node_entity
+  n4@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
+  class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**assign​_​objects​_​to​_​clusters**<br/>来自crate:bevy​_​light ↗：将灯光、探针<br/>及贴花分配到视图分簇。" }
+  n5@{ shape: rounded, label: "**update​_​point​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见点光<br/>的六面阴影视锥。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**update​_​point​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见点光<br/>的六面阴影视锥。" }
+  n6@{ shape: rounded, label: "**draw​_​all​_​frustum​_​gizmos**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的视锥调试图形。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**draw​_​all​_​frustum​_​gizmos**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记实体的视锥调试图形。" }
+  n7@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
   class n7 node_system
-  class n7 external_node
-  n8@{ shape: rounded, label: "**check​_​visibility​_​cpu​_​culling**<br/>按层、距离和视锥收集各相机可见实体。" }
+  n8@{ shape: rounded, label: "**prepare​_​view​_​uniforms**<br/>来自crate:bevy​_​render ↗：生成视图投<br/>影、抖动、裁剪及 LOD 的 GPU 参数。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**prepare​_​view​_​uniforms**<br/>来自crate:bevy​_​render ↗：生成视图投<br/>影、抖动、裁剪及 LOD 的 GPU 参数。" }
+  class n8 external_node
+  n9@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
-  class n10 node_system
+  n10@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
+  class n10 node_entity
   class n10 external_node
   n11@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
   class n11 node_system
@@ -79,7 +79,7 @@ flowchart LR
   n13@{ shape: rounded, label: "**update​_​spot​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见聚光<br/>灯的阴影视锥。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：绘制主菜单展示舞台并承接菜<br/>单 UI。" }
+  n14@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
   class n14 node_entity
   class n14 external_node
   n0 e0@--> n1
@@ -88,27 +88,27 @@ flowchart LR
   class e1 edge_write
   n0 e2@--> n3
   class e2 edge_read
-  n4 e3@-->|"可能包含"| n0
-  class e3 edge_reference
-  n0 e4@--> n5
-  class e4 edge_read
-  n6 e5@-->|"赋值"| n0
-  class e5 edge_write
+  n0 e3@--> n4
+  class e3 edge_read
+  n5 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n0 e5@--> n6
+  class e5 edge_read
   n0 e6@--> n7
   class e6 edge_read
   n0 e7@--> n8
   class e7 edge_read
-  n0 e8@--> n9
-  class e8 edge_read
-  n10 e9@-->|"插入"| n0
-  class e9 edge_write
+  n9 e8@-->|"插入"| n0
+  class e8 edge_write
+  n10 e9@-->|"可能包含"| n0
+  class e9 edge_reference
   n11 e10@--- n0
   class e10 edge_read
   n11 e11@-->|"插入"| n0
   class e11 edge_write
   n12 e12@--- n0
   class e12 edge_read
-  n10 e13@--- n0
+  n9 e13@--- n0
   class e13 edge_read
   n12 e14@-->|"插入"| n0
   class e14 edge_write
@@ -116,7 +116,7 @@ flowchart LR
   class e15 edge_write
   n13 e16@-->|"可变访问"| n0
   class e16 edge_write
-  n10 e17@---|"存在性约束"| n0
+  n9 e17@---|"存在性约束"| n0
   class e17 edge_reference
   n14 e18@-->|"可能包含"| n0
   class e18 edge_reference
@@ -129,8 +129,8 @@ flowchart LR
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
-  e6@{ curve: bumpX }
+  e5@{ curve: bumpX }
+  e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

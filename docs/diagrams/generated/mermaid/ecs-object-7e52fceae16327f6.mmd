@@ -40,19 +40,19 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**MenuScroll**<br/>可滚动区域的标记；用于键盘导航时把当前按<br/>钮滚入视野。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**scroll​_​focused​_​button**<br/>短窗口中键盘仍能访问所有按钮；新页面先等<br/>布局完成，再滚到焦点所在区域。" }
+  n1@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>同步设置滚动条的有效范围和交互状态。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**sync​_​settings​_​scrollbars**<br/>同步设置滚动条的有效范围和交互状态。" }
+  n2@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>把设置滚动轨道绑定到实际内容视口。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>裁切并滚动设置面板内的正文内容。" }
+  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>保存设置内容的滚动位置与视口。" }
   class n3 node_entity
-  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>裁切并滚动设置面板内的正文内容。" }
+  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>保存设置内容的滚动位置与视口。" }
   class n4 node_entity
-  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>裁切并滚动设置面板内的正文内容。" }
+  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>保存设置内容的滚动位置与视口。" }
   class n5 node_entity
-  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>裁切并滚动设置面板内的正文内容。" }
+  n6@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>保存设置内容的滚动位置与视口。" }
   class n6 node_entity
-  n7@{ shape: rounded, label: "**bind​_​settings​_​scrollbars**<br/>把设置滚动轨道绑定到实际内容视口。" }
+  n7@{ shape: rounded, label: "**scroll​_​focused​_​button**<br/>短窗口中键盘仍能访问所有按钮；新页面先等<br/>布局完成，再滚到焦点所在区域。" }
   class n7 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference

@@ -75,7 +75,7 @@ fn pause_freezes_actual_physics_immediately_and_resume_does_not_catch_up() {
         "resume must not integrate paused wall time"
     );
 
-    // 返回菜单重新推进展示动画的虚拟时钟，但遗留测试刚体也不能继续模拟。
+    // 返回菜单重新推进虚拟时钟，但遗留测试刚体也不能继续模拟。
     app.world_mut()
         .resource_mut::<NextState<AppState>>()
         .set(AppState::Paused);

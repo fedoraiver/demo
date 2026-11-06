@@ -30,77 +30,49 @@
 }
 ---
 flowchart LR
-  accTitle: demo::ui::scroll::scroll_focused_button · 对象关系
+  accTitle: demo::audio::mix::sync_voice_volumes · 对象关系
   accDescr: 当前对象及全部直接关联对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
-  classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef node_resource fill:#F8F4EE,stroke:#A5792C,stroke-width:1.6px,color:#1F3340
-  classDef node_local fill:#F8F5F1,stroke:#AA8752,stroke-width:1.6px,color:#1F3340
   classDef node_system_set fill:#F3F4F6,stroke:#6A778C,stroke-width:1.6px,color:#1F3340
   classDef node_plugin fill:#F1F3F6,stroke:#4A6389,stroke-width:2.2px,color:#1F3340
+  classDef edge_order stroke:#334155,stroke-width:2px
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
-  classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef edge_registration stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**scroll​_​focused​_​button**<br/>短窗口中键盘仍能访问所有按钮；新页面先等<br/>布局完成，再滚到焦点所在区域。" }
+  n0@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**ScrollPosition**<br/>来自crate:bevy​_​ui ↗：指定 UI 内容的逻<br/>辑像素滚动位置。" }
-  class n1 node_component
-  class n1 external_node
-  n2@{ shape: rounded, label: "**MenuScroll**<br/>可滚动区域的标记；用于键盘导航时把当前按<br/>钮滚入视野。" }
-  class n2 node_component
-  n3@{ shape: rounded, label: "**UiGlobalTransform**<br/>来自crate:bevy​_​ui ↗：保存 UI 节点的绝<br/>对二维变换。" }
-  class n3 node_component
+  n1@{ shape: lin-rect, label: "**Mix**<br/>跨功能只约束混音与播放阶段，具体资源和实<br/>例处理顺序留在音频内部。" }
+  class n1 node_system_set
+  n2@{ shape: cyl, label: "**AudioMix**<br/>音频输出的有效混音源，离开设置页后采用最<br/>近成功应用的配置。" }
+  class n2 node_resource
+  n3@{ shape: cyl, label: "**Assets#lt;AudioInstance#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
+  class n3 node_resource
   class n3 external_node
-  n4@{ shape: cyl, label: "**MenuFocus**<br/>当前可操作按钮的序号，由键盘导航和鼠标悬<br/>停共同维护。" }
-  class n4 node_resource
-  n5@{ shape: rounded, label: "**ChildOf**<br/>来自crate:bevy​_​ecs ↗：保存当前实体的<br/>父实体身份" }
-  class n5 node_component
-  class n5 external_node
-  n6@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
+  n4@{ shape: rounded, label: "**sync​_​audio​_​mix**<br/>合成设置预览或正式配置的有效音量。" }
+  class n4 node_system
+  n5@{ shape: cyl, label: "**SoundBank**<br/>集中维护声音句柄与播放状态，记录每种事件<br/>最近一次获准播放的时间。" }
+  class n5 node_resource
+  n6@{ shape: fr-rect, label: "**GameAudioPlugin**<br/>安装 Kira 输出与音频生命周期；无设备测<br/>试直接使用内部纯数据夹具。" }
   class n6 node_plugin
-  n7@{ shape: rounded, label: "**ComputedNode**<br/>来自crate:bevy​_​ui ↗：保存 UI 布局计算<br/>后的物理尺寸。" }
-  class n7 node_component
-  class n7 external_node
-  n8@{ shape: rounded, label: "**MenuButton**<br/>菜单实体保存动作与导航序号，系统不依赖显<br/>示文字或实体名称。" }
-  class n8 node_component
-  n9@{ shape: lin-rect, label: "**Style**<br/>请求在 PreUpdate 消费后，Update 依次生<br/>成 BSN 页面并更新视觉焦点。" }
-  class n9 node_system_set
-  n10@{ shape: notch-rect, label: "**Local · previous**<br/>避免对同一聚焦按钮重复调整滚动。" }
-  class n10 node_local
-  n0 e0@-->|"赋值"| n1
-  class e0 edge_write
-  n2 e1@-->|"存在性约束"| n0
-  class e1 edge_reference
-  n3 e2@--> n0
-  class e2 edge_read
-  n4 e3@--> n0
-  class e3 edge_read
-  n5 e4@--> n0
-  class e4 edge_read
+  n1 e0@-->|"集合成员"| n0
+  class e0 edge_set_membership
+  n2 e1@--> n0
+  class e1 edge_read
+  n0 e2@-->|"可变访问"| n3
+  class e2 edge_write
+  n4 e3@-->|"先于"| n0
+  class e3 edge_order
+  n0 e4@-->|"可变访问"| n5
+  class e4 edge_write
   n6 e5@-->|"调用"| n0
   class e5 edge_registration
-  n7 e6@--> n0
-  class e6 edge_read
-  n0 e7@-->|"可变访问"| n1
-  class e7 edge_write
-  n8 e8@--> n0
-  class e8 edge_read
-  n9 e9@-->|"集合成员"| n0
-  class e9 edge_set_membership
-  n0 e10@-->|"可变访问"| n10
-  class e10 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: basis }
-  e7@{ curve: bumpX }
-  e8@{ curve: basis }
-  e9@{ curve: basis }
-  e10@{ curve: basis }

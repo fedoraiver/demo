@@ -69,17 +69,17 @@ flowchart LR
   class e3 edge_read
   n3 e4@-->|"可变访问"| n0
   class e4 edge_write
-  n2 e5@-->|"赋值"| n0
+  n5 e5@-->|"赋值"| n0
   class e5 edge_write
-  n5 e6@-->|"赋值"| n0
+  n5 e6@-->|"可变访问"| n0
   class e6 edge_write
-  n0 e7@--> n6
-  class e7 edge_read
-  n1 e8@-->|"赋值"| n0
-  class e8 edge_write
-  n7 e9@-->|"赋值"| n0
+  n2 e7@-->|"赋值"| n0
+  class e7 edge_write
+  n0 e8@--> n6
+  class e8 edge_read
+  n1 e9@-->|"赋值"| n0
   class e9 edge_write
-  n5 e10@-->|"可变访问"| n0
+  n7 e10@-->|"赋值"| n0
   class e10 edge_write
   n7 e11@-->|"可变访问"| n0
   class e11 edge_write

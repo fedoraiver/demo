@@ -46,14 +46,11 @@ flowchart LR
   class n1 node_system
   n2@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：把已准备的海岛<br/>几何接入世界静态碰撞。" }
+  n3@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
   class n3 node_entity
   class n3 external_node
-  n4@{ shape: rounded, label: "**prepare​_​island · 创建模板**<br/>来自scene​_​assembly ↗：使固定站位的展<br/>示 NPC 阻挡人物与箱体。" }
-  class n4 node_entity
-  class n4 external_node
-  n5@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
-  class n5 node_system
+  n4@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
+  class n4 node_system
   n1 e0@-->|"赋值"| n0
   class e0 edge_write
   n0 e1@--> n2
@@ -62,13 +59,10 @@ flowchart LR
   class e2 edge_write
   n3 e3@-->|"可能包含"| n0
   class e3 edge_reference
-  n4 e4@-->|"可能包含"| n0
-  class e4 edge_reference
-  n0 e5@--> n5
-  class e5 edge_read
+  n0 e4@--> n4
+  class e4 edge_read
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e1@{ curve: bumpX }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }

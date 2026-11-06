@@ -51,19 +51,19 @@ flowchart LR
   class n3 external_node
   n4@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n4 node_observer
-  n5@{ shape: rounded, label: "**(Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityMut#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>把求值结果写入类型化输入动作。" }
+  n5@{ shape: rounded, label: "**(Commands#lt;'​_​, '​_​#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityRef#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>根据求值结果触发输入动作通知。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**(Commands#lt;'​_​, '​_​#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityRef#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>根据求值结果触发输入动作通知。" }
-  class n6 node_system
-  n7@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：用向下导航输入切换到下一个菜<br/>单按钮。" }
+  n6@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：用向下导航输入切换到下一个菜<br/>单按钮。" }
+  class n6 node_entity
+  class n6 external_node
+  n7@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把空格按下转换为<br/>角色跳跃请求。" }
   class n7 node_entity
   class n7 external_node
-  n8@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把空格按下转换为<br/>角色跳跃请求。" }
+  n8@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把向左导航输入转成聚焦设置项<br/>的减少请求。" }
   class n8 node_entity
   class n8 external_node
-  n9@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把向左导航输入转成聚焦设置项<br/>的减少请求。" }
-  class n9 node_entity
-  class n9 external_node
+  n9@{ shape: rounded, label: "**(Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityMut#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>把求值结果写入类型化输入动作。" }
+  class n9 node_system
   n10@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：将键盘与手柄返回输入统一为菜<br/>单返回请求。" }
   class n10 node_entity
   class n10 external_node
@@ -96,31 +96,31 @@ flowchart LR
   class e3 edge_read
   n0 e4@--> n5
   class e4 edge_read
-  n0 e5@--> n6
-  class e5 edge_read
-  n0 e6@-->|"存在性约束"| n6
+  n6 e5@-->|"可能包含"| n0
+  class e5 edge_reference
+  n7 e6@-->|"可能包含"| n0
   class e6 edge_reference
-  n7 e7@-->|"可能包含"| n0
+  n8 e7@-->|"可能包含"| n0
   class e7 edge_reference
-  n8 e8@-->|"可能包含"| n0
-  class e8 edge_reference
-  n9 e9@-->|"可能包含"| n0
+  n0 e8@--> n9
+  class e8 edge_read
+  n10 e9@-->|"可能包含"| n0
   class e9 edge_reference
-  n10 e10@-->|"可能包含"| n0
-  class e10 edge_reference
-  n0 e11@--> n11
-  class e11 edge_read
-  n0 e12@-->|"存在性约束"| n5
+  n0 e10@--> n11
+  class e10 edge_read
+  n0 e11@-->|"存在性约束"| n5
+  class e11 edge_reference
+  n12 e12@-->|"可能包含"| n0
   class e12 edge_reference
-  n12 e13@-->|"可能包含"| n0
+  n13 e13@-->|"可能包含"| n0
   class e13 edge_reference
-  n13 e14@-->|"可能包含"| n0
+  n14 e14@-->|"可能包含"| n0
   class e14 edge_reference
-  n14 e15@-->|"可能包含"| n0
-  class e15 edge_reference
-  n0 e16@--> n15
-  class e16 edge_read
-  n16 e17@-->|"可能包含"| n0
+  n0 e15@--> n15
+  class e15 edge_read
+  n16 e16@-->|"可能包含"| n0
+  class e16 edge_reference
+  n0 e17@-->|"存在性约束"| n9
   class e17 edge_reference
   n17 e18@-->|"可能包含"| n0
   class e18 edge_reference
