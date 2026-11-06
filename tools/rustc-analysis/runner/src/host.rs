@@ -868,6 +868,7 @@ impl Host {
                 reports.push((report, path));
             }
             let mut selected = Vec::new();
+            let mut selected_keys = Vec::new();
             let mut requested = BTreeSet::new();
             let mut missing = BTreeSet::new();
             let mut hashes = Hashes::default();
@@ -1102,6 +1103,10 @@ impl Host {
                             missing.insert(artifact.package_id.clone());
                         }
                     }
+                    selected_keys.push(unit_binding::report_key(
+                        &bound[index].key,
+                        report.target.test,
+                    ));
                     selected.push(report);
                 } else if current.is_empty() && artifact.fresh {
                     let mut candidates = Vec::new();
@@ -1147,6 +1152,10 @@ impl Host {
                             if artifact.selected {
                                 requested.insert(selected.len());
                             }
+                            selected_keys.push(unit_binding::report_key(
+                                &bound[index].key,
+                                report.target.test,
+                            ));
                             selected.push(report);
                         }
                         None => {
@@ -1225,12 +1234,14 @@ impl Host {
                 )?;
                 eprintln!("Analysis cache: {summary}");
                 return Ok(Compilation {
-                    reports: selected
-                        .into_iter()
-                        .enumerate()
-                        .filter(|(index, _)| requested.contains(index))
-                        .map(|(_, report)| report)
-                        .collect(),
+                    reports: ordered_reports(
+                        selected_keys
+                            .into_iter()
+                            .zip(selected)
+                            .enumerate()
+                            .filter(|(index, _)| requested.contains(index))
+                            .map(|(_, report)| report),
+                    )?,
                     packages: metadata["packages"].clone(),
                     executable,
                     configuration,
@@ -1242,6 +1253,20 @@ impl Host {
         }
         unreachable!()
     }
+}
+
+// 原生 unit 与 harness 已在绑定阶段消歧；排序不使用运行路径或事实内容摘要。
+fn ordered_reports(
+    reports: impl IntoIterator<Item = (String, UnitReport)>,
+) -> Result<Vec<UnitReport>> {
+    let mut ordered = BTreeMap::new();
+    for (key, report) in reports {
+        ensure!(
+            ordered.insert(key, report).is_none(),
+            "Duplicate native compiler report identity"
+        );
+    }
+    Ok(ordered.into_values().collect())
 }
 
 fn retained_report_matches(
@@ -1567,8 +1592,10 @@ fn publish_extraction(
 ) -> Result<()> {
     fs::create_dir_all(output)?;
     let output = output.canonicalize()?;
-    let debugdump = output.join("debugdump");
-    fs::create_dir_all(&debugdump)?;
+    // 与输出同卷暂存，保留 --out 指向其他卷时的发布能力。
+    let staging = output.join(format!(".extraction-{}", host.run));
+    fs::create_dir(&staging)?;
+    let debugdump = staging.join("debugdump");
     let executable = result
         .executable
         .context("Architecture extraction requires a production binary target")?;
@@ -1580,13 +1607,10 @@ fn publish_extraction(
         .arg(&debugdump)
         .status()?;
     ensure!(status.success(), "Dedicated Schedule export failed");
-    ensure!(
-        debugdump.join("manifest.json").is_file() && debugdump.join("runtime.json").is_file(),
-        "Dedicated export did not publish its runtime snapshot"
-    );
-    fs::copy(debugdump.join("runtime.json"), output.join("runtime.json"))?;
+    preserve_schedule_snapshot(&debugdump, &output)?;
+    fs::copy(debugdump.join("runtime.json"), staging.join("runtime.json"))?;
     fs::write(
-        output.join("analysis-summary.json"),
+        staging.join("analysis-summary.json"),
         serde_json::to_vec_pretty(&result.summary)?,
     )?;
     let units = result
@@ -1607,20 +1631,560 @@ fn publish_extraction(
         source_origins,
         units,
         executable_sha256: file_digest(&executable)?,
-        runtime_sha256: file_digest(&output.join("runtime.json"))?,
+        runtime_sha256: file_digest(&staging.join("runtime.json"))?,
     };
-    let staged = output.join("facts.json.new");
+    let staged = staging.join("facts.json");
     let mut writer = BufWriter::with_capacity(1024 * 1024, fs::File::create(&staged)?);
     serde_json::to_writer(&mut writer, &bundle)?;
     writer.flush()?;
     drop(writer);
-    fs::rename(staged, output.join("facts.json"))?;
+    publish_extraction_files(
+        &staging,
+        &output,
+        &output.join(format!(".extraction-previous-{}", host.run)),
+    )
+}
+
+fn read_schedule_snapshot(directory: &Path) -> Result<(serde_json::Value, Vec<u8>)> {
+    ensure!(
+        fs::symlink_metadata(directory)?.file_type().is_dir(),
+        "Invalid Schedule export directory"
+    );
+    for name in ["manifest.json", "runtime.json"] {
+        ensure!(
+            fs::symlink_metadata(directory.join(name))?
+                .file_type()
+                .is_file(),
+            "Missing or unsafe Schedule export file"
+        );
+    }
+    let manifest: serde_json::Value =
+        serde_json::from_slice(&fs::read(directory.join("manifest.json"))?)?;
+    let bytes = fs::read(directory.join("runtime.json"))?;
+    let runtime: analysis_contract::runtime::RuntimeSnapshot = serde_json::from_slice(&bytes)?;
+    ensure!(
+        manifest["schemaVersion"] == 1
+            && manifest["exportedAt"].as_u64().is_some()
+            && [
+                "bevyVersion",
+                "debugdumpVersion",
+                "target",
+                "sourceFingerprint"
+            ]
+            .iter()
+            .all(|field| manifest[*field]
+                .as_str()
+                .is_some_and(|value| !value.is_empty()))
+            && runtime.schema_version == 1
+            && manifest["sourceFingerprint"] == runtime.source_fingerprint
+            && manifest["target"] == runtime.target
+            && manifest["features"] == serde_json::to_value(&runtime.features)?
+            && runtime
+                .features
+                .iter()
+                .any(|feature| feature == "debugdump"),
+        "Invalid Schedule export provenance"
+    );
+    let schedules = manifest["schedules"]
+        .as_array()
+        .context("Missing Schedule manifest entries")?;
+    ensure!(
+        schedules.len() == runtime.schedules.len(),
+        "Schedule manifest/runtime count mismatch"
+    );
+    let mut ids = BTreeSet::new();
+    for entry in schedules {
+        let app = entry["app"].as_str().context("Missing Schedule app")?;
+        let label = entry["label"].as_str().context("Missing Schedule label")?;
+        let id = digest(format!("{app}\0{label}"));
+        let id = &id[..16];
+        ensure!(
+            !app.is_empty() && !label.is_empty() && entry["id"] == id && ids.insert(id.to_owned()),
+            "Invalid or duplicate Schedule identity"
+        );
+        let filename = entry["filename"]
+            .as_str()
+            .context("Missing Schedule DOT filename")?;
+        ensure!(
+            filename == format!("schedule-{id}.dot")
+                || filename == format!("ecs-schedule-{id}.dot"),
+            "Unsafe Schedule DOT filename"
+        );
+        let dot = directory.join(filename);
+        ensure!(
+            fs::symlink_metadata(&dot)?.file_type().is_file()
+                && entry["sha256"] == file_digest(&dot)?,
+            "Schedule DOT hash mismatch"
+        );
+        let matches = runtime
+            .schedules
+            .iter()
+            .filter(|schedule| schedule.id == id)
+            .collect::<Vec<_>>();
+        ensure!(
+            matches.len() == 1,
+            "Missing or duplicate runtime Schedule identity"
+        );
+        let schedule = matches[0];
+        ensure!(
+            schedule.app == app
+                && schedule.label == label
+                && schedule.dot_filename == filename
+                && entry["sha256"] == schedule.dot_sha256
+                && entry["systemCount"].as_u64() == Some(schedule.systems.len() as u64),
+            "Schedule manifest/runtime evidence mismatch"
+        );
+    }
+    Ok((manifest, bytes))
+}
+
+// 真实导出始终执行；只有完整证据与旧发布原字节相符时才沿用旧清单及导出时间。
+fn preserve_schedule_snapshot(staging: &Path, output: &Path) -> Result<()> {
+    let (mut manifest, runtime) = read_schedule_snapshot(staging)?;
+    let previous = output.join("debugdump");
+    if let Ok((mut old_manifest, old_runtime)) = read_schedule_snapshot(&previous) {
+        manifest.as_object_mut().unwrap().remove("exportedAt");
+        old_manifest.as_object_mut().unwrap().remove("exportedAt");
+        if manifest == old_manifest
+            && runtime == old_runtime
+            && fs::read(output.join("runtime.json")).is_ok_and(|bytes| bytes == old_runtime)
+        {
+            fs::copy(
+                previous.join("manifest.json"),
+                staging.join("manifest.json"),
+            )?;
+        }
+    }
+    Ok(())
+}
+
+// 新 facts 和 runtime 全部就绪后才替换；返回失败前恢复已移动的旧发布，避免混合配对。
+fn publish_extraction_files(staging: &Path, output: &Path, backup: &Path) -> Result<()> {
+    fs::create_dir(backup)?;
+    let names = [
+        "debugdump",
+        "runtime.json",
+        "analysis-summary.json",
+        "facts.json",
+    ];
+    let mut previous = Vec::new();
+    let mut installed = Vec::new();
+    let publication = (|| -> Result<()> {
+        for name in names {
+            if output.join(name).exists() {
+                fs::rename(output.join(name), backup.join(name))?;
+                previous.push(name);
+            }
+            fs::rename(staging.join(name), output.join(name))?;
+            installed.push(name);
+        }
+        Ok(())
+    })();
+    if let Err(error) = publication {
+        for name in installed.into_iter().rev() {
+            let filename = output.join(name);
+            if filename.is_dir() {
+                fs::remove_dir_all(&filename)?;
+            } else {
+                fs::remove_file(&filename)?;
+            }
+        }
+        for name in previous.into_iter().rev() {
+            fs::rename(backup.join(name), output.join(name))?;
+        }
+        return Err(error).context("Cannot publish extraction; restored the previous output");
+    }
+    fs::remove_dir_all(backup)
+        .context("Extraction published but previous output cleanup failed")?;
+    fs::remove_dir(staging).context("Extraction published but staging cleanup failed")?;
     Ok(())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn extraction_test_directory(name: &str) -> PathBuf {
+        let directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../../../tmp/ra/tests")
+            .join(name)
+            .join(format!(
+                "{}-{}",
+                std::process::id(),
+                SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .unwrap()
+                    .as_nanos()
+            ));
+        fs::create_dir_all(&directory).unwrap();
+        directory.canonicalize().unwrap()
+    }
+
+    fn snapshot_fixture(directory: &Path, exported_at: u64, dot: &[u8]) {
+        fs::create_dir_all(directory).unwrap();
+        let id = digest("main\0Update")[..16].to_owned();
+        let filename = format!("schedule-{id}.dot");
+        let hash = digest(dot);
+        let runtime = analysis_contract::runtime::RuntimeSnapshot {
+            schema_version: 1,
+            source_fingerprint: digest("source"),
+            target: "test-target".into(),
+            features: vec!["debugdump".into()],
+            schedules: vec![analysis_contract::runtime::RuntimeSchedule {
+                id: id.clone(),
+                app: "main".into(),
+                label: "Update".into(),
+                type_id: "schedule-type".into(),
+                dot_filename: filename.clone(),
+                dot_sha256: hash.clone(),
+                ..Default::default()
+            }],
+        };
+        let manifest = serde_json::json!({"schemaVersion":1,"bevyVersion":"test-bevy","debugdumpVersion":"test-debugdump",
+            "sourceFingerprint":runtime.source_fingerprint,"target":runtime.target,"features":runtime.features,
+            "exportedAt":exported_at,"schedules":[{"id":id,"app":"main","label":"Update","filename":filename,"sha256":hash,"systemCount":0}]});
+        fs::write(directory.join(filename), dot).unwrap();
+        fs::write(
+            directory.join("runtime.json"),
+            serde_json::to_vec_pretty(&runtime).unwrap(),
+        )
+        .unwrap();
+        fs::write(
+            directory.join("manifest.json"),
+            serde_json::to_vec_pretty(&manifest).unwrap(),
+        )
+        .unwrap();
+    }
+
+    fn ordering_report(name: &str, run: &str, evidence: &str) -> UnitReport {
+        UnitReport {
+            schema_version: ANALYSIS_SCHEMA_VERSION,
+            rule: Rule::Architecture,
+            analyzed: true,
+            run: run.into(),
+            configuration: "configuration".into(),
+            compiler: "compiler".into(),
+            target: named_fields::Target {
+                source: format!("/source/{name}.rs"),
+                name: name.into(),
+                test: false,
+            },
+            manifest_dir: "/source".into(),
+            package: name.into(),
+            artifact_tag: name.into(),
+            crate_types: vec!["rlib".into()],
+            inputs: Default::default(),
+            findings: vec![],
+            entities: Default::default(),
+            failure: None,
+            facts: Some(analysis_contract::facts::UnitFacts {
+                crate_name: name.into(),
+                crate_identity: name.into(),
+                source_files: vec![analysis_contract::facts::SourceFile {
+                    path: format!("/source/{name}.rs"),
+                    sha256: evidence.into(),
+                }],
+                ..Default::default()
+            }),
+        }
+    }
+
+    #[test]
+    fn extraction_fact_order_uses_native_keys_and_keeps_changed_evidence() {
+        let first = || {
+            (
+                unit_binding::report_key("native-a", false),
+                ordering_report("a", "first-run", "original"),
+            )
+        };
+        let second = || {
+            (
+                unit_binding::report_key("native-b", false),
+                ordering_report("b", "second-run", "original"),
+            )
+        };
+        let bytes = |reports| {
+            let units = ordered_reports(reports)
+                .unwrap()
+                .into_iter()
+                .map(|report| report.facts.unwrap())
+                .collect::<Vec<_>>();
+            serde_json::to_vec(&units).unwrap()
+        };
+        let baseline = bytes(vec![first(), second()]);
+        assert_eq!(baseline, bytes(vec![second(), first()]));
+        assert_eq!(
+            baseline,
+            bytes(vec![
+                (
+                    unit_binding::report_key("native-a", false),
+                    ordering_report("a", "different-run", "original")
+                ),
+                second()
+            ])
+        );
+        assert_ne!(
+            baseline,
+            bytes(vec![
+                (
+                    unit_binding::report_key("native-a", false),
+                    ordering_report("a", "first-run", "changed")
+                ),
+                second()
+            ])
+        );
+        assert!(ordered_reports(vec![first(), first()]).is_err());
+        assert_ne!(
+            unit_binding::report_key("native-a", false),
+            unit_binding::report_key("native-a", true)
+        );
+    }
+
+    #[test]
+    fn extraction_snapshot_reuses_original_manifest_bytes_only_for_matching_evidence() {
+        for change in [
+            "none",
+            "empty",
+            "dot",
+            "runtime",
+            "runtime-whitespace",
+            "manifest",
+            "target",
+            "features",
+            "sourceFingerprint",
+            "old-root-runtime",
+            "old-dot",
+            "old-manifest",
+        ] {
+            let directory = extraction_test_directory(change);
+            let output = directory.join("output");
+            let old = output.join("debugdump");
+            let staging = directory.join("staging");
+            snapshot_fixture(&old, 1, b"digraph { original }");
+            fs::copy(old.join("runtime.json"), output.join("runtime.json")).unwrap();
+            snapshot_fixture(
+                &staging,
+                2,
+                if change == "dot" {
+                    b"digraph { modified }"
+                } else {
+                    b"digraph { original }"
+                },
+            );
+            match change {
+                "empty" => {
+                    for root in [&old, &staging] {
+                        for name in ["manifest.json", "runtime.json"] {
+                            let filename = root.join(name);
+                            let mut snapshot: serde_json::Value =
+                                serde_json::from_slice(&fs::read(&filename).unwrap()).unwrap();
+                            snapshot["schedules"] = serde_json::json!([]);
+                            fs::write(filename, serde_json::to_vec_pretty(&snapshot).unwrap())
+                                .unwrap();
+                        }
+                    }
+                    fs::copy(old.join("runtime.json"), output.join("runtime.json")).unwrap();
+                }
+                "runtime" => {
+                    let filename = staging.join("runtime.json");
+                    let mut value: serde_json::Value =
+                        serde_json::from_slice(&fs::read(&filename).unwrap()).unwrap();
+                    value["schedules"][0]["typeId"] = serde_json::json!("changed-type");
+                    fs::write(filename, serde_json::to_vec_pretty(&value).unwrap()).unwrap();
+                }
+                "runtime-whitespace" => {
+                    let filename = staging.join("runtime.json");
+                    let mut bytes = fs::read(&filename).unwrap();
+                    bytes.push(b'\n');
+                    fs::write(filename, bytes).unwrap();
+                }
+                "manifest" => {
+                    let filename = staging.join("manifest.json");
+                    let mut value: serde_json::Value =
+                        serde_json::from_slice(&fs::read(&filename).unwrap()).unwrap();
+                    value["additionalEvidence"] = serde_json::json!({"new":true});
+                    fs::write(filename, serde_json::to_vec_pretty(&value).unwrap()).unwrap();
+                }
+                "target" | "features" | "sourceFingerprint" => {
+                    let value = match change {
+                        "target" => serde_json::json!("changed-target"),
+                        "features" => serde_json::json!(["debugdump", "extra"]),
+                        _ => serde_json::json!(digest("changed source")),
+                    };
+                    for name in ["manifest.json", "runtime.json"] {
+                        let filename = staging.join(name);
+                        let mut snapshot: serde_json::Value =
+                            serde_json::from_slice(&fs::read(&filename).unwrap()).unwrap();
+                        snapshot[change] = value.clone();
+                        fs::write(filename, serde_json::to_vec_pretty(&snapshot).unwrap()).unwrap();
+                    }
+                }
+                "old-root-runtime" => {
+                    fs::write(output.join("runtime.json"), b"damaged").unwrap();
+                }
+                "old-dot" => {
+                    fs::write(
+                        old.join(format!("schedule-{}.dot", &digest("main\0Update")[..16])),
+                        b"damaged",
+                    )
+                    .unwrap();
+                }
+                "old-manifest" => {
+                    fs::write(old.join("manifest.json"), b"damaged").unwrap();
+                }
+                _ => {}
+            }
+            let original = fs::read(old.join("manifest.json")).unwrap();
+            let before = fs::read(staging.join("manifest.json")).unwrap();
+            preserve_schedule_snapshot(&staging, &output).unwrap();
+            let after = fs::read(staging.join("manifest.json")).unwrap();
+            assert_eq!(
+                after,
+                if ["none", "empty"].contains(&change) {
+                    original
+                } else {
+                    before
+                },
+                "{change}"
+            );
+            assert!(read_schedule_snapshot(&staging).is_ok(), "{change}");
+            fs::remove_dir_all(directory).unwrap();
+        }
+    }
+
+    #[test]
+    fn extraction_snapshot_rejects_new_corruption_without_changing_published_bytes() {
+        for name in ["manifest.json", "runtime.json", "dot"] {
+            let directory = extraction_test_directory(name);
+            let output = directory.join("output");
+            let old = output.join("debugdump");
+            let staging = directory.join("staging");
+            snapshot_fixture(&old, 1, b"digraph {}");
+            fs::copy(old.join("runtime.json"), output.join("runtime.json")).unwrap();
+            snapshot_fixture(&staging, 2, b"digraph {}");
+            let before = fs::read(old.join("manifest.json")).unwrap();
+            let filename = if name == "dot" {
+                format!("schedule-{}.dot", &digest("main\0Update")[..16])
+            } else {
+                name.into()
+            };
+            fs::write(staging.join(filename), b"damaged").unwrap();
+            assert!(preserve_schedule_snapshot(&staging, &output).is_err());
+            assert_eq!(fs::read(old.join("manifest.json")).unwrap(), before);
+            assert!(read_schedule_snapshot(&old).is_ok());
+            fs::remove_dir_all(directory).unwrap();
+        }
+    }
+
+    #[test]
+    fn extraction_publication_rolls_back_all_four_outputs_after_partial_failure() {
+        let directory = extraction_test_directory("publication");
+        let output = directory.join("output");
+        let staging = directory.join("staging");
+        snapshot_fixture(&output.join("debugdump"), 1, b"digraph { old }");
+        snapshot_fixture(&staging.join("debugdump"), 2, b"digraph { new }");
+        for root in [&output, &staging] {
+            let runtime = fs::read(root.join("debugdump/runtime.json")).unwrap();
+            fs::write(root.join("runtime.json"), &runtime).unwrap();
+            fs::write(
+                root.join("facts.json"),
+                serde_json::to_vec(&serde_json::json!({"runtimeSha256":digest(runtime)})).unwrap(),
+            )
+            .unwrap();
+            fs::write(root.join("analysis-summary.json"), b"summary").unwrap();
+        }
+        let files = [
+            "debugdump/manifest.json",
+            "debugdump/runtime.json",
+            "runtime.json",
+            "facts.json",
+            "analysis-summary.json",
+        ];
+        let before = files.map(|name| fs::read(output.join(name)).unwrap());
+        fs::remove_file(staging.join("facts.json")).unwrap();
+        assert!(publish_extraction_files(&staging, &output, &directory.join("backup")).is_err());
+        assert_eq!(
+            files.map(|name| fs::read(output.join(name)).unwrap()),
+            before
+        );
+        assert!(read_schedule_snapshot(&output.join("debugdump")).is_ok());
+        snapshot_fixture(&staging.join("debugdump"), 2, b"digraph { new }");
+        let runtime = fs::read(staging.join("debugdump/runtime.json")).unwrap();
+        fs::write(staging.join("runtime.json"), &runtime).unwrap();
+        fs::write(
+            staging.join("facts.json"),
+            serde_json::to_vec(&serde_json::json!({"runtimeSha256":digest(&runtime)})).unwrap(),
+        )
+        .unwrap();
+        fs::write(staging.join("analysis-summary.json"), b"new summary").unwrap();
+        publish_extraction_files(&staging, &output, &directory.join("success-backup")).unwrap();
+        assert!(!staging.exists());
+        assert!(!directory.join("success-backup").exists());
+        let facts: serde_json::Value =
+            serde_json::from_slice(&fs::read(output.join("facts.json")).unwrap()).unwrap();
+        assert_eq!(
+            facts["runtimeSha256"],
+            file_digest(&output.join("runtime.json")).unwrap()
+        );
+        assert_eq!(fs::read(output.join("runtime.json")).unwrap(), runtime);
+        assert_eq!(
+            read_schedule_snapshot(&output.join("debugdump")).unwrap().0["exportedAt"],
+            2
+        );
+        fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[test]
+    fn extraction_failed_real_export_preserves_published_output() {
+        let directory = extraction_test_directory("export-failure");
+        let output = directory.join("output");
+        snapshot_fixture(&output.join("debugdump"), 1, b"digraph {}");
+        fs::copy(
+            output.join("debugdump/runtime.json"),
+            output.join("runtime.json"),
+        )
+        .unwrap();
+        fs::write(output.join("facts.json"), b"previous facts").unwrap();
+        let before = fs::read(output.join("debugdump/manifest.json")).unwrap();
+        let run = directory.join("run");
+        fs::create_dir(&run).unwrap();
+        let host = Host {
+            root: directory.clone(),
+            cache: directory.clone(),
+            directory: run,
+            target_dir: directory.clone(),
+            build_dir: directory.clone(),
+            sysroot: directory.clone(),
+            compiler_release: "test".into(),
+            driver: PathBuf::new(),
+            path: env::var_os("PATH").unwrap_or_default(),
+            host: "test".into(),
+            run: "test".into(),
+        };
+        // Rust 测试程序不接受 --dump-schedules，真实子进程以非零状态退出。
+        let result = Compilation {
+            reports: vec![],
+            packages: serde_json::json!([]),
+            executable: Some(env::current_exe().unwrap()),
+            configuration: "test".into(),
+            environment_path: host.path.clone(),
+            summary: serde_json::json!({}),
+        };
+        assert!(publish_extraction(&host, vec![], result, &output).is_err());
+        assert_eq!(
+            fs::read(output.join("debugdump/manifest.json")).unwrap(),
+            before
+        );
+        assert_eq!(
+            fs::read(output.join("facts.json")).unwrap(),
+            b"previous facts"
+        );
+        assert_eq!(
+            fs::read(output.join("runtime.json")).unwrap(),
+            fs::read(output.join("debugdump/runtime.json")).unwrap()
+        );
+        fs::remove_dir_all(directory).unwrap();
+    }
 
     fn nested_metadata(packages: &[(&str, &str)]) -> serde_json::Value {
         serde_json::json!({"packages": packages.iter().map(|(id, manifest)| serde_json::json!({

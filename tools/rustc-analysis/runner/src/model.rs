@@ -1718,6 +1718,10 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
             .or_default()
             .push(index);
     }
+    // 同一上下文只保存首次到达的代表路径，因此遍历顺序必须来自调用身份。
+    for indices in calls_by_caller.values_mut() {
+        indices.sort_by_cached_key(|index| identifier("call", &calls[*index]));
+    }
     // 用途依赖包含私有 MIR 审计；业务上下文与公开调用图只读取真实条件调用。
     for call in calls.iter().chain(&purpose_calls) {
         if let Some(reason) = &call.unresolved_reason
@@ -2324,6 +2328,10 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
             context_queue.push_back(next);
         }
     }
+    for owners in callable_objects.values_mut() {
+        owners.sort();
+        owners.dedup();
+    }
     eprintln!(
         "Architecture model: propagated {} contexts over {} callables; projecting {} parameter accesses",
         call_contexts.len(),
@@ -2694,15 +2702,17 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         .context("Call graph output has no UTF-8 filename")?;
     let mut call_graph_writer =
         BufWriter::with_capacity(1024 * 1024, fs::File::create(&call_graph_path)?);
-    let mut call_graph_ids = BTreeSet::new();
+    let mut call_graph_calls = BTreeMap::new();
     for call in &calls {
-        let Some(owners) = callable_objects.get(&call.caller) else {
-            continue;
-        };
-        let id = identifier("call", call);
-        if !call_graph_ids.insert(id.clone()) {
+        if !callable_objects.contains_key(&call.caller) {
             continue;
         }
+        call_graph_calls
+            .entry(identifier("call", call))
+            .or_insert(call);
+    }
+    for (id, call) in &call_graph_calls {
+        let owners = &callable_objects[&call.caller];
         let sources = model.source(&call.source, "call");
         let conditions = model.guard_sources(&call.conditions);
         let edge = json!({"id":id,"caller":call.caller,"callee":call.callee,"declaration":call.declaration,"registeredOwners":owners,"deferred":call.deferred,"conditions":conditions,"sourceEntries":sources});
@@ -2711,7 +2721,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
     }
     call_graph_writer.flush()?;
     drop(call_graph_writer);
-    let call_graph = json!({"schemaVersion":2,"format":"ndjson","file":call_graph_name,"sha256":crate::host::file_digest(&call_graph_path)?,"edgeCount":call_graph_ids.len()});
+    let call_graph = json!({"schemaVersion":2,"format":"ndjson","file":call_graph_name,"sha256":crate::host::file_digest(&call_graph_path)?,"edgeCount":call_graph_calls.len()});
     for object in model.objects.values_mut() {
         object["sourceGaps"] = json!(unique(
             object["sourceGaps"].as_array().cloned().unwrap_or_default()
@@ -2743,7 +2753,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         "Architecture model: writing {} objects, {} relations and {} reachable call edges",
         model.objects.len(),
         model.relations.len(),
-        call_graph_ids.len()
+        call_graph_calls.len()
     );
     eprintln!(
         "Architecture model: purpose dispatch certified {}, conservative fallback {}",
