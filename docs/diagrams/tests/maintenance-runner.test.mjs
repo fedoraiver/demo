@@ -83,6 +83,47 @@ test('real child records argv, PID, timestamps, exit and raw streams; unchanged 
   assert.doesNotMatch(report, /待实际执行/);
 });
 
+test('Windows transient state replacement failure retries before starting the real child', { skip: process.platform !== 'win32' }, async t => {
+  const f = fixture(t), rename = fs.renameSync;
+  let injected = false, retried = false, stagedBytes;
+  t.mock.method(fs, 'renameSync', (staged, target) => {
+    if (path.basename(target) === 'state.json') {
+      const bytes = fs.readFileSync(staged);
+      const state = JSON.parse(bytes.toString('utf8'));
+      const record = state.stages.at(-1);
+      if (!injected && record?.id === 'produce' && record.status === 'running') {
+        injected = true;
+        stagedBytes = bytes;
+        const error = new Error('Injected transient state replacement failure');
+        error.code = 'EPERM';
+        throw error;
+      }
+      if (stagedBytes) {
+        assert.deepEqual(bytes, stagedBytes);
+        stagedBytes = undefined;
+        retried = true;
+      }
+    }
+    return rename(staged, target);
+  });
+  const state = await runMaintenance({ workspace: f.workspace, pipeline: pipeline() });
+  assert.equal(state.status, 'passed', state.error);
+  assert.equal(injected, true);
+  assert.equal(retried, true);
+  assert.deepEqual(state.stages.map(record => record.id), ['produce', 'verify']);
+  for (const record of state.stages) {
+    assert.equal(record.status, 'passed', record.error);
+    assert.ok(record.pid > 0);
+    assert.equal(record.exitCode, 0);
+  }
+  assert.equal(fs.readFileSync(path.join(f.workspace, 'executions.txt'), 'utf8'), 'produce\nverify\n');
+  assert.equal(fs.readFileSync(path.join(f.workspace, 'output.txt'), 'utf8'), 'input one');
+  assert.equal(fs.readFileSync(state.stages[0].stdout, 'utf8'), 'raw output\n');
+  assert.equal(fs.readFileSync(state.stages[1].stderr, 'utf8'), 'raw stderr\n');
+  const saved = JSON.parse(fs.readFileSync(path.join(f.workspace, 'tmp/ecs-architecture/maintenance', state.runId, 'state.json'), 'utf8'));
+  assert.equal(saved.status, 'passed', saved.error);
+});
+
 test('not-started status and reports use the current manual acceptance policy', async t => {
   const f = fixture(t);
   const status = await maintenanceStatus({ workspace: f.workspace });
@@ -244,7 +285,7 @@ test('Skill helper content invalidates downstream reuse while installed dependen
     ...pipeline().map(stage => ({ ...stage, inputs: [...stage.inputs, ...names] })),
   ];
   const first = await runMaintenance({ workspace: f.workspace, pipeline: stages });
-  assert.equal(first.status, 'passed');
+  assert.equal(first.status, 'passed', first.error);
   f.put(helper, 'export const helper = "after";');
   assert.notEqual(digest(fileSnapshot(f.workspace, names)), digest(before));
   const plan = await planMaintenance({ workspace: f.workspace });
@@ -254,7 +295,7 @@ test('Skill helper content invalidates downstream reuse while installed dependen
   assert.equal(status.status, 'stale');
   assert.deepEqual(status.invalidated, ['produce', 'verify']);
   const resumed = await runMaintenance({ workspace: f.workspace, resume: first.runId, pipeline: stages });
-  assert.equal(resumed.status, 'passed');
+  assert.equal(resumed.status, 'passed', resumed.error);
   assert.deepEqual(resumed.stages.map(stage => [stage.id, stage.attempt]), [['dependencies', 1], ['produce', 1], ['verify', 1], ['produce', 2], ['verify', 2]]);
   assert.equal(fs.readFileSync(path.join(f.workspace, 'executions.txt'), 'utf8'), 'dependencies\nproduce\nverify\nproduce\nverify\n');
 });
@@ -290,10 +331,11 @@ test('identity summaries retain independent registrations, generics, projections
 test('changed command producer invalidates downstream even if output bytes stay identical', async t => {
   const f = fixture(t), stages = pipeline();
   const first = await runMaintenance({ workspace: f.workspace, pipeline: stages });
+  assert.equal(first.status, 'passed', first.error);
   const changed = pipeline();
   changed[0].command.args[1] += "process.stdout.write('changed producer');";
   const resumed = await runMaintenance({ workspace: f.workspace, resume: first.runId, pipeline: changed });
-  assert.equal(resumed.status, 'passed');
+  assert.equal(resumed.status, 'passed', resumed.error);
   assert.equal(resumed.stages.length, 4);
   assert.equal(resumed.stages.at(-1).attempt, 2);
 });

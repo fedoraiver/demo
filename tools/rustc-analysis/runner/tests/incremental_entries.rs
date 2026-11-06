@@ -12,7 +12,7 @@ use std::{
         Mutex, MutexGuard,
         atomic::{AtomicU64, Ordering},
     },
-    time::{SystemTime, UNIX_EPOCH},
+    time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
 static HOST_TEST_LOCK: Mutex<()> = Mutex::new(());
@@ -127,7 +127,8 @@ fn main() {
     let output = std::path::PathBuf::from(args.next().unwrap());
     std::fs::create_dir_all(&output).unwrap();
     let fingerprint = format!("fixture-{}", value());
-    std::fs::write(output.join("manifest.json"), format!("{{\"schemaVersion\":1,\"sourceFingerprint\":\"{}\",\"schedules\":[]}}", fingerprint)).unwrap();
+    let exported_at = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_secs();
+    std::fs::write(output.join("manifest.json"), format!("{{\"schemaVersion\":1,\"bevyVersion\":\"0.20.0\",\"debugdumpVersion\":\"0.17.0\",\"sourceFingerprint\":\"{}\",\"target\":\"fixture\",\"features\":[\"debugdump\"],\"exportedAt\":{},\"schedules\":[]}}", fingerprint, exported_at)).unwrap();
     std::fs::write(output.join("runtime.json"), format!("{{\"schemaVersion\":1,\"sourceFingerprint\":\"{}\",\"target\":\"fixture\",\"features\":[\"debugdump\"],\"schedules\":[]}}", fingerprint)).unwrap();
 }
 "#.replace("__VALUE__", &value.to_string()).replace("__NEGATIVE__", if negative { "pub struct NeedsNamedField(pub usize);" } else { "" });
@@ -784,9 +785,39 @@ fn all_public_entries_reuse_hot_units_and_recompile_only_changed_root_sources() 
         let cold = fixture.run(rule, "cold", "first", "1");
         changed(&cold);
         native_incremental_was_enabled(&cold, &fixture, rule == "architecture");
+        let output = fixture.root.join("architecture-output");
+        let cold_outputs = if rule == "architecture" {
+            let mut files = file_snapshot(&output);
+            assert!(files.remove(Path::new("analysis-summary.json")).is_some());
+            for name in [
+                "facts.json",
+                "runtime.json",
+                "debugdump/manifest.json",
+                "debugdump/runtime.json",
+            ] {
+                assert!(files.contains_key(Path::new(name)));
+            }
+            // 导出使用真实秒级时间，跨秒后仍须保留相同快照的原始发布时间。
+            std::thread::sleep(Duration::from_secs(1));
+            Some(files)
+        } else {
+            None
+        };
         let warm = fixture.run(rule, "warm", "first", "1");
         hot(&warm);
         assert_eq!(cold.result, warm.result);
+        if let Some(cold_outputs) = cold_outputs {
+            let mut warm_outputs = file_snapshot(&output);
+            assert!(
+                warm_outputs
+                    .remove(Path::new("analysis-summary.json"))
+                    .is_some()
+            );
+            assert_eq!(
+                cold_outputs, warm_outputs,
+                "Unchanged extraction must preserve facts, runtime and Schedule snapshot bytes"
+            );
+        }
         if rule == "named-fields" {
             let reports = cold.directory.join(&fixture.package);
             let harnesses: BTreeSet<_> = fs::read_dir(reports)

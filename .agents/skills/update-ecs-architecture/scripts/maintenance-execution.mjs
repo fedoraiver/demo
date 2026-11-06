@@ -2,11 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { digest } from './maintenance-inputs.mjs';
+import { replaceArtifactSync } from '../../../../docs/diagrams/src/architecture-artifact-writer.mjs';
 
 export function atomicJson(filename, value) {
   const staged = `${filename}.${process.pid}.new`;
   fs.writeFileSync(staged, JSON.stringify(value, null, 2) + '\n');
-  fs.renameSync(staged, filename);
+  replaceArtifactSync(staged, filename);
 }
 
 /** 子进程只接收独立 argv；Windows 也不通过 shell 拼接用户路径。 */

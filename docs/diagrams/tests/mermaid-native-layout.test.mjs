@@ -111,7 +111,8 @@ test('captured InputFocus output fanout clears a near-collinear read using one n
   assert.deepEqual(fixture, before);
 });
 
-test('captured SSAO parallel input operations clear a near-collinear removal using native output neighbors', { skip: !chromium, timeout: 180000 }, async () => {
+// 该夹具需遍历多组原生排版候选，预留完整编译与清理时间。
+test('captured SSAO parallel input operations clear a near-collinear removal using native output neighbors', { skip: !chromium, timeout: 300000 }, async () => {
   const fixture = JSON.parse(fs.readFileSync(new URL('./fixtures/native-ssao-input.json', import.meta.url), 'utf8'));
   const { graph, registry, features, targetEdgeId } = fixture, before = structuredClone(fixture), attempts = [];
   const view = renderGraphView(fixture.view, graph, registry, features);

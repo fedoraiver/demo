@@ -856,6 +856,197 @@ fn call_graph_sidecar_preserves_recursive_call_proofs_and_deduplicates_unit_copi
 }
 
 #[test]
+fn call_graph_and_representative_paths_are_stable_across_unit_and_call_order() {
+    let fixture = Fixture::new(true);
+    let mut facts = fixture.read("facts.json");
+    let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
+    unit.behavior_hash = "stable-call-fixture".into();
+    unit.declarations[0].docs = "通过辅助调用处理实体，并保留调用条件与代表路径。".into();
+    let source = unit.declarations[0].source.clone().unwrap();
+    let call = |caller: &str, callee: &str, column: usize| CallFact {
+        caller: caller.into(),
+        callee: Some(callee.into()),
+        declaration: Some("function".into()),
+        source: Some(SourceEvidence {
+            column,
+            ..source.clone()
+        }),
+        ..Default::default()
+    };
+    let left = call("callable", "left", 1);
+    let right = call("callable", "right", 3);
+    let (first_column, second_column) = if identifier("call", &left) < identifier("call", &right) {
+        (1, 5)
+    } else {
+        (3, 7)
+    };
+    let mut conditional = call("join", "sink", 11);
+    conditional.conditions.push(SourceEvidence {
+        role: "condition".into(),
+        snippet: "system()".into(),
+        ..source.clone()
+    });
+    let mut deferred = conditional.clone();
+    deferred.deferred = true;
+    let mut opposite = conditional.clone();
+    opposite.conditions[0].role = "unless".into();
+    unit.calls = vec![
+        left,
+        right,
+        call("left", "join", 5),
+        call("right", "join", 7),
+        call("join", "join", 9),
+        conditional,
+        deferred,
+        opposite,
+    ];
+    let expected_ids: Vec<_> = unit
+        .calls
+        .iter()
+        .map(|call| identifier("call", call))
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect();
+    unit.calls.push(unit.calls[0].clone());
+    unit.operations.push(OperationFact {
+        id: "insert-in-join".into(),
+        owner: "join".into(),
+        method: "resolved-world-insert".into(),
+        target_type: Some("marker-type".into()),
+        kind: "insert".into(),
+        scope: "current".into(),
+        source: Some(source),
+        ..Default::default()
+    });
+    let mut second = unit.clone();
+    second.crate_identity = "second-compiled-unit".into();
+    second.accesses.clear();
+    second.operations.clear();
+    let mut previous = None;
+    for (reverse_units, reverse_calls) in
+        [(false, false), (true, false), (false, true), (true, true)]
+    {
+        let mut units = vec![unit.clone(), second.clone()];
+        if reverse_units {
+            units.reverse();
+        }
+        if reverse_calls {
+            for unit in &mut units {
+                unit.calls.reverse();
+            }
+        }
+        facts["units"] = json!(units);
+        fixture.write("facts.json", &facts);
+        fixture.build().unwrap();
+        let model = fixture.read("model.json");
+        let graph = &model["callGraph"];
+        assert_eq!(graph["schemaVersion"], 2);
+        assert_eq!(graph["format"], "ndjson");
+        assert_eq!(graph["edgeCount"], expected_ids.len());
+        let bytes = fs::read(fixture.root.join(graph["file"].as_str().unwrap())).unwrap();
+        assert_eq!(graph["sha256"], digest(&bytes));
+        let edges: Vec<Value> = bytes
+            .split(|byte| *byte == b'\n')
+            .filter(|line| !line.is_empty())
+            .map(|line| serde_json::from_slice(line).unwrap())
+            .collect();
+        assert_eq!(
+            edges
+                .iter()
+                .map(|edge| edge["id"].as_str().unwrap().to_owned())
+                .collect::<Vec<_>>(),
+            expected_ids
+        );
+        let owners: Vec<_> = model["objects"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|object| object["kind"] == "System")
+            .map(|object| object["id"].clone())
+            .collect();
+        assert_eq!(owners.len(), 2);
+        for edge in &edges {
+            let native = unit
+                .calls
+                .iter()
+                .find(|call| identifier("call", call) == edge["id"].as_str().unwrap())
+                .unwrap();
+            assert_eq!(edge["caller"], native.caller);
+            assert_eq!(edge["callee"], json!(native.callee));
+            assert_eq!(edge["deferred"], native.deferred);
+            assert_eq!(edge["registeredOwners"], json!(owners));
+            assert_eq!(edge["declaration"], "function");
+            assert_eq!(edge["sourceEntries"].as_array().unwrap().len(), 1);
+            assert_eq!(
+                edge["sourceEntries"][0]["column"],
+                native.source.as_ref().unwrap().column
+            );
+            assert_eq!(
+                edge["conditions"].as_array().unwrap().len(),
+                native.conditions.len()
+            );
+            for (condition, native) in edge["conditions"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .zip(&native.conditions)
+            {
+                assert_eq!(condition["expression"], native.snippet);
+                assert_eq!(condition["guardKind"], native.role);
+            }
+        }
+        let conditional_edges: Vec<_> = edges
+            .iter()
+            .filter(|edge| edge["callee"] == "sink")
+            .collect();
+        assert_eq!(conditional_edges.len(), 3);
+        for edge in &conditional_edges {
+            assert_eq!(edge["conditions"].as_array().unwrap().len(), 1);
+            assert_eq!(edge["conditions"][0]["expression"], "system()");
+        }
+        assert!(
+            conditional_edges
+                .iter()
+                .any(|edge| edge["deferred"] == true)
+        );
+        assert!(
+            conditional_edges
+                .iter()
+                .any(|edge| edge["conditions"][0]["guardKind"] == "unless")
+        );
+        let inserts: Vec<_> = model["relations"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|relation| relation["kind"] == "insert")
+            .collect();
+        assert_eq!(inserts.len(), 2);
+        for relation in inserts {
+            let operations = relation["bodyOperations"].as_array().unwrap();
+            assert_eq!(operations.len(), 1);
+            assert_eq!(
+                operations[0]["callChainScope"],
+                "representative-static-path"
+            );
+            let chain = operations[0]["callChain"].as_array().unwrap();
+            assert_eq!(chain.len(), 2);
+            assert_eq!(chain[0]["column"], first_column);
+            assert_eq!(chain[1]["column"], second_column);
+        }
+        let current = (
+            bytes,
+            model["objects"].clone(),
+            model["relations"].clone(),
+            graph.clone(),
+        );
+        if let Some(previous) = &previous {
+            assert_eq!(previous, &current);
+        }
+        previous = Some(current);
+    }
+}
+
+#[test]
 fn repeated_registration_retains_instances_and_access_capability() {
     let fixture = Fixture::new(true);
     fixture.build().unwrap();
