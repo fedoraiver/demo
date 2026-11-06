@@ -40,7 +40,7 @@ impl Plugin for WindowPolicyPlugin {
 pub(crate) fn primary_window() -> Window {
     let supported = cfg!(any(target_os = "macos", target_os = "windows"));
     Window {
-        title: "Island Courier".into(),
+        title: "Grey-boxing".into(),
         resolution: INITIAL_SIZE.into(),
         resize_constraints: WindowResizeConstraints {
             min_width: MIN_LOGICAL_SIZE.x,

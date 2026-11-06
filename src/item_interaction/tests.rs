@@ -51,7 +51,7 @@ mod attachment_tests {
         let item = app
             .world_mut()
             .spawn((
-                Item::StandardParcel,
+                Item,
                 Pickable,
                 CarryGrip {
                     offset: Vec3::new(0.0, 1.3, -0.48),
@@ -306,17 +306,16 @@ mod frame_tests {
     };
 
     use crate::{
-        bounds_recovery::{BoundsRecoveryPlugin, SpawnPoint, WaterRecoveryOrder},
         character::{Character, CharacterIntent, CharacterMotion, CharacterPlugin},
         first_person::{
             ControlsCamera, FirstPersonCamera, FirstPersonPlugin, MouseLookState, PlayerId,
             spawn_keyboard_controller,
         },
-        game_flow::{FixedGameplaySystems, configure_feature_order},
+        game_flow::configure_feature_order,
         item_interaction::{
             CarryGrip, HeldAttachment, HeldBy, HeldTarget, Item, ItemInteractionPlugin, Pickable,
         },
-        physics::{GamePhysicsPlugin, ground_body, item_collision_layers, world_collision_layers},
+        physics::{GamePhysicsPlugin, ground_body, world_collision_layers},
         settings::{GameSettings, PrototypeConfig},
     };
     use bevy_enhanced_input::prelude::EnhancedInputPlugin;
@@ -409,10 +408,6 @@ mod frame_tests {
 
     /// Window 仅作为 Enhanced Input 所需的 ECS 数据；真实 E 绑定负责建立持握关系。
     fn carry_fixture(grip: Option<Vec3>) -> CarryFixture {
-        carry_fixture_with_easing(grip, false)
-    }
-
-    fn carry_fixture_with_easing(grip: Option<Vec3>, preserve_easing_pause: bool) -> CarryFixture {
         let mut app = App::new();
         configure_feature_order(&mut app);
         app.add_plugins((
@@ -428,7 +423,6 @@ mod frame_tests {
             ItemInteractionPlugin,
             EnhancedInputPlugin,
             FirstPersonPlugin,
-            BoundsRecoveryPlugin,
         ))
         .insert_resource(Time::<Fixed>::from_hz(60.0))
         .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::ZERO))
@@ -458,9 +452,6 @@ mod frame_tests {
                 CharacterMotion { grounded: true },
                 character_body(&config),
                 Transform::IDENTITY,
-                SpawnPoint {
-                    pose: Transform::IDENTITY,
-                },
             ))
             .id();
         let camera_state = FirstPersonCamera::new(character);
@@ -478,20 +469,12 @@ mod frame_tests {
         let item = app
             .world_mut()
             .spawn((
-                Item::StandardParcel,
+                Item,
                 Pickable,
                 item_body(&config),
                 Transform::from_xyz(0.0, 0.35, -1.0),
-                SpawnPoint {
-                    pose: Transform::from_xyz(0.0, 0.35, -1.0),
-                },
             ))
             .id();
-        if preserve_easing_pause {
-            app.world_mut()
-                .entity_mut(item)
-                .insert((NoTranslationEasing, NoRotationEasing));
-        }
         if let Some(grip) = grip {
             app.world_mut()
                 .entity_mut(item)
@@ -797,329 +780,6 @@ mod frame_tests {
             "The first-person camera must complete the requested turn despite the item obstruction"
         );
     }
-
-    struct ItemSnapshot {
-        position: Vec3,
-        rotation: Quat,
-        linear_velocity: Vec3,
-        angular_velocity: Vec3,
-        held: bool,
-        dynamic: bool,
-    }
-
-    #[derive(Resource)]
-    struct RecoveryProbe {
-        item: Entity,
-        proxy: Entity,
-        snapshot: Option<ItemSnapshot>,
-    }
-
-    /// 记录正常主调度中恢复后的状态，再由同一个 app.update 完成真实物理与呈现。
-    fn observe_recovery_before_physics(
-        mut probe: ResMut<RecoveryProbe>,
-        items: Query<(
-            &Position,
-            &Rotation,
-            &LinearVelocity,
-            &AngularVelocity,
-            Has<HeldBy>,
-            Option<&RigidBody>,
-        )>,
-    ) {
-        let (position, rotation, linear, angular, held, body) = items.get(probe.item).unwrap();
-        probe.snapshot = Some(ItemSnapshot {
-            position: position.0,
-            rotation: rotation.0,
-            linear_velocity: linear.0,
-            angular_velocity: angular.0,
-            held,
-            dynamic: body == Some(&RigidBody::Dynamic),
-        });
-    }
-
-    fn add_recovery_probe(fixture: &mut CarryFixture) {
-        fixture.app.insert_resource(RecoveryProbe {
-            item: fixture.item,
-            proxy: fixture
-                .app
-                .world()
-                .get::<HeldAttachment>(fixture.item)
-                .unwrap()
-                .collider,
-            snapshot: None,
-        });
-        // 落水恢复先于 Simulate，探针在此之后读取已应用的释放命令；不主动调用恢复系统。
-        fixture.app.add_systems(
-            FixedUpdate,
-            observe_recovery_before_physics.after(FixedGameplaySystems::Target),
-        );
-    }
-
-    fn assert_free_after_recovery(fixture: &CarryFixture) {
-        let world = fixture.app.world();
-        assert!(world.get::<HeldBy>(fixture.item).is_none());
-        assert!(world.get::<HeldTarget>(fixture.item).is_none());
-        assert_eq!(
-            world.get::<RigidBody>(fixture.item),
-            Some(&RigidBody::Dynamic)
-        );
-        assert_eq!(
-            world.get::<ColliderOf>(fixture.item).unwrap().body,
-            fixture.item
-        );
-        assert!(world.get::<ColliderDisabled>(fixture.item).is_none());
-        assert!(
-            world
-                .get_entity(world.resource::<RecoveryProbe>().proxy)
-                .is_err()
-        );
-        assert_eq!(
-            world.get::<CollisionLayers>(fixture.item),
-            Some(&item_collision_layers())
-        );
-        assert!(world.get::<ChildOf>(fixture.item).is_none());
-        let mass = world.resource::<PrototypeConfig>().character_mass;
-        assert!((world.get::<Mass>(fixture.character).unwrap().0 - mass).abs() < 0.001);
-    }
-
-    #[test]
-    fn actual_attachment_holder_water_recovery_releases_dry_item_at_its_real_pose() {
-        let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)));
-        assert_held_pose(&fixture);
-        // 先让组合体获得真实平移速度，避免错误清零也能通过释放速度断言。
-        fixture
-            .app
-            .world_mut()
-            .entity_mut(fixture.character)
-            .insert(LinearVelocity(Vec3::X * 2.0));
-        fixture.app.update();
-        let world = fixture.app.world();
-        let position = world.get::<Position>(fixture.item).unwrap().0;
-        let rotation = world.get::<Rotation>(fixture.item).unwrap().0;
-        let velocity = world.get::<LinearVelocity>(fixture.item).unwrap().0;
-        let angular = world.get::<AngularVelocity>(fixture.item).unwrap().0;
-        assert!(position.y > 0.0);
-        assert!(velocity.length() > 0.1);
-        let proxy = world.get::<HeldAttachment>(fixture.item).unwrap().collider;
-        assert_eq!(
-            world.get::<ColliderOf>(proxy).unwrap().body,
-            fixture.character
-        );
-        let spawn = Transform::from_xyz(20.0, 0.0, 14.0);
-        fixture
-            .app
-            .world_mut()
-            .entity_mut(fixture.character)
-            .insert(SpawnPoint { pose: spawn });
-        fixture
-            .app
-            .world_mut()
-            .get_mut::<Position>(fixture.character)
-            .unwrap()
-            .y = -1.6;
-        add_recovery_probe(&mut fixture);
-        fixture.app.update();
-        // 立即检查本次实际帧末；探针提供重力积分前的精确释放状态。
-        assert_free_after_recovery(&fixture);
-        let world = fixture.app.world();
-        let released = world.resource::<RecoveryProbe>().snapshot.as_ref().unwrap();
-        assert!(!released.held && released.dynamic);
-        assert!(released.position.abs_diff_eq(position, 0.0001));
-        assert!(released.linear_velocity.abs_diff_eq(velocity, 0.0001));
-        assert!(released.angular_velocity.abs_diff_eq(angular, 0.0001));
-        for axis in [Vec3::NEG_Z, Vec3::Y] {
-            assert!((released.rotation * axis).abs_diff_eq(rotation * axis, 0.0001));
-        }
-        assert!(
-            world
-                .get::<Position>(fixture.character)
-                .unwrap()
-                .0
-                .distance(spawn.translation)
-                < 0.05
-        );
-        assert!(
-            world
-                .get::<Position>(fixture.item)
-                .unwrap()
-                .0
-                .distance(position)
-                < 0.1
-        );
-        assert!(
-            world
-                .get::<Position>(fixture.item)
-                .unwrap()
-                .0
-                .distance(spawn.translation)
-                > 10.0
-        );
-    }
-
-    #[test]
-    fn actual_attachment_item_water_recovery_restores_own_spawn_and_easing_pause() {
-        let mut fixture = carry_fixture_with_easing(Some(Vec3::new(0.0, 1.3, -0.48)), true);
-        assert_held_pose(&fixture);
-        let character_position = fixture
-            .app
-            .world()
-            .get::<Position>(fixture.character)
-            .unwrap()
-            .0;
-        let spawn = Transform::from_xyz(-12.0, 0.35, 9.0).with_rotation(Quat::from_rotation_y(0.7));
-        fixture.app.world_mut().entity_mut(fixture.item).insert((
-            SpawnPoint { pose: spawn },
-            Position(Vec3::new(3.0, -1.6, 4.0)),
-            LinearVelocity(Vec3::new(1.0, -3.0, 0.5)),
-            AngularVelocity(Vec3::Y * 2.0),
-        ));
-        add_recovery_probe(&mut fixture);
-        fixture.app.update();
-        assert_free_after_recovery(&fixture);
-        let world = fixture.app.world();
-        let recovered = world.resource::<RecoveryProbe>().snapshot.as_ref().unwrap();
-        assert!(!recovered.held && recovered.dynamic);
-        assert!(recovered.position.abs_diff_eq(spawn.translation, 0.0001));
-        assert_eq!(recovered.linear_velocity, Vec3::ZERO);
-        assert_eq!(recovered.angular_velocity, Vec3::ZERO);
-        for axis in [Vec3::NEG_Z, Vec3::Y] {
-            assert!((recovered.rotation * axis).abs_diff_eq(spawn.rotation * axis, 0.0001));
-        }
-        assert!(
-            world
-                .get::<Position>(fixture.character)
-                .unwrap()
-                .0
-                .distance(character_position)
-                < 0.05
-        );
-        assert!(
-            world
-                .get::<Transform>(fixture.item)
-                .unwrap()
-                .translation
-                .distance(spawn.translation)
-                < 0.05
-        );
-        assert!(world.get::<NoTranslationEasing>(fixture.item).is_some());
-        assert!(world.get::<NoRotationEasing>(fixture.item).is_some());
-        // 连续无固定步帧不能从海中端点重新插值；下一固定步也保留拾取前已有的暂停设置。
-        fixture
-            .app
-            .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::ZERO));
-        for _ in 0..3 {
-            fixture.app.update();
-            assert!(
-                fixture
-                    .app
-                    .world()
-                    .get::<Transform>(fixture.item)
-                    .unwrap()
-                    .translation
-                    .distance(spawn.translation)
-                    < 0.05
-            );
-        }
-        fixture
-            .app
-            .insert_resource(TimeUpdateStrategy::FixedTimesteps(1));
-        fixture.app.update();
-        assert!(
-            fixture
-                .app
-                .world()
-                .get::<NoTranslationEasing>(fixture.item)
-                .is_some()
-        );
-        assert!(
-            fixture
-                .app
-                .world()
-                .get::<NoRotationEasing>(fixture.item)
-                .is_some()
-        );
-    }
-
-    #[derive(Component)]
-    struct RecoveryOrderShift;
-
-    #[test]
-    fn actual_attachment_simultaneous_water_recovery_uses_item_spawn_in_both_query_orders() {
-        for item_first in [false, true] {
-            let mut fixture = carry_fixture(Some(Vec3::new(0.0, 1.3, -0.48)));
-            assert_held_pose(&fixture);
-            // 测试标记只把指定实体移到后创建的 archetype，明确覆盖两种恢复迭代顺序。
-            let last = if item_first {
-                fixture.character
-            } else {
-                fixture.item
-            };
-            fixture
-                .app
-                .world_mut()
-                .entity_mut(last)
-                .insert(RecoveryOrderShift);
-            // 先让真实系统更新自己的查询缓存，再准备同时落水；观测结果只来自该系统。
-            fixture.app.update();
-            let world = fixture.app.world_mut();
-            world.resource_mut::<WaterRecoveryOrder>().entities.clear();
-            let holder_spawn = Transform::from_xyz(20.0, 0.0, 14.0);
-            let item_spawn =
-                Transform::from_xyz(-12.0, 0.35, 9.0).with_rotation(Quat::from_rotation_y(0.7));
-            world.entity_mut(fixture.character).insert((
-                SpawnPoint { pose: holder_spawn },
-                Position(Vec3::new(3.0, -2.9, 4.0)),
-                LinearVelocity(Vec3::new(1.0, -3.0, 0.5)),
-            ));
-            world.entity_mut(fixture.item).insert((
-                SpawnPoint { pose: item_spawn },
-                Position(Vec3::new(3.0, -1.6, 3.52)),
-                LinearVelocity(Vec3::new(1.0, -3.0, 0.5)),
-                AngularVelocity(Vec3::Y * 2.0),
-            ));
-            add_recovery_probe(&mut fixture);
-            fixture.app.update();
-            // 同一真实帧内双方恢复，任何延迟释放命令都不能把已经恢复的箱子写回水中。
-            assert_free_after_recovery(&fixture);
-            let world = fixture.app.world();
-            assert_eq!(
-                world.resource::<WaterRecoveryOrder>().entities,
-                if item_first {
-                    vec![fixture.item, fixture.character]
-                } else {
-                    vec![fixture.character, fixture.item]
-                },
-                "The actual recovery system must exercise the requested query order"
-            );
-            let recovered = world.resource::<RecoveryProbe>().snapshot.as_ref().unwrap();
-            assert!(!recovered.held && recovered.dynamic);
-            assert!(
-                recovered
-                    .position
-                    .abs_diff_eq(item_spawn.translation, 0.0001),
-                "Simultaneous recovery must use the item's own spawn: item_first={item_first}, actual={:?}",
-                recovered.position
-            );
-            assert_eq!(recovered.linear_velocity, Vec3::ZERO);
-            assert_eq!(recovered.angular_velocity, Vec3::ZERO);
-            assert!(
-                world
-                    .get::<Position>(fixture.character)
-                    .unwrap()
-                    .0
-                    .distance(holder_spawn.translation)
-                    < 0.05
-            );
-            assert!(
-                world
-                    .get::<Transform>(fixture.item)
-                    .unwrap()
-                    .translation
-                    .distance(item_spawn.translation)
-                    < 0.05
-            );
-        }
-    }
 }
 
 mod interaction_tests {
@@ -1187,7 +847,7 @@ mod interaction_tests {
         let config = app.world().resource::<PrototypeConfig>().clone();
         app.world_mut()
             .spawn((
-                Item::StandardParcel,
+                Item,
                 Pickable,
                 Transform::from_translation(position),
                 item_body(&config),
@@ -2179,217 +1839,5 @@ mod rotation_tests {
             Vec3::new(0.0, 4.0, 0.0),
             Vec3::new(0.0, 2.0, 0.0000001),
         ]);
-    }
-}
-
-mod audio_event_tests {
-    //! 无设备反馈回归，直接组合插件使用的接触和握持误差系统。
-
-    use super::audio_events::{register_feedback, warn_hold_strain};
-    use super::*;
-    use crate::game_flow::AppState;
-    use crate::game_flow::configure_feature_order;
-    use crate::{
-        audio::{SoundCue, SoundRequest},
-        character::Character,
-        settings::PrototypeConfig,
-    };
-    use avian3d::prelude::*;
-    use bevy::ecs::relationship::Relationship;
-
-    #[test]
-    fn gameplay_feedback_stays_silent_in_main_menu_and_pause() {
-        let mut app = App::new();
-        configure_feature_order(&mut app);
-        app.init_resource::<PrototypeConfig>()
-            .init_resource::<ContactGraph>()
-            .insert_resource(Time::<Fixed>::from_hz(60.0))
-            .insert_resource(State::new(AppState::MainMenu));
-        register_feedback(&mut app);
-        app.world_mut()
-            .resource_mut::<Time<Fixed>>()
-            .advance_by(std::time::Duration::from_secs_f32(0.1));
-        let holder = app
-            .world_mut()
-            .spawn((Character, Position::default(), Transform::default()))
-            .id();
-        app.world_mut().spawn((
-            Item::StandardParcel,
-            <HeldBy as Relationship>::from(holder),
-            Position(Vec3::X * 5.0),
-        ));
-        let item = app.world_mut().spawn(Item::StandardParcel).id();
-        let ground = app.world_mut().spawn_empty().id();
-        // 只提供已解算的接触数据，验证收集系统的会话门槛，不安装物理或输出设备。
-        let mut point = ContactPoint::new(Vec3::ZERO, Vec3::ZERO, Vec3::ZERO, 0.0);
-        point.normal_impulse = 2.0;
-        app.world_mut()
-            .resource_mut::<ContactGraph>()
-            .add_edge_with(ContactEdge::new(item, ground), |pair| {
-                pair.flags.insert(ContactPairFlags::TOUCHING);
-                pair.manifolds = vec![ContactManifold::new([point], -Vec3::Y)];
-            });
-        for _ in 0..20 {
-            app.world_mut().run_schedule(FixedUpdate);
-            app.world_mut().run_schedule(FixedPostUpdate);
-        }
-        assert!(app.world().resource::<Messages<SoundRequest>>().is_empty());
-
-        app.insert_resource(State::new(AppState::Running));
-        app.world_mut().run_schedule(FixedUpdate);
-        app.world_mut().run_schedule(FixedPostUpdate);
-        let cues: Vec<_> = app
-            .world_mut()
-            .resource_mut::<Messages<SoundRequest>>()
-            .drain()
-            .map(|request| request.cue)
-            .collect();
-        assert_eq!(cues, [SoundCue::ItemLand]);
-
-        app.insert_resource(State::new(AppState::Paused));
-        for _ in 0..20 {
-            app.world_mut().run_schedule(FixedUpdate);
-            app.world_mut().run_schedule(FixedPostUpdate);
-        }
-        assert!(app.world().resource::<Messages<SoundRequest>>().is_empty());
-        app.insert_resource(State::new(AppState::Running));
-        for _ in 0..10 {
-            app.world_mut().run_schedule(FixedUpdate);
-            app.world_mut().run_schedule(FixedPostUpdate);
-        }
-        let cues: Vec<_> = app
-            .world_mut()
-            .resource_mut::<Messages<SoundRequest>>()
-            .drain()
-            .map(|request| request.cue)
-            .collect();
-        assert_eq!(cues, [SoundCue::InstabilityWarning]);
-    }
-
-    #[test]
-    fn sustained_strain_warns_once_and_recovery_rearms() {
-        let mut app = App::new();
-        configure_feature_order(&mut app);
-        app.init_resource::<PrototypeConfig>()
-            .insert_resource(Time::<Fixed>::from_hz(60.0))
-            .add_message::<SoundRequest>()
-            .add_systems(FixedUpdate, warn_hold_strain);
-        app.world_mut()
-            .resource_mut::<Time<Fixed>>()
-            .advance_by(std::time::Duration::from_secs_f32(0.1));
-        let holder = app
-            .world_mut()
-            .spawn((Character, Position::default(), Transform::default()))
-            .id();
-        let item = app
-            .world_mut()
-            .spawn((
-                Item::StandardParcel,
-                <HeldBy as Relationship>::from(holder),
-                Position(Vec3::X * 5.0),
-            ))
-            .id();
-        for _ in 0..20 {
-            app.world_mut().run_schedule(FixedUpdate);
-        }
-        let cues: Vec<_> = app
-            .world_mut()
-            .resource_mut::<Messages<SoundRequest>>()
-            .drain()
-            .collect();
-        assert_eq!(cues.len(), 1);
-        assert_eq!(cues[0].cue, SoundCue::InstabilityWarning);
-        let target = app.world().resource::<PrototypeConfig>().hold_offset;
-        app.world_mut().get_mut::<Position>(item).unwrap().0 = target;
-        app.world_mut().run_schedule(FixedUpdate);
-        app.world_mut().get_mut::<Position>(item).unwrap().0 = Vec3::X * 5.0;
-        for _ in 0..10 {
-            app.world_mut().run_schedule(FixedUpdate);
-        }
-        assert_eq!(
-            app.world_mut()
-                .resource_mut::<Messages<SoundRequest>>()
-                .drain()
-                .count(),
-            1
-        );
-        app.world_mut().entity_mut(item).remove::<HeldBy>();
-        app.world_mut().run_schedule(FixedUpdate);
-        assert!(app.world().resource::<Messages<SoundRequest>>().is_empty());
-    }
-
-    #[test]
-    fn item_grips_allow_normal_lag_and_rearm_after_recovery() {
-        // 运行真实反馈系统，覆盖海岛纸箱和木箱的偏移、物理位置与非零水平朝向。
-        // 不安装物理、窗口或音频设备；位姿直接表达正常持握和两次持续受阻。
-        for grip in [Vec3::new(0.0, 1.3, -0.48), Vec3::new(0.0, 1.3, -0.62)] {
-            let mut app = App::new();
-            configure_feature_order(&mut app);
-            app.init_resource::<PrototypeConfig>()
-                .insert_resource(Time::<Fixed>::from_hz(60.0))
-                .add_message::<SoundRequest>()
-                .add_systems(FixedUpdate, warn_hold_strain);
-            app.world_mut()
-                .resource_mut::<Time<Fixed>>()
-                .advance_by(std::time::Duration::from_secs_f32(0.1));
-            let position = Vec3::new(3.0, 0.8, -2.0);
-            let rotation = Quat::from_rotation_y(1.2);
-            let holder = app
-                .world_mut()
-                .spawn((
-                    Character,
-                    Position(position),
-                    // 模拟目标必须读 Position，不能误读经过插值的呈现位置。
-                    Transform {
-                        translation: position + Vec3::X,
-                        rotation,
-                        ..default()
-                    },
-                ))
-                .id();
-            let target = position + rotation * grip;
-            let item = app
-                .world_mut()
-                .spawn((
-                    Item::StandardParcel,
-                    <HeldBy as Relationship>::from(holder),
-                    CarryGrip { offset: grip },
-                    Position(target + rotation * Vec3::Z * 0.3),
-                ))
-                .id();
-            let take_cues = |app: &mut App| {
-                app.world_mut()
-                    .resource_mut::<Messages<SoundRequest>>()
-                    .drain()
-                    .map(|request| (request.cue, request.source))
-                    .collect::<Vec<_>>()
-            };
-            // 小于恢复阈值的正常惯性偏移不应触发持续失稳告警。
-            for _ in 0..20 {
-                app.world_mut().run_schedule(FixedUpdate);
-            }
-            assert!(take_cues(&mut app).is_empty(), "grip={grip:?}");
-
-            for _ in 0..2 {
-                app.world_mut().get_mut::<Position>(item).unwrap().0 = target + Vec3::X * 2.0;
-                for _ in 0..20 {
-                    app.world_mut().run_schedule(FixedUpdate);
-                }
-                assert_eq!(
-                    take_cues(&mut app),
-                    [(SoundCue::InstabilityWarning, item)],
-                    "grip={grip:?}"
-                );
-                for _ in 0..10 {
-                    app.world_mut().run_schedule(FixedUpdate);
-                }
-                assert!(take_cues(&mut app).is_empty(), "grip={grip:?}");
-
-                // 恢复到实际物品目标后重新武装；下一轮受阻仍应发出一条警告。
-                app.world_mut().get_mut::<Position>(item).unwrap().0 = target;
-                app.world_mut().run_schedule(FixedUpdate);
-                assert!(take_cues(&mut app).is_empty(), "grip={grip:?}");
-            }
-        }
     }
 }

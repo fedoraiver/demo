@@ -5,6 +5,7 @@ use super::*;
 #[test]
 fn primary_window_has_supported_aspect_and_minimum_size() {
     let window = primary_window();
+    assert_eq!(window.title, "Grey-boxing");
     assert_eq!(
         window.resolution.physical_width() * 9,
         window.resolution.physical_height() * 16

@@ -41,42 +41,5 @@
       "extract selected OGG bytes unchanged",
       "copy release License.txt unchanged"
     ]
-  },
-  {
-    "id": "kenney_impact-sounds",
-    "title": "Impact Sounds",
-    "pack_version": "1.0",
-    "author": "Kenney",
-    "page": "https://kenney.nl/assets/impact-sounds",
-    "download": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
-    "license": "CC0",
-    "license_version": "1.0 Universal",
-    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
-    "status": "downloaded",
-    "acquired_date": "2026-10-01",
-    "archive_bytes": 800850,
-    "archive_sha256": "029d734af1582474edf3a694d1b0cebc97c1c152f2f39fa34d4c2bafc5de77f8",
-    "archive_cache": "tmp/audio/downloads/kenney_impact-sounds.zip",
-    "license_evidence": "audio/sources/kenney_impact-sounds-License.txt",
-    "license_evidence_sha256": "b49aa9c56b04528b95913de13e506a0f7c5e807b9925db9bfef86af1f91120db",
-    "selected_files": [
-      {
-        "id": "parcel_land",
-        "original_entry": "Audio/impactWood_medium_000.ogg",
-        "original_sha256": "1723a9fd25103ed41af06054814e84e65f4a772bac86ab2dc927da93d9592ff5",
-        "output_sha256": "1723a9fd25103ed41af06054814e84e65f4a772bac86ab2dc927da93d9592ff5"
-      },
-      {
-        "id": "cart_collision",
-        "original_entry": "Audio/impactMetal_medium_000.ogg",
-        "original_sha256": "a96f879fec0864a8938e0c745b6996a6c5679c16a234ce31a01cc995e8401003",
-        "output_sha256": "a96f879fec0864a8938e0c745b6996a6c5679c16a234ce31a01cc995e8401003"
-      }
-    ],
-    "processing": [
-      "download official full release ZIP",
-      "extract selected OGG bytes unchanged",
-      "copy release License.txt unchanged"
-    ]
   }
 ]

@@ -69,7 +69,6 @@ pub(super) fn sync_character_facing(
                     angular.0,
                     "turn_collision",
                 );
-                commands.write_message(SoundRequest::new(SoundCue::ItemRelease, item));
             }
             transform.rotation = rotation;
             // 只同步安全朝向，不积分平移；延迟命令在同帧持箱同步前应用，避免零固定步状态分裂。

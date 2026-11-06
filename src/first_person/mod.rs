@@ -16,7 +16,6 @@ use bevy_inspector_egui::bevy_egui::{
 };
 
 use crate::{
-    audio::{SoundCue, SoundRequest},
     character::{Character, CharacterIntent},
     game_flow::{AppState, FixedGameplaySystems, PresentationSystems, gameplay_running},
     item_interaction::{CarryRotationQuery, HeldAttachment, HoldingItems, release_item},

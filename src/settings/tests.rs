@@ -64,34 +64,92 @@ fn camera_settings_default_legacy_and_custom_values() {
 }
 
 #[test]
-fn audio_settings_support_legacy_partial_and_custom_files() {
+fn ui_audio_defaults_partial_and_legacy_values_preserve_supported_settings() {
     assert_eq!(GameSettings::default().audio, AudioSettings::default());
-    for legacy in [
-        "{}",
-        r#"{"max_fps": 144, "camera": {"invert_y": true}}"#,
-        r#"{"audio": {}}"#,
-    ] {
+    for legacy in ["{}", r#"{"audio": {}}"#, r#"{"audio": {"sfx_volume": 50}}"#] {
         let settings: GameSettings = serde_json::from_str(legacy).unwrap();
         assert_eq!(settings.audio, AudioSettings::default());
     }
     let partial: GameSettings = serde_json::from_str(r#"{"audio": {"ui_volume": 0}}"#).unwrap();
     assert_eq!(partial.audio.master_volume, 100);
-    assert_eq!(partial.audio.sfx_volume, 100);
     assert_eq!(partial.audio.ui_volume, 0);
-    let custom: GameSettings = serde_json::from_str(
-        r#"{"audio": {"master_volume": 73, "sfx_volume": 0, "ui_volume": 100}}"#,
-    )
-    .unwrap();
-    assert_eq!(SettingsDraft::from_settings(&custom).audio, custom.audio);
-    assert_eq!(custom.audio.master_volume, 73);
-    assert_eq!(custom.audio.sfx_volume, 0);
-    assert_eq!(custom.audio.ui_volume, 100);
+
+    let path = settings_test_path();
+    for legacy_sfx in ["0", "null", "false"] {
+        let json = format!(
+            r#"{{"max_fps": 144, "camera": {{"mouse_sensitivity": 0.006, "invert_y": true}}, "audio": {{"master_volume": 73, "ui_volume": 31, "sfx_volume": {legacy_sfx}}}}}"#
+        );
+        let decoded: GameSettings = serde_json::from_str(&json).unwrap();
+        assert_eq!(decoded.max_fps.get(), 144);
+        assert_eq!(decoded.camera.mouse_sensitivity, 0.006);
+        assert!(decoded.camera.invert_y);
+        assert_eq!(decoded.audio.master_volume, 73);
+        assert_eq!(decoded.audio.ui_volume, 31);
+
+        fs::write(&path, &json).unwrap();
+        let loaded = GameSettings::load(&path);
+        assert_eq!(loaded.max_fps.get(), 144);
+        assert_eq!(loaded.camera.mouse_sensitivity, 0.006);
+        assert!(loaded.camera.invert_y);
+        assert_eq!(loaded.audio, decoded.audio);
+        assert_eq!(fs::read_to_string(&path).unwrap(), json);
+    }
+    fs::remove_file(path).unwrap();
 }
 
 #[test]
-fn invalid_audio_settings_fall_back_and_never_replace_existing_file() {
+fn saving_legacy_settings_omits_retired_sfx_volume_and_keeps_ui_audio() {
     let path = settings_test_path();
-    for field in ["master_volume", "sfx_volume", "ui_volume"] {
+    let original = r#"{"max_fps": 144, "camera": {"invert_y": true}, "audio": {"master_volume": 75, "ui_volume": 31, "sfx_volume": 50}}"#;
+    fs::write(&path, original).unwrap();
+    let draft = SettingsDraft::from_settings(&GameSettings::load(&path));
+    draft.to_settings().unwrap().save(&path).unwrap();
+
+    let saved: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&path).unwrap()).unwrap();
+    assert_eq!(
+        saved["audio"],
+        serde_json::json!({"master_volume": 75, "ui_volume": 31})
+    );
+    assert_eq!(saved["max_fps"], 144);
+    assert_eq!(saved["camera"]["invert_y"], true);
+    let reloaded = GameSettings::load(&path);
+    assert_eq!(reloaded.max_fps.get(), 144);
+    assert!(reloaded.camera.invert_y);
+    assert_eq!(reloaded.audio.master_volume, 75);
+    assert_eq!(reloaded.audio.ui_volume, 31);
+    fs::remove_file(path).unwrap();
+}
+
+#[test]
+fn legacy_sfx_compatibility_preserves_other_field_validation() {
+    let path = settings_test_path();
+    for invalid in [
+        r#"{"max_fps": 144, "audio": {}, "unknown": true}"#,
+        r#"{"max_fps": 144, "audio": {}, "camera": {"unknown": true}}"#,
+        r#"{"max_fps": 59, "audio": {}}"#,
+        r#"{"max_fps": 144, "audio": {}, "camera": {"mouse_sensitivity": 0}}"#,
+        r#"{"max_fps": 144, "max_fps": 240, "audio": {}}"#,
+        r#"{"max_fps": 144, "audio": {"sfx_volume": 50, "music_volume": 20}}"#,
+        r#"{"max_fps": 144, "audio": {"sfx_volume": 50, "ui_volume": 30, "ui_volume": 40}}"#,
+        r#"{"max_fps": 144, "audio": null}"#,
+    ] {
+        assert!(serde_json::from_str::<GameSettings>(invalid).is_err());
+        fs::write(&path, invalid).unwrap();
+        assert_eq!(
+            read_settings(&path).unwrap_err().kind(),
+            io::ErrorKind::InvalidData
+        );
+        assert_eq!(GameSettings::load(&path).max_fps.get(), 60);
+        assert_eq!(fs::read_to_string(&path).unwrap(), invalid);
+    }
+    fs::remove_file(path).unwrap();
+}
+
+#[test]
+fn invalid_ui_audio_falls_back_and_cannot_replace_existing_settings() {
+    let path = settings_test_path();
+    for field in ["master_volume", "ui_volume"] {
         for value in ["101", "255", "256", "-1", "50.5", "null", "true", "\"NaN\""] {
             let json = format!(r#"{{"max_fps": 144, "audio": {{"{field}": {value}}}}}"#);
             assert!(serde_json::from_str::<GameSettings>(&json).is_err());
@@ -102,8 +160,7 @@ fn invalid_audio_settings_fall_back_and_never_replace_existing_file() {
             assert_eq!(fs::read_to_string(&path).unwrap(), json);
         }
     }
-    assert!(serde_json::from_str::<GameSettings>(r#"{"audio": {"music_volume": 50}}"#).is_err());
-    let original = r#"{"audio": {"master_volume": 75}}"#;
+    let original = r#"{"audio": {"master_volume": 75, "ui_volume": 50}}"#;
     fs::write(&path, original).unwrap();
     for audio in [
         AudioSettings {
@@ -111,16 +168,11 @@ fn invalid_audio_settings_fall_back_and_never_replace_existing_file() {
             ..default()
         },
         AudioSettings {
-            sfx_volume: 101,
-            ..default()
-        },
-        AudioSettings {
             ui_volume: 101,
             ..default()
         },
     ] {
-        let draft = SettingsDraft { audio, ..default() };
-        assert!(draft.to_settings().is_err());
+        assert!(SettingsDraft { audio, ..default() }.to_settings().is_err());
         let settings = GameSettings { audio, ..default() };
         assert_eq!(
             settings.save(&path).unwrap_err().kind(),
@@ -187,7 +239,6 @@ fn save_creates_and_replaces_complete_settings_json() {
         invert_y: true,
         audio: AudioSettings {
             master_volume: 75,
-            sfx_volume: 0,
             ui_volume: 33,
         },
     };
@@ -198,7 +249,13 @@ fn save_creates_and_replaces_complete_settings_json() {
     assert_eq!(loaded.camera.mouse_sensitivity, 0.0065);
     assert!(loaded.camera.invert_y);
     assert_eq!(loaded.audio, draft.audio);
-    assert!(fs::read_to_string(&path).unwrap().ends_with('\n'));
+    let saved = fs::read_to_string(&path).unwrap();
+    assert!(saved.ends_with('\n'));
+    assert!(
+        serde_json::from_str::<serde_json::Value>(&saved).unwrap()["audio"]
+            .get("sfx_volume")
+            .is_none()
+    );
     fs::remove_file(path).unwrap();
 }
 
@@ -316,11 +373,10 @@ fn draft_adjustments_remain_within_menu_limits() {
 }
 
 #[test]
-fn audio_draft_adjustments_preserve_custom_values_and_clamp_only_edited_field() {
-    let custom: GameSettings = serde_json::from_str(
-        r#"{"max_fps": 75, "audio": {"master_volume": 73, "sfx_volume": 3, "ui_volume": 97}}"#,
-    )
-    .unwrap();
+fn ui_audio_draft_adjustments_preserve_values_and_clamp_only_edited_fields() {
+    let custom: GameSettings =
+        serde_json::from_str(r#"{"max_fps": 75, "audio": {"master_volume": 73, "ui_volume": 97}}"#)
+            .unwrap();
     let mut draft = SettingsDraft::from_settings(&custom);
     assert_eq!(draft.to_settings().unwrap().audio, custom.audio);
     assert_eq!(draft.volume(SettingKey::FrameRate), None);
@@ -329,20 +385,12 @@ fn audio_draft_adjustments_preserve_custom_values_and_clamp_only_edited_field() 
     assert_eq!(draft.audio, custom.audio);
     draft.adjust(SettingKey::MasterVolume, 1);
     assert_eq!(draft.audio.master_volume, 78);
-    assert_eq!(draft.audio.sfx_volume, 3);
     assert_eq!(draft.audio.ui_volume, 97);
-    draft.adjust(SettingKey::SfxVolume, -1);
-    assert_eq!(draft.audio.sfx_volume, 0);
     draft.adjust(SettingKey::UiVolume, 1);
     assert_eq!(draft.audio.ui_volume, 100);
     assert!(!draft.set_volume(SettingKey::UiVolume, 255));
     assert!(draft.set_volume(SettingKey::MasterVolume, 255));
-    assert_eq!(draft.audio.master_volume, 100);
-    for key in [
-        SettingKey::MasterVolume,
-        SettingKey::SfxVolume,
-        SettingKey::UiVolume,
-    ] {
+    for key in [SettingKey::MasterVolume, SettingKey::UiVolume] {
         for _ in 0..22 {
             draft.adjust(key, -1);
         }

@@ -1,10 +1,10 @@
-//! 角色与展示 NPC 的脚底原点、胶囊形状和动态身体配置。
+//! 角色的脚底原点、胶囊形状和动态身体配置。
 
 use crate::{physics::GamePhysicsLayer, settings::PrototypeConfig};
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
-/// 玩家与展示 NPC 共享脚底原点的身体形状，刚体类型和碰撞层由装配方决定。
+/// 胶囊从角色脚底向上延伸，根实体保持脚底原点。
 pub(crate) fn character_collider(config: &PrototypeConfig) -> Collider {
     Collider::compound(vec![(
         Vec3::Y * config.character_height * 0.5,

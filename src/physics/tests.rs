@@ -11,7 +11,6 @@ use bevy::{
 use std::time::Duration;
 
 use crate::{
-    audio::{SoundCue, SoundRequest},
     character::{Character, CharacterIntent, CharacterMotion, CharacterPlugin},
     game_flow::{FixedGameplaySystems, configure_feature_order},
     item_interaction::{HeldBy, HeldTarget, HoldingItems, Item, ItemInteractionPlugin, Pickable},
@@ -30,114 +29,6 @@ pub(crate) fn ground_body(_config: &PrototypeConfig) -> impl Bundle {
         )]),
         world_collision_layers(),
     )
-}
-
-/// 每帧读取真正的消息缓冲，避免在多固定步或渲染帧之间重复计算反馈。
-fn take_sound_cues(app: &mut App) -> Vec<SoundCue> {
-    app.world_mut()
-        .resource_mut::<Messages<SoundRequest>>()
-        .drain()
-        .map(|request| request.cue)
-        .collect()
-}
-
-#[test]
-fn accepted_pickup_and_release_emit_once_and_drop_emits_ground_impact() {
-    for kind in [Item::StandardParcel, Item::FragileParcel, Item::WoodenCrate] {
-        let mut app = test_app();
-        let character = spawn_character(&mut app, Vec3::ZERO);
-        let item = spawn_item(&mut app, Vec3::new(0.0, 0.3, -1.3));
-        app.world_mut().entity_mut(item).insert(kind);
-        step(&mut app, 30);
-        take_sound_cues(&mut app);
-        request_pickup(&mut app, character);
-        step(&mut app, 1);
-        assert_eq!(take_sound_cues(&mut app), [SoundCue::ItemPickup]);
-        assert_eq!(app.world().get::<Item>(item), Some(&kind));
-        assert_eq!(app.world().get::<HeldBy>(item).unwrap().get(), character);
-        step(&mut app, 30);
-        assert!(!take_sound_cues(&mut app).contains(&SoundCue::ItemPickup));
-        request_pickup(&mut app, character);
-        step(&mut app, 1);
-        assert_eq!(take_sound_cues(&mut app), [SoundCue::ItemRelease]);
-        assert_eq!(app.world().get::<Item>(item), Some(&kind));
-        assert!(app.world().get::<HeldBy>(item).is_none());
-        assert_eq!(
-            app.world().get::<RigidBody>(item),
-            Some(&RigidBody::Dynamic)
-        );
-        let mut impacts = 0;
-        for _ in 0..120 {
-            app.update();
-            impacts += take_sound_cues(&mut app)
-                .into_iter()
-                .filter(|cue| *cue == SoundCue::ItemLand)
-                .count();
-        }
-        assert!(
-            impacts >= 1,
-            "A released item must emit its actual landing impact"
-        );
-        for _ in 0..60 {
-            app.update();
-            assert!(
-                !take_sound_cues(&mut app).contains(&SoundCue::ItemLand),
-                "A resting item must stay silent"
-            );
-        }
-    }
-}
-
-#[test]
-fn failed_pickup_and_side_wall_contact_do_not_emit_success_or_landing() {
-    let mut app = test_app();
-    let character = spawn_character(&mut app, Vec3::new(-10.0, 0.0, 0.0));
-    let item = spawn_item(&mut app, Vec3::new(0.0, 3.0, 0.0));
-    app.world_mut().get_mut::<LinearVelocity>(item).unwrap().x = 3.0;
-    app.world_mut().spawn((
-        RigidBody::Static,
-        Collider::cuboid(0.2, 5.0, 4.0),
-        world_collision_layers(),
-        Transform::from_xyz(0.7, 2.5, 0.0),
-    ));
-    request_pickup(&mut app, character);
-    for _ in 0..12 {
-        app.update();
-        assert!(
-            take_sound_cues(&mut app).is_empty(),
-            "Side contact is not a ground impact and failed pickup is silent"
-        );
-    }
-    assert!(
-        app.world().get::<LinearVelocity>(item).unwrap().x < 1.0,
-        "The test must actually hit the wall"
-    );
-}
-
-#[test]
-fn speculative_support_before_impact_does_not_lose_landing_cue() {
-    // 接触预测可在真正落地前产生 TOUCHING；覆盖不同距离和较快的初始下落速度。
-    for (height, vertical_speed) in [(0.349, -3.0), (0.4, -3.0), (1.0, 0.0), (2.17, -1.0)] {
-        let mut app = test_app();
-        let item = spawn_item(&mut app, Vec3::new(0.0, height, 0.0));
-        app.world_mut().get_mut::<LinearVelocity>(item).unwrap().y = vertical_speed;
-        let mut count = 0;
-        for _ in 0..120 {
-            app.update();
-            count += take_sound_cues(&mut app)
-                .iter()
-                .filter(|cue| **cue == SoundCue::ItemLand)
-                .count();
-        }
-        assert!(
-            count >= 1,
-            "Missing actual landing at height={height}, speed={vertical_speed}"
-        );
-        for _ in 0..30 {
-            app.update();
-            assert!(!take_sound_cues(&mut app).contains(&SoundCue::ItemLand));
-        }
-    }
 }
 
 /// 只安装时间、变换和玩法物理插件，不加载窗口、渲染器或完整场景。
@@ -188,7 +79,7 @@ fn spawn_item(app: &mut App, position: Vec3) -> Entity {
     let config = app.world().resource::<PrototypeConfig>().clone();
     app.world_mut()
         .spawn((
-            Item::StandardParcel,
+            Item,
             Pickable,
             item_body(&config),
             Transform::from_translation(position),

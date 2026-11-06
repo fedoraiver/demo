@@ -315,15 +315,7 @@ mod test_support {
 mod backdrop_tests {
     use crate::game_flow::AppState;
     use crate::ui::backdrop::*;
-    use bevy::world_serialization::WorldInstanceReady;
-    use bevy::{
-        animation::{RepeatAnimation, graph::AnimationNodeType},
-        asset::AssetPlugin,
-        camera::CameraProjection,
-        scene::ScenePlugin,
-        state::app::StatesPlugin,
-        world_serialization::{WorldAsset, WorldInstanceSpawner},
-    };
+    use bevy::{asset::AssetPlugin, scene::ScenePlugin, state::app::StatesPlugin};
     use bevy_inspector_egui::bevy_egui::PrimaryEguiContext;
 
     use super::*;
@@ -339,20 +331,14 @@ mod backdrop_tests {
             StatesPlugin,
         ))
         .init_state::<AppState>();
-        app.update();
+        crate::ui::backdrop::register(&mut app);
         let other_camera = app.world_mut().spawn(Camera3d::default()).id();
+        app.update();
         let root = app
             .world_mut()
-            .spawn_scene(bsn! {
-                MenuBackdrop
-                DespawnOnExit::<AppState>(AppState::MainMenu)
-                Transform
-                Children [
-                    @menu_camera()
-                ]
-            })
-            .unwrap()
-            .id();
+            .query_filtered::<Entity, With<MenuBackdrop>>()
+            .single(app.world())
+            .unwrap();
         let menu_camera = app.world().get::<Children>(root).unwrap()[0];
         assert!(app.world().get::<IsDefaultUiCamera>(menu_camera).is_some());
         assert!(app.world().get::<PrimaryEguiContext>(menu_camera).is_some());
@@ -365,180 +351,6 @@ mod backdrop_tests {
         assert!(app.world().get_entity(root).is_err());
         assert!(app.world().get_entity(menu_camera).is_err());
         assert!(app.world().get::<Camera3d>(other_camera).is_some());
-    }
-
-    /// 无窗口检查具名资产约定，GLB 再导出可以改变排列但不能移除菜单持箱动作。
-    #[test]
-    fn courier_asset_contains_carry_clip_and_independent_parcel() {
-        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("assets");
-        let bytes = std::fs::read(root.join(COURIER_PATH)).unwrap();
-        assert_eq!(&bytes[..4], b"glTF");
-        let json_len = u32::from_le_bytes(bytes[12..16].try_into().unwrap()) as usize;
-        let gltf: serde_json::Value = serde_json::from_slice(&bytes[20..20 + json_len]).unwrap();
-        assert_eq!(
-            gltf["animations"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .filter(|animation| animation["name"] == COURIER_ANIMATION)
-                .count(),
-            1
-        );
-        assert_eq!(gltf["scenes"].as_array().unwrap().len(), 1);
-        assert!(
-            gltf["skins"]
-                .as_array()
-                .is_some_and(|skins| !skins.is_empty())
-        );
-        assert!(root.join("models/props/prop_parcel_standard.glb").is_file());
-    }
-
-    /// 真实 Observer 和图绑定覆盖场景先就绪、父 GLB 后到达，以及动画导出排列变化。
-    #[test]
-    fn courier_menu_resolves_named_clip_after_scene_and_asset_are_ready() {
-        let mut app = App::new();
-        // 只安装资产与动画调度，不安装窗口、渲染器或完整游戏。
-        app.add_plugins((
-            TaskPoolPlugin::default(),
-            AssetPlugin::default(),
-            AnimationPlugin,
-        ))
-        .init_resource::<Assets<Gltf>>()
-        .init_resource::<Assets<WorldAsset>>()
-        .init_resource::<Time>()
-        .add_observer(mark_courier_animation_ready)
-        .add_systems(Update, play_courier_animation);
-        app.finish();
-        app.cleanup();
-        let gltf_handle = app.world().resource::<Assets<Gltf>>().reserve_handle();
-        let carry_clip = app
-            .world()
-            .resource::<Assets<AnimationClip>>()
-            .reserve_handle();
-        let mut clips = app.world_mut().resource_mut::<Assets<AnimationClip>>();
-        let backward_clip = clips.add(AnimationClip::default());
-        let walk_clip = clips.add(AnimationClip::default());
-        let root = app
-            .world_mut()
-            .spawn(CourierAnimation {
-                gltf: gltf_handle.clone(),
-            })
-            .id();
-        let armature = app.world_mut().spawn(ChildOf(root)).id();
-        let player = app
-            .world_mut()
-            .spawn((AnimationPlayer::default(), ChildOf(armature)))
-            .id();
-        let world_asset = app
-            .world_mut()
-            .resource_mut::<Assets<WorldAsset>>()
-            .add(WorldAsset::new(World::new()));
-        let instance_id = WorldInstanceSpawner::default()
-            .spawn_sync(app.world_mut(), world_asset.id())
-            .unwrap();
-        app.world_mut().trigger(WorldInstanceReady {
-            entity: root,
-            instance_id,
-        });
-        app.update();
-        assert!(app.world().get::<CourierAnimationPending>(root).is_some());
-        assert!(app.world().get::<AnimationGraphHandle>(player).is_none());
-        let gltf = Gltf {
-            scenes: default(),
-            named_scenes: default(),
-            meshes: default(),
-            named_meshes: default(),
-            materials: default(),
-            named_materials: default(),
-            nodes: default(),
-            named_nodes: default(),
-            skins: default(),
-            named_skins: default(),
-            default_scene: None,
-            // Carry_Idle 故意排在第三个，不能把索引 0 的倒走片段接到展示角色上。
-            animations: vec![backward_clip.clone(), walk_clip.clone(), carry_clip.clone()],
-            named_animations: [
-                ("Carry_Backward".into(), backward_clip),
-                ("Walk".into(), walk_clip),
-                (COURIER_ANIMATION.into(), carry_clip.clone()),
-            ]
-            .into_iter()
-            .collect(),
-            source: None,
-        };
-        app.world_mut()
-            .resource_mut::<Assets<Gltf>>()
-            .insert(gltf_handle.id(), gltf)
-            .unwrap();
-        app.update();
-        assert!(app.world().get::<CourierAnimationPending>(root).is_some());
-        assert!(app.world().get::<AnimationGraphHandle>(player).is_none());
-        let mut clip = AnimationClip::default();
-        clip.set_duration(0.8);
-        app.world_mut()
-            .resource_mut::<Assets<AnimationClip>>()
-            .insert(carry_clip.id(), clip)
-            .unwrap();
-        app.update();
-        assert!(app.world().get::<CourierAnimationPending>(root).is_none());
-        assert!(app.world().get::<AnimationPlayer>(root).is_none());
-        let graph_handle = app
-            .world()
-            .get::<AnimationGraphHandle>(player)
-            .unwrap()
-            .0
-            .clone();
-        let graph = app
-            .world()
-            .resource::<Assets<AnimationGraph>>()
-            .get(&graph_handle)
-            .unwrap();
-        let playing = app.world().get::<AnimationPlayer>(player).unwrap();
-        let active: Vec<_> = playing.playing_animations().collect();
-        assert_eq!(active.len(), 1);
-        let (node, active) = active[0];
-        assert!(matches!(active.repeat_mode(), RepeatAnimation::Forever));
-        let AnimationNodeType::Clip(bound_clip) = &graph[*node].node_type else {
-            panic!("Menu courier must play a named animation clip");
-        };
-        assert_eq!(bound_clip.id(), carry_clip.id());
-        // pending 已消费，后续帧不能重复生成动画图或重置正在播放的动作。
-        app.update();
-        assert_eq!(
-            app.world()
-                .get::<AnimationGraphHandle>(player)
-                .unwrap()
-                .0
-                .id(),
-            graph_handle.id()
-        );
-        assert_eq!(app.world().resource::<Assets<AnimationGraph>>().len(), 1);
-    }
-
-    /// 投影检查只验证固定构图的数学边界，真实光照、遮挡与材质仍由用户验收。
-    #[test]
-    fn camera_frames_courier_and_station_on_right_at_wide_and_narrow_aspects() {
-        let view = camera_transform().to_matrix().inverse();
-        for aspect in [16.0 / 9.0, 4.0 / 3.0] {
-            let projection = PerspectiveProjection {
-                fov: 46.0_f32.to_radians(),
-                aspect_ratio: aspect,
-                near: 0.1,
-                far: 1000.0,
-                ..default()
-            }
-            .get_clip_from_view();
-            for point in [
-                COURIER_POSITION,
-                COURIER_POSITION + Vec3::Y * 1.91,
-                STATION_POSITION + Vec3::Y * 2.0,
-            ] {
-                let clip = projection * view * point.extend(1.0);
-                let ndc = clip.truncate() / clip.w;
-                assert!(ndc.x > 0.0 && ndc.x < 1.0, "point={point:?}, ndc={ndc:?}");
-                assert!(ndc.y.abs() < 1.0, "point={point:?}, ndc={ndc:?}");
-            }
-        }
     }
 }
 
@@ -635,7 +447,7 @@ mod page_layout_tests {
                         .unwrap();
                     for paragraph in [
                         "Move relative to the camera. Build up speed, coast to a stop, and jump while grounded.",
-                        "Get close to a parcel with a clear path. Hold it with physics, then release it to let gravity do the rest.",
+                        "Get close to an object with a clear path. Hold it with physics, then release it to let gravity do the rest.",
                         "Use the mouse to look around in first-person. Press Esc to pause and resume.",
                     ] {
                         let (_, node, transform, parent) = world
@@ -1500,7 +1312,7 @@ mod page_refresh_tests {
             .world_mut()
             .query::<(&Text, &TextFont)>()
             .iter(app.world())
-            .find(|(text, _)| text.0 == "ISLAND")
+            .find(|(text, _)| text.0 == "GREY")
             .unwrap()
             .1
             .font_size;
@@ -1515,7 +1327,7 @@ mod page_refresh_tests {
             .world_mut()
             .query::<(&Text, &TextFont)>()
             .iter(app.world())
-            .find(|(text, _)| text.0 == "ISLAND")
+            .find(|(text, _)| text.0 == "GREY")
             .unwrap()
             .1
             .font_size;
@@ -1639,22 +1451,18 @@ mod page_structure_tests {
             false,
         ));
         assert_eq!(
-            &audio[4..14],
+            &audio[4..10],
             &[
                 UiAction::Adjust(SettingKey::MasterVolume, -1),
                 UiAction::Adjust(SettingKey::MasterVolume, 0),
                 UiAction::Adjust(SettingKey::MasterVolume, 1),
-                UiAction::Adjust(SettingKey::SfxVolume, -1),
-                UiAction::Adjust(SettingKey::SfxVolume, 0),
-                UiAction::Adjust(SettingKey::SfxVolume, 1),
                 UiAction::Adjust(SettingKey::UiVolume, -1),
                 UiAction::Adjust(SettingKey::UiVolume, 0),
                 UiAction::Adjust(SettingKey::UiVolume, 1),
-                UiAction::TestSfx,
             ]
         );
         assert_eq!(
-            &audio[14..],
+            &audio[10..],
             &[
                 UiAction::RestoreDefaults,
                 UiAction::ApplySettings,
@@ -2350,14 +2158,17 @@ mod requests_tests {
 
         // 最后一帧坐标和释放同时到达仍应用最终值，只反馈一次。
         for action in [
-            UiAction::SetVolume(SettingKey::SfxVolume, 70),
-            UiAction::SetVolume(SettingKey::SfxVolume, 33),
+            UiAction::SetVolume(SettingKey::MasterVolume, 70),
+            UiAction::SetVolume(SettingKey::MasterVolume, 33),
             UiAction::FinishVolumeEdit,
         ] {
             app.world_mut().write_message(UiRequest { action });
         }
         app.update();
-        assert_eq!(app.world().resource::<SettingsDraft>().audio.sfx_volume, 33);
+        assert_eq!(
+            app.world().resource::<SettingsDraft>().audio.master_volume,
+            33
+        );
         assert_eq!(drain_sounds(&mut app), [SoundCue::MenuConfirm]);
 
         // 拖回初值没有净变化；无效字段不能通过滑条入口修改相机或帧率。
@@ -2484,7 +2295,6 @@ mod requests_tests {
         request(&mut app, UiAction::OpenSettings);
         request(&mut app, UiAction::SelectTab(SettingsTab::Audio));
         request(&mut app, UiAction::SetVolume(SettingKey::MasterVolume, 73));
-        request(&mut app, UiAction::SetVolume(SettingKey::SfxVolume, 0));
         request(&mut app, UiAction::SetVolume(SettingKey::UiVolume, 49));
         request(&mut app, UiAction::SelectTab(SettingsTab::Controls));
         assert_eq!(
@@ -2502,7 +2312,6 @@ mod requests_tests {
         request(&mut app, UiAction::ApplySettings);
         let committed = app.world().resource::<GameSettings>().audio;
         assert_eq!(committed.master_volume, 73);
-        assert_eq!(committed.sfx_volume, 0);
         assert_eq!(committed.ui_volume, 49);
         assert_eq!(GameSettings::load(&path).audio, committed);
         assert_eq!(
@@ -2556,45 +2365,6 @@ mod requests_tests {
         assert_eq!(app.world().resource::<SettingsDraft>().audio, committed);
         assert_eq!(app.world().resource::<AudioPreview>().settings, None);
         std::fs::remove_file(path).unwrap();
-    }
-
-    #[test]
-    fn sfx_sample_works_in_pause_without_changing_gameplay_or_settings() {
-        let mut app = test_app();
-        request(&mut app, UiAction::TestSfx);
-        assert!(drain_sounds(&mut app).is_empty());
-        request(&mut app, UiAction::StartGame);
-        request(&mut app, UiAction::Back);
-        request(&mut app, UiAction::OpenSettings);
-        request(&mut app, UiAction::SelectTab(SettingsTab::Audio));
-        drain_sounds(&mut app);
-        let draft = app.world().resource::<SettingsDraft>().clone();
-        // 同帧重复试听也只产生一个素材请求，来源是菜单而非角色或包裹。
-        app.world_mut().write_message(UiRequest {
-            action: UiAction::TestSfx,
-        });
-        app.world_mut().write_message(UiRequest {
-            action: UiAction::TestSfx,
-        });
-        app.update();
-        let samples: Vec<_> = app
-            .world_mut()
-            .resource_mut::<Messages<SoundRequest>>()
-            .drain()
-            .collect();
-        assert_eq!(samples.len(), 1);
-        assert_eq!(samples[0].cue, SoundCue::ItemPickup);
-        assert!(app.world().get::<MenuContext>(samples[0].source).is_some());
-        assert_eq!(*app.world().resource::<SettingsDraft>(), draft);
-        assert!(app.world().resource::<Time<Virtual>>().is_paused());
-        assert_eq!(
-            *app.world().resource::<State<AppState>>().get(),
-            AppState::Paused
-        );
-        request(&mut app, UiAction::SelectTab(SettingsTab::Graphics));
-        drain_sounds(&mut app);
-        request(&mut app, UiAction::TestSfx);
-        assert!(drain_sounds(&mut app).is_empty());
     }
 
     #[test]
@@ -3744,7 +3514,7 @@ mod widgets_tests {
             body: default(),
             scale: 1.0,
         };
-        const PARAGRAPH: &str = "Move around the island with WASD. Jump with Space. Carry a parcel to explore a new route and make your next delivery.";
+        const PARAGRAPH: &str = "Move around the test scene with WASD. Jump with Space. Carry an object to test movement, collision and interactions.";
         app.world_mut()
             .spawn_scene(bsn! {
                 column(12.0)
@@ -3763,9 +3533,7 @@ mod widgets_tests {
                     --
                     @super::super::volume::volume_row(&theme, "Master Volume", 100, SettingKey::MasterVolume, 5, "Adjust every sound.")
                     --
-                    @super::super::volume::volume_row(&theme, "SFX Volume", 0, SettingKey::SfxVolume, 8, "Adjust gameplay sounds.")
-                    --
-                    @super::super::volume::volume_row(&theme, "UI Volume", 37, SettingKey::UiVolume, 11, "Adjust menu sounds.")
+                    @super::super::volume::volume_row(&theme, "UI Volume", 0, SettingKey::UiVolume, 8, "Adjust menu sounds.")
                     --
                     @placeholder_row(&theme, "Window Mode", false)
                     --
@@ -3803,9 +3571,7 @@ mod widgets_tests {
                     --
                     Node { column_gap: px(9), align_items: AlignItems::Center }
                     Children [
-                        @parcel_stamp(&theme)
-                        --
-                        @label(&theme, "ISLAND DELIVERY CO.", 15.0, CREAM)
+                        @label(&theme, "DEVELOPMENT SANDBOX", 15.0, CREAM)
                     ]
                     --
                     column(8.0)

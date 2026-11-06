@@ -145,12 +145,12 @@ pub(super) fn main_page(theme: &UiTheme, paused: bool) -> impl Scene + use<> {
     let tag_title = if paused {
         "TAKE A BREATHER"
     } else {
-        "YOUR ISLAND. YOUR ROUTE."
+        "TEST YOUR IDEAS."
     };
     let tag_body = if paused {
-        "Your parcel will be right here."
+        "Your session is paused."
     } else {
-        "A little sunshine. A lot to carry."
+        "Move, jump and interact."
     };
     let placeholders: Box<dyn SceneList> = if paused {
         Box::new(bsn_list! {})
@@ -201,7 +201,7 @@ pub(super) fn main_page(theme: &UiTheme, paused: bool) -> impl Scene + use<> {
                     }
                     BackgroundColor(GOLD)
                     --
-                    @label(theme, if paused { "DELIVERIES ON HOLD" } else { "SINGLE PLAYER" }, 15.0, CREAM)
+                    @label(theme, if paused { "SESSION ON HOLD" } else { "SINGLE PLAYER" }, 15.0, CREAM)
                 ]
             ]
             --
@@ -251,7 +251,7 @@ fn footer(theme: &UiTheme) -> impl Scene + use<> {
         }
         BackgroundColor(Color::srgba(0.07, 0.11, 0.16, 0.88))
         Children [
-            @label(theme, "ISLAND DELIVERY CO.  /  HANDLE WITH CARE", 14.0, CREAM)
+            @label(theme, "GREY-BOXING  /  DEVELOPMENT SANDBOX", 14.0, CREAM)
             --
             Name("Menu footer input hints")
             Node {
@@ -324,7 +324,7 @@ pub(super) fn settings_page(
     let scale = theme.scale;
     let (category, next_index) = match state.tab {
         SettingsTab::Graphics => ("GRAPHICS", 6),
-        SettingsTab::Audio => ("AUDIO", 14),
+        SettingsTab::Audio => ("AUDIO", 10),
         SettingsTab::Controls => ("CONTROLS", 8),
         SettingsTab::Accessibility => ("ACCESSIBILITY", 4),
     };
@@ -354,17 +354,12 @@ pub(super) fn settings_page(
             column(13.0 * scale)
             Children [
                 @volume_row(theme, "Master Volume", draft.audio.master_volume, SettingKey::MasterVolume, 4,
-                    "Adjust every sound together. Changes are heard immediately. Choose Apply to save, or Back to restore the last applied volumes.")
+                    "Adjust all menu sounds together. Changes are heard immediately. Choose Apply to save, or Back to restore the last applied volumes.")
                 --
-                @volume_row(theme, "SFX Volume", draft.audio.sfx_volume, SettingKey::SfxVolume, 7,
-                    "Adjust pickup, release, landing and carry warning sounds. Use Test SFX to hear a pickup sample in this menu.")
-                --
-                @volume_row(theme, "UI Volume", draft.audio.ui_volume, SettingKey::UiVolume, 10,
+                @volume_row(theme, "UI Volume", draft.audio.ui_volume, SettingKey::UiVolume, 7,
                     "Adjust menu navigation, confirmation and back sounds. Dragging previews the volume without repeated confirmation sounds.")
                 --
                 @placeholder_row(theme, "Music Volume", false)
-                --
-                @small_button(theme, "Test SFX", UiAction::TestSfx, 13)
                 --
                 @label(theme, "Preview changes now. Choose Apply to save.", 17.0, MUTED)
             ]
@@ -392,7 +387,7 @@ pub(super) fn settings_page(
                 --
                 @placeholder_row(theme, "Camera Shake", false)
                 --
-                @label(theme, "More ways to make the island yours.", 17.0, MUTED)
+                @label(theme, "More accessibility options are planned.", 17.0, MUTED)
             ]
         }),
     };
@@ -517,18 +512,6 @@ fn description_panel(theme: &UiTheme, compact: bool) -> impl Scene + use<> {
             --
             @label(theme, "Select a setting to see what it does. Use the arrows to change its value, then Apply to save.", 18.0, MUTED)
             DescriptionBody
-            --
-            Name("Setting description parcel note")
-            Node {
-                margin: UiRect::top(px(theme.size(12.0))),
-                align_items: AlignItems::Center,
-                column_gap: px(theme.size(9.0)),
-            }
-            Children [
-                @parcel_stamp(theme)
-                --
-                @heading(theme, "HANDLE WITH CARE", 17.0, INK)
-            ]
         ]
     }
 }
@@ -552,15 +535,13 @@ pub(super) fn help_page(theme: &UiTheme) -> impl Scene + use<> {
                 flex_shrink: 0.0,
             }
             Children [
-                @parcel_stamp(theme)
-                --
                 Name("Help title and introduction")
                 column(5.0 * scale)
                 Node { flex_grow: 1.0 }
                 Children [
                     @heading(theme, "HOW TO PLAY", 36.0, INK)
                     --
-                    @label(theme, "Grab a parcel. Find your stride. Enjoy the island.", 18.0, MUTED)
+                    @label(theme, "Explore movement and physics in a test scene.", 18.0, MUTED)
                 ]
             ]
             --
@@ -575,7 +556,7 @@ pub(super) fn help_page(theme: &UiTheme) -> impl Scene + use<> {
                     "Move relative to the camera. Build up speed, coast to a stop, and jump while grounded.")
                 --
                 @help_card(theme, "02", "CARRY & DROP", "E", "E again", "Pick up", "Release",
-                    "Get close to a parcel with a clear path. Hold it with physics, then release it to let gravity do the rest.")
+                    "Get close to an object with a clear path. Hold it with physics, then release it to let gravity do the rest.")
                 --
                 @help_card(theme, "03", "CAMERA & PAUSE", "Mouse", "Esc", "Look around", "Pause",
                     "Use the mouse to look around in first-person. Press Esc to pause and resume.")
@@ -589,7 +570,7 @@ pub(super) fn help_page(theme: &UiTheme) -> impl Scene + use<> {
                 flex_shrink: 0.0,
             }
             Children [
-                @label(theme, "One courier. One box at a time. Take it easy out there.", 19.0, INK)
+                @label(theme, "Move, jump and carry objects to test the scene.", 19.0, INK)
                 Node { flex_grow: 1.0 }
                 --
                 @small_button(theme, "Back", UiAction::Back, 0)

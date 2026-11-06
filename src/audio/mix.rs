@@ -5,7 +5,7 @@ use crate::settings::{AudioSettings, GameSettings, MAX_AUDIO_VOLUME};
 use bevy::prelude::*;
 use bevy_kira_audio::{AudioInstance, AudioTween, prelude::Decibels};
 
-/// 两条业务通道共用的有效混音源；离开设置页便回到最近成功应用的配置。
+/// 音频输出的有效混音源，离开设置页后采用最近成功应用的配置。
 #[derive(Resource, Clone, Copy, Debug, PartialEq, Eq, Default)]
 pub(super) struct AudioMix {
     pub(super) settings: AudioSettings,
@@ -13,14 +13,10 @@ pub(super) struct AudioMix {
 }
 
 impl AudioMix {
-    pub(super) fn gain(&self, ui: bool) -> f64 {
-        let category = if ui {
-            self.settings.ui_volume
-        } else {
-            self.settings.sfx_volume
-        };
+    /// 当前 UI 通道使用总音量和 UI 分类音量计算增益。
+    pub(super) fn gain(&self) -> f64 {
         let volume_scale = f64::from(MAX_AUDIO_VOLUME);
-        MASTER_GAIN * f64::from(self.settings.master_volume) * f64::from(category)
+        MASTER_GAIN * f64::from(self.settings.master_volume) * f64::from(self.settings.ui_volume)
             / (volume_scale * volume_scale)
     }
 }
@@ -52,8 +48,6 @@ pub(super) fn sync_audio_mix(
             info!(target: "demo::audio",
                 master_volume_before = mix.settings.master_volume,
                 master_volume_after = desired.settings.master_volume,
-                sfx_volume_before = mix.settings.sfx_volume,
-                sfx_volume_after = desired.settings.sfx_volume,
                 ui_volume_before = mix.settings.ui_volume,
                 ui_volume_after = desired.settings.ui_volume,
                 reason = if preview {
@@ -73,14 +67,14 @@ pub(super) fn sync_voice_volumes(
     mut bank: ResMut<SoundBank>,
     mut instances: ResMut<Assets<AudioInstance>>,
 ) {
-    // Kira 0.26 的通道 set_volume 会覆盖每个实例的绝对音量，不能保持素材间响度。
-    // 因此统一计算 UI/SFX 增益，再按每条声音的清单音量同步，覆盖正在播放和刚就绪实例。
+    // Kira 的通道 set_volume 会覆盖每个实例的绝对音量，不能保持素材间响度。
+    // 因此按通道混音和素材清单音量同步，覆盖正在播放和刚就绪实例。
     let SoundBank { sounds, voices, .. } = &mut *bank;
     for voice in voices {
         let Some(sound) = sounds.get(&voice.cue) else {
             continue;
         };
-        let volume = volume_decibels(mix.gain(voice.ui), sound.policy.volume);
+        let volume = volume_decibels(mix.gain(), sound.policy.volume);
         if voice.applied_volume != Some(volume)
             && let Some(mut instance) = instances.get_mut(voice.handle.id())
         {

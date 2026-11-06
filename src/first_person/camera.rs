@@ -55,7 +55,7 @@ pub(super) fn follow_first_person_camera(
     }
 }
 
-/// 第一人称只隐藏自身视觉子树，保留业务根与独立木箱。
+/// 第一人称只隐藏自身视觉子树，保留业务根与独立物品。
 pub(super) fn sync_character_visibility(
     controllers: Query<(&ControlsCharacter, &ControlsCamera), With<GameplayContext>>,
     cameras: Query<&FirstPersonCamera>,

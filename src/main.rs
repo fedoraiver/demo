@@ -1,7 +1,5 @@
 mod audio;
-mod bounds_recovery;
 mod character;
-mod character_animation;
 mod first_person;
 mod game_flow;
 mod inspector;
@@ -14,9 +12,7 @@ mod ui;
 mod window_policy;
 
 use audio::GameAudioPlugin;
-use bounds_recovery::BoundsRecoveryPlugin;
 use character::CharacterPlugin;
-use character_animation::CharacterAnimationPlugin;
 use first_person::FirstPersonPlugin;
 use game_flow::{FIXED_SIMULATION_HZ, GameFlowPlugin};
 use inspector::{InspectorPlugin, LaunchMode};
@@ -57,7 +53,7 @@ fn main() -> AppExit {
         DefaultPlugins
             .build()
             .disable::<LogPlugin>()
-            // 设备输出统一由 Kira 管理。
+            // 音频设备输出统一由 Kira 管理。
             .disable::<bevy::audio::AudioPlugin>()
             .set(WindowPlugin {
                 primary_window: Some(window_policy::primary_window()),
@@ -77,8 +73,6 @@ fn main() -> AppExit {
             CharacterPlugin,
             ItemInteractionPlugin,
             FirstPersonPlugin,
-            CharacterAnimationPlugin,
-            BoundsRecoveryPlugin,
             SceneAssemblyPlugin,
             GameUiPlugin,
             GameAudioPlugin,

@@ -1,20 +1,16 @@
 #!/usr/bin/env python3
-"""零预算音频资产的导入、可重现合成和无播放技术检查。"""
+"""音频正式素材导入、清单生成和无播放技术检查。"""
 
 import argparse
 import array
 import hashlib
-import io
 import json
 import math
 import platform
-import random
 import shutil
-import struct
 import subprocess
 import sys
 import urllib.request
-import wave
 import zipfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -23,7 +19,6 @@ ROOT = Path(__file__).resolve().parents[1]
 AUDIO = ROOT / "assets/audio"
 CONFIG = AUDIO / "generation.json"
 VERSION = "1.0.0"
-RATE = 44100
 
 
 def read_json(path):
@@ -78,87 +73,15 @@ def import_sources(config, acquired_date, use_cache):
     print(f"Imported {sum(len(x['selected_files']) for x in receipts)} official release files")
 
 
-def synthesize(spec):
-    """每条音效独立种子；正弦谐波避免方波混叠，包络抑制起止点击。"""
-    rng = random.Random(spec["seed"])
-    length = round(spec["duration_seconds"] * RATE)
-    samples = [0.0] * length
-    if spec["recipe"] == "periodic_breeze":
-        # 整数周期谐波在 6 秒内闭合；这是合成背景候选，不冒充海浪录音。
-        for harmonic in spec["harmonics"]:
-            phase = rng.random() * math.tau
-            frequency = harmonic["cycles"] / spec["duration_seconds"]
-            for i in range(length):
-                samples[i] += harmonic["amplitude"] * math.sin(math.tau * frequency * i / RATE + phase)
-    else:
-        for note in spec["notes"]:
-            phase = rng.random() * math.tau
-            start = round(note["start_seconds"] * RATE)
-            count = round(note["duration_seconds"] * RATE)
-            for index in range(count):
-                target = start + index
-                if target >= length:
-                    break
-                position = index / max(1, count - 1)
-                frequency = note["frequency_start_hz"] + (note["frequency_end_hz"] - note["frequency_start_hz"]) * position
-                phase += math.tau * frequency / RATE
-                attack = min(1.0, index / max(1, round(note["attack_seconds"] * RATE)))
-                release = min(1.0, (count - 1 - index) / max(1, round(note["release_seconds"] * RATE)))
-                envelope = attack * release * math.exp(-note["decay"] * position)
-                signal = math.sin(phase) + note["second_harmonic"] * math.sin(2 * phase)
-                samples[target] += signal * envelope * note["amplitude"]
-    # 去 DC 后再对一次性音效应用短边缘渐变，不在循环背景的接缝添加静音。
-    mean = sum(samples) / length
-    samples = [x - mean for x in samples]
-    if spec["recipe"] != "periodic_breeze":
-        edge = round(spec["edge_fade_seconds"] * RATE)
-        for index in range(edge):
-            gain = index / max(1, edge - 1)
-            samples[index] *= gain
-            samples[-index - 1] *= gain
-    peak = max(abs(x) for x in samples)
-    gain = spec["target_peak"] / peak if peak else 0.0
-    return [round(x * gain * 32767) for x in samples]
-
-
-def render_wav(spec):
-    """相同配方可在内存复现文件字节，检查时不覆盖正式成品。"""
-    buffer = io.BytesIO()
-    samples = synthesize(spec)
-    with wave.open(buffer, "wb") as output:
-        output.setnchannels(1)
-        output.setsampwidth(2)
-        output.setframerate(RATE)
-        output.writeframes(struct.pack("<" + "h" * len(samples), *samples))
-    return buffer.getvalue()
-
-
 def generate(config):
-    """生成原始 PCM 文件，并让清单准确描述外部发布 OGG 与本地合成 WAV。"""
+    """按配置重建正式 OGG 素材清单，不改写媒体与来源证据。"""
     receipts = read_json(AUDIO / "sources/source_receipts.json")
     sources = {x["id"]: x for x in receipts}
     assets = []
-    for spec in config["procedural_assets"]:
-        destination = ROOT / "assets" / spec["path"]
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_bytes(render_wav(spec))
-        assets.append({"id": spec["id"], "event_ids": [spec["id"]], "title": spec["title"],
-                       "category": spec["category"], "path": spec["path"], "kind": "procedural",
-                       "format": {"container": "wav", "codec": "pcm_s16le", "lossy": False,
-                                  "provenance": "original locally synthesized PCM", "sample_rate": RATE, "channels": 1, "bit_depth": 16},
-                       "source": {"page": None, "author": "demo project local procedural generator",
-                                  "license": "project-original", "license_version": None, "acquired_date": None,
-                                  "created_date": config["created_date"], "note": "No external samples; rights remain with the project. This is not a third-party CC0 claim."},
-                       "generator": {"path": "scripts/audio_pipeline.py", "version": VERSION,
-                                     "config": "assets/audio/generation.json", "recipe": spec["recipe"], "seed": spec["seed"],
-                                     "parameters": {key: value for key, value in spec.items()
-                                                    if key not in ("id", "title", "category", "path", "playback")}},
-                       "processing": ["local mathematical synthesis using recorded recipe and per-asset seed", "remove DC mean", "edge fade for one-shots only", "scale to recorded target peak", "quantize once to signed PCM16 WAV"],
-                       "playback": spec["playback"], "sha256": sha256(destination.read_bytes())})
     for spec in config["external_assets"]:
         source = sources[spec["source_id"]]
         destination = ROOT / "assets" / spec["path"]
-        assets.append({"id": spec["id"], "event_ids": [spec["id"]], "title": spec["title"],
+        assets.append({"id": spec["id"], "event_ids": spec.get("event_ids", [spec["id"]]), "title": spec["title"],
                        "category": spec["category"], "path": spec["path"], "kind": "external_release",
                        "format": {"container": "ogg", "codec": "vorbis", "lossy": True,
                                   "provenance": "official release OGG (not a web preview, not asserted lossless)"},
@@ -172,17 +95,17 @@ def generate(config):
     assets.sort(key=lambda x: (x["category"], x["id"]))
     manifest = {"schema_version": 1, "created_date": config["created_date"],
                 "policy": {"budget": 0, "paid_generation_api": False, "external_license_allowlist": ["CC0-1.0"],
-                           "preview_to_lossless_conversion": False, "ambience_default_enabled": False,
+                           "preview_to_lossless_conversion": False,
                            "subjective_listening_status": "not_performed", "game_runtime_status": "not_performed"},
                 "events": config["events"], "assets": assets,
-                "sources": receipts, "pending_sources": config["pending_sources"],
+                "sources": receipts,
                 "generator_environment": {"version": VERSION, "python": platform.python_version(),
                                           "dependencies": "Python standard library only",
                                           "platform": platform.platform(),
                                           "script_sha256": sha256(Path(__file__).read_bytes()),
                                           "config_sha256": sha256(CONFIG.read_bytes())}}
     write_json(AUDIO / "audio_manifest.json", manifest)
-    print(f"Generated {len(config['procedural_assets'])} original PCM assets; manifest has {len(assets)} assets")
+    print(f"Generated manifest for {len(assets)} audio assets")
 
 
 def decode(path, ffmpeg, ffprobe):
@@ -201,7 +124,7 @@ def decode(path, ffmpeg, ffprobe):
 
 
 def check(config, ffmpeg, ffprobe):
-    """检查格式、静音、削波、DC、哈希和循环接缝；听感验收仍需用户试听。"""
+    """检查格式、静音、削波、DC 与原包哈希；听感验收由用户试听。"""
     manifest = read_json(AUDIO / "audio_manifest.json")
     limits = config["quality_limits"]
     records = []
@@ -222,19 +145,11 @@ def check(config, ffmpeg, ffprobe):
         warnings = []
         if digest != asset["sha256"]:
             warnings.append("hash_mismatch")
-        original_bytes_match = None
-        regenerated_bytes_match = None
-        if asset["kind"] == "external_release":
-            receipt = next(x for x in manifest["sources"] if x["id"] == asset["source"]["id"])
-            original = next(x for x in receipt["selected_files"] if x["id"] == asset["id"])
-            original_bytes_match = digest == original["original_sha256"]
-            if not original_bytes_match:
-                warnings.append("release_bytes_changed")
-        else:
-            spec = next(x for x in config["procedural_assets"] if x["id"] == asset["id"])
-            regenerated_bytes_match = sha256(render_wav(spec)) == digest
-            if not regenerated_bytes_match:
-                warnings.append("regenerated_bytes_changed")
+        receipt = next(source for source in manifest["sources"] if source["id"] == asset["source"]["id"])
+        original = next(item for item in receipt["selected_files"] if item["id"] == asset["id"])
+        original_bytes_match = digest == original["original_sha256"]
+        if not original_bytes_match:
+            warnings.append("release_bytes_changed")
         expected_codec = asset["format"]["codec"]
         if stream["codec_name"] != expected_codec or rate not in (44100, 48000) or channels not in (1, 2):
             warnings.append("unexpected_format")
@@ -248,24 +163,15 @@ def check(config, ffmpeg, ffprobe):
             warnings.append("long_tail_silence")
         if dc > limits["max_dc_amplitude"]:
             warnings.append("dc_offset")
-        seam = None
-        if asset["playback"]["looped"]:
-            delta = max(abs(samples[c] - samples[-channels + c]) for c in range(channels))
-            slope_delta = max(abs((samples[channels + c] - samples[c]) - (samples[-channels + c] - samples[-2 * channels + c])) for c in range(channels))
-            seam = {"boundary_delta": round(delta, 8), "slope_delta": round(slope_delta, 8),
-                    "listening_status": "not_performed", "method": "sample boundary and first derivative; no subjective claim"}
-            if delta > limits["max_loop_boundary_delta"] or slope_delta > limits["max_loop_slope_delta"]:
-                warnings.append("loop_seam_discontinuity")
         record = {"id": asset["id"], "path": asset["path"], "status": "pass" if not warnings else "review_required",
                   "warnings": warnings, "codec": stream["codec_name"], "sample_rate": rate, "channels": channels,
                   "frames": frames, "duration_seconds": round(frames / rate, 6), "peak_amplitude": round(peak, 8),
                   "peak_dbfs": round(20 * math.log10(peak), 3) if peak else None,
                   "rms_dbfs": round(20 * math.log10(math.sqrt(sum(x * x for x in samples) / len(samples))), 3) if peak else None,
                   "head_silence_seconds": round(leading, 6), "tail_silence_seconds": round(trailing, 6),
-                  "clipped_samples": clipped, "dc_amplitude": round(dc, 8), "loop_seam": seam,
+                  "clipped_samples": clipped, "dc_amplitude": round(dc, 8),
                   "sha256": digest, "hash_match": digest == asset["sha256"],
-                  "original_release_bytes_match": original_bytes_match,
-                  "regenerated_bytes_match": regenerated_bytes_match}
+                  "original_release_bytes_match": original_bytes_match}
         records.append(record)
         asset["quality"] = record
     report = {"schema_version": 1, "checked_date": datetime.now(timezone(timedelta(hours=8))).date().isoformat(), "checker_version": VERSION,

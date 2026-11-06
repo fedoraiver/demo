@@ -273,7 +273,7 @@ impl QueryDispatcher for CarryPathDispatcher {
                 details::NonlinearShapeCastMode::StopAtPenetration,
             ))
         } else if let Some(composite) = first.as_composite_shape() {
-            // 把同一方向规则传入每个子形状，地面网格与偏心木箱不能退回默认厚度门槛。
+            // 把同一方向规则传入每个子形状，地面网格与偏心复合物体不能退回默认厚度门槛。
             Ok(details::cast_shapes_nonlinear_composite_shape_shape(
                 self,
                 first_motion,

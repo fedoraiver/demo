@@ -18,11 +18,10 @@ pub enum SettingKey {
     MouseSensitivity,
     InvertY,
     MasterVolume,
-    SfxVolume,
     UiVolume,
 }
 
-/// 菜单独立编辑的草稿；音量可以临时预览，只有应用成功才替换已保存设置。
+/// 菜单独立编辑的草稿，音量供临时预览，应用成功后替换已保存设置。
 #[derive(Resource, Clone, Debug, PartialEq)]
 pub struct SettingsDraft {
     pub max_fps: u32,
@@ -65,21 +64,19 @@ impl SettingsDraft {
         Ok(settings)
     }
 
-    /// 返回可调整音量的百分比；其他设置字段没有音量值。
+    /// 返回可调整音量的百分比，其他设置字段没有音量值。
     pub fn volume(&self, key: SettingKey) -> Option<u8> {
         match key {
             SettingKey::MasterVolume => Some(self.audio.master_volume),
-            SettingKey::SfxVolume => Some(self.audio.sfx_volume),
             SettingKey::UiVolume => Some(self.audio.ui_volume),
             _ => None,
         }
     }
 
-    /// 鼠标拖动与方向步进共用写入边界，夹到 100 并返回是否发生实际变化。
+    /// 鼠标拖动与方向步进共用写入边界，返回是否发生实际变化。
     pub fn set_volume(&mut self, key: SettingKey, value: u8) -> bool {
         let volume = match key {
             SettingKey::MasterVolume => &mut self.audio.master_volume,
-            SettingKey::SfxVolume => &mut self.audio.sfx_volume,
             SettingKey::UiVolume => &mut self.audio.ui_volume,
             _ => return false,
         };
@@ -117,7 +114,7 @@ impl SettingsDraft {
                 }
             }
             SettingKey::InvertY => self.invert_y = !self.invert_y,
-            key @ (SettingKey::MasterVolume | SettingKey::SfxVolume | SettingKey::UiVolume) => {
+            key @ (SettingKey::MasterVolume | SettingKey::UiVolume) => {
                 let value = i16::from(self.volume(key).unwrap())
                     + VOLUME_STEP * i16::from(direction.signum());
                 self.set_volume(key, value.clamp(0, i16::from(MAX_AUDIO_VOLUME)) as u8);

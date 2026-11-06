@@ -21,6 +21,33 @@ fn shipped_manifest_maps_all_cues_once() {
 }
 
 #[test]
+fn manifest_accepts_additional_categories_and_unregistered_assets() {
+    let mut manifest: serde_json::Value = serde_json::from_str(MANIFEST).unwrap();
+    let mut asset = manifest["assets"][0].clone();
+    asset["id"] = serde_json::json!("future_effect");
+    asset["category"] = serde_json::json!("effects");
+    asset["path"] = serde_json::json!("audio/effects/future_effect.ogg");
+    asset["event_ids"] = serde_json::json!(["future_effect"]);
+    manifest["assets"].as_array_mut().unwrap().push(asset);
+
+    let parsed = Manifest::parse(&serde_json::to_string(&manifest).unwrap()).unwrap();
+    assert!(
+        parsed
+            .assets
+            .iter()
+            .any(|asset| asset.id == "future_effect" && asset.category == "effects")
+    );
+}
+
+#[test]
+fn registered_events_require_their_declared_categories() {
+    let mut manifest: serde_json::Value = serde_json::from_str(MANIFEST).unwrap();
+    manifest["assets"][0]["category"] = serde_json::json!("effects");
+    manifest["assets"][0]["path"] = serde_json::json!("audio/effects/menu.ogg");
+    assert!(Manifest::parse(&serde_json::to_string(&manifest).unwrap()).is_err());
+}
+
+#[test]
 fn playback_limits_cover_same_frame_cooldown_and_global_cap() {
     let policy = PlaybackPolicy {
         volume: 0.7,
@@ -36,28 +63,21 @@ fn playback_limits_cover_same_frame_cooldown_and_global_cap() {
 }
 
 #[test]
-fn audio_mix_preserves_asset_balance_and_controls_categories_independently() {
+fn audio_mix_preserves_asset_balance_and_multiplies_master_and_ui_volume() {
     let mut mix = AudioMix::default();
-    assert_eq!(mix.gain(true), MASTER_GAIN);
-    assert_eq!(mix.gain(false), MASTER_GAIN);
+    assert_eq!(mix.gain(), MASTER_GAIN);
     for asset_volume in [0.2, 0.5, 1.0] {
-        let decibels = volume_decibels(mix.gain(true), asset_volume);
+        let decibels = volume_decibels(mix.gain(), asset_volume);
         assert!((f64::from(decibels.as_amplitude()) - MASTER_GAIN * asset_volume).abs() < 1e-6);
     }
-    mix.settings.sfx_volume = 20;
-    assert_eq!(mix.gain(true), MASTER_GAIN);
-    assert_eq!(mix.gain(false), 0.05);
     mix.settings.ui_volume = 60;
     mix.settings.master_volume = 50;
-    assert_eq!(mix.gain(true), 0.075);
-    assert_eq!(mix.gain(false), 0.025);
+    assert_eq!(mix.gain(), 0.075);
     mix.settings.master_volume = 0;
-    for ui in [true, false] {
-        let silent = volume_decibels(mix.gain(ui), 1.0);
-        assert_eq!(silent, Decibels::SILENCE);
-        assert!(silent.0.is_finite());
-        assert_eq!(silent.as_amplitude(), 0.0);
-    }
+    let silent = volume_decibels(mix.gain(), 1.0);
+    assert_eq!(silent, Decibels::SILENCE);
+    assert!(silent.0.is_finite());
+    assert_eq!(silent.as_amplitude(), 0.0);
 }
 
 #[test]
@@ -65,12 +85,10 @@ fn preview_overrides_saved_mix_and_clearing_uses_latest_applied_values() {
     let mut app = queued_test_app();
     let saved = AudioSettings {
         master_volume: 40,
-        sfx_volume: 60,
         ui_volume: 80,
     };
     let preview = AudioSettings {
         master_volume: 75,
-        sfx_volume: 20,
         ui_volume: 50,
     };
     app.world_mut().resource_mut::<GameSettings>().audio = saved;
@@ -98,94 +116,67 @@ fn preview_overrides_saved_mix_and_clearing_uses_latest_applied_values() {
 
 #[test]
 fn muted_requests_are_discarded_without_cooldown_and_unmute_does_not_replay() {
-    for muted_ui in [true, false] {
+    for muted in [
+        AudioSettings {
+            master_volume: 0,
+            ..default()
+        },
+        AudioSettings {
+            ui_volume: 0,
+            ..default()
+        },
+    ] {
         let mut app = queued_test_app();
         let source = app.world_mut().spawn_empty().id();
-        let muted_cue = if muted_ui {
-            SoundCue::MenuConfirm
-        } else {
-            SoundCue::ItemPickup
-        };
-        let audible_cue = if muted_ui {
-            SoundCue::ItemPickup
-        } else {
-            SoundCue::MenuConfirm
-        };
-        let mut settings = app.world_mut().resource_mut::<GameSettings>();
-        if muted_ui {
-            settings.audio.ui_volume = 0;
-        } else {
-            settings.audio.sfx_volume = 0;
+        app.world_mut().resource_mut::<GameSettings>().audio = muted;
+        for cue in SoundCue::ALL {
+            app.world_mut()
+                .write_message(SoundRequest::new(cue, source));
         }
-        app.world_mut()
-            .write_message(SoundRequest::new(muted_cue, source));
-        app.world_mut()
-            .write_message(SoundRequest::new(audible_cue, source));
         app.update();
-        let bank = app.world().resource::<SoundBank>();
-        assert_eq!(bank.voices.len(), 1);
-        assert_eq!(bank.voices[0].cue, audible_cue);
-        assert!(!bank.last_played.contains_key(&muted_cue));
+        assert!(app.world().resource::<SoundBank>().voices.is_empty());
+        assert!(app.world().resource::<SoundBank>().last_played.is_empty());
         app.world_mut().resource_mut::<GameSettings>().audio = AudioSettings::default();
         app.update();
-        assert_eq!(app.world().resource::<SoundBank>().voices.len(), 1);
+        assert!(app.world().resource::<SoundBank>().voices.is_empty());
         app.world_mut()
-            .write_message(SoundRequest::new(muted_cue, source));
+            .write_message(SoundRequest::new(SoundCue::MenuConfirm, source));
         app.update();
-        assert_eq!(app.world().resource::<SoundBank>().voices.len(), 2);
+        assert_eq!(app.world().resource::<SoundBank>().voices.len(), 1);
     }
-    let mut app = queued_test_app();
-    let source = app.world_mut().spawn_empty().id();
-    app.world_mut()
-        .resource_mut::<GameSettings>()
-        .audio
-        .master_volume = 0;
-    for cue in [SoundCue::MenuConfirm, SoundCue::ItemPickup] {
-        app.world_mut()
-            .write_message(SoundRequest::new(cue, source));
-    }
-    app.update();
-    assert!(app.world().resource::<SoundBank>().voices.is_empty());
-    assert!(app.world().resource::<SoundBank>().last_played.is_empty());
-    app.world_mut()
-        .resource_mut::<GameSettings>()
-        .audio
-        .master_volume = 100;
-    app.update();
-    assert!(app.world().resource::<SoundBank>().voices.is_empty());
 }
 
-/// 默认通道只排队而不会初始化设备；实际执行播放系统验证 Queued 的跨帧限额。
+/// 默认通道只排队，不初始化音频设备；排队实例也计入跨帧并发上限。
 #[test]
 fn queued_requests_obey_limits_without_audio_device() {
     let mut app = queued_test_app();
     let source = app.world_mut().spawn_empty().id();
-    for cue in SoundCue::ALL.into_iter().take(5) {
+    for cue in SoundCue::ALL {
         app.world_mut()
             .write_message(SoundRequest::new(cue, source));
     }
     app.update();
-    assert_eq!(app.world().resource::<SoundBank>().voices.len(), MAX_VOICES);
+    assert_eq!(app.world().resource::<SoundBank>().voices.len(), 3);
     app.world_mut()
         .resource_mut::<Time<Real>>()
         .advance_by(std::time::Duration::from_secs(2));
     app.world_mut()
-        .write_message(SoundRequest::new(SoundCue::ItemHandoff, source));
+        .write_message(SoundRequest::new(SoundCue::MenuHover, source));
+    app.update();
+    assert_eq!(app.world().resource::<SoundBank>().voices.len(), MAX_VOICES);
+    app.world_mut()
+        .write_message(SoundRequest::new(SoundCue::MenuConfirm, source));
     app.update();
     let bank = app.world().resource::<SoundBank>();
     assert_eq!(bank.voices.len(), MAX_VOICES);
-    assert!(!bank.last_played.contains_key(&SoundCue::ItemHandoff));
+    assert_eq!(bank.last_played[&SoundCue::MenuConfirm], 0.0);
     for voice in &bank.voices {
-        let state = if voice.ui {
+        assert_eq!(
             app.world()
                 .resource::<AudioChannel<UiTrack>>()
-                .state(&voice.handle)
-        } else {
-            app.world()
-                .resource::<AudioChannel<SfxTrack>>()
-                .state(&voice.handle)
-        };
-        assert_eq!(state, PlaybackState::Queued);
+                .state(&voice.handle),
+            PlaybackState::Queued
+        );
     }
 }
 
@@ -198,7 +189,6 @@ fn queued_test_app() -> App {
         .init_resource::<AudioMix>()
         .init_resource::<AudioPreview>()
         .init_resource::<AudioChannel<UiTrack>>()
-        .init_resource::<AudioChannel<SfxTrack>>()
         .init_resource::<SoundBank>()
         .add_message::<SoundRequest>()
         .add_systems(
@@ -225,54 +215,10 @@ fn queued_test_app() -> App {
             LoadedSound {
                 handle,
                 policy: asset.playback.clone(),
-                ui: asset.category == "ui",
             },
         );
     }
     app
-}
-
-#[test]
-fn gameplay_queue_reserves_menu_feedback_and_keeps_global_cap() {
-    let mut app = queued_test_app();
-    let source = app.world_mut().spawn_empty().id();
-    for cue in [
-        SoundCue::ItemPickup,
-        SoundCue::ItemRelease,
-        SoundCue::ItemHandoff,
-        SoundCue::ItemLand,
-    ] {
-        app.world_mut()
-            .write_message(SoundRequest::new(cue, source));
-    }
-    app.update();
-    let bank = app.world().resource::<SoundBank>();
-    assert_eq!(bank.voices.len(), MAX_VOICES - RESERVED_UI_VOICES);
-    assert!(bank.voices.iter().all(|voice| !voice.ui));
-    assert!(!bank.last_played.contains_key(&SoundCue::ItemLand));
-    app.world_mut()
-        .write_message(SoundRequest::new(SoundCue::MenuConfirm, source));
-    app.update();
-    let bank = app.world().resource::<SoundBank>();
-    assert_eq!(bank.voices.len(), MAX_VOICES);
-    let menu = bank.voices.iter().find(|voice| voice.ui).unwrap();
-    assert_eq!(menu.cue, SoundCue::MenuConfirm);
-    assert_eq!(
-        app.world()
-            .resource::<AudioChannel<UiTrack>>()
-            .state(&menu.handle),
-        PlaybackState::Queued
-    );
-    app.world_mut()
-        .write_message(SoundRequest::new(SoundCue::MenuCancel, source));
-    app.update();
-    assert_eq!(app.world().resource::<SoundBank>().voices.len(), MAX_VOICES);
-    assert!(
-        !app.world()
-            .resource::<SoundBank>()
-            .last_played
-            .contains_key(&SoundCue::MenuCancel)
-    );
 }
 
 #[test]
@@ -310,7 +256,6 @@ fn menu_cooldown_uses_real_time_while_virtual_time_is_paused() {
     assert!(app.world().resource::<Time<Real>>().elapsed() > paused_at);
     let bank = app.world().resource::<SoundBank>();
     assert_eq!(bank.voices.len(), 2);
-    assert!(bank.voices.iter().all(|voice| voice.ui));
 
     // Queued 实例也受单事件上限约束，即使冷却已结束仍不增加第三条。
     app.insert_resource(TimeUpdateStrategy::ManualDuration(Duration::from_secs(1)));

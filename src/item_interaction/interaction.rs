@@ -2,7 +2,6 @@
 
 use super::{HeldBy, HeldTarget, HoldingItems, Pickable, begin_attachment, release_item};
 use crate::{
-    audio::{SoundCue, SoundRequest},
     character::{Character, CharacterIntent},
     settings::PrototypeConfig,
 };
@@ -72,8 +71,6 @@ pub(super) fn handle_interaction(
                     angular_velocity.0,
                     "interact_action_release",
                 );
-                // 延迟消息与解除关系一起提交，播放者只能收到已接受的交互结果。
-                commands.write_message(SoundRequest::new(SoundCue::ItemRelease, item));
             }
             continue;
         }
@@ -139,7 +136,6 @@ pub(super) fn handle_interaction(
                 rotation_paused,
                 collider_disabled,
             );
-            commands.write_message(SoundRequest::new(SoundCue::ItemPickup, item));
             info!(target: "demo::gameplay",
                 ?character,
                 ?item,

@@ -84,7 +84,6 @@ pub enum UiAction {
     /// 滑条拖动只更新草稿，释放时统一反馈，避免每像素都播放确认音。
     SetVolume(SettingKey, u8),
     FinishVolumeEdit,
-    TestSfx,
 }
 
 /// 菜单实体保存动作与导航序号，系统不依赖显示文字或实体名称。
@@ -123,7 +122,7 @@ impl Plugin for GameUiPlugin {
     }
 }
 
-/// 注册菜单的真实状态、输入、页面和视觉行为，便于不装展示舞台的无窗口集成夹具复用。
+/// 注册菜单的真实状态、输入、页面和视觉行为，供无窗口集成夹具复用。
 pub(crate) fn register_menu(app: &mut App) {
     lifecycle::register(app);
     app.init_resource::<MenuInputSource>()

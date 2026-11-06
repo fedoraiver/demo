@@ -7,7 +7,9 @@ mod motion;
 #[cfg(test)]
 mod tests;
 
-pub(crate) use body::{character_body, character_collider};
+pub(crate) use body::character_body;
+#[cfg(test)]
+pub(crate) use body::character_collider;
 pub(crate) use components::{Character, CharacterIntent, CharacterMotion};
 
 use avian3d::prelude::PhysicsSystems;

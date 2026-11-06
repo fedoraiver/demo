@@ -178,16 +178,6 @@ fn handle_requests(
                 volume_after = draft.volume(editing), reason = "volume_drag_finished",
                 "Audio volume preview changed");
         }
-        UiAction::TestSfx if menu.page == MenuPage::Settings && menu.tab == SettingsTab::Audio => {
-            *volume_edit = None;
-            // 试听复用素材请求，来源为菜单控制者；不触发拿放系统或伪造玩法成功日志。
-            if let Ok(source) = controllers.single() {
-                sounds.write(SoundRequest::new(SoundCue::ItemPickup, source));
-                info!(target: "demo::ui", event = "parcel_pickup", ?source,
-                    reason = "settings_preview", "Audio sample requested");
-            }
-            return;
-        }
         UiAction::RestoreDefaults if menu.page == MenuPage::Settings => {
             *draft = SettingsDraft::default();
             menu.status = Some("Defaults restored. Choose Apply to save.".into());
@@ -203,7 +193,6 @@ fn handle_requests(
                         sensitivity_before = settings.camera.mouse_sensitivity, sensitivity_after = updated.camera.mouse_sensitivity,
                         invert_y_before = settings.camera.invert_y, invert_y_after = updated.camera.invert_y,
                         master_volume_before = settings.audio.master_volume, master_volume_after = updated.audio.master_volume,
-                        sfx_volume_before = settings.audio.sfx_volume, sfx_volume_after = updated.audio.sfx_volume,
                         ui_volume_before = settings.audio.ui_volume, ui_volume_after = updated.audio.ui_volume,
                         reason = "settings_apply", "Game settings saved and applied");
                     *settings = updated;

@@ -1,57 +1,54 @@
 # 音频管线
 
-本文面向维护音频资产和接入声音反馈的开发者，说明来源导入、可重现生成、技术检查和接入要求。用户操作与独立试听见 [使用说明](usage.md#音效)，运行时 ECS 数据流见 [当前架构](architecture.md#音效数据流)。
+本文面向维护音频资产和接入声音事件的开发者，说明正式素材导入、清单生成、技术检查和运行时接入。用户试听入口见[使用说明](usage.md#音效)，运行时调度见[音效数据流](architecture.md#音效数据流)。
 
-## 资产与记录的归属
+## 记录归属
 
 | 记录 | 用途 |
 | --- | --- |
-| [音效事件表](../assets/audio/events.md) | 当前事件的触发与去重合同，以及未接入素材的语义边界。 |
-| [来源记录](../assets/audio/ATTRIBUTION.md) | 外部包、作者、许可证及取得证据，原创素材权属和未下载候选。 |
-| [generation.json](../assets/audio/generation.json) | 外部包导入选择、本地合成配方、独立种子和播放策略的输入配置。 |
-| [audio_manifest.json](../assets/audio/audio_manifest.json) | 生成后的运行时映射，以及与文件对应的来源、处理、哈希和技术信息。 |
-| [quality_report.json](../assets/audio/quality_report.json) | 技术检查的工具版本、阈值和结果。 |
+| [音效事件表](../assets/audio/events.md) | 已接入声音事件的触发与去重合同。 |
+| [来源记录](../assets/audio/ATTRIBUTION.md) | 外部发布包、作者、许可证和取得证据。 |
+| [generation.json](../assets/audio/generation.json) | 正式素材选择、事件映射与播放策略的输入。 |
+| [audio_manifest.json](../assets/audio/audio_manifest.json) | 运行映射、来源、处理、哈希和技术信息。 |
+| [quality_report.json](../assets/audio/quality_report.json) | 检查工具、阈值与测量结果。 |
 
-生成后的清单和报告由管线维护；调整生成输入时修改 `generation.json` 或生成器，不手工维护第二份参数表。试听页使用生成快照，修改清单后也要刷新快照。
+修改输入配置或管线后重新生成清单、质量报告与试听快照，素材来源和文件参数由其所属记录维护。
 
 ## 素材要求
 
-优先复用仓库已有素材。外部素材只接受来源与许可可核实的 CC0 完整发布文件，不接受 CC BY-NC、许可不明素材、影视游戏提取声音或付费生成 API。
-
-保留正式发布文件的编码格式、原包条目、字节哈希及许可证副本。不得用网页有损预览代替原文件，也不将有损文件转换成 WAV 后声称是无损原录音。
-
-本地合成不使用外部采样，权利归属按原创素材记录，不标为第三方 CC0。合成环境底声是试听候选，默认不在游戏播放；真实声音缺口及取得状态见 [来源记录](../assets/audio/ATTRIBUTION.md#真实声音缺口仅候选未下载)。
+优先复用仓库素材。外部素材采用来源与许可可核实的 CC0 完整发布文件，保留原编码、原包条目、哈希及许可证副本。素材制作遵循零预算约束，不接受付费生成 API。音频清单中的播放增益只在运行时应用。
 
 ## 重现与检查
 
-仓库已有音频可直接使用，正常构建不需要下载。运行以下命令前，确认本机已有 Python；生成只使用 Python 标准库，技术检查还需要 `ffmpeg` 和 `ffprobe`。在仓库根目录执行：
+正常构建直接使用仓库中的音频文件。清单生成需要 Python 标准库，技术检查还需要本机 `ffmpeg` 与 `ffprobe`。管线回归还使用本机 Node.js 检查试听页的分类、路径与播放状态。试听用例在离线数据夹具中执行。从仓库根目录执行下列命令。
 
 ```powershell
-python scripts/audio_pipeline.py generate
-python scripts/audio_pipeline.py check
-python scripts/build_audition_index.py
+python -B scripts/audio_pipeline.py generate
+python -B scripts/audio_pipeline.py check
+python -B scripts/build_audition_index.py
+python -B -m unittest discover -s scripts -p test_audio_pipeline.py
 ```
 
-`generate` 重建原创 WAV 与运行时清单，保留外部 OGG 和下载记录。`check` 不播放音频：在内存复现合成字节、比对外部文件与取得记录的哈希，并更新清单和质量报告。`build_audition_index.py` 刷新试听页的 `audition_data.js` 快照。
+`generate` 从导入配置和来源证据重建清单，素材集合与分类由配置决定。每项素材可通过 `event_ids` 声明事件映射，省略时使用素材 ID。`check` 解码到内存，测量格式、静音、削波与 DC，并核对成品及原包条目的哈希，再更新清单和报告。`build_audition_index.py` 刷新 `audition_data.js`，使[独立试听页](../assets/audio/audition.html)可直接打开使用。
 
-解码工具不在 PATH 时，可为 `check` 传入 `--ffmpeg <路径> --ffprobe <路径>`。缺少工具应记录为未完成检查，不能视作通过；管线不自动安装解码器。技术检查范围、无窗口回归与预期结果见 [音频无窗口验证](testing/README.md#音频无窗口验证)。
+解码工具未在 PATH 中时，为 `check` 传入 `--ffmpeg <路径> --ffprobe <路径>`。无窗口覆盖见[音频验证](testing/README.md#音频无窗口验证)。
 
-### 导入外部发布包
+### 导入正式发布包
 
-仅在需要取得或重新导入正式发布包时执行：
+当前外部导入流程处理正式发布包中的 OGG 条目，素材分类与目标路径由配置给出。取得或重新导入发布包时执行下列命令。
 
 ```powershell
-python scripts/audio_pipeline.py import-sources --acquired-date YYYY-MM-DD
+python -B scripts/audio_pipeline.py import-sources --acquired-date YYYY-MM-DD
 ```
 
-`--acquired-date` 填写实际取得日期。重新使用已取得的包时添加 `--use-cache` 并保留其实际取得日期，不把缓存使用日期记录为下载日期。完整包暂存在根 `tmp/audio/downloads/`，正式来源证据写入 `assets/audio/sources/`。
-
-替换素材前核实许可并更新导入配置；导入后重新执行生成、检查和快照刷新。首次取得日期与候选页面查阅日期分别记录，不补写未取得文件的哈希。
+日期填写实际取得日期。重用已取得的包时添加 `--use-cache` 并保留原日期。完整包暂存在根 `tmp/audio/downloads/`，正式来源证据写入 `assets/audio/sources/`。导入后执行清单生成、技术检查和快照刷新。
 
 ## 接入与验收
 
-声音反馈通过已接受的业务结果发送，不从按键推断成功。接入时按 [音效事件表](../assets/audio/events.md) 确认触发、去重及当前范围；新增语义时同步维护 `SoundCue` 与清单映射，不能把预留素材名称当成玩法需求。
+声音生产端按[事件合同](../assets/audio/events.md)发送 `SoundRequest`，由 `GameAudioPlugin` 使用 `bevy_kira_audio` 管理加载、播放、混音与设备输出。当前菜单事件通过 `UiTrack` 播放，使用真实时间控制冷却，排队实例计入并发限制。未加载或静音的请求立即消费。
 
-运行时由 `AssetServer` 加载实际文件，路径相对 `assets/`。清单编译嵌入 Rust 程序，修改清单后需要重新编译。混音、加载失败处理、并发和暂停行为由 [音效数据流](architecture.md#音效数据流) 说明，音量设置的操作与持久化见 [使用说明](usage.md#设置)。
+当前 UI 声音的有效增益为默认基准、素材清单音量、Master Volume 与 UI Volume 的乘积。设置页通过 `AudioPreview` 即时预览，应用成功后保存，返回时采用最近成功应用的设置。正在播放与排队实例都按当前混音同步音量。
 
-技术报告不代表听感或真实设备输出通过。`subjective_listening_status` 与 `game_runtime_status` 必须反映实际验收状态，不能从文件存在或网页可播放推断。听感与游戏声音输出由用户按 [音频检查与用户验收](testing/game-acceptance.md#音频验收) 完成。
+新增素材时，在 `generation.json` 声明素材分类、来源、事件映射与播放策略，生成清单并补齐来源证据。将声音接入运行时事件时，同步更新 `SoundCue`、事件类别及清单映射，由所属功能在事件被接受后发送请求，并按所需声音类别接入播放通道、混音与生命周期行为。当前接入范围见[事件表](../assets/audio/events.md)，相关实现检查见[音频无窗口验证](testing/README.md#音频无窗口验证)。
+
+清单编译嵌入 Rust 程序，修改后需重新编译。技术检查与真实设备听感分别记录，用户按[音频验收](testing/game-acceptance.md#音频验收)确认触发、混音和输出。

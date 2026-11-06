@@ -281,7 +281,7 @@ mod action_tests {
         let item = app
             .world_mut()
             .spawn((
-                Item::StandardParcel,
+                Item,
                 Pickable,
                 Transform::from_xyz(0.0, config.item_half_height, -1.0),
                 item_body(&config),
@@ -425,7 +425,6 @@ mod pose_tests {
     };
 
     use crate::{
-        bounds_recovery::{BoundsRecoveryPlugin, SpawnPoint},
         character::{CharacterIntent, CharacterMotion, CharacterPlugin},
         first_person::PlayerId,
         first_person::{FirstPersonPlugin, spawn_keyboard_controller},
@@ -460,7 +459,6 @@ mod pose_tests {
             ItemInteractionPlugin,
             bevy_enhanced_input::EnhancedInputPlugin,
             FirstPersonPlugin,
-            BoundsRecoveryPlugin,
         ))
         .insert_resource(Time::<Fixed>::from_hz(60.0))
         .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::ZERO))
@@ -547,7 +545,7 @@ mod pose_tests {
         let config = app.world().resource::<PrototypeConfig>().clone();
         app.world_mut()
             .spawn((
-                Item::StandardParcel,
+                Item,
                 Pickable,
                 item_body(&config),
                 Transform::from_translation(position),
@@ -555,7 +553,7 @@ mod pose_tests {
             .id()
     }
 
-    /// 原型默认偏移、纸箱和木箱复用相同的帧末姿态与解除关系回归。
+    /// 默认与两种自定义握点复用相同的帧末姿态与解除关系回归。
     fn carry_grip_cases() -> [Option<Vec3>; 3] {
         [
             None,
@@ -1509,83 +1507,6 @@ mod pose_tests {
         //! held pose tests 的无窗口回归。
 
         use super::*;
-
-        #[test]
-        fn water_recovery_uses_current_camera_facing_for_the_same_fixed_step_movement() {
-            let (mut app, window, character, camera, _) = test_app();
-            let spawn =
-                Transform::from_xyz(4.0, 0.03, 5.0).with_rotation(Quat::from_rotation_y(-0.6));
-            app.world_mut()
-                .entity_mut(character)
-                .insert(SpawnPoint { pose: spawn });
-            // 通过真实输入上下文持续按住 W，避免下一帧 Enhanced Input 清空手写的移动意图。
-            inspector_keyboard(&mut app, window, KeyCode::KeyW, ButtonState::Pressed);
-            mouse_motion(&mut app, Vec2::new(-500.0, 0.0));
-            app.update();
-            let yaw = app.world().get::<FirstPersonCamera>(camera).unwrap().yaw;
-            let facing = Quat::from_rotation_y(yaw) * Vec3::NEG_Z;
-            assert!((spawn.rotation * Vec3::NEG_Z).dot(facing) < 0.0);
-            assert_eq!(
-                app.world()
-                    .get::<CharacterIntent>(character)
-                    .unwrap()
-                    .movement,
-                Vec2::Y
-            );
-            let underwater = Vec3::new(40.0, -2.0, -40.0);
-            app.world_mut().get_mut::<Position>(character).unwrap().0 = underwater;
-            app.world_mut()
-                .get_mut::<Transform>(character)
-                .unwrap()
-                .translation = underwater;
-            app.world_mut()
-                .get_mut::<LinearVelocity>(character)
-                .unwrap()
-                .0 = Vec3::new(5.0, -3.0, 4.0);
-            let fixed_before = app.world().resource::<Time<Fixed>>().elapsed();
-            fixed_step(&mut app);
-            let world = app.world();
-            assert_eq!(
-                world.resource::<Time<Fixed>>().elapsed() - fixed_before,
-                world.resource::<Time<Fixed>>().timestep()
-            );
-            let position = world.get::<Position>(character).unwrap().0;
-            assert!(position.distance(spawn.translation) < 0.1, "{position:?}");
-            let velocity = world.get::<LinearVelocity>(character).unwrap().0;
-            assert!(velocity.xz().length() > 0.05, "{velocity:?}");
-            assert!(
-                velocity.xz().normalize().dot(facing.xz()) > 0.9999,
-                "Recovery movement used the spawn facing: {velocity:?} {facing:?}"
-            );
-            assert!(
-                world
-                    .get::<Transform>(character)
-                    .unwrap()
-                    .forward()
-                    .dot(facing)
-                    > 0.9999
-            );
-            let recovered_fixed_time = world.resource::<Time<Fixed>>().elapsed();
-            for _ in 0..3 {
-                // 恢复后的零固定步帧不能再次用出生朝向覆盖当前镜头方向或推进物理。
-                app.update();
-                let world = app.world();
-                assert_eq!(
-                    world.resource::<Time<Fixed>>().elapsed(),
-                    recovered_fixed_time
-                );
-                assert_eq!(world.get::<Position>(character).unwrap().0, position);
-                assert_eq!(world.get::<LinearVelocity>(character).unwrap().0, velocity);
-                assert!(
-                    world
-                        .get::<Transform>(character)
-                        .unwrap()
-                        .forward()
-                        .dot(facing)
-                        > 0.9999
-                );
-            }
-        }
 
         #[test]
         fn turning_preserves_translation_interpolation_and_camera_reads_presented_position() {

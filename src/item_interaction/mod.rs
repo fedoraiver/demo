@@ -1,7 +1,6 @@
 //! 物品拾取、共享刚体持握、完整转向碰撞与释放恢复；不自动安装其他项目插件。
 
 mod attachment;
-mod audio_events;
 mod body;
 mod components;
 mod interaction;
@@ -30,7 +29,7 @@ use lifecycle::{
 };
 use pose::{sync_held_physics, sync_held_presentation};
 
-/// 注册交互、持握生命周期、物理与呈现同步及物品反馈；物理插件由调用方显式安装。
+/// 注册交互、持握生命周期及物理与呈现同步；物理插件由调用方显式安装。
 pub(crate) struct ItemInteractionPlugin;
 
 impl Plugin for ItemInteractionPlugin {
@@ -92,7 +91,6 @@ impl Plugin for ItemInteractionPlugin {
                     .run_if(gameplay_running),
             )
             .add_observer(prepare_holder_despawn);
-        audio_events::register_feedback(app);
     }
 }
 

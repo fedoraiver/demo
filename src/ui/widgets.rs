@@ -318,65 +318,27 @@ pub(super) fn keycap(theme: &UiTheme, key: &'static str, light: bool) -> impl Sc
     }
 }
 
-/// 纸箱标志由普通 UI 节点组合，避免把品牌和按钮文字烘焙进图片。
-pub(super) fn parcel_stamp(theme: &UiTheme) -> impl Scene + use<> {
-    bsn! {
-        Name("Menu parcel stamp")
-        Node {
-            width: px(theme.size(50.0)),
-            height: px(theme.size(45.0)),
-            border: px(3),
-            border_radius: BorderRadius::all(px(4)),
-            align_items: AlignItems::Center,
-            justify_content: JustifyContent::Center,
-        }
-        BackgroundColor(Color::srgb(0.75, 0.51, 0.27))
-        BorderColor::all(INK)
-        Children [
-            Name("Menu parcel stamp tape")
-            Node {
-                position_type: PositionType::Absolute,
-                top: px(0),
-                width: percent(30),
-                height: percent(40),
-            }
-            BackgroundColor(Color::srgb(0.91, 0.71, 0.42))
-            --
-            Name("Menu parcel stamp marking")
-            Node {
-                width: percent(40),
-                height: px(theme.size(6.0)),
-                margin: UiRect::top(px(theme.size(12.0))),
-                border_radius: BorderRadius::all(px(2)),
-            }
-            BackgroundColor(INK)
-        ]
-    }
-}
-
 pub(super) fn logo(theme: &UiTheme, compact: bool) -> impl Scene + use<> {
     let scale = theme.scale;
-    // 固定菜单标题留出六行按钮的高度；设置与帮助的小标志保持原样。
+    // 标题的尺寸为固定菜单按钮与页脚保留空间。
     let title_size = if compact { 50.0 } else { 56.0 };
     bsn! {
         Name("Menu logo")
         column(3.0 * scale)
         Children [
-            Name("Menu logo company row")
+            Name("Menu logo caption")
             Node { align_items: AlignItems::Center, column_gap: px(theme.size(12.0)) }
             Children [
-                @parcel_stamp(theme)
-                --
-                @label(theme, "ISLAND DELIVERY CO.", 15.0, CREAM)
+                @label(theme, "DEVELOPMENT SANDBOX", 15.0, CREAM)
             ]
             --
-            @heading(theme, "ISLAND", title_size, CREAM)
+            @heading(theme, "GREY", title_size, CREAM)
             TextShadow { offset: {Vec2::new(3.0, 4.0)}, color: INK }
             --
-            @heading(theme, "COURIER", title_size, GOLD)
+            @heading(theme, "BOXING", title_size, GOLD)
             TextShadow { offset: {Vec2::new(3.0, 4.0)}, color: INK }
             --
-            @label(theme, "SMALL ISLAND. BIG DELIVERIES.", 16.0, CREAM)
+            @label(theme, "MOVE. JUMP. EXPERIMENT.", 16.0, CREAM)
             TextShadow { offset: {Vec2::new(1.0, 2.0)}, color: INK }
             Node { margin: UiRect::top(px(theme.size(7.0))) }
         ]
