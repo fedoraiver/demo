@@ -642,6 +642,24 @@ fn unique(values: Vec<Value>) -> Vec<Value> {
         .collect()
 }
 
+fn source_contains(container: &SourceEvidence, source: &SourceEvidence) -> bool {
+    let complete = |evidence: &SourceEvidence| {
+        evidence.line > 0
+            && evidence.column > 0
+            && evidence.end_line > 0
+            && evidence.end_column > 0
+            && (evidence.line, evidence.column) < (evidence.end_line, evidence.end_column)
+    };
+    !container.path.is_empty()
+        && container.path == source.path
+        && !container.sha256.is_empty()
+        && container.sha256 == source.sha256
+        && complete(container)
+        && complete(source)
+        && (container.line, container.column) <= (source.line, source.column)
+        && (source.end_line, source.end_column) <= (container.end_line, container.end_column)
+}
+
 fn aggregate_gaps(values: Vec<Value>) -> Vec<Value> {
     let mut grouped = BTreeMap::<String, (Value, BTreeSet<String>)>::new();
     for mut value in values {
@@ -2009,23 +2027,29 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                     .or_default()
                     .push(id.clone());
                 call_contexts.insert((candidate.clone(), id.clone(), false), vec![]);
-                let registration_sources: Vec<_> = registrations
-                    .iter()
-                    .filter(|registration| registration.target.as_ref() == Some(candidate))
-                    .filter_map(|registration| registration.source.clone())
-                    .collect();
-                let registration_sources = unique(
-                    registration_sources
+                let mut registration_sources = unique(
+                    registrations
                         .iter()
-                        .map(|source| serde_json::to_value(source).expect("Source evidence"))
+                        .filter(|registration| registration.target.as_ref() == Some(candidate))
+                        .flat_map(|registration| model.source(&registration.source, "registration"))
                         .collect(),
                 );
-                if registration_sources.len() == 1 {
-                    let source: SourceEvidence =
-                        serde_json::from_value(registration_sources[0].clone())
-                            .expect("Source evidence");
-                    source_entries.extend(model.source(&Some(source), "registration"));
+                registration_sources.sort_by_cached_key(|source| {
+                    (
+                        source["dependency"].is_object(),
+                        source["path"].to_string(),
+                        source["line"].as_u64(),
+                        source["column"].as_u64(),
+                        source.to_string(),
+                    )
+                });
+                // 静态调用点没有运行时调度身份；多处证据保留为函数级入口，不猜当前实例。
+                if registration_sources.len() > 1 {
+                    for source in &mut registration_sources {
+                        source["label"] = json!("该函数的注册位置（不限于当前调度）");
+                    }
                 }
+                source_entries.extend(registration_sources);
             }
             for group in system_groups {
                 groups.entry(group).or_default().push(system.name.clone());
@@ -2574,6 +2598,74 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         for evidence in &entity.source_evidence {
             sources.extend(model.source(&Some(evidence.clone()), "assembly"));
         }
+        let fallback_name = sources
+            .first()
+            .and_then(|source| {
+                Some(format!(
+                    "Entity @ {}:{}",
+                    source["path"].as_str()?,
+                    source["line"].as_u64()?
+                ))
+            })
+            .unwrap_or_else(|| "Entity @ 未知位置".into());
+        let mut name_labels = BTreeSet::new();
+        let mut name_candidates = BTreeMap::new();
+        let mut name_gaps = vec![];
+        let candidates: BTreeMap<_, _> = entity
+            .name_candidates
+            .iter()
+            .map(|candidate| {
+                (
+                    serde_json::to_string(candidate).expect("Serializable name candidate"),
+                    candidate,
+                )
+            })
+            .collect();
+        for candidate in candidates.into_values() {
+            let candidate_sources = model.source(&candidate.expression, "assembly");
+            // 同一装配范围内的名称证据仍保存在候选中，不重复提升为详情入口。
+            let covered = candidate.expression.as_ref().is_some_and(|expression| {
+                entity
+                    .source_evidence
+                    .iter()
+                    .any(|assembly| source_contains(assembly, expression))
+            });
+            if !covered {
+                sources.extend(candidate_sources.clone());
+            }
+            let expression = candidate.expression.as_ref().map(|source| &source.snippet);
+            let label = match &candidate.value {
+                Some(value) if value.is_empty() => "Name(\"\")".into(),
+                Some(value) => value.clone(),
+                None => expression
+                    .filter(|expression| !expression.trim().is_empty())
+                    .cloned()
+                    .unwrap_or_else(|| {
+                        let reason = candidate.reason.as_deref().unwrap_or("未提供具体原因");
+                        name_gaps.push(format!(
+                            "无法静态确认此 Name 的具体值或非空表达式；使用创建位置回退名称：{reason}"
+                        ));
+                        fallback_name.clone()
+                    }),
+            };
+            name_labels.insert(label);
+            let candidate = json!({"value":candidate.value,"expression":expression,"reason":candidate.reason,"sourceEntries":candidate_sources});
+            name_candidates.insert(candidate.to_string(), candidate);
+        }
+        if name_labels.is_empty() {
+            name_labels.insert(fallback_name);
+            name_gaps.push("编译器事实未提供实体 Name 候选；使用创建位置回退名称。".into());
+        }
+        // 名称只投影编译器候选；保留未知分支，不从多候选中任选一个。
+        let name = if name_labels.len() == 1 {
+            name_labels.into_iter().next().unwrap()
+        } else {
+            format!(
+                "Name ∈ {{{}}}",
+                name_labels.into_iter().collect::<Vec<_>>().join(" | ")
+            )
+        };
+        let name_candidates: Vec<_> = name_candidates.into_values().collect();
         let sources = unique(sources);
         let declaration = model
             .callables
@@ -2582,10 +2674,6 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
             .cloned();
         let feature = model.feature(declaration.as_ref());
         let key = format!("entity:{}", entity.id);
-        let name = declaration
-            .as_ref()
-            .map(|declaration| format!("{} · 创建模板", declaration.name))
-            .unwrap_or_else(|| "实体创建模板".into());
         let creator_behavior = if let Some(declaration) = &declaration {
             model.behavior_hash(declaration)
         } else {
@@ -2604,6 +2692,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
             &sources,
         );
         let mut source_gaps: Vec<_> = entity.gaps.iter().map(|gap| gap.reason.clone()).collect();
+        source_gaps.extend(name_gaps);
         if entity.possible {
             source_gaps.push(
                 "此模板位于可能结构上下文；其组件及子实体不表示各候选在同次创建中同时存在。".into(),
@@ -2624,7 +2713,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                 model.link(&id,&candidate,"alternative","结构候选",group_sources.clone(),json!({"evidence":"assembly","alternativeGroup":group.id,"alternativeContext":context,"selection":group.selection,"possible":true}));
             }
         }
-        model.objects.insert(id.clone(),json!({"id":id,"templateId":entity.id,"name":name,"kind":"Entity","feature":feature,"description":description,"display_summary":summary,"sourceEntries":sources,"sourceGaps":source_gaps,"alternativeGroups":alternative_groups,"alternativeGroup":entity.alternative_group,"alternativeSelection":entity.alternative_selection,"alternativeContext":entity.alternative_context,"possible":entity.possible}));
+        model.objects.insert(id.clone(),json!({"id":id,"templateId":entity.id,"name":name,"nameCandidates":name_candidates,"kind":"Entity","feature":feature,"description":description,"display_summary":summary,"sourceEntries":sources,"sourceGaps":source_gaps,"alternativeGroups":alternative_groups,"alternativeGroup":entity.alternative_group,"alternativeSelection":entity.alternative_selection,"alternativeContext":entity.alternative_context,"possible":entity.possible}));
         for gap in &entity.gaps {
             let gap_sources = model.source(&gap.source, "assembly");
             analysis_gaps.push(json!({"unit":"model","owner":gap.owner,"kind":gap.kind,"reason":gap.reason,"sourceEntries":gap_sources,"entityTemplateId":entity.id,"alternativeGroup":entity.alternative_group,"possible":entity.possible}));

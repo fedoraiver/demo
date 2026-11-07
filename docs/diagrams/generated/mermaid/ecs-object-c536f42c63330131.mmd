@@ -46,15 +46,12 @@ flowchart LR
   n2@{ shape: rounded, label: "**upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**upscaling**<br/>来自crate:bevy​_​core​_​pipeline ↗：将主<br/>颜色纹理缩放写入最终输出附件。" }
+  n3@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
+  n4@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>来自crate:bevy​_​render ↗：为视图维护主<br/>颜色双缓冲及可选多采样目标。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>来自crate:bevy​_​render ↗：为视图维护主<br/>颜色双缓冲及可选多采样目标。" }
-  class n5 node_system
-  class n5 external_node
   n1 e0@-->|"插入"| n0
   class e0 edge_write
   n1 e1@-->|"可变访问"| n0
@@ -65,11 +62,11 @@ flowchart LR
   class e3 edge_read
   n0 e4@--> n2
   class e4 edge_read
-  n0 e5@--> n3
+  n0 e5@--> n2
   class e5 edge_read
-  n0 e6@--> n4
+  n0 e6@--> n3
   class e6 edge_read
-  n0 e7@--> n5
+  n0 e7@--> n4
   class e7 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }

@@ -30,14 +30,14 @@
 }
 ---
 flowchart LR
-  accTitle: begin_attachment · 创建模板 · 对象关系
+  accTitle: Held item collision proxy · 对象关系
   accDescr: 实体创建模板与直接关联的非组件对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**begin​_​attachment · 创建模板**<br/>承载所持物品在人物共享刚体上的碰撞形状。" }
+  n0@{ shape: rounded, label: "**Held item collision proxy**<br/>承载所持物品在人物共享刚体上的碰撞形状。" }
   class n0 node_entity
   n1@{ shape: rounded, label: "**handle​_​interaction**<br/>拾取建立物理持握关系；释放只解除控制，保<br/>留刚体姿态、线速度和角速度。" }
   class n1 node_system

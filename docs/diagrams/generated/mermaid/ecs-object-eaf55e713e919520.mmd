@@ -38,27 +38,29 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: cyl, label: "**AudioMix**<br/>音频输出的有效混音源，离开设置页后采用最<br/>近成功应用的配置。" }
   class n0 node_resource
+  end
+  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>将有效混音与素材音量同步到播放实例。" }
+  n2@{ shape: rounded, label: "**play​_​requests**<br/>按有效混音和播放限额处理声音请求。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**play​_​requests**<br/>按有效混音和播放限额处理声音请求。" }
+  n3@{ shape: rounded, label: "**sync​_​audio​_​mix**<br/>合成设置预览或正式配置的有效音量。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**sync​_​audio​_​mix**<br/>合成设置预览或正式配置的有效音量。" }
-  class n4 node_system
   n0 e0@--> n1
   class e0 edge_read
-  n0 e1@--> n2
+  n0 e1@--> n1
   class e1 edge_read
-  n0 e2@--> n3
+  n0 e2@--> n2
   class e2 edge_read
-  n4 e3@-->|"可变访问"| n0
+  n3 e3@-->|"可变访问"| n0
   class e3 edge_write
-  n4 e4@-->|"赋值"| n0
+  n3 e4@-->|"赋值"| n0
   class e4 edge_write
   e0@{ curve: basis }
+  e1@{ curve: bumpX }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

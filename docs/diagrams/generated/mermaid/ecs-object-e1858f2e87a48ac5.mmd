@@ -17,8 +17,8 @@
     },
     "flowchart": {
       "htmlLabels": false,
-      "nodeSpacing": 16,
-      "rankSpacing": 48,
+      "nodeSpacing": 32,
+      "rankSpacing": 64,
       "padding": 16,
       "wrappingWidth": 280,
       "minNodeWidth": 180,
@@ -38,19 +38,26 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**UiViewTarget**<br/>从 UI 视图定位对应的主渲染目标视图。" }
   class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
   n1@{ shape: rounded, label: "**ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**extract​_​ui​_​camera​_​view**<br/>为活动二维或三维相机维护独立 UI 视图。" }
-  class n3 node_system
+  end
+  style layout_card_n2 fill:none,stroke:none
   n0 e0@--> n1
   class e0 edge_read
-  n0 e1@--> n2
+  n0 e1@--> n1
   class e1 edge_read
-  n3 e2@-->|"插入"| n0
+  n2 e2@-->|"插入"| n0
   class e2 edge_write
-  e0@{ curve: basis }
-  e1@{ curve: basis }
+  e0@{ curve: bumpX }
+  e1@{ curve: bumpX }

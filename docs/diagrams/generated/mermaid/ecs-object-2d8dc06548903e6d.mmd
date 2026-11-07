@@ -50,100 +50,86 @@ flowchart LR
   n3@{ shape: hex, label: "**clear​_​completed​_​movement**<br/>来自first​_​person ↗：结束移动时清零对<br/>应角色的移动输入。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: rounded, label: "**update​_​grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
-  class n4 node_system
-  n5@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
-  class n5 node_system
+  n4@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>来自first​_​person ↗：取消移动时清零对<br/>应角色的移动输入。" }
+  class n4 node_observer
+  class n4 external_node
+  n5@{ shape: hex, label: "**record​_​movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
+  class n5 node_observer
   class n5 external_node
-  n6@{ shape: rounded, label: "**sync​_​character​_​visibility**<br/>来自first​_​person ↗：第一人称只隐藏自<br/>身视觉子树，保留业务根与独立物品。" }
+  n6@{ shape: rounded, label: "**update​_​grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
   class n6 node_system
-  class n6 external_node
   n7@{ shape: hex, label: "**clear​_​completed​_​movement**<br/>来自first​_​person ↗：结束移动时清零对<br/>应角色的移动输入。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>来自first​_​person ↗：取消移动时清零对<br/>应角色的移动输入。" }
-  class n8 node_observer
+  n8@{ shape: rounded, label: "**sync​_​character​_​visibility**<br/>来自first​_​person ↗：第一人称只隐藏自<br/>身视觉子树，保留业务根与独立物品。" }
+  class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**sync​_​mouse​_​capture**<br/>来自first​_​person ↗：在输入转发前确定<br/>归属；切换前约定其他按键已松开，检查器没<br/>有进行中的交互。" }
-  class n9 node_system
+  n9@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>来自first​_​person ↗：取消移动时清零对<br/>应角色的移动输入。" }
+  class n9 node_observer
   class n9 external_node
   n10@{ shape: hex, label: "**record​_​movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
+  n11@{ shape: rounded, label: "**sync​_​mouse​_​capture**<br/>来自first​_​person ↗：在输入转发前确定<br/>归属；切换前约定其他按键已松开，检查器没<br/>有进行中的交互。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>来自first​_​person ↗：取消移动时清零对<br/>应角色的移动输入。" }
+  n12@{ shape: hex, label: "**record​_​movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
   class n12 node_observer
   class n12 external_node
-  n13@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n13@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: hex, label: "**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
-  class n14 node_observer
+  n14@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  class n14 node_system
   class n14 external_node
   n15@{ shape: rounded, label: "**release​_​orphaned​_​items**<br/>来自item​_​interaction ↗：关系被外部解<br/>除或人物销毁时，独立箱实体仍能恢复自由刚<br/>体，不产生残留附属碰撞。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: hex, label: "**record​_​movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
+  n16@{ shape: hex, label: "**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
   class n16 node_observer
   class n16 external_node
-  n17@{ shape: hex, label: "**request​_​interaction**<br/>来自first​_​person ↗：为对应角色保留一<br/>次固定步交互请求。" }
-  class n17 node_observer
+  n17@{ shape: rounded, label: "**Player**<br/>来自scene​_​assembly ↗：保存灰盒玩家身<br/>份与运动状态。" }
+  class n17 node_entity
   class n17 external_node
-  n18@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：保存灰盒玩家身<br/>份与运动状态。" }
-  class n18 node_entity
+  n18@{ shape: hex, label: "**request​_​interaction**<br/>来自first​_​person ↗：为对应角色保留一<br/>次固定步交互请求。" }
+  class n18 node_observer
   class n18 external_node
-  n19@{ shape: hex, label: "**record​_​movement**<br/>来自first​_​person ↗：按事件所属的上下<br/>文查找角色，避免把一个玩家的动作写给其他<br/>角色。" }
+  n19@{ shape: hex, label: "**request​_​interaction**<br/>来自first​_​person ↗：为对应角色保留一<br/>次固定步交互请求。" }
   class n19 node_observer
   class n19 external_node
   n20@{ shape: hex, label: "**request​_​interaction**<br/>来自first​_​person ↗：为对应角色保留一<br/>次固定步交互请求。" }
   class n20 node_observer
   class n20 external_node
-  n21@{ shape: rounded, label: "**update​_​grounded**<br/>脚底附近的小球向下探测支撑面；墙面法线和<br/>上升中的角色不能算接地。" }
-  class n21 node_system
-  n22@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>来自first​_​person ↗：取消移动时清零对<br/>应角色的移动输入。" }
-  class n22 node_observer
+  n21@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>来自first​_​person ↗：取消移动时清零对<br/>应角色的移动输入。" }
+  class n21 node_observer
+  class n21 external_node
+  n22@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>来自item​_​interaction ↗：箱实体被销毁<br/>时关系钩子会清空反向索引，人物仍存活则归<br/>还其原质量。" }
+  class n22 node_system
   class n22 external_node
-  n23@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>来自item​_​interaction ↗：箱实体被销毁<br/>时关系钩子会清空反向索引，人物仍存活则归<br/>还其原质量。" }
-  class n23 node_system
+  n23@{ shape: hex, label: "**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
+  class n23 node_observer
   class n23 external_node
-  n24@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>来自item​_​interaction ↗：帧末跟随同一<br/>份已呈现人物姿态，零固定步时也不在箱体上<br/>叠加第二份插值。" }
+  n24@{ shape: rounded, label: "**move​_​characters**<br/>用有上限的加速度趋近目标水平速度，保留碰<br/>撞和外部冲量造成的实际运动。" }
   class n24 node_system
-  class n24 external_node
-  n25@{ shape: hex, label: "**request​_​interaction**<br/>来自first​_​person ↗：为对应角色保留一<br/>次固定步交互请求。" }
-  class n25 node_observer
-  class n25 external_node
-  n26@{ shape: hex, label: "**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
-  class n26 node_observer
+  n25@{ shape: rounded, label: "**log​_​character​_​velocity**<br/>采样物理解算后的实际速度，便于检查加速<br/>度、刹车和碰撞反馈。" }
+  class n25 node_system
+  n26@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  class n26 node_system
   class n26 external_node
-  n27@{ shape: hex, label: "**clear​_​completed​_​movement**<br/>来自first​_​person ↗：结束移动时清零对<br/>应角色的移动输入。" }
-  class n27 node_observer
+  n27@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
+  class n27 node_system
   class n27 external_node
-  n28@{ shape: rounded, label: "**move​_​characters**<br/>用有上限的加速度趋近目标水平速度，保留碰<br/>撞和外部冲量造成的实际运动。" }
-  class n28 node_system
-  n29@{ shape: rounded, label: "**log​_​character​_​velocity**<br/>采样物理解算后的实际速度，便于检查加速<br/>度、刹车和碰撞反馈。" }
+  n28@{ shape: hex, label: "**clear​_​completed​_​movement**<br/>来自first​_​person ↗：结束移动时清零对<br/>应角色的移动输入。" }
+  class n28 node_observer
+  class n28 external_node
+  n29@{ shape: rounded, label: "**jump​_​characters**<br/>跳跃只消费一次，通过冲量改变速度；重力和<br/>位置积分全部交给 Avian。" }
   class n29 node_system
-  n30@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  n30@{ shape: rounded, label: "**follow​_​first​_​person​_​camera**<br/>来自first​_​person ↗：镜头使用本帧插值<br/>后的人物位置与观察角度；互斥过滤避免<br/>Transform 查询读写冲突。" }
   class n30 node_system
   class n30 external_node
-  n31@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
-  class n31 node_system
+  n31@{ shape: hex, label: "**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
+  class n31 node_observer
   class n31 external_node
-  n32@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
-  class n32 node_system
-  class n32 external_node
-  n33@{ shape: rounded, label: "**jump​_​characters**<br/>跳跃只消费一次，通过冲量改变速度；重力和<br/>位置积分全部交给 Avian。" }
-  class n33 node_system
-  n34@{ shape: hex, label: "**request​_​jump**<br/>来自first​_​person ↗：一次性请求保留到<br/>固定步消费，即使本渲染帧没有固定步也不会<br/>丢失。" }
-  class n34 node_observer
-  class n34 external_node
-  n35@{ shape: rounded, label: "**follow​_​first​_​person​_​camera**<br/>来自first​_​person ↗：镜头使用本帧插值<br/>后的人物位置与观察角度；互斥过滤避免<br/>Transform 查询读写冲突。" }
-  class n35 node_system
-  class n35 external_node
-  n36@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
-  class n36 node_system
-  class n36 external_node
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
   n0 e1@-->|"存在性约束"| n2
@@ -158,63 +144,63 @@ flowchart LR
   class e5 edge_reference
   n0 e6@-->|"存在性约束"| n7
   class e6 edge_reference
-  n0 e7@-->|"存在性约束"| n8
+  n0 e7@-->|"存在性约束"| n2
   class e7 edge_reference
-  n0 e8@-->|"存在性约束"| n9
+  n0 e8@-->|"存在性约束"| n8
   class e8 edge_reference
-  n0 e9@-->|"存在性约束"| n10
+  n0 e9@-->|"存在性约束"| n9
   class e9 edge_reference
-  n0 e10@-->|"存在性约束"| n11
+  n0 e10@-->|"存在性约束"| n10
   class e10 edge_reference
-  n0 e11@-->|"存在性约束"| n12
+  n0 e11@-->|"存在性约束"| n11
   class e11 edge_reference
-  n0 e12@-->|"存在性约束"| n13
+  n0 e12@-->|"存在性约束"| n12
   class e12 edge_reference
-  n0 e13@-->|"存在性约束"| n14
+  n0 e13@-->|"存在性约束"| n13
   class e13 edge_reference
-  n0 e14@-->|"存在性约束"| n15
+  n0 e14@-->|"存在性约束"| n14
   class e14 edge_reference
-  n0 e15@-->|"存在性约束"| n16
+  n0 e15@-->|"存在性约束"| n15
   class e15 edge_reference
-  n0 e16@-->|"存在性约束"| n17
+  n0 e16@-->|"存在性约束"| n16
   class e16 edge_reference
-  n18 e17@-->|"可能包含"| n0
+  n17 e17@-->|"可能包含"| n0
   class e17 edge_reference
-  n0 e18@-->|"存在性约束"| n19
+  n0 e18@-->|"存在性约束"| n18
   class e18 edge_reference
-  n0 e19@-->|"存在性约束"| n20
+  n0 e19@-->|"存在性约束"| n19
   class e19 edge_reference
-  n0 e20@-->|"存在性约束"| n21
+  n0 e20@-->|"存在性约束"| n20
   class e20 edge_reference
-  n0 e21@-->|"存在性约束"| n22
+  n0 e21@-->|"存在性约束"| n6
   class e21 edge_reference
-  n0 e22@-->|"存在性约束"| n23
+  n0 e22@-->|"存在性约束"| n21
   class e22 edge_reference
-  n0 e23@-->|"存在性约束"| n24
+  n0 e23@-->|"存在性约束"| n22
   class e23 edge_reference
-  n0 e24@-->|"存在性约束"| n25
+  n0 e24@-->|"存在性约束"| n1
   class e24 edge_reference
-  n0 e25@-->|"存在性约束"| n26
+  n0 e25@-->|"存在性约束"| n23
   class e25 edge_reference
-  n0 e26@-->|"存在性约束"| n27
+  n0 e26@-->|"存在性约束"| n24
   class e26 edge_reference
-  n0 e27@-->|"存在性约束"| n28
+  n0 e27@-->|"存在性约束"| n25
   class e27 edge_reference
-  n0 e28@-->|"存在性约束"| n29
+  n0 e28@-->|"存在性约束"| n2
   class e28 edge_reference
-  n0 e29@-->|"存在性约束"| n30
+  n0 e29@-->|"存在性约束"| n26
   class e29 edge_reference
-  n0 e30@-->|"存在性约束"| n31
+  n0 e30@-->|"存在性约束"| n27
   class e30 edge_reference
-  n0 e31@-->|"存在性约束"| n32
+  n0 e31@-->|"存在性约束"| n28
   class e31 edge_reference
-  n0 e32@-->|"存在性约束"| n33
+  n0 e32@-->|"存在性约束"| n29
   class e32 edge_reference
-  n0 e33@-->|"存在性约束"| n34
+  n0 e33@-->|"存在性约束"| n30
   class e33 edge_reference
-  n0 e34@-->|"存在性约束"| n35
+  n0 e34@-->|"存在性约束"| n31
   class e34 edge_reference
-  n0 e35@-->|"存在性约束"| n36
+  n0 e35@-->|"存在性约束"| n14
   class e35 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -233,6 +219,7 @@ flowchart LR
   e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }
+  e18@{ curve: basis }
   e19@{ curve: basis }
   e20@{ curve: basis }
   e21@{ curve: basis }

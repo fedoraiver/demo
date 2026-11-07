@@ -53,9 +53,6 @@ flowchart LR
   class n4 node_system
   n5@{ shape: rounded, label: "**pre​_​process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
-  class n6 node_system
-  class n6 external_node
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"插入"| n0
@@ -66,7 +63,7 @@ flowchart LR
   class e3 edge_read
   n0 e4@--> n5
   class e4 edge_read
-  n6 e5@-->|"插入"| n0
+  n2 e5@-->|"插入"| n0
   class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

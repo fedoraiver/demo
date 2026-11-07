@@ -63,7 +63,7 @@ flowchart LR
   class n5 node_resource
   n6@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
   class n6 node_system_set
-  n7@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n7@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>汇总 Egui 输入并同步上下文状态。" }
   class n7 node_system
   n8@{ shape: cyl, label: "**Messages#lt;EguiInputEvent#gt;**<br/>来自crate:bevy​_​ecs ↗：保存最近两次轮<br/>换期间产生的指定类型消息" }
   class n8 node_resource

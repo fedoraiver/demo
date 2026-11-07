@@ -68,11 +68,8 @@ flowchart LR
   n9@{ shape: rounded, label: "**update​_​instance​_​states**<br/>来自crate:bevy​_​kira​_​audio ↗：把实际<br/>播放状态回写到类型通道。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**sync​_​voice​_​volumes**<br/>来自audio ↗：将有效混音与素材音量同步<br/>到播放实例。" }
+  n10@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n10 node_system
-  class n10 external_node
-  n11@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
-  class n11 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
   n0 e1@--> n2
@@ -91,9 +88,9 @@ flowchart LR
   class e7 edge_write
   n0 e8@--> n9
   class e8 edge_read
-  n10 e9@-->|"可变访问"| n0
+  n1 e9@-->|"可变访问"| n0
   class e9 edge_write
-  n0 e10@--> n11
+  n0 e10@--> n10
   class e10 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }

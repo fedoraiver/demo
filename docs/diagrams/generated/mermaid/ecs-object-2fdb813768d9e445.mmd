@@ -41,12 +41,9 @@ flowchart LR
   n1@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
-  class n2 node_system
-  class n2 external_node
   n0 e0@--> n1
   class e0 edge_consume
-  n0 e1@--> n2
+  n0 e1@--> n1
   class e1 edge_consume
-  e0@{ curve: basis }
-  e1@{ curve: basis }
+  e0@{ curve: bumpX }
+  e1@{ curve: bumpX }

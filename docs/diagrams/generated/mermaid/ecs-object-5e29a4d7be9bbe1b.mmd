@@ -402,323 +402,305 @@ flowchart LR
   end
   style layout_card_n62 fill:none,stroke:none
   subgraph layout_card_n63[" "]
-  n63@{ shape: rounded, label: "**egui​_​pass**<br/>来自crate:bevy​_​egui ↗：把准备好的<br/>Egui 绘制项渲染到视图目标。" }
+  n63@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
   class n63 node_system
   class n63 external_node
   end
   style layout_card_n63 fill:none,stroke:none
   subgraph layout_card_n64[" "]
-  n64@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  n64@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n64 node_system
-  class n64 external_node
   end
   style layout_card_n64 fill:none,stroke:none
   subgraph layout_card_n65[" "]
-  n65@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
+  n65@{ shape: rounded, label: "**prepare​_​view​_​tonemapping​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按视<br/>图实际颜色分级需求专用化色调映射。" }
   class n65 node_system
+  class n65 external_node
   end
   style layout_card_n65 fill:none,stroke:none
   subgraph layout_card_n66[" "]
-  n66@{ shape: rounded, label: "**prepare​_​view​_​tonemapping​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按视<br/>图实际颜色分级需求专用化色调映射。" }
+  n66@{ shape: rounded, label: "**queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
   class n66 node_system
   class n66 external_node
   end
   style layout_card_n66 fill:none,stroke:none
   subgraph layout_card_n67[" "]
-  n67@{ shape: rounded, label: "**queue​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：按透<br/>明模式更新二维网格渲染批次。" }
+  n67@{ shape: rounded, label: "**expire​_​specializations​_​for​_​views**<br/>移除已失效视图的材质专用化脏标记。" }
   class n67 node_system
-  class n67 external_node
   end
   style layout_card_n67 fill:none,stroke:none
   subgraph layout_card_n68[" "]
-  n68@{ shape: rounded, label: "**expire​_​specializations​_​for​_​views**<br/>移除已失效视图的材质专用化脏标记。" }
+  n68@{ shape: rounded, label: "**upload​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：上传各视图的环<br/>境图、反射与辐照探针参数。" }
   class n68 node_system
+  class n68 external_node
   end
   style layout_card_n68 fill:none,stroke:none
   subgraph layout_card_n69[" "]
-  n69@{ shape: rounded, label: "**upload​_​light​_​probes**<br/>来自crate:bevy​_​pbr ↗：上传各视图的环<br/>境图、反射与辐照探针参数。" }
+  n69@{ shape: rounded, label: "**queue​_​oit​_​resolve​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：按<br/>OIT 相机设置缓存透明解析管线。" }
   class n69 node_system
   class n69 external_node
   end
   style layout_card_n69 fill:none,stroke:none
   subgraph layout_card_n70[" "]
-  n70@{ shape: rounded, label: "**queue​_​oit​_​resolve​_​pipeline**<br/>来自crate:bevy​_​core​_​pipeline ↗：按<br/>OIT 相机设置缓存透明解析管线。" }
+  n70@{ shape: rounded, label: "**prepare​_​fog**<br/>来自crate:bevy​_​pbr ↗：转换并上传各视<br/>图的距离雾参数。" }
   class n70 node_system
   class n70 external_node
   end
   style layout_card_n70 fill:none,stroke:none
   subgraph layout_card_n71[" "]
-  n71@{ shape: rounded, label: "**prepare​_​fog**<br/>来自crate:bevy​_​pbr ↗：转换并上传各视<br/>图的距离雾参数。" }
+  n71@{ shape: rounded, label: "**early​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：执行<br/>早期延迟预通道并保存深度结果。" }
   class n71 node_system
   class n71 external_node
   end
   style layout_card_n71 fill:none,stroke:none
   subgraph layout_card_n72[" "]
-  n72@{ shape: rounded, label: "**early​_​deferred​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：执行<br/>早期延迟预通道并保存深度结果。" }
+  n72@{ shape: rounded, label: "**prepare​_​atmosphere​_​transforms**<br/>来自crate:bevy​_​pbr ↗：按相机位置构造<br/>大气局部坐标变换。" }
   class n72 node_system
   class n72 external_node
   end
   style layout_card_n72 fill:none,stroke:none
   subgraph layout_card_n73[" "]
-  n73@{ shape: rounded, label: "**prepare​_​atmosphere​_​transforms**<br/>来自crate:bevy​_​pbr ↗：按相机位置构造<br/>大气局部坐标变换。" }
+  n73@{ shape: rounded, label: "**prepare​_​cas​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按去噪<br/>与目标格式准备视图锐化管线。" }
   class n73 node_system
   class n73 external_node
   end
   style layout_card_n73 fill:none,stroke:none
   subgraph layout_card_n74[" "]
-  n74@{ shape: rounded, label: "**prepare​_​cas​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按去噪<br/>与目标格式准备视图锐化管线。" }
+  n74@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
   class n74 node_system
   class n74 external_node
   end
   style layout_card_n74 fill:none,stroke:none
   subgraph layout_card_n75[" "]
-  n75@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>来自crate:bevy​_​egui ↗：按目标格式选<br/>择 Egui 渲染管线。" }
+  n75@{ shape: rounded, label: "**prepare​_​skybox​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按目<br/>标格式与采样数准备天空盒管线。" }
   class n75 node_system
   class n75 external_node
   end
   style layout_card_n75 fill:none,stroke:none
   subgraph layout_card_n76[" "]
-  n76@{ shape: rounded, label: "**prepare​_​skybox​_​pipelines**<br/>来自crate:bevy​_​core​_​pipeline ↗：按目<br/>标格式与采样数准备天空盒管线。" }
+  n76@{ shape: rounded, label: "**prepare​_​smaa​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按质量<br/>预设准备视图的三条 SMAA 管线。" }
   class n76 node_system
   class n76 external_node
   end
   style layout_card_n76 fill:none,stroke:none
   subgraph layout_card_n77[" "]
-  n77@{ shape: rounded, label: "**prepare​_​smaa​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按质量<br/>预设准备视图的三条 SMAA 管线。" }
+  n77@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
   class n77 node_system
-  class n77 external_node
   end
   style layout_card_n77 fill:none,stroke:none
   subgraph layout_card_n78[" "]
-  n78@{ shape: rounded, label: "**batch​_​and​_​prepare​_​binned​_​render​_​**<br/>**phase**<br/>为分桶渲染阶段建立 GPU 预处理批次。" }
+  n78@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
   class n78 node_system
   end
   style layout_card_n78 fill:none,stroke:none
   subgraph layout_card_n79[" "]
-  n79@{ shape: rounded, label: "**sort​_​phase​_​system**<br/>按各视图重新计算并排序阶段绘制项。" }
+  n79@{ shape: rounded, label: "**prepare​_​previous​_​view​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：重建前帧抖动矩<br/>阵并上传视图历史参数。" }
   class n79 node_system
+  class n79 external_node
   end
   style layout_card_n79 fill:none,stroke:none
   subgraph layout_card_n80[" "]
-  n80@{ shape: rounded, label: "**prepare​_​previous​_​view​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：重建前帧抖动矩<br/>阵并上传视图历史参数。" }
+  n80@{ shape: rounded, label: "**late​_​gpu​_​preprocess**<br/>来自crate:bevy​_​pbr ↗：对后期遮挡工作<br/>项执行间接网格预处理。" }
   class n80 node_system
   class n80 external_node
   end
   style layout_card_n80 fill:none,stroke:none
   subgraph layout_card_n81[" "]
-  n81@{ shape: rounded, label: "**late​_​gpu​_​preprocess**<br/>来自crate:bevy​_​pbr ↗：对后期遮挡工作<br/>项执行间接网格预处理。" }
+  n81@{ shape: rounded, label: "**queue​_​sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
   class n81 node_system
   class n81 external_node
   end
   style layout_card_n81 fill:none,stroke:none
   subgraph layout_card_n82[" "]
-  n82@{ shape: rounded, label: "**queue​_​sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
+  n82@{ shape: rounded, label: "**collect​_​gpu​_​culled​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按渲染层把<br/>GPU 裁剪对象分配到各视图列表。" }
   class n82 node_system
   class n82 external_node
   end
   style layout_card_n82 fill:none,stroke:none
   subgraph layout_card_n83[" "]
-  n83@{ shape: rounded, label: "**collect​_​gpu​_​culled​_​meshes**<br/>来自crate:bevy​_​pbr ↗：按渲染层把<br/>GPU 裁剪对象分配到各视图列表。" }
+  n83@{ shape: rounded, label: "**queue​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：为提取<br/>的 UI 阴影选择匹配目标格式和阴影采样数<br/>的管线，按节点堆叠顺序及阴影层偏移加入透<br/>明 UI 绘制阶段。" }
   class n83 node_system
   class n83 external_node
   end
   style layout_card_n83 fill:none,stroke:none
   subgraph layout_card_n84[" "]
-  n84@{ shape: rounded, label: "**queue​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：为提取<br/>的 UI 阴影选择匹配目标格式和阴影采样数<br/>的管线，按节点堆叠顺序及阴影层偏移加入透<br/>明 UI 绘制阶段。" }
+  n84@{ shape: rounded, label: "**prepare​_​smaa​_​bind​_​groups**<br/>来自crate:bevy​_​anti​_​alias ↗：为视图<br/>绑定 SMAA 中间纹理与查找表。" }
   class n84 node_system
   class n84 external_node
   end
   style layout_card_n84 fill:none,stroke:none
   subgraph layout_card_n85[" "]
-  n85@{ shape: rounded, label: "**prepare​_​smaa​_​bind​_​groups**<br/>来自crate:bevy​_​anti​_​alias ↗：为视图<br/>绑定 SMAA 中间纹理与查找表。" }
+  n85@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
   class n85 node_system
-  class n85 external_node
   end
   style layout_card_n85 fill:none,stroke:none
   subgraph layout_card_n86[" "]
-  n86@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  n86@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
   class n86 node_system
   end
   style layout_card_n86 fill:none,stroke:none
   subgraph layout_card_n87[" "]
-  n87@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
+  n87@{ shape: rounded, label: "**prepare​_​clustering​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图的聚簇计<br/>算与光栅阶段绑定工作缓冲。" }
   class n87 node_system
+  class n87 external_node
   end
   style layout_card_n87 fill:none,stroke:none
   subgraph layout_card_n88[" "]
-  n88@{ shape: rounded, label: "**prepare​_​clustering​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图的聚簇计<br/>算与光栅阶段绑定工作缓冲。" }
+  n88@{ shape: rounded, label: "**prepare​_​motion​_​blur​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按颜<br/>色格式与采样数准备运动模糊管线。" }
   class n88 node_system
   class n88 external_node
   end
   style layout_card_n88 fill:none,stroke:none
   subgraph layout_card_n89[" "]
-  n89@{ shape: rounded, label: "**prepare​_​motion​_​blur​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按颜<br/>色格式与采样数准备运动模糊管线。" }
+  n89@{ shape: rounded, label: "**main​_​build​_​indirect​_​parameters**<br/>来自crate:bevy​_​pbr ↗：为主不透明及透<br/>明通道构建间接绘制参数。" }
   class n89 node_system
   class n89 external_node
   end
   style layout_card_n89 fill:none,stroke:none
   subgraph layout_card_n90[" "]
-  n90@{ shape: rounded, label: "**main​_​build​_​indirect​_​parameters**<br/>来自crate:bevy​_​pbr ↗：为主不透明及透<br/>明通道构建间接绘制参数。" }
+  n90@{ shape: rounded, label: "**prepare​_​fxaa​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按相机<br/>边缘阈值与目标格式准备 FXAA 管线。" }
   class n90 node_system
   class n90 external_node
   end
   style layout_card_n90 fill:none,stroke:none
   subgraph layout_card_n91[" "]
-  n91@{ shape: rounded, label: "**prepare​_​fxaa​_​pipelines**<br/>来自crate:bevy​_​anti​_​alias ↗：按相机<br/>边缘阈值与目标格式准备 FXAA 管线。" }
+  n91@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n91 node_system
-  class n91 external_node
   end
   style layout_card_n91 fill:none,stroke:none
   subgraph layout_card_n92[" "]
-  n92@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n92@{ shape: rounded, label: "**prepare​_​sprite​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为精<br/>灵视图绑定参数和色调映射 LUT。" }
   class n92 node_system
+  class n92 external_node
   end
   style layout_card_n92 fill:none,stroke:none
   subgraph layout_card_n93[" "]
-  n93@{ shape: rounded, label: "**prepare​_​sprite​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为精<br/>灵视图绑定参数和色调映射 LUT。" }
+  n93@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
   class n93 node_system
-  class n93 external_node
   end
   style layout_card_n93 fill:none,stroke:none
   subgraph layout_card_n94[" "]
-  n94@{ shape: rounded, label: "**batch​_​and​_​prepare​_​sorted​_​render​_​**<br/>**phase**<br/>按已有绘制顺序合并 GPU 预处理阶段批次。" }
+  n94@{ shape: rounded, label: "**queue​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：把有效材质网格<br/>分入预通道或延迟几何阶段。" }
   class n94 node_system
+  class n94 external_node
   end
   style layout_card_n94 fill:none,stroke:none
   subgraph layout_card_n95[" "]
-  n95@{ shape: rounded, label: "**queue​_​prepass​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：把有效材质网格<br/>分入预通道或延迟几何阶段。" }
+  n95@{ shape: rounded, label: "**prepare​_​view​_​depth​_​pyramids**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除视图维护深度金字塔。" }
   class n95 node_system
   class n95 external_node
   end
   style layout_card_n95 fill:none,stroke:none
   subgraph layout_card_n96[" "]
-  n96@{ shape: rounded, label: "**prepare​_​view​_​depth​_​pyramids**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除视图维护深度金字塔。" }
+  n96@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
   class n96 node_system
   class n96 external_node
   end
   style layout_card_n96 fill:none,stroke:none
   subgraph layout_card_n97[" "]
-  n97@{ shape: rounded, label: "**main​_​transmissive​_​pass​_​3d**<br/>来自crate:bevy​_​pbr ↗：分层复制场景颜<br/>色并绘制三维透射物体。" }
+  n97@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n97 node_system
-  class n97 external_node
   end
   style layout_card_n97 fill:none,stroke:none
   subgraph layout_card_n98[" "]
-  n98@{ shape: rounded, label: "**cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
+  n98@{ shape: rounded, label: "**prepare​_​prepass​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按三<br/>维预通道配置分配各类输出纹理。" }
   class n98 node_system
   class n98 external_node
   end
   style layout_card_n98 fill:none,stroke:none
   subgraph layout_card_n99[" "]
-  n99@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n99@{ shape: rounded, label: "**prepare​_​cluster​_​dummy​_​textures**<br/>来自crate:bevy​_​pbr ↗：为聚簇光栅通道<br/>准备视口占位纹理。" }
   class n99 node_system
+  class n99 external_node
   end
   style layout_card_n99 fill:none,stroke:none
   subgraph layout_card_n100[" "]
-  n100@{ shape: rounded, label: "**prepare​_​prepass​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按三<br/>维预通道配置分配各类输出纹理。" }
+  n100@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n100 node_system
-  class n100 external_node
   end
   style layout_card_n100 fill:none,stroke:none
   subgraph layout_card_n101[" "]
-  n101@{ shape: rounded, label: "**prepare​_​cluster​_​dummy​_​textures**<br/>来自crate:bevy​_​pbr ↗：为聚簇光栅通道<br/>准备视口占位纹理。" }
+  n101@{ shape: rounded, label: "**prepare​_​pending​_​mesh​_​material2d​_​**<br/>**queues**<br/>来自crate:bevy​_​sprite​_​render ↗：轮换<br/>二维材质待就绪队列并清理失效视图。" }
   class n101 node_system
   class n101 external_node
   end
   style layout_card_n101 fill:none,stroke:none
   subgraph layout_card_n102[" "]
-  n102@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n102@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>来自crate:bevy​_​egui ↗：上传 Egui 屏<br/>幕变换缓冲。" }
   class n102 node_system
+  class n102 external_node
   end
   style layout_card_n102 fill:none,stroke:none
   subgraph layout_card_n103[" "]
-  n103@{ shape: rounded, label: "**prepare​_​pending​_​mesh​_​material2d​_​**<br/>**queues**<br/>来自crate:bevy​_​sprite​_​render ↗：轮换<br/>二维材质待就绪队列并清理失效视图。" }
+  n103@{ shape: rounded, label: "**queue​_​shadows**<br/>来自crate:bevy​_​pbr ↗：按材质与光源资<br/>格更新阴影绘制分桶。" }
   class n103 node_system
   class n103 external_node
   end
   style layout_card_n103 fill:none,stroke:none
   subgraph layout_card_n104[" "]
-  n104@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>来自crate:bevy​_​egui ↗：上传 Egui 屏<br/>幕变换缓冲。" }
+  n104@{ shape: rounded, label: "**queue​_​line​_​joint​_​gizmos​_​3d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将三<br/>维 Gizmo 折线接头加入透明阶段。" }
   class n104 node_system
   class n104 external_node
   end
   style layout_card_n104 fill:none,stroke:none
   subgraph layout_card_n105[" "]
-  n105@{ shape: rounded, label: "**queue​_​shadows**<br/>来自crate:bevy​_​pbr ↗：按材质与光源资<br/>格更新阴影绘制分桶。" }
+  n105@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：把各视图和雾体<br/>积组合转换为体积雾 Uniform。" }
   class n105 node_system
   class n105 external_node
   end
   style layout_card_n105 fill:none,stroke:none
   subgraph layout_card_n106[" "]
-  n106@{ shape: rounded, label: "**ui​_​pass**<br/>来自crate:bevy​_​ui​_​render ↗：把透明<br/>UI 绘制项渲染到关联视图。" }
+  n106@{ shape: rounded, label: "**prepare​_​upsampling​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>Bloom 中间合成和最终目标准备升采样管<br/>线。" }
   class n106 node_system
   class n106 external_node
   end
   style layout_card_n106 fill:none,stroke:none
   subgraph layout_card_n107[" "]
-  n107@{ shape: rounded, label: "**queue​_​line​_​joint​_​gizmos​_​3d**<br/>来自crate:bevy​_​gizmos​_​render ↗：将三<br/>维 Gizmo 折线接头加入透明阶段。" }
+  n107@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
   class n107 node_system
   class n107 external_node
   end
   style layout_card_n107 fill:none,stroke:none
   subgraph layout_card_n108[" "]
-  n108@{ shape: rounded, label: "**prepare​_​volumetric​_​fog​_​uniforms**<br/>来自crate:bevy​_​pbr ↗：把各视图和雾体<br/>积组合转换为体积雾 Uniform。" }
+  n108@{ shape: rounded, label: "**prepare​_​smaa​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：为<br/>SMAA 分配边缘、模板和混合权重纹理。" }
   class n108 node_system
   class n108 external_node
   end
   style layout_card_n108 fill:none,stroke:none
   subgraph layout_card_n109[" "]
-  n109@{ shape: rounded, label: "**prepare​_​upsampling​_​pipeline**<br/>来自crate:bevy​_​post​_​process ↗：为<br/>Bloom 中间合成和最终目标准备升采样管<br/>线。" }
+  n109@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
   class n109 node_system
   class n109 external_node
   end
   style layout_card_n109 fill:none,stroke:none
   subgraph layout_card_n110[" "]
-  n110@{ shape: rounded, label: "**specialize​_​material2d​_​meshes**<br/>来自crate:bevy​_​sprite​_​render ↗：为可<br/>见二维网格重建失效的材质专用化。" }
+  n110@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n110 node_system
-  class n110 external_node
   end
   style layout_card_n110 fill:none,stroke:none
   subgraph layout_card_n111[" "]
-  n111@{ shape: rounded, label: "**prepare​_​smaa​_​textures**<br/>来自crate:bevy​_​anti​_​alias ↗：为<br/>SMAA 分配边缘、模板和混合权重纹理。" }
+  n111@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
   class n111 node_system
-  class n111 external_node
   end
   style layout_card_n111 fill:none,stroke:none
   subgraph layout_card_n112[" "]
-  n112@{ shape: rounded, label: "**per​_​view​_​shadow​_​pass**<br/>来自crate:bevy​_​pbr ↗：绘制相机相关的<br/>平行光级联阴影。" }
+  n112@{ shape: rounded, label: "**early​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：构建早期预通道<br/>使用的多重间接绘制参数。" }
   class n112 node_system
   class n112 external_node
   end
   style layout_card_n112 fill:none,stroke:none
   subgraph layout_card_n113[" "]
-  n113@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n113@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
   class n113 node_system
+  class n113 external_node
   end
   style layout_card_n113 fill:none,stroke:none
   subgraph layout_card_n114[" "]
-  n114@{ shape: rounded, label: "**write​_​binned​_​instance​_​buffers**<br/>上传多重绘制分桶并生成 GPU 解包任务。" }
+  n114@{ shape: rounded, label: "**check​_​views​_​lights​_​need​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：检测阴影视图投<br/>影类型并标记管线待刷新。" }
   class n114 node_system
+  class n114 external_node
   end
   style layout_card_n114 fill:none,stroke:none
-  subgraph layout_card_n115[" "]
-  n115@{ shape: rounded, label: "**early​_​prepass​_​build​_​indirect​_​**<br/>**parameters**<br/>来自crate:bevy​_​pbr ↗：构建早期预通道<br/>使用的多重间接绘制参数。" }
-  class n115 node_system
-  class n115 external_node
-  end
-  style layout_card_n115 fill:none,stroke:none
-  subgraph layout_card_n116[" "]
-  n116@{ shape: rounded, label: "**specialize​_​material​_​meshes**<br/>来自crate:bevy​_​pbr ↗：为变化的可见网<br/>格生成并缓存材质专用管线。" }
-  class n116 node_system
-  class n116 external_node
-  end
-  style layout_card_n116 fill:none,stroke:none
-  subgraph layout_card_n117[" "]
-  n117@{ shape: rounded, label: "**check​_​views​_​lights​_​need​_​**<br/>**specialization**<br/>来自crate:bevy​_​pbr ↗：检测阴影视图投<br/>影类型并标记管线待刷新。" }
-  class n117 node_system
-  class n117 external_node
-  end
-  style layout_card_n117 fill:none,stroke:none
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
   n2 e1@--- n0
@@ -849,135 +831,135 @@ flowchart LR
   class e63 edge_read
   n0 e64@--> n62
   class e64 edge_read
-  n0 e65@--> n63
+  n0 e65@--> n50
   class e65 edge_read
-  n0 e66@-->|"存在性约束"| n64
+  n0 e66@-->|"存在性约束"| n63
   class e66 edge_reference
-  n0 e67@--> n65
+  n0 e67@--> n64
   class e67 edge_read
-  n0 e68@--> n66
+  n0 e68@--> n65
   class e68 edge_read
   n0 e69@-->|"存在性约束"| n30
   class e69 edge_reference
-  n0 e70@--> n67
+  n0 e70@--> n66
   class e70 edge_read
-  n0 e71@--> n68
+  n0 e71@--> n67
   class e71 edge_read
   n0 e72@--> n1
   class e72 edge_read
-  n0 e73@-->|"存在性约束"| n69
+  n0 e73@-->|"存在性约束"| n68
   class e73 edge_reference
-  n0 e74@--> n70
+  n0 e74@--> n69
   class e74 edge_read
-  n0 e75@-->|"存在性约束"| n71
+  n0 e75@-->|"存在性约束"| n70
   class e75 edge_reference
-  n0 e76@--> n72
+  n0 e76@--> n71
   class e76 edge_read
-  n0 e77@--> n73
+  n0 e77@--> n72
   class e77 edge_read
-  n0 e78@--> n74
+  n0 e78@--> n73
   class e78 edge_read
-  n0 e79@-->|"存在性约束"| n75
+  n0 e79@-->|"存在性约束"| n74
   class e79 edge_reference
   n0 e80@-->|"存在性约束"| n26
   class e80 edge_reference
-  n0 e81@--> n76
+  n0 e81@--> n75
   class e81 edge_read
-  n0 e82@--> n77
+  n0 e82@--> n76
   class e82 edge_read
-  n0 e83@-->|"存在性约束"| n78
+  n0 e83@-->|"存在性约束"| n77
   class e83 edge_reference
-  n0 e84@--> n79
+  n0 e84@--> n78
   class e84 edge_read
-  n0 e85@--> n80
+  n0 e85@--> n79
   class e85 edge_read
-  n0 e86@--> n81
+  n0 e86@--> n80
   class e86 edge_read
-  n0 e87@--> n82
+  n0 e87@--> n81
   class e87 edge_read
-  n0 e88@-->|"存在性约束"| n83
+  n0 e88@-->|"存在性约束"| n82
   class e88 edge_reference
-  n0 e89@--> n84
+  n0 e89@--> n83
   class e89 edge_read
-  n0 e90@-->|"存在性约束"| n85
+  n0 e90@-->|"存在性约束"| n84
   class e90 edge_reference
-  n0 e91@--> n86
+  n0 e91@--> n85
   class e91 edge_read
-  n0 e92@--> n87
+  n0 e92@--> n86
   class e92 edge_read
-  n0 e93@-->|"存在性约束"| n88
+  n0 e93@-->|"存在性约束"| n87
   class e93 edge_reference
-  n0 e94@--> n89
+  n0 e94@--> n88
   class e94 edge_read
-  n0 e95@--> n90
+  n0 e95@--> n89
   class e95 edge_read
-  n0 e96@--> n91
+  n0 e96@--> n90
   class e96 edge_read
-  n0 e97@--> n92
+  n0 e97@--> n91
   class e97 edge_read
   n0 e98@--> n41
   class e98 edge_read
-  n0 e99@-->|"存在性约束"| n93
+  n0 e99@-->|"存在性约束"| n92
   class e99 edge_reference
   n0 e100@--> n59
   class e100 edge_read
-  n0 e101@--> n94
+  n0 e101@--> n93
   class e101 edge_read
-  n0 e102@--> n95
+  n0 e102@--> n94
   class e102 edge_read
-  n0 e103@--> n96
+  n0 e103@--> n95
   class e103 edge_read
-  n0 e104@--> n97
+  n0 e104@--> n96
   class e104 edge_read
-  n0 e105@-->|"存在性约束"| n98
+  n0 e105@-->|"存在性约束"| n6
   class e105 edge_reference
-  n0 e106@--> n99
+  n0 e106@--> n97
   class e106 edge_read
-  n0 e107@--> n100
+  n0 e107@--> n98
   class e107 edge_read
-  n0 e108@-->|"存在性约束"| n101
+  n0 e108@-->|"存在性约束"| n99
   class e108 edge_reference
-  n0 e109@--> n102
+  n0 e109@--> n100
   class e109 edge_read
   n0 e110@-->|"存在性约束"| n57
   class e110 edge_reference
   n10 e111@-->|"移除"| n0
   class e111 edge_write
-  n0 e112@--> n103
+  n0 e112@--> n101
   class e112 edge_read
-  n0 e113@--> n104
+  n0 e113@--> n102
   class e113 edge_read
-  n0 e114@--> n105
+  n0 e114@--> n103
   class e114 edge_read
-  n0 e115@--> n106
+  n0 e115@--> n34
   class e115 edge_read
-  n0 e116@--> n107
+  n0 e116@--> n104
   class e116 edge_read
-  n0 e117@--> n108
+  n0 e117@--> n105
   class e117 edge_read
-  n0 e118@--> n109
+  n0 e118@--> n106
   class e118 edge_read
   n0 e119@--> n17
   class e119 edge_read
-  n0 e120@-->|"存在性约束"| n84
+  n0 e120@-->|"存在性约束"| n83
   class e120 edge_reference
-  n0 e121@--> n110
+  n0 e121@--> n107
   class e121 edge_read
-  n0 e122@-->|"存在性约束"| n111
+  n0 e122@-->|"存在性约束"| n108
   class e122 edge_reference
-  n0 e123@--> n78
+  n0 e123@--> n77
   class e123 edge_read
-  n0 e124@--> n112
+  n0 e124@--> n109
   class e124 edge_read
-  n0 e125@--> n113
+  n0 e125@--> n110
   class e125 edge_read
-  n0 e126@--> n114
+  n0 e126@--> n111
   class e126 edge_read
-  n0 e127@--> n115
+  n0 e127@--> n112
   class e127 edge_read
-  n0 e128@--> n116
+  n0 e128@--> n113
   class e128 edge_read
-  n0 e129@--> n117
+  n0 e129@--> n114
   class e129 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -1037,8 +1019,8 @@ flowchart LR
   e55@{ curve: basis }
   e56@{ curve: basis }
   e57@{ curve: basis }
-  e58@{ curve: basis }
   e59@{ curve: basis }
+  e60@{ curve: basis }
   e61@{ curve: basis }
   e62@{ curve: basis }
   e63@{ curve: basis }

@@ -50,8 +50,6 @@ flowchart LR
   class n3 external_node
   n4@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
-  class n5 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
   n0 e1@-->|"存在性约束"| n2
@@ -64,12 +62,12 @@ flowchart LR
   class e4 edge_read
   n0 e5@--> n2
   class e5 edge_read
-  n0 e6@--> n5
+  n0 e6@--> n4
   class e6 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }
+  e4@{ curve: bumpX }
   e5@{ curve: bumpX }
   e6@{ curve: basis }

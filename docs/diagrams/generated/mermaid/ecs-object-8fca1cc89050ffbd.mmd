@@ -40,7 +40,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**Time#lt;Real#gt;**<br/>保存时钟上下文、帧间隔及累计时间" }
   class n0 node_resource
-  n1@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：把界面输入和文<br/>件拖放写入 Egui 输入批次。" }
+  n1@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：汇总 Egui 输<br/>入并同步上下文状态。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: rounded, label: "**play​_​requests**<br/>来自audio ↗：按有效混音和播放限额处理<br/>声音请求。" }

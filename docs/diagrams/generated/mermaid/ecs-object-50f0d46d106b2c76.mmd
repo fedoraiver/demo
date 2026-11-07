@@ -44,7 +44,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**spawn​_​session**<br/>装配可移动、跳跃和搬运的灰盒会话。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>照亮灰盒地面与方块。" }
+  n1@{ shape: rounded, label: "**Greybox daylight**<br/>照亮灰盒地面与方块。" }
   class n1 node_entity
   n2@{ shape: cyl, label: "**PrototypeConfig**<br/>来自settings ↗：原型的运动、平地和持箱<br/>参数。" }
   class n2 node_resource
@@ -90,7 +90,7 @@ flowchart LR
   n16@{ shape: rounded, label: "**FirstPersonCamera**<br/>来自first​_​person ↗：观察角度的唯一来<br/>源；有向转角保留到下一次安全朝向同步。" }
   class n16 node_component
   class n16 external_node
-  n17@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载玩家键鼠玩法<br/>输入与角色控制关系。" }
+  n17@{ shape: rounded, label: "**format!(#quot;Keyboard controller {id}#quot;)**<br/>来自first​_​person ↗：承载玩家键鼠玩法<br/>输入与角色控制关系。" }
   class n17 node_entity
   class n17 external_node
   n18@{ shape: rounded, label: "**AngularDamping**<br/>来自crate:avian3d ↗：随物理步衰减刚体<br/>角速度。" }
@@ -102,16 +102,16 @@ flowchart LR
   n20@{ shape: cyl, label: "**Assets#lt;Mesh#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n20 node_resource
   class n20 external_node
-  n21@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>承载灰盒地面的显示与静态碰撞。" }
+  n21@{ shape: rounded, label: "**Greybox ground**<br/>承载灰盒地面的显示与静态碰撞。" }
   class n21 node_entity
-  n22@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>从受控角色眼位呈现灰盒会话。" }
+  n22@{ shape: rounded, label: "**First-person camera**<br/>从受控角色眼位呈现灰盒会话。" }
   class n22 node_entity
   n23@{ shape: rounded, label: "**SweptCcd**<br/>来自crate:avian3d ↗：配置快速动态刚体<br/>的连续扫掠。" }
   class n23 node_component
   class n23 external_node
-  n24@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>创建可拾取并参与物理的灰盒方块。" }
+  n24@{ shape: rounded, label: "**format!(#quot;Greybox cube {}#quot;, index +**<br/>**1)**<br/>创建可拾取并参与物理的灰盒方块。" }
   class n24 node_entity
-  n25@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>保存灰盒玩家身份与运动状态。" }
+  n25@{ shape: rounded, label: "**Player**<br/>保存灰盒玩家身份与运动状态。" }
   class n25 node_entity
   n26@{ shape: rounded, label: "**CollisionLayers**<br/>来自crate:avian3d ↗：声明碰撞体所属层<br/>和可交互层。" }
   class n26 node_component

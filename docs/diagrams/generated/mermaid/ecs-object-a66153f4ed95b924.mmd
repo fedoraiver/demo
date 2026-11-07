@@ -42,7 +42,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**EguiContextPointerPosition**<br/>缓存当前 Egui 指针坐标" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
+  n1@{ shape: rounded, label: "**MenuCamera**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
   class n1 node_entity
   class n1 external_node
   n2@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
@@ -53,7 +53,7 @@ flowchart LR
   class n4 node_system
   n5@{ shape: rounded, label: "**write​_​non​_​window​_​pointer​_​moved​_​**<br/>**messages​_​system**<br/>刷新非窗口 Egui 界面的指针位置。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
+  n6@{ shape: rounded, label: "**First-person camera**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
   class n6 node_entity
   class n6 external_node
   n1 e0@-->|"可能包含"| n0

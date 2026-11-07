@@ -38,21 +38,22 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**MsaaWritebackBlitPipeline**<br/>记录把后处理颜色回写到 MSAA 目标的管<br/>线。" }
   class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**prepare​_​msaa​_​writeback​_​pipelines**<br/>为需要保留已有颜色的多采样相机准备回写管<br/>线。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**msaa​_​writeback**<br/>将后处理颜色回写多采样目标。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**msaa​_​writeback**<br/>将后处理颜色回写多采样目标。" }
-  class n3 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write
   n1 e1@-->|"插入"| n0
   class e1 edge_write
   n0 e2@--> n2
   class e2 edge_read
-  n0 e3@--> n3
+  n0 e3@--> n2
   class e3 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }

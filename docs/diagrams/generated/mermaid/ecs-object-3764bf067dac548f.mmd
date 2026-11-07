@@ -51,10 +51,8 @@ flowchart LR
   class n4 node_system
   n5@{ shape: rounded, label: "**prepare​_​screenshots**<br/>为有效截图目标准备捕获资源和输出附件。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**camera​_​system**<br/>响应目标尺寸变化并更新相机投影。" }
+  n6@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**prepare​_​view​_​attachments**<br/>按相机输出目标准备可共享的颜色附件。" }
-  class n7 node_system
   n1 e0@--- n0
   class e0 edge_read
   n0 e1@--> n2
@@ -67,13 +65,13 @@ flowchart LR
   class e4 edge_read
   n0 e5@--> n5
   class e5 edge_read
-  n0 e6@--> n6
+  n0 e6@--> n2
   class e6 edge_read
   n1 e7@-->|"可变访问"| n0
   class e7 edge_write
   n1 e8@-->|"赋值"| n0
   class e8 edge_write
-  n0 e9@--> n7
+  n0 e9@--> n6
   class e9 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }

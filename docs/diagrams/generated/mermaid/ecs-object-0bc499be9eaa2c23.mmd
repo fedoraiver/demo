@@ -46,12 +46,12 @@ flowchart LR
   class n1 node_system
   n2@{ shape: rounded, label: "**prepare​_​egui​_​render​_​target​_​data​_​**<br/>**system**<br/>准备 Egui 顶点索引和裁剪绘制命令。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
+  n3@{ shape: rounded, label: "**MenuCamera**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
   class n3 node_entity
   class n3 external_node
   n4@{ shape: rounded, label: "**extract​_​egui​_​camera​_​view​_​system**<br/>为活动相机提取独立 Egui 渲染视图。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
+  n5@{ shape: rounded, label: "**First-person camera**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
   class n5 node_entity
   class n5 external_node
   n6@{ shape: rounded, label: "**process​_​output​_​system**<br/>拆分 Egui 绘制输出并执行平台命令。" }

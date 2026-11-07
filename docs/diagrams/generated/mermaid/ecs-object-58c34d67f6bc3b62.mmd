@@ -38,8 +38,11 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**Fxaa**<br/>配置相机的快速近似抗锯齿。" }
   class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**fxaa**<br/>对启用的相机视图执行 FXAA 抗锯齿。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
@@ -47,19 +50,18 @@ flowchart LR
   class n2 external_node
   n3@{ shape: rounded, label: "**prepare​_​fxaa​_​pipelines**<br/>按相机边缘阈值与目标格式准备 FXAA 管<br/>线。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**fxaa**<br/>对启用的相机视图执行 FXAA 抗锯齿。" }
-  class n4 node_system
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"移除"| n0
   class e1 edge_write
   n0 e2@--> n3
   class e2 edge_read
-  n0 e3@--> n4
+  n0 e3@--> n1
   class e3 edge_read
   n2 e4@--- n0
   class e4 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e3@{ curve: basis }
+  e2@{ curve: basis }
+  e3@{ curve: bumpX }
   e4@{ curve: basis }

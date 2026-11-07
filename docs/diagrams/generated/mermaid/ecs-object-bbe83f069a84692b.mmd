@@ -46,44 +46,44 @@ flowchart LR
   class n1 node_observer
   n2@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n2 node_observer
-  n3@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：通过键盘或手柄移到上一个菜单<br/>按钮。" }
+  n3@{ shape: rounded, label: "**demo::ui::navigation::PreviousAction**<br/>来自ui ↗：通过键盘或手柄移到上一个菜单<br/>按钮。" }
   class n3 node_entity
   class n3 external_node
   n4@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n4 node_observer
   n5@{ shape: rounded, label: "**(Commands#lt;'​_​, '​_​#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityRef#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>根据求值结果触发输入动作通知。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：用向下导航输入切换到下一个菜<br/>单按钮。" }
+  n6@{ shape: rounded, label: "**demo::ui::navigation::NextAction**<br/>来自ui ↗：用向下导航输入切换到下一个菜<br/>单按钮。" }
   class n6 node_entity
   class n6 external_node
-  n7@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：把空格按下转换为<br/>角色跳跃请求。" }
+  n7@{ shape: rounded, label: "**demo::first​_​person::actions::**<br/>**JumpAction**<br/>来自first​_​person ↗：把空格按下转换为<br/>角色跳跃请求。" }
   class n7 node_entity
   class n7 external_node
-  n8@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把向左导航输入转成聚焦设置项<br/>的减少请求。" }
+  n8@{ shape: rounded, label: "**demo::ui::navigation::LeftAction**<br/>来自ui ↗：把向左导航输入转成聚焦设置项<br/>的减少请求。" }
   class n8 node_entity
   class n8 external_node
   n9@{ shape: rounded, label: "**(Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityRef#lt;'​_​,**<br/>**'​_​#gt;, Without#lt;ActionFns#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, EntityMut#lt;'​_​#gt;,**<br/>**(With#lt;ActionFns#gt;,**<br/>**Without#lt;ContextInstances#lt;PreUpdate#gt;#gt;**<br/>**)#gt;)**<br/>把求值结果写入类型化输入动作。" }
   class n9 node_system
-  n10@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：将键盘与手柄返回输入统一为菜<br/>单返回请求。" }
+  n10@{ shape: rounded, label: "**demo::ui::navigation::BackAction**<br/>来自ui ↗：将键盘与手柄返回输入统一为菜<br/>单返回请求。" }
   class n10 node_entity
   class n10 external_node
   n11@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n11 node_observer
-  n12@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：汇总鼠标位移，驱<br/>动所属玩家的相机观察。" }
+  n12@{ shape: rounded, label: "**demo::first​_​person::actions::**<br/>**LookAction**<br/>来自first​_​person ↗：汇总鼠标位移，驱<br/>动所属玩家的相机观察。" }
   class n12 node_entity
   class n12 external_node
-  n13@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：把向右导航输入转成聚焦设置项<br/>的增加请求。" }
+  n13@{ shape: rounded, label: "**demo::ui::navigation::RightAction**<br/>来自ui ↗：把向右导航输入转成聚焦设置项<br/>的增加请求。" }
   class n13 node_entity
   class n13 external_node
-  n14@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：将 E 键按下转换为<br/>所控角色的一次交互请求。" }
+  n14@{ shape: rounded, label: "**demo::first​_​person::actions::**<br/>**InteractAction**<br/>来自first​_​person ↗：将 E 键按下转换为<br/>所控角色的一次交互请求。" }
   class n14 node_entity
   class n14 external_node
   n15@{ shape: hex, label: "**reset​_​action**<br/>重置离开上下文的输入动作状态。" }
   class n15 node_observer
-  n16@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：汇总 WASD 输入并<br/>驱动对应角色的移动意图。" }
+  n16@{ shape: rounded, label: "**demo::first​_​person::actions::**<br/>**MoveAction**<br/>来自first​_​person ↗：汇总 WASD 输入并<br/>驱动对应角色的移动意图。" }
   class n16 node_entity
   class n16 external_node
-  n17@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：将键盘或手柄确认输入交给当前<br/>菜单按钮。" }
+  n17@{ shape: rounded, label: "**demo::ui::navigation::ConfirmAction**<br/>来自ui ↗：将键盘或手柄确认输入交给当前<br/>菜单按钮。" }
   class n17 node_entity
   class n17 external_node
   n0 e0@--> n1
@@ -132,7 +132,7 @@ flowchart LR
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }
+  e8@{ curve: bumpX }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }

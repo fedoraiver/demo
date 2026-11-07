@@ -68,23 +68,23 @@ flowchart LR
   n9@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
   class n9 node_observer
   class n9 external_node
-  n10@{ shape: rounded, label: "**integrate​_​positions**<br/>来自crate:avian3d ↗：按子步速度积分刚<br/>体位姿增量。" }
-  class n10 node_system
+  n10@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
+  class n10 node_observer
   class n10 external_node
-  n11@{ shape: rounded, label: "**solve​_​contacts**<br/>来自crate:avian3d ↗：迭代接触冲量以处<br/>理穿透与相对速度。" }
+  n11@{ shape: rounded, label: "**integrate​_​positions**<br/>来自crate:avian3d ↗：按子步速度积分刚<br/>体位姿增量。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>来自crate:bevy​_​enhanced​_​input ↗：求<br/>值上下文输入并更新动作状态。" }
+  n12@{ shape: rounded, label: "**solve​_​contacts**<br/>来自crate:avian3d ↗：迭代接触冲量以处<br/>理穿透与相对速度。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
+  n13@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>来自crate:bevy​_​enhanced​_​input ↗：求<br/>值上下文输入并更新动作状态。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**run​_​fixed​_​main​_​schedule**<br/>按累计时间推进固定主调度。" }
+  n14@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
   class n14 node_system
-  n15@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
-  class n15 node_observer
-  class n15 external_node
+  class n14 external_node
+  n15@{ shape: rounded, label: "**run​_​fixed​_​main​_​schedule**<br/>按累计时间推进固定主调度。" }
+  class n15 node_system
   n16@{ shape: rounded, label: "**extract​_​time**<br/>来自crate:bevy​_​render ↗：将主世界当<br/>前 Time 值复制并插入渲染世界，供渲染侧<br/>全局时间参数使用。" }
   class n16 node_system
   class n16 external_node
@@ -111,13 +111,13 @@ flowchart LR
   n24@{ shape: rounded, label: "**advance​_​animations**<br/>来自crate:bevy​_​animation ↗：推进动画<br/>播放器中活动动画的播放时间。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: rounded, label: "**time​_​system**<br/>按时间更新策略推进真实与虚拟时钟。" }
-  class n25 node_system
-  n26@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
+  n25@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
+  class n25 node_observer
+  class n25 external_node
+  n26@{ shape: rounded, label: "**time​_​system**<br/>按时间更新策略推进真实与虚拟时钟。" }
   class n26 node_system
-  class n26 external_node
-  n27@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
-  class n27 node_observer
+  n27@{ shape: rounded, label: "**joint​_​damping**<br/>来自crate:avian3d ↗：衰减关节两端刚体<br/>的相对速度。" }
+  class n27 node_system
   class n27 external_node
   n28@{ shape: rounded, label: "**update​_​solver​_​body​_​aabbs**<br/>来自crate:avian3d ↗：按物理结果更新活<br/>跃刚体的碰撞边界。" }
   class n28 node_system
@@ -146,18 +146,18 @@ flowchart LR
   class e10 edge_read
   n0 e11@--> n11
   class e11 edge_read
-  n2 e12@-->|"可变访问"| n0
-  class e12 edge_write
-  n3 e13@-->|"可变访问"| n0
+  n0 e12@--> n12
+  class e12 edge_read
+  n2 e13@-->|"可变访问"| n0
   class e13 edge_write
-  n0 e14@--> n12
-  class e14 edge_read
+  n3 e14@-->|"可变访问"| n0
+  class e14 edge_write
   n0 e15@--> n13
   class e15 edge_read
-  n14 e16@-->|"赋值"| n0
-  class e16 edge_write
-  n0 e17@--> n15
-  class e17 edge_read
+  n0 e16@--> n14
+  class e16 edge_read
+  n15 e17@-->|"赋值"| n0
+  class e17 edge_write
   n16 e18@--- n0
   class e18 edge_read
   n0 e19@--> n17
@@ -176,19 +176,19 @@ flowchart LR
   class e25 edge_read
   n0 e26@--> n24
   class e26 edge_read
-  n16 e27@-->|"插入"| n0
-  class e27 edge_write
-  n25 e28@-->|"可变访问"| n0
+  n0 e27@--> n25
+  class e27 edge_read
+  n16 e28@-->|"插入"| n0
   class e28 edge_write
-  n25 e29@-->|"赋值"| n0
+  n26 e29@-->|"可变访问"| n0
   class e29 edge_write
-  n0 e30@--> n26
-  class e30 edge_read
+  n26 e30@-->|"赋值"| n0
+  class e30 edge_write
   n0 e31@--> n27
   class e31 edge_read
   n0 e32@--> n28
   class e32 edge_read
-  n14 e33@-->|"可变访问"| n0
+  n15 e33@-->|"可变访问"| n0
   class e33 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -206,7 +206,7 @@ flowchart LR
   e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }
-  e16@{ curve: basis }
+  e17@{ curve: basis }
   e18@{ curve: basis }
   e19@{ curve: basis }
   e20@{ curve: basis }

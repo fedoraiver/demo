@@ -41,106 +41,94 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**CollisionLayers**<br/>声明碰撞体所属层和可交互层。" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
+  n2@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
+  n3@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
-  class n4 node_system
-  class n4 external_node
-  n5@{ shape: hex, label: "**build::{closure#35;5}**<br/>同步碰撞代理的碰撞层配置。" }
-  class n5 node_observer
-  n6@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
+  n4@{ shape: hex, label: "**build::{closure#35;5}**<br/>同步碰撞代理的碰撞层配置。" }
+  class n4 node_observer
+  n5@{ shape: rounded, label: "**solve​_​continuous**<br/>通过连续扫掠限制快速刚体穿透。" }
+  class n5 node_system
+  n6@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  class n6 external_node
+  n7@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n7 node_system
-  class n7 external_node
-  n8@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
-  class n8 node_system
+  n8@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  class n8 node_observer
   n9@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
-  class n10 node_observer
-  n11@{ shape: rounded, label: "**init​_​collider​_​constructor​_​**<br/>**hierarchies**<br/>按层级构造配置为后代生成碰撞体。" }
-  class n11 node_system
-  n12@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
-  class n12 node_entity
-  class n12 external_node
-  n13@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  n10@{ shape: rounded, label: "**init​_​collider​_​constructor​_​**<br/>**hierarchies**<br/>按层级构造配置为后代生成碰撞体。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**Greybox ground**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
+  class n11 node_entity
+  class n11 external_node
+  n12@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  class n12 node_observer
+  n13@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
   class n13 node_observer
-  n14@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n14@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
-  class n15 node_system
-  class n15 external_node
-  n16@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
-  class n16 node_observer
-  n17@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
-  class n17 node_system
-  class n17 external_node
-  n18@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
-  class n18 node_observer
+  n15@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  class n15 node_observer
   n0 e0@--> n1
   class e0 edge_read
-  n0 e1@--> n2
+  n0 e1@--> n1
   class e1 edge_read
-  n3 e2@-->|"插入"| n0
+  n2 e2@-->|"插入"| n0
   class e2 edge_write
-  n3 e3@--- n0
+  n2 e3@--- n0
   class e3 edge_read
-  n4 e4@-->|"插入"| n0
+  n3 e4@-->|"插入"| n0
   class e4 edge_write
-  n0 e5@--> n5
+  n0 e5@--> n4
   class e5 edge_read
-  n0 e6@--> n6
+  n0 e6@--> n5
   class e6 edge_read
-  n0 e7@--> n7
+  n0 e7@--> n6
   class e7 edge_read
-  n0 e8@--> n8
+  n0 e8@--> n7
   class e8 edge_read
-  n0 e9@--> n9
+  n0 e9@--> n8
   class e9 edge_read
-  n0 e10@--> n10
+  n0 e10@--> n9
   class e10 edge_read
-  n11 e11@-->|"插入"| n0
+  n10 e11@-->|"插入"| n0
   class e11 edge_write
-  n12 e12@-->|"可能包含"| n0
+  n11 e12@-->|"可能包含"| n0
   class e12 edge_reference
-  n0 e13@--> n13
+  n0 e13@--> n12
   class e13 edge_read
-  n0 e14@--> n14
+  n0 e14@--> n6
   class e14 edge_read
-  n15 e15@-->|"插入"| n0
+  n3 e15@-->|"插入"| n0
   class e15 edge_write
-  n0 e16@--> n16
+  n0 e16@--> n13
   class e16 edge_read
-  n0 e17@--> n17
+  n0 e17@--> n14
   class e17 edge_read
-  n0 e18@--> n18
+  n0 e18@--> n15
   class e18 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
+  e3@{ curve: bumpX }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }
+  e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
-  e12@{ curve: basis }
+  e12@{ curve: bumpY }
   e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }

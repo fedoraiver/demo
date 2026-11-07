@@ -48,20 +48,17 @@ flowchart LR
   n3@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
-  class n4 node_system
-  class n4 external_node
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"插入"| n0
   class e1 edge_write
   n3 e2@-->|"插入"| n0
   class e2 edge_write
-  n4 e3@-->|"插入"| n0
+  n3 e3@-->|"插入"| n0
   class e3 edge_write
   n2 e4@--- n0
   class e4 edge_read
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e2@{ curve: bumpX }
   e3@{ curve: basis }
-  e4@{ curve: basis }
+  e4@{ curve: bumpX }

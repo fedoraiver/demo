@@ -41,11 +41,9 @@ flowchart LR
   class n0 node_component
   n1@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
-  class n2 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
-  n2 e1@-->|"可变访问"| n0
+  n1 e1@-->|"可变访问"| n0
   class e1 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

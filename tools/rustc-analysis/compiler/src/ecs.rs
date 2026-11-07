@@ -559,11 +559,14 @@ impl<'tcx> Collector<'tcx> {
     }
 
     fn source(&mut self, span: Span, role: &str) -> Option<SourceEvidence> {
+        self.source_at(span, span.source_callsite(), role)
+    }
+
+    fn source_at(&mut self, span: Span, site: Span, role: &str) -> Option<SourceEvidence> {
         if span.is_dummy() {
             return None;
         }
         let map = self.tcx.sess.source_map();
-        let site = span.source_callsite();
         let start = map.lookup_char_pos(site.lo());
         let end = map.lookup_char_pos(site.hi());
         let filename = start.file.name.prefer_local_unconditionally().to_string();
@@ -2120,13 +2123,7 @@ impl<'tcx> Collector<'tcx> {
             let env = TypingEnv::fully_monomorphized();
             let source = self.source(span, "create");
             let observations = structures.len();
-            let mut seen = HashSet::new();
-            let candidates: Vec<_> = structures
-                .into_iter()
-                .filter(|structure| {
-                    seen.insert(self.entity_shape(structure, true, env).to_string())
-                })
-                .collect();
+            let candidates = self.merge_entity_observations(&structures, env);
             let group = (candidates.len() > 1).then(|| {
                 format!(
                     "alternative-{}",
@@ -2243,6 +2240,25 @@ impl<'tcx> Collector<'tcx> {
         serde_json::json!({"components":components,"required":required,"children":children,"alternatives":alternatives,"source":if sources {self.structure_source(structure)} else {None},"gaps":if sources {structure.gaps.clone()} else {vec![]}})
     }
 
+    fn merge_entity_observations(
+        &mut self,
+        structures: &[crate::entity::mir_value::EntityStructure<'tcx>],
+        env: TypingEnv<'tcx>,
+    ) -> Vec<crate::entity::mir_value::EntityStructure<'tcx>> {
+        let mut seen: HashMap<String, usize> = HashMap::new();
+        let mut candidates: Vec<crate::entity::mir_value::EntityStructure<'tcx>> = vec![];
+        for structure in structures {
+            let shape = self.entity_shape(structure, true, env).to_string();
+            if let Some(&index) = seen.get(&shape) {
+                candidates[index].merge_name_candidates(structure);
+            } else {
+                seen.insert(shape, candidates.len());
+                candidates.push(structure.clone());
+            }
+        }
+        candidates
+    }
+
     fn entity_structure(
         &mut self,
         creator: &str,
@@ -2295,18 +2311,14 @@ impl<'tcx> Collector<'tcx> {
                 "alternative-{}",
                 digest(serde_json::to_vec(&(creator, path, group_index)).unwrap())
             );
-            let mut seen = HashSet::new();
             let mut candidates = vec![];
-            for candidate in group {
-                if !seen.insert(self.entity_shape(candidate, true, env).to_string()) {
-                    continue;
-                }
+            for candidate in self.merge_entity_observations(group, env) {
                 let index = candidates.len();
-                let candidate_source = self.structure_source(candidate).or_else(|| source.clone());
-                let shape = digest(self.entity_shape(candidate, false, env).to_string());
+                let candidate_source = self.structure_source(&candidate).or_else(|| source.clone());
+                let shape = digest(self.entity_shape(&candidate, false, env).to_string());
                 candidates.push(self.entity_structure(
                     creator,
-                    candidate,
+                    &candidate,
                     candidate_source,
                     &format!(
                         "{path}.alternative{group_index}.candidate{index}-{}",
@@ -2344,6 +2356,30 @@ impl<'tcx> Collector<'tcx> {
             .filter(|evidence| Some(evidence) != source.as_ref())
             .into_iter()
             .collect();
+        let mut name_candidates: Vec<_> = structure
+            .name_candidates
+            .iter()
+            .map(|candidate| {
+                // Name 表达式保留实参范围，避免 source_callsite 扩大成整段 BSN。
+                let expression = candidate
+                    .expression
+                    .and_then(|span| self.source_at(span, span, "assembly"))
+                    .filter(|source| !source.snippet.trim().is_empty());
+                let reason = candidate.reason.clone().or_else(|| {
+                    (candidate.value.is_none() && expression.is_none())
+                        .then(|| "Name 内容及其赋值表达式未能确定。".into())
+                });
+                EntityNameCandidate {
+                    value: candidate.value.clone(),
+                    expression,
+                    reason,
+                }
+            })
+            .collect();
+        name_candidates.sort_by_cached_key(|candidate| {
+            serde_json::to_string(candidate).expect("Entity name evidence")
+        });
+        name_candidates.dedup();
         let record = EntityTemplate {
             id: id.clone(),
             creator: creator.into(),
@@ -2358,6 +2394,7 @@ impl<'tcx> Collector<'tcx> {
             alternative_context,
             possible,
             source_evidence,
+            name_candidates,
         };
         self.facts.entities.push(record);
         id

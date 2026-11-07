@@ -40,8 +40,11 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**Mesh3d**<br/>为三维可绘制实体指定网格资产。" }
   class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**check​_​dir​_​light​_​mesh​_​visibility**<br/>来自crate:bevy​_​light ↗：计算方向光各<br/>相机级联可见的投影网格。" }
   class n1 node_system
   class n1 external_node
@@ -54,7 +57,7 @@ flowchart LR
   n4@{ shape: rounded, label: "**draw​_​all​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制未单独标<br/>记的动态蒙皮网格包围区域。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
+  n5@{ shape: rounded, label: "**Greybox ground**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
   class n5 node_entity
   class n5 external_node
   n6@{ shape: rounded, label: "**mark​_​meshes​_​as​_​changed​_​if​_​their​_​**<br/>**materials​_​changed**<br/>来自crate:bevy​_​pbr ↗：材质组件或资产<br/>变化时请求网格重新提取。" }
@@ -69,7 +72,7 @@ flowchart LR
   n9@{ shape: rounded, label: "**draw​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制带独立显<br/>示标记的动态蒙皮包围区域。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：创建可拾取并参<br/>与物理的灰盒方块。" }
+  n10@{ shape: rounded, label: "**format!(#quot;Greybox cube {}#quot;, index +**<br/>**1)**<br/>来自scene​_​assembly ↗：创建可拾取并参<br/>与物理的灰盒方块。" }
   class n10 node_entity
   class n10 external_node
   n11@{ shape: rounded, label: "**calculate​_​bounds**<br/>来自crate:bevy​_​camera ↗：为允许自动计<br/>算的三维网格维护包围盒。" }
@@ -124,16 +127,11 @@ flowchart LR
   class e17 edge_read
   n0 e18@-->|"存在性约束"| n15
   class e18 edge_reference
-  n2 layout_input_0@~~~ n5
-  n5 layout_input_1@~~~ n6
-  n6 layout_input_2@~~~ n10
-  n10 layout_input_3@~~~ n13
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

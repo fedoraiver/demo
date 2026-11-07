@@ -47,30 +47,27 @@ flowchart LR
   class n2 external_node
   n3@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
+  n4@{ shape: rounded, label: "**spawn​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：创建<br/>变换操作器各轴网格、材质和覆盖相机。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**spawn​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：创建<br/>变换操作器各轴网格、材质和覆盖相机。" }
+  n5@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
   class n5 node_system
-  class n5 external_node
-  n6@{ shape: rounded, label: "**asset​_​events**<br/>发布累计的资产变化消息。" }
+  n6@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**update​_​gizmo​_​meshes**<br/>来自crate:bevy​_​gizmos​_​render ↗：将变<br/>换操作器对齐焦点并更新模式与高亮。" }
-  class n7 node_system
-  class n7 external_node
+  class n6 external_node
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
   n2 e1@-->|"可变访问"| n0
   class e1 edge_write
   n0 e2@--> n3
   class e2 edge_read
-  n4 e3@-->|"可变访问"| n0
+  n2 e3@-->|"可变访问"| n0
   class e3 edge_write
-  n5 e4@-->|"可变访问"| n0
+  n4 e4@-->|"可变访问"| n0
   class e4 edge_write
-  n6 e5@-->|"可变访问"| n0
+  n5 e5@-->|"可变访问"| n0
   class e5 edge_write
-  n7 e6@-->|"可变访问"| n0
+  n6 e6@-->|"可变访问"| n0
   class e6 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

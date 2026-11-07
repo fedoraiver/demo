@@ -132,6 +132,57 @@ test('source groups hide redundant role labels while retaining specific source l
   assert.equal(page.data.registry['item.Shared'].sourceEntries.length,2);
 });
 
+test('object details deduplicate locations within each source role and merge labels without changing evidence',()=>{
+  const sources=[
+    {role:'create',label:'创建位置',path:'src\\scene.rs',line:12},
+    {role:'create',label:'分支 A',path:'src/scene.rs',line:12,column:1,expression:'spawn(a)',expansions:[{name:'scene!'}]},
+    {role:'create',label:'分支 B',path:'src/scene.rs',line:12,column:1,expression:'spawn(b)'},
+    {role:'create',label:'分支 A',path:'src/scene.rs',line:12,column:1},
+    {role:'create',label:'create',path:'src/scene.rs',line:12,column:1},
+    {role:'create',path:'src/scene.rs',line:12,column:5},
+    {role:'assembly',label:'装配位置',path:'src/scene.rs',line:12,column:1},
+    {role:'operation',label:'条件 A',path:'src/scene.rs',line:18,guardKind:'condition',expression:'ready'},
+    {role:'operation',label:'条件 B',path:'src/scene.rs',line:18,column:1,guardKind:'unless',expression:'paused'},
+  ],original=structuredClone(sources);
+  const page=viewer('?object=item.Shared',{edit:data=>{data.registry['item.Shared'].sourceEntries=sources}}),details=page.get('details');
+  function assertSources(){
+    assert.deepEqual(details.querySelectorAll('.source-group-label').map(item=>item.textContent),['创建位置','装配位置','操作位置']);
+    assert.deepEqual(details.querySelectorAll('.source-entry-label').map(item=>item.textContent),['分支 A；分支 B','条件 A；条件 B']);
+    assert.deepEqual(details.querySelectorAll('[data-vscode-path]').map(link=>[link.dataset.vscodePath,link.dataset.vscodeLine,link.dataset.vscodeColumn]),[
+      ['src\\scene.rs','12',undefined],['src/scene.rs','12','5'],['src/scene.rs','12','1'],['src/scene.rs','18',undefined],
+    ]);
+    assert.deepEqual(page.data.registry['item.Shared'].sourceEntries,original);
+  }
+  assertSources();page.app.openObject('resource.Config');page.flush();page.back();assertSources();
+});
+
+test('relation details distinguish source columns, packages and roots and retain every invalid location',()=>{
+  const source={role:'operation',path:'src/lib.rs',line:20},dependency={name:'example',version:'1.0.0',root:'E:\\cargo\\example'};
+  const sources=[source,{...source,path:'src\\lib.rs',column:1,guardKind:'unless',expression:'disabled'},
+    {...source,column:4},{...source,role:'create'},
+    {...source,dependency},{...source,column:1,dependency:{...dependency,root:'//?/E:/cargo/example/'}},
+    {...source,dependency:{...dependency,name:'other'}},{...source,dependency:{...dependency,version:'2.0.0'}},
+    {...source,dependency:{...dependency,root:'F:/cargo/example'}},
+    ...[{},{}].map(()=>({...source,dependency:{name:'example',version:'1.0.0'}})),
+    ...[{},{}].map(()=>({...source,dependency:{...dependency,root:'relative'}})),
+    ...[{},{}].map(()=>({...source,path:'../outside.rs'})),
+    ...[{},{}].map(()=>({...source,column:0})),
+  ],original=structuredClone(sources);
+  const page=viewer('?object=item.Shared',{edit:data=>{data.views.find(view=>view.objectId==='item.Shared').links.find(link=>link.id==='write').sourceEntries=sources}});
+  page.get('diagram').querySelector('[data-link-id="write"]').dispatch('keydown',{key:'Enter'});
+  const details=page.get('details'),links=details.querySelectorAll('[data-vscode-path]');
+  assert.deepEqual(details.querySelectorAll('.source-group-label').map(item=>item.textContent),['操作位置','创建位置']);
+  assert.equal(links.length,15);
+  assert.deepEqual(links.filter(link=>link.dataset.vscodeDependencyRoot==='relative').length,2);
+  assert.equal(links.filter(link=>link.dataset.vscodeDependencyRoot==='').length,2);
+  assert.equal(links.filter(link=>link.dataset.vscodePath==='../outside.rs').length,2);
+  assert.equal(links.filter(link=>link.dataset.vscodeColumn==='0').length,2);
+  assert.deepEqual(links.filter(link=>link.dataset.vscodeDependencyRoot&&link.dataset.vscodeDependencyRoot!=='relative').map(link=>[link.dataset.vscodeDependencyName,link.dataset.vscodeDependencyVersion,link.dataset.vscodeDependencyRoot]),[
+    ['example','1.0.0','E:\\cargo\\example'],['other','1.0.0','E:\\cargo\\example'],['example','2.0.0','E:\\cargo\\example'],['example','1.0.0','F:/cargo/example'],
+  ]);
+  assert.deepEqual(sources,original);
+});
+
 test('external views defer deep-link selection until metadata arrives without hydrating the descriptor index',async()=>{
   const loader=controlledViews(),page=viewer('?object=item.Shared&node=system-fixed&workspace=E:/work',{...loader});
   assert.equal(page.app.view,undefined);assert.equal(page.canvas.getAttribute('aria-busy'),'true');
@@ -637,6 +688,60 @@ test('each projection and registration keeps its own description and source loca
   assertCardDetails(page,'system-update');assert.equal(page.data.registry['system-update'].registrations[0].schedule,'RunFixedMainLoop');
 });
 
+test('project function registration locations survive Schedule selection, object navigation and history',()=>{
+  const label='该函数的注册位置（不限于当前调度）',sources=[
+    {role:'definition',label:'定义位置',path:'src/scene_assembly/mod.rs',line:43,column:1},
+    {role:'registration',label,path:'src/scene_assembly/mod.rs',line:34,column:9},
+    {role:'registration',label,path:'src/scene_assembly/mod.rs',line:39,column:14},
+  ];
+  const page=viewer('?schedule=schedule-update&workspace=D:/demo',{edit:data=>{
+    interactiveSchedules(data);
+    Object.assign(data.registry['system-fixed'],{name:'demo::scene_assembly::spawn_session',sourceEntries:structuredClone(sources)});
+  }});
+  function assertLocations(){
+    const details=page.get('details');
+    assert.equal(details.querySelector('h2').textContent,'demo::scene_assembly::spawn_session');
+    assert.deepEqual(details.querySelectorAll('.source-group-label').map(item=>item.textContent),['定义位置','注册位置']);
+    assert.deepEqual(details.querySelectorAll('.source-entry-label').map(item=>item.textContent),[label,label]);
+    assert.deepEqual(details.querySelectorAll('[data-vscode-path]').map(link=>[link.dataset.vscodePath,link.dataset.vscodeLine,link.dataset.vscodeColumn]),sources.map(source=>[source.path,String(source.line),String(source.column)]));
+    assert.equal(page.refreshed.at(-1),details);
+    assert.deepEqual(page.data.registry['system-fixed'].sourceEntries,sources);
+  }
+  leftClick(page,'fixed-card');assertLocations();
+  page.click(page.get('details').querySelector('[data-object="system-fixed"]'));assertLocations();
+  assert.equal(page.location.searchParams.get('object'),'system-fixed');
+  page.back();assert.equal(page.app.view.id,'schedule-update');assert.equal(page.location.searchParams.get('scheduleNode'),'fixed-card');assertLocations();
+  page.forward();assert.equal(page.location.searchParams.get('object'),'system-fixed');assertLocations();
+});
+
+test('folded function nodes restore object selections without merging Schedule registration identities',()=>{
+  const page=viewer('?object=item.Shared&node=system-update&workspace=E:/work',{edit:data=>{
+    interactiveSchedules(data);
+    const view=data.views.find(view=>view.objectId==='item.Shared');
+    view.nodes.find(node=>node.id==='system-fixed').sourceNodeIds=['system-fixed','system-update'];
+    view.nodes=view.nodes.filter(node=>node.id!=='system-update');
+    view.links=view.links.map(link=>({...link,displayFrom:link.from==='system-update'?'system-fixed':link.from,displayTo:link.to==='system-update'?'system-fixed':link.to}));
+    const hidden=view.svg.match(/<g class="node" data-id="system-update".*?<\/text><\/g><\/g>/)?.[0];
+    assert.ok(hidden);view.svg=view.svg.replace(hidden,'');
+  }});
+  function assertRepresentative(){
+    assert.equal(page.location.searchParams.get('node'),'system-fixed');
+    assert.equal(page.get('diagram').querySelector('[data-id="system-fixed"]').classList.contains('selected'),true);
+    assert.equal(page.get('diagram').querySelector('[data-id="system-update"]'),null);
+    assertCardDetails(page,'system-fixed');
+    assert.equal(page.app.view.links.find(link=>link.id==='read-update').to,'system-update');
+    assert.equal(page.app.view.links.find(link=>link.id==='read-update').displayTo,'system-fixed');
+  }
+  assertRepresentative();
+  page.app.openObject('resource.Config');page.flush();page.back();assertRepresentative();
+  page.forward();assert.equal(page.location.searchParams.get('object'),'resource.Config');page.back();assertRepresentative();
+  page.app.openObject('system-update');page.flush();
+  assert.equal(page.location.searchParams.get('object'),'system-update');assert.equal(page.location.searchParams.get('node'),'system-update');assertCardDetails(page,'system-update');
+  page.choose('schedule-update');leftClick(page,'update-card');
+  assert.equal(page.location.searchParams.get('scheduleNode'),'update-card');assertCardDetails(page,'system-update');assertScheduleHighlight(page,'update-card');
+  leftClick(page,'fixed-card');assert.equal(page.location.searchParams.get('scheduleNode'),'fixed-card');assertCardDetails(page,'system-fixed');assertScheduleHighlight(page,'fixed-card');
+});
+
 test('global search reaches isolated objects and distinguishes same names by owner and Schedule',()=>{
   const page=viewer('?feature=overview');page.app.search('Shared');
   const results=page.get('object-results').querySelectorAll('[data-object]');
@@ -649,6 +754,29 @@ test('global search reaches isolated objects and distinguishes same names by own
   page.click(page.get('object-results').querySelector('[data-object="resource.Config"]'));assert.equal(page.app.view.id,'object:resource.Config');
   assert.equal(page.app.view.nodes.length,1);assertFitted(page);
   page.back();assert.equal(page.get('object-results').querySelector('h2').textContent,'1 个匹配对象');assert.equal(page.get('search').value,'Config');
+});
+
+test('Entity Name search opens each same-named creation template with its exact title and source',()=>{
+  for(const name of ['HUD::状态 "active"_label','format!("Block {}", index)']){
+    const page=viewer('?object=item.Shared',{edit:data=>{
+      data.registry['entity-item'].name=name;
+      data.registry['entity-character'].name=name;
+      data.registry['entity-character'].sourceEntries=[{role:'assembly',path:'src/character.rs',line:31}];
+    }});
+    page.app.search(name);
+    const hits=page.get('object-results').querySelectorAll('[data-object]');
+    assert.deepEqual(new Set(hits.map(button=>button.dataset.object)),new Set(['entity-item','entity-character']));
+    for(const id of hits.map(button=>button.dataset.object)){
+      const hit=page.get('object-results').querySelector('[data-object="'+id+'"]');
+      assert.ok(hit.textContent.includes(name));
+      page.click(hit);
+      assert.equal(page.app.view.objectId,id);
+      assert.equal(page.get('details').querySelector('h2').textContent,name);
+      assertCardDetails(page,id);
+      assert.equal(page.location.searchParams.get('object'),id);
+      page.app.search(name);
+    }
+  }
 });
 
 function searchKind(page,kind,checked=true){
@@ -926,6 +1054,42 @@ test('generated embedded scripts execute their search factory and category handl
   const input=document.getElementById('search');input.value='Shared';input.dispatch('input');document.getElementById('search-kinds-toggle').click();const component=document.querySelector('[data-search-kind="Component"]');component.checked=true;component.dispatch('change');
   assert.deepEqual(document.getElementById('object-results').querySelectorAll('[data-object]').map(button=>button.dataset.object),['character.Shared','item.Shared']);
   assert.equal(document.getElementById('section'),null);assert.equal(document.getElementById('object-results').hidden,false);
+});
+
+test('generated scripts deduplicate source links while preserving copying, invalid feedback and navigation history',async()=>{
+  const source={role:'operation',path:'src\\dedup.rs',line:7},sources=[
+    {...source,label:'操作位置',guardKind:'condition',expression:'ready'},
+    {...source,path:'src/dedup.rs',column:1,label:'同一定位补充',guardKind:'unless',expression:'paused',expansions:[{name:'scene!'}]},
+    ...[{},{}].map(()=>({...source,dependency:{name:'example',version:'1.0.0'}})),
+    ...[{},{}].map(()=>({...source,column:0})),
+    ...[null,null,false,false].map(dependency=>({...source,dependency})),
+    ...[{},{}].map(()=>({...source,path:'../outside.rs'})),
+  ],original=structuredClone(sources),data=fixture();
+  data.registry['item.Shared'].sourceEntries=sources;
+  data.views.find(view=>view.objectId==='item.Shared').links.find(link=>link.id==='write').sourceEntries=sources;
+  const html=renderArchitectureViewer(data),document=testDocument(html),location=new URL('file:///D:/demo/docs/diagrams/generated/pages/ecs-architecture.html?object=item.Shared&workspace=D:/demo'),frames=[],events=new Map(),copied=[],entries=[{href:location.href,state:null}];let index=0;
+  document.getElementById('architecture-data').textContent=JSON.stringify(data);
+  const history={get state(){return entries[index].state},replaceState(state,_,href){location.href=href;entries[index]={href:location.href,state}},pushState(state,_,href){location.href=href;entries.splice(index+1);entries.push({href:location.href,state});index++}},window={innerWidth:1440,innerHeight:900,addEventListener(name,listener){events.set(name,listener)}};
+  const context=vm.createContext({document,location,history,window,requestAnimationFrame:callback=>frames.push(callback),navigator:{clipboard:{writeText:async value=>copied.push(value)}},URL,URLSearchParams,AbortController,setTimeout:()=>1,clearTimeout:()=>{}});
+  for(const{attributes,script}of scriptsIn(html))if(!attributes.includes('application/json'))new vm.Script(script).runInContext(context);
+  const flush=()=>{while(frames.length)frames.splice(0).forEach(callback=>callback())};flush();
+  const details=document.getElementById('details');
+  async function assertSources(){
+    const links=details.querySelectorAll('a[data-vscode-path]');
+    assert.equal(links.length,11);assert.equal(links.filter(link=>link.getAttribute('aria-disabled')==='true').length,10);
+    assert.equal(links[0].href,'vscode://file/D:/demo/src/dedup.rs:7:1');
+    assert.equal(details.querySelector('.source-entry-label').textContent,'同一定位补充');
+    assert.equal(details.querySelectorAll('[data-source-unavailable]').filter(item=>item.textContent.includes('依赖源码根目录缺失')).length,2);
+    assert.equal(links.filter(link=>link.title==='源码路径、包身份或行列无效，无法打开。').length,8);
+    details.querySelector('[data-source-location] button').dispatch('click');await advance();
+    assert.equal(copied.at(-1),'D:/demo/src/dedup.rs:7:1');
+  }
+  await assertSources();
+  document.getElementById('diagram').querySelector('[data-link-id="write"]').dispatch('keydown',{key:'Enter'});await assertSources();
+  details.querySelector('[data-open="system-fixed"]').click();flush();assert.equal(location.searchParams.get('object'),'system-fixed');
+  location.href=entries[--index].href;events.get('popstate')();flush();await assertSources();
+  location.href=entries[++index].href;events.get('popstate')();flush();assert.equal(location.searchParams.get('object'),'system-fixed');
+  assert.deepEqual(data.registry['item.Shared'].sourceEntries,original);assert.deepEqual(data.views.find(view=>view.objectId==='item.Shared').links.find(link=>link.id==='write').sourceEntries,original);
 });
 
 test('plugin picker navigation preserves object selection history and workspace after owner links are removed',()=>{
@@ -1287,6 +1451,20 @@ test('dense search retains full endpoints and contracts, selected native pair an
   page.click(page.get('relation-overview'));assert.equal(page.app.view.relationPresentation,'list');assert.equal(page.get('relation-search').value,'条件 63');assert.equal(page.location.searchParams.has('objectRelation'),false);
   page.back();await page.settle();assert.equal(page.app.view.relationPresentation,'relation');assert.equal(page.get('clear-selection'),null);assert.equal(page.get('relation-search').value,'条件 63');
   page.forward();await page.settle();assert.equal(page.app.view.relationPresentation,'list');assert.equal(page.get('relation-list').scrollTop,27);
+});
+
+test('dense relation rows search exact Entity names and navigate their template identity',async()=>{
+  const name='HUD::状态 "active"_label';
+  const page=viewer('?object=item.Shared',{edit:data=>{denseFixture(data);data.registry['entity-item'].name=name},createObjectRelationRenderer:()=>({render:async(target,id)=>focusedRelation(target,id)})});
+  const search=page.get('relation-search');search.value=name;search.dispatch('input');
+  assert.equal(page.get('relation-count').textContent,'64 / 64 条关系');
+  assert.ok(page.get('relation-list').querySelector('[data-relation="dense-0"]').textContent.includes(name));
+  chooseRelation(page,'dense-0');await page.settle();
+  page.app.select('entity-item');
+  assert.equal(page.get('details').querySelector('h2').textContent,name);
+  page.click(page.get('details').querySelector('[data-object="entity-item"]'));
+  assert.equal(page.app.view.objectId,'entity-item');
+  assertCardDetails(page,'entity-item');
 });
 
 test('dense unknown relations and render errors keep the complete directory and offer another relation',async()=>{

@@ -183,12 +183,12 @@ function definition(view, graph, registry, features, scheduleGroups = [], buildO
   if (byId.size !== nodes.length) throw new Error(`同一视图重复声明节点：${view.id}`);
   const objectCenter = view.centerNodeId || graph.centerNodeId;
   // 双向访问放在同一侧，使用原生起点箭头保留真实方向，避免把一跳图排成有向环。
-  const objectIncoming = new Set(view.aspect === 'object' ? graph.links.filter(link => link.to === objectCenter && link.from !== objectCenter).map(link => link.from) : []);
+  const objectIncoming = new Set(view.aspect === 'object' ? graph.links.filter(link => displayEndpoint(link, 'to') === objectCenter && displayEndpoint(link, 'from') !== objectCenter).map(link => displayEndpoint(link, 'from')) : []);
   const links = graph.links.map((link, index) => {
     const edgeSemantic = edgeSemanticOf(link, registry);
     const nativeReverse = (view.aspect === 'component' && displayEndpoint(link, 'from') === (view.componentNodeId || graph.componentNodeId)
       && byId.get(displayEndpoint(link, 'to'))?.visualType !== 'entity')
-      || (view.aspect === 'object' && link.from === objectCenter && objectIncoming.has(link.to));
+      || (view.aspect === 'object' && displayEndpoint(link, 'from') === objectCenter && objectIncoming.has(displayEndpoint(link, 'to')));
     return { ...link, ...(nativeReverse ? { nativeReverse: true } : {}), mermaidId: `e${index}`, edgeSemantic, displayLabel: displayLabelOf(link, edgeSemantic, registry) };
   });
   const placement = view.aspect === 'systems' || view.layout === 'app-schedule' ? buildObserverPlacement(graph, registry, scheduleGroups) : { groups: scheduleGroups, branches: [] };

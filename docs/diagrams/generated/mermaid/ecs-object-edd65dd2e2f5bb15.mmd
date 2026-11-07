@@ -39,16 +39,17 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**ViewUpscalingPipeline**<br/>记录视图颜色输出所用的缩放管线。" }
   class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**prepare​_​view​_​upscaling​_​pipelines**<br/>按相机合成方式准备输出缩放管线。" }
   class n2 node_system
   n3@{ shape: rounded, label: "**clear​_​view​_​upscaling​_​pipelines**<br/>清除视图缩放管线以便设备恢复后重建。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
-  class n4 node_system
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"插入"| n0
@@ -59,11 +60,11 @@ flowchart LR
   class e3 edge_reference
   n3 e4@-->|"移除"| n0
   class e4 edge_write
-  n0 e5@--> n4
+  n0 e5@--> n1
   class e5 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: bumpX }
-  e3@{ curve: bumpX }
+  e2@{ curve: basis }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }

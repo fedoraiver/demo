@@ -42,19 +42,18 @@ flowchart LR
   class n0 node_resource
   n1@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
+  n2@{ shape: rounded, label: "**prepare​_​post​_​processing​_​pipelines**<br/>按视图颜色格式准备内置后处理管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**prepare​_​post​_​processing​_​pipelines**<br/>按视图颜色格式准备内置后处理管线。" }
+  n3@{ shape: rounded, label: "**init​_​post​_​processing​_​pipeline**<br/>建立色差、暗角和镜头畸变的共用后处理资<br/>源。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**init​_​post​_​processing​_​pipeline**<br/>建立色差、暗角和镜头畸变的共用后处理资<br/>源。" }
-  class n4 node_system
   n0 e0@--> n1
   class e0 edge_read
-  n0 e1@--> n2
+  n0 e1@--> n1
   class e1 edge_read
-  n0 e2@--> n3
+  n0 e2@--> n2
   class e2 edge_read
-  n4 e3@-->|"插入"| n0
+  n3 e3@-->|"插入"| n0
   class e3 edge_write
   e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }

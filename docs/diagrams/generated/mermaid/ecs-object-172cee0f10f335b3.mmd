@@ -67,15 +67,12 @@ flowchart LR
   n10@{ shape: rounded, label: "**draw​_​skinned​_​mesh​_​bounds**<br/>来自crate:bevy​_​gizmos ↗：绘制带独立显<br/>示标记的动态蒙皮包围区域。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
+  n11@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  n12@{ shape: rounded, label: "**calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**calculate​_​bounds​_​2d**<br/>来自crate:bevy​_​sprite ↗：为二维网格和<br/>精灵计算局部包围盒。" }
-  class n13 node_system
-  class n13 external_node
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"可变访问"| n0
@@ -96,11 +93,11 @@ flowchart LR
   class e8 edge_read
   n0 e9@--> n10
   class e9 edge_read
-  n11 e10@-->|"可变访问"| n0
+  n7 e10@-->|"可变访问"| n0
   class e10 edge_write
-  n12 e11@-->|"可变访问"| n0
+  n11 e11@-->|"可变访问"| n0
   class e11 edge_write
-  n0 e12@--> n13
+  n0 e12@--> n12
   class e12 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -108,8 +105,9 @@ flowchart LR
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
+  e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }
+  e8@{ curve: bumpX }
   e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }

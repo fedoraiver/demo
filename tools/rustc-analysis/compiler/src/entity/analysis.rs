@@ -1,5 +1,7 @@
 //! 直接读取编译器类型与 MIR；所有分析均发生在 TyCtxt 的有效期内。
-use crate::entity::mir_value::{Address, Constraint, Datum, EntityStructure, Kind, Memory};
+use crate::entity::mir_value::{
+    Address, Constraint, Datum, EntityStructure, Kind, Memory, NameParts,
+};
 use analysis_contract::{
     entity_names::{Creation, Diagnostic, Report, Site},
     normalized,
@@ -39,6 +41,7 @@ pub struct Engine<'tcx> {
     pub collect_structure: bool,
     pub structural_creations: Vec<StructuralCreation<'tcx>>,
     pub required_types: HashMap<Ty<'tcx>, Vec<Ty<'tcx>>>,
+    pub required_names: HashMap<Ty<'tcx>, NameParts>,
     pub instances: Vec<Instance<'tcx>>,
     creations: Vec<Creation>,
     diagnostics: Vec<Diagnostic>,
@@ -117,6 +120,7 @@ pub fn resolver(tcx: TyCtxt<'_>, collect_structure: bool) -> Engine<'_> {
         collect_structure,
         structural_creations: vec![],
         required_types: HashMap::new(),
+        required_names: HashMap::new(),
         instances: vec![],
         creations: vec![],
         diagnostics: vec![],
@@ -460,6 +464,46 @@ impl<'tcx> Engine<'tcx> {
         self.recursive.remove(key);
         result
     }
+    fn invalidate_mutable_text(&self, arguments: &[Datum<'tcx>], memory: &mut Memory<'tcx>) {
+        for argument in arguments {
+            // Fn 系列调用把实参放入已知元组，仍只处理其中显式的可变文本引用。
+            if matches!(argument.ty.kind(), ty::Tuple(_)) {
+                self.invalidate_mutable_text(argument.fields(), memory);
+                continue;
+            }
+            if !matches!(argument.ty.kind(), ty::Ref(_, inner, rustc_hir::Mutability::Mut) if self.text_type(*inner))
+            {
+                continue;
+            }
+            let Kind::Ref(address) = &argument.kind else {
+                continue;
+            };
+            self.invalidate_text_slot(address, memory, 0);
+        }
+    }
+
+    fn invalidate_text_slot(&self, address: &Address, memory: &mut Memory<'tcx>, depth: usize) {
+        if depth >= 32 {
+            return;
+        }
+        let Some(value) = memory.read(address) else {
+            return;
+        };
+        if matches!(value.ty.kind(), ty::Ref(_, _, rustc_hir::Mutability::Mut))
+            && let Kind::Ref(target) = &value.kind
+        {
+            // 可变引用既可能改写原目标，也可能被重绑；共享引用只允许重绑所在槽。
+            self.invalidate_text_slot(target, memory, depth + 1);
+        }
+        let reason = "text modified by an uninterpreted call";
+        let unknown = if value.ty.is_ref() {
+            self.unknown(value.ty, reason, memory)
+        } else {
+            Datum::unknown(value.ty, reason)
+        };
+        memory.write(self.tcx, address, unknown);
+    }
+
     fn interpret(
         &mut self,
         instance: Instance<'tcx>,
@@ -473,6 +517,7 @@ impl<'tcx> Engine<'tcx> {
             instance.def,
             ty::InstanceKind::Intrinsic(_) | ty::InstanceKind::LlvmIntrinsic(_)
         ) {
+            self.invalidate_mutable_text(&arguments, &mut memory);
             return Ok(vec![Outcome {
                 value: self.unknown(return_ty, "runtime compiler intrinsic", &mut memory),
                 memory,
@@ -500,12 +545,14 @@ impl<'tcx> Engine<'tcx> {
                 && (self.text_type(return_ty) || self.control_type(return_ty)));
         if !needed {
             self.callbacks(&arguments, &memory, span)?;
+            self.invalidate_mutable_text(&arguments, &mut memory);
             return Ok(vec![Outcome {
                 value: self.unknown(return_ty, "external runtime value", &mut memory),
                 memory,
             }]);
         }
         if matches!(instance.def, ty::InstanceKind::Virtual(..)) {
+            self.invalidate_mutable_text(&arguments, &mut memory);
             return Ok(vec![Outcome {
                 value: self.unknown(return_ty, "dynamic dispatch target is unknown", &mut memory),
                 memory,
@@ -698,11 +745,26 @@ impl<'tcx> Engine<'tcx> {
                     let callee = self.operand(&frame, func, &mut memory)?;
                     let values = args
                         .iter()
-                        .map(|argument| self.operand(&frame, &argument.node, &mut memory))
+                        .map(|argument| {
+                            let mut value = self.operand(&frame, &argument.node, &mut memory)?;
+                            value.argument_span = Some(argument.span);
+                            Ok(value)
+                        })
                         .collect::<Result<Vec<_>>>()?;
                     let results = self.invoke(callee, values, memory, *fn_span)?;
                     if let Some(target) = target {
+                        let result_ty = self.instantiate(
+                            frame.instance,
+                            destination.ty(&frame.body.local_decls, self.tcx).ty,
+                        );
                         for mut result in results {
+                            result.value.ty = result_ty;
+                            if self.text_type(result.value.ty)
+                                && result.value.name_expression.is_none()
+                            {
+                                result.value.name_expression =
+                                    self.name_expression_span(terminator.source_info.span);
+                            }
                             self.write(&frame, *destination, result.value, &mut result.memory);
                             queue.push_back((*target, result.memory));
                         }
@@ -756,6 +818,7 @@ impl<'tcx> Engine<'tcx> {
                 if let Some(instance) = self.resolve(id, args)? {
                     self.call(instance, values, memory, span)
                 } else {
+                    self.invalidate_mutable_text(&values, &mut memory);
                     let ty = self
                         .tcx
                         .fn_sig(id)
@@ -787,13 +850,16 @@ impl<'tcx> Engine<'tcx> {
                 values.insert(0, self_value);
                 self.call(instance, values, memory, span)
             }
-            _ => Ok(vec![Outcome {
-                value: Datum::unknown(
-                    self.tcx.types.unit,
-                    "dynamic function pointer target is unknown",
-                ),
-                memory,
-            }]),
+            _ => {
+                self.invalidate_mutable_text(&values, &mut memory);
+                Ok(vec![Outcome {
+                    value: Datum::unknown(
+                        self.tcx.types.unit,
+                        "dynamic function pointer target is unknown",
+                    ),
+                    memory,
+                }])
+            }
         }
     }
     pub fn return_ty(&self, instance: Instance<'tcx>) -> Ty<'tcx> {
@@ -938,6 +1004,7 @@ impl<'tcx> Engine<'tcx> {
         );
         let address = self.address(frame, place, memory);
         let stored = address.as_ref().and_then(|address| memory.read(address));
+        let name_expression = stored.as_ref().and_then(|value| value.name_expression);
         let mut value = match stored {
             Some(value) if !matches!(value.kind, Kind::Unknown(_)) => value,
             value => {
@@ -957,6 +1024,7 @@ impl<'tcx> Engine<'tcx> {
             }
         };
         value.ty = ty;
+        value.name_expression = value.name_expression.or(name_expression);
         value
     }
     fn write(
@@ -1085,6 +1153,12 @@ impl<'tcx> Engine<'tcx> {
             _ => self.unknown(ty, "runtime MIR rvalue", memory),
         };
         result.ty = ty;
+        if self.is_name(ty) && result.name_expression.is_none() {
+            result.name_expression = result
+                .fields()
+                .first()
+                .and_then(|field| field.name_expression.or(field.argument_span).or(field.span));
+        }
         Ok(result)
     }
 }

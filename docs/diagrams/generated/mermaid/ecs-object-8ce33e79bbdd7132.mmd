@@ -67,7 +67,7 @@ flowchart LR
   n9@{ shape: rounded, label: "**prepare​_​lights**<br/>来自crate:bevy​_​pbr ↗：准备视图光照参<br/>数、阴影视图和阴影贴图。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
+  n10@{ shape: rounded, label: "**First-person camera**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
   class n10 node_entity
   class n10 external_node
   n11@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
@@ -79,7 +79,7 @@ flowchart LR
   n13@{ shape: rounded, label: "**update​_​spot​_​light​_​frusta**<br/>来自crate:bevy​_​light ↗：更新可见聚光<br/>灯的阴影视锥。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
+  n14@{ shape: rounded, label: "**MenuCamera**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
   class n14 node_entity
   class n14 external_node
   n0 e0@--> n1

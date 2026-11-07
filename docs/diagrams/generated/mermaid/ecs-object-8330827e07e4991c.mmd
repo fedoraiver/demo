@@ -68,7 +68,7 @@ flowchart LR
   class n7 node_system_group
   n8@{ shape: cyl, label: "**HoveredNonWindowEguiContext**<br/>保存指针当前悬停的非窗口 Egui 上下文实<br/>体" }
   class n8 node_resource
-  n9@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n9@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>汇总 Egui 输入并同步上下文状态。" }
   class n9 node_system
   n10@{ shape: lean-r, label: "**EguiInputEvent**<br/>传递供 Egui 消费的输入事件。" }
   class n10 node_message
@@ -122,7 +122,7 @@ flowchart LR
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
-  e9@{ curve: basis }
+  e9@{ curve: bumpX }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }

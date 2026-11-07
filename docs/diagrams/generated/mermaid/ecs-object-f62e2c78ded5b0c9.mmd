@@ -41,22 +41,22 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**Messages#lt;UiRequest#gt;**<br/>保存最近两次轮换期间产生的指定类型消息" }
   class n0 node_resource
-  n1@{ shape: hex, label: "**back**<br/>来自ui ↗：将返回动作提交给统一菜单请求<br/>入口。" }
+  n1@{ shape: hex, label: "**right**<br/>来自ui ↗：向当前设置字段提交增值请求。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>来自ui ↗：Enhanced Input 负责菜单语义<br/>动作，但无法表示 UI 命中后的局部绝对横<br/>坐标。" }
-  class n2 node_system
+  n2@{ shape: hex, label: "**back**<br/>来自ui ↗：将返回动作提交给统一菜单请求<br/>入口。" }
+  class n2 node_observer
   class n2 external_node
-  n3@{ shape: hex, label: "**confirm**<br/>来自ui ↗：提交当前聚焦按钮的菜单动作。" }
+  n3@{ shape: hex, label: "**back**<br/>来自ui ↗：将返回动作提交给统一菜单请求<br/>入口。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  n4@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>来自ui ↗：Enhanced Input 负责菜单语义<br/>动作，但无法表示 UI 命中后的局部绝对横<br/>坐标。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: hex, label: "**confirm**<br/>来自ui ↗：提交当前聚焦按钮的菜单动作。" }
-  class n5 node_observer
+  n5@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  class n5 node_system
   class n5 external_node
-  n6@{ shape: hex, label: "**right**<br/>来自ui ↗：向当前设置字段提交增值请求。" }
+  n6@{ shape: hex, label: "**left**<br/>来自ui ↗：向当前设置字段提交减值请求。" }
   class n6 node_observer
   class n6 external_node
   n7@{ shape: hex, label: "**confirm**<br/>来自ui ↗：提交当前聚焦按钮的菜单动作。" }
@@ -65,26 +65,26 @@ flowchart LR
   n8@{ shape: hex, label: "**right**<br/>来自ui ↗：向当前设置字段提交增值请求。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**right**<br/>来自ui ↗：向当前设置字段提交增值请求。" }
+  n9@{ shape: hex, label: "**back**<br/>来自ui ↗：将返回动作提交给统一菜单请求<br/>入口。" }
   class n9 node_observer
   class n9 external_node
   n10@{ shape: hex, label: "**left**<br/>来自ui ↗：向当前设置字段提交减值请求。" }
   class n10 node_observer
   class n10 external_node
-  n11@{ shape: hex, label: "**left**<br/>来自ui ↗：向当前设置字段提交减值请求。" }
+  n11@{ shape: hex, label: "**right**<br/>来自ui ↗：向当前设置字段提交增值请求。" }
   class n11 node_observer
   class n11 external_node
   n12@{ shape: hex, label: "**left**<br/>来自ui ↗：向当前设置字段提交减值请求。" }
   class n12 node_observer
   class n12 external_node
-  n13@{ shape: hex, label: "**back**<br/>来自ui ↗：将返回动作提交给统一菜单请求<br/>入口。" }
+  n13@{ shape: hex, label: "**confirm**<br/>来自ui ↗：提交当前聚焦按钮的菜单动作。" }
   class n13 node_observer
   class n13 external_node
-  n14@{ shape: hex, label: "**back**<br/>来自ui ↗：将返回动作提交给统一菜单请求<br/>入口。" }
-  class n14 node_observer
+  n14@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
+  class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
-  class n15 node_system
+  n15@{ shape: hex, label: "**confirm**<br/>来自ui ↗：提交当前聚焦按钮的菜单动作。" }
+  class n15 node_observer
   class n15 external_node
   n1 e0@-->|"赋值"| n0
   class e0 edge_write
@@ -92,9 +92,9 @@ flowchart LR
   class e1 edge_write
   n3 e2@-->|"赋值"| n0
   class e2 edge_write
-  n4 e3@-->|"可变访问"| n0
+  n4 e3@-->|"赋值"| n0
   class e3 edge_write
-  n5 e4@-->|"赋值"| n0
+  n5 e4@-->|"可变访问"| n0
   class e4 edge_write
   n6 e5@-->|"赋值"| n0
   class e5 edge_write
@@ -110,15 +110,15 @@ flowchart LR
   class e10 edge_write
   n12 e11@-->|"赋值"| n0
   class e11 edge_write
-  n13 e12@-->|"赋值"| n0
+  n5 e12@-->|"赋值"| n0
   class e12 edge_write
-  n14 e13@-->|"赋值"| n0
+  n13 e13@-->|"赋值"| n0
   class e13 edge_write
-  n4 e14@-->|"赋值"| n0
-  class e14 edge_write
-  n0 e15@--> n15
-  class e15 edge_read
-  n2 e16@-->|"可变访问"| n0
+  n0 e14@--> n14
+  class e14 edge_read
+  n4 e15@-->|"可变访问"| n0
+  class e15 edge_write
+  n15 e16@-->|"赋值"| n0
   class e16 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -134,5 +134,5 @@ flowchart LR
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
-  e14@{ curve: basis }
+  e15@{ curve: basis }
   e16@{ curve: basis }

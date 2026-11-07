@@ -43,7 +43,7 @@ flowchart LR
   n1@{ shape: rounded, label: "**write​_​file​_​dnd​_​messages​_​system**<br/>来自crate:bevy​_​egui ↗：把文件拖放路由<br/>到对应 Egui 上下文。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：把界面输入和文<br/>件拖放写入 Egui 输入批次。" }
+  n2@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：汇总 Egui 输<br/>入并同步上下文状态。" }
   class n2 node_system
   class n2 external_node
   n1 e0@-->|"可变访问"| n0

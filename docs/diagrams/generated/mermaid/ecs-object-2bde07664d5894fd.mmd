@@ -30,15 +30,15 @@
 }
 ---
 flowchart LR
-  accTitle: rebuild_page · 创建模板 · 对象关系
+  accTitle: Menu label · 对象关系
   accDescr: 实体创建模板与直接关联的非组件对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef edge_relationship stroke:#7B4DB2,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示帮助页的键位与动作名称。" }
+  n0@{ shape: rounded, label: "**Menu label**<br/>显示帮助页的键位与动作名称。" }
   class n0 node_entity
-  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>排列帮助卡片中的标题与操作说明。" }
+  n1@{ shape: rounded, label: "**format!(#quot;Help input hint: {title}#quot;)**<br/>排列帮助卡片中的标题与操作说明。" }
   class n1 node_entity
   n1 e0@-->|"子实体"| n0
   class e0 edge_relationship

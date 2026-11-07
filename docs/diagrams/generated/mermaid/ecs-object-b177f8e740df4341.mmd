@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: spawn_keyboard_controller · 创建模板 · 对象关系
+  accTitle: format!(#quot;Keyboard controller {id}#quot;) · 对象关系
   accDescr: 实体创建模板与直接关联的非组件对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -38,22 +38,19 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_relationship stroke:#7B4DB2,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>承载玩家键鼠玩法输入与角色控制关系。" }
+  n0@{ shape: rounded, label: "**format!(#quot;Keyboard controller {id}#quot;)**<br/>承载玩家键鼠玩法输入与角色控制关系。" }
   class n0 node_entity
-  n1@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>汇总 WASD 输入并驱动对应角色的移动意<br/>图。" }
+  n1@{ shape: rounded, label: "**demo::first​_​person::actions::**<br/>**MoveAction**<br/>汇总 WASD 输入并驱动对应角色的移动意<br/>图。" }
   class n1 node_entity
-  n2@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>把空格按下转换为角色跳跃请求。" }
+  n2@{ shape: rounded, label: "**demo::first​_​person::actions::**<br/>**JumpAction**<br/>把空格按下转换为角色跳跃请求。" }
   class n2 node_entity
-  n3@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>将 E 键按下转换为所控角色的一次交互请<br/>求。" }
+  n3@{ shape: rounded, label: "**demo::first​_​person::actions::**<br/>**InteractAction**<br/>将 E 键按下转换为所控角色的一次交互请<br/>求。" }
   class n3 node_entity
-  n4@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>汇总鼠标位移，驱动所属玩家的相机观察。" }
+  n4@{ shape: rounded, label: "**demo::first​_​person::actions::**<br/>**LookAction**<br/>汇总鼠标位移，驱动所属玩家的相机观察。" }
   class n4 node_entity
   n5@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
-  class n6 node_system
-  class n6 external_node
   n0 e0@-->|"子实体"| n1
   class e0 edge_relationship
   n0 e1@-->|"子实体"| n2
@@ -64,7 +61,7 @@ flowchart LR
   class e3 edge_relationship
   n5 e4@-->|"创建模板"| n0
   class e4 edge_write
-  n6 e5@-->|"创建模板"| n0
+  n5 e5@-->|"创建模板"| n0
   class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

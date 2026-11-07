@@ -41,78 +41,78 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lean-r, label: "**SoundRequest**<br/>声音请求保存用于日志定位的来源实体标识，<br/>来源实体销毁后仍可消费。" }
   class n0 node_message
-  n1@{ shape: rounded, label: "**play​_​requests**<br/>按有效混音和播放限额处理声音请求。" }
-  class n1 node_system
-  n2@{ shape: hex, label: "**next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
-  class n2 node_observer
-  class n2 external_node
+  n1@{ shape: hex, label: "**previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
+  class n1 node_observer
+  class n1 external_node
+  n2@{ shape: rounded, label: "**play​_​requests**<br/>按有效混音和播放限额处理声音请求。" }
+  class n2 node_system
   n3@{ shape: hex, label: "**previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
   class n3 node_observer
   class n3 external_node
-  n4@{ shape: hex, label: "**previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
+  n4@{ shape: hex, label: "**next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
   class n4 node_observer
   class n4 external_node
   n5@{ shape: hex, label: "**next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
   class n5 node_observer
   class n5 external_node
-  n6@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
-  class n6 node_system
+  n6@{ shape: hex, label: "**next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
+  class n6 node_observer
   class n6 external_node
-  n7@{ shape: hex, label: "**next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
+  n7@{ shape: hex, label: "**previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
   class n7 node_observer
   class n7 external_node
-  n8@{ shape: hex, label: "**previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
-  class n8 node_observer
+  n8@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
+  class n8 node_system
   class n8 external_node
   n9@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
   class n9 node_system
   class n9 external_node
-  n0 e0@--> n1
-  class e0 edge_consume
-  n2 e1@-->|"可变访问"| n0
-  class e1 edge_publish
-  n2 e2@-->|"消息"| n0
+  n1 e0@-->|"消息"| n0
+  class e0 edge_publish
+  n0 e1@--> n2
+  class e1 edge_consume
+  n3 e2@-->|"可变访问"| n0
   class e2 edge_publish
-  n3 e3@-->|"消息"| n0
+  n4 e3@-->|"可变访问"| n0
   class e3 edge_publish
   n4 e4@-->|"消息"| n0
   class e4 edge_publish
-  n3 e5@-->|"可变访问"| n0
+  n5 e5@-->|"消息"| n0
   class e5 edge_publish
-  n5 e6@-->|"消息"| n0
+  n3 e6@-->|"消息"| n0
   class e6 edge_publish
   n6 e7@-->|"可变访问"| n0
   class e7 edge_publish
-  n7 e8@-->|"可变访问"| n0
+  n7 e8@-->|"消息"| n0
   class e8 edge_publish
-  n8 e9@-->|"消息"| n0
+  n7 e9@-->|"可变访问"| n0
   class e9 edge_publish
-  n4 e10@-->|"可变访问"| n0
+  n8 e10@-->|"可变访问"| n0
   class e10 edge_publish
-  n8 e11@-->|"可变访问"| n0
+  n8 e11@-->|"消息"| n0
   class e11 edge_publish
-  n5 e12@-->|"可变访问"| n0
+  n6 e12@-->|"消息"| n0
   class e12 edge_publish
-  n6 e13@-->|"消息"| n0
+  n9 e13@-->|"可变访问"| n0
   class e13 edge_publish
-  n7 e14@-->|"消息"| n0
+  n5 e14@-->|"可变访问"| n0
   class e14 edge_publish
-  n9 e15@-->|"可变访问"| n0
+  n1 e15@-->|"可变访问"| n0
   class e15 edge_publish
   n9 e16@-->|"消息"| n0
   class e16 edge_publish
-  e1@{ curve: basis }
+  e0@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: basis }
+  e5@{ curve: bumpX }
   e6@{ curve: basis }
-  e7@{ curve: bumpX }
+  e7@{ curve: basis }
   e8@{ curve: basis }
-  e9@{ curve: basis }
+  e9@{ curve: bumpX }
   e10@{ curve: basis }
   e11@{ curve: basis }
-  e12@{ curve: bumpX }
+  e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }
   e15@{ curve: basis }

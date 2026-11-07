@@ -38,16 +38,17 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: cyl, label: "**EguiTransforms**<br/>保存 Egui 变换的动态统一缓冲、主世界实<br/>体到缓冲偏移的映射及对应绑定组" }
   class n0 node_resource
+  end
+  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**prepare​_​egui​_​transforms​_​system**<br/>上传 Egui 屏幕变换缓冲。" }
   class n2 node_system
   n3@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
-  class n4 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
   n2 e1@-->|"赋值"| n0
@@ -58,11 +59,11 @@ flowchart LR
   class e3 edge_write
   n0 e4@--> n3
   class e4 edge_read
-  n0 e5@--> n4
+  n0 e5@--> n3
   class e5 edge_read
   e0@{ curve: basis }
-  e1@{ curve: bumpX }
-  e2@{ curve: bumpX }
+  e1@{ curve: basis }
+  e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }

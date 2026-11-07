@@ -97,34 +97,31 @@ flowchart LR
   n19@{ shape: rounded, label: "**prepare​_​msaa​_​writeback​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：为需<br/>要保留已有颜色的多采样相机准备回写管线。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: rounded, label: "**msaa​_​writeback**<br/>来自crate:bevy​_​post​_​process ↗：将后<br/>处理颜色回写多采样目标。" }
+  n20@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​view​_​bind​_​**<br/>**group​_​layouts**<br/>来自crate:bevy​_​post​_​process ↗：为景<br/>深视图创建单输入与 Bokeh 双输入布局。" }
   class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​view​_​bind​_​**<br/>**group​_​layouts**<br/>来自crate:bevy​_​post​_​process ↗：为景<br/>深视图创建单输入与 Bokeh 双输入布局。" }
+  n21@{ shape: rounded, label: "**temporal​_​anti​_​alias**<br/>来自crate:bevy​_​anti​_​alias ↗：混合当<br/>前颜色与历史帧并更新 TAA 历史目标。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**temporal​_​anti​_​alias**<br/>来自crate:bevy​_​anti​_​alias ↗：混合当<br/>前颜色与历史帧并更新 TAA 历史目标。" }
+  n22@{ shape: rounded, label: "**queue​_​sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: rounded, label: "**queue​_​sprites**<br/>来自crate:bevy​_​sprite​_​render ↗：按视<br/>图可见性将精灵加入透明二维阶段。" }
+  n23@{ shape: rounded, label: "**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
   class n23 node_system
   class n23 external_node
-  n24@{ shape: rounded, label: "**prepare​_​core​_​2d​_​depth​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：为有<br/>效二维视图准备共享目标深度纹理。" }
+  n24@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按景<br/>深模式和视图格式准备两阶段管线。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: rounded, label: "**prepare​_​depth​_​of​_​field​_​pipelines**<br/>来自crate:bevy​_​post​_​process ↗：按景<br/>深模式和视图格式准备两阶段管线。" }
+  n25@{ shape: rounded, label: "**resolve​_​composition​_​spaces**<br/>协调共享纹理相机的合成色彩空间。" }
   class n25 node_system
-  class n25 external_node
-  n26@{ shape: rounded, label: "**resolve​_​composition​_​spaces**<br/>协调共享纹理相机的合成色彩空间。" }
+  n26@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
   class n26 node_system
-  n27@{ shape: rounded, label: "**prepare​_​view​_​targets**<br/>为视图维护主颜色双缓冲及可选多采样目标。" }
+  n27@{ shape: rounded, label: "**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
   class n27 node_system
-  n28@{ shape: rounded, label: "**motion​_​blur**<br/>来自crate:bevy​_​post​_​process ↗：读取<br/>当前视图颜色、预通道运动矢量和深度，按快<br/>门角度及采样数执行运动模糊；采样关闭、所<br/>需纹理或管线不可用时跳过。" }
+  class n27 external_node
+  n28@{ shape: rounded, label: "**prepare​_​prepass​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按三<br/>维预通道配置分配各类输出纹理。" }
   class n28 node_system
   class n28 external_node
-  n29@{ shape: rounded, label: "**prepare​_​prepass​_​textures**<br/>来自crate:bevy​_​core​_​pipeline ↗：按三<br/>维预通道配置分配各类输出纹理。" }
-  class n29 node_system
-  class n29 external_node
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
@@ -165,25 +162,25 @@ flowchart LR
   class e18 edge_read
   n0 e19@--> n19
   class e19 edge_read
-  n0 e20@--> n20
+  n0 e20@--> n2
   class e20 edge_read
-  n0 e21@--> n21
+  n0 e21@--> n20
   class e21 edge_read
-  n0 e22@--> n22
+  n0 e22@--> n21
   class e22 edge_read
-  n0 e23@--> n23
+  n0 e23@--> n22
   class e23 edge_read
-  n0 e24@--> n24
+  n0 e24@--> n23
   class e24 edge_read
-  n0 e25@--> n25
+  n0 e25@--> n24
   class e25 edge_read
-  n0 e26@--> n26
+  n0 e26@--> n25
   class e26 edge_read
-  n0 e27@--> n27
+  n0 e27@--> n26
   class e27 edge_read
-  n0 e28@--> n28
+  n0 e28@--> n27
   class e28 edge_read
-  n0 e29@--> n29
+  n0 e29@--> n28
   class e29 edge_read
   n10 e30@--- n0
   class e30 edge_read
@@ -196,14 +193,14 @@ flowchart LR
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
-  e9@{ curve: bumpX }
+  e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
-  e14@{ curve: basis }
+  e15@{ curve: basis }
   e16@{ curve: basis }
-  e17@{ curve: bumpX }
+  e17@{ curve: basis }
   e18@{ curve: basis }
   e19@{ curve: basis }
   e20@{ curve: basis }

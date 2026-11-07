@@ -58,66 +58,63 @@ flowchart LR
   n6@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>来自crate:avian3d ↗：把接触增删同步到<br/>约束图和物理岛。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>来自crate:avian3d ↗：把接触增删同步到<br/>约束图和物理岛。" }
-  class n7 node_system
+  n7@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：移除被禁用刚体的<br/>物理岛节点。" }
+  class n7 node_observer
   class n7 external_node
-  n8@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：移除被禁用刚体的<br/>物理岛节点。" }
+  n8@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
   class n8 node_observer
   class n8 external_node
-  n9@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
-  class n9 node_observer
+  n9@{ shape: rounded, label: "**enable​_​entities​_​when​_​state**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词重新启用实体子树。" }
+  class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**enable​_​entities​_​when​_​state**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词重新启用实体子树。" }
-  class n10 node_system
+  n10@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体物理岛节点。" }
+  class n10 node_observer
   class n10 external_node
-  n11@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体物理岛节点。" }
+  n11@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>来自crate:avian3d ↗：重置启用刚体的休<br/>眠状态并请求唤醒。" }
   class n11 node_observer
   class n11 external_node
-  n12@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>来自crate:avian3d ↗：重置启用刚体的休<br/>眠状态并请求唤醒。" }
+  n12@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体物理岛节点。" }
   class n12 node_observer
   class n12 external_node
-  n13@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体物理岛节点。" }
+  n13@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：移除被禁用刚体的<br/>物理岛节点。" }
   class n13 node_observer
   class n13 external_node
-  n14@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：移除被禁用刚体的<br/>物理岛节点。" }
+  n14@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>来自crate:avian3d ↗：重置启用刚体的休<br/>眠状态并请求唤醒。" }
   class n14 node_observer
   class n14 external_node
-  n15@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>来自crate:avian3d ↗：重置启用刚体的休<br/>眠状态并请求唤醒。" }
-  class n15 node_observer
+  n15@{ shape: rounded, label: "**apply​_​joint​_​graph​_​changes**<br/>来自crate:avian3d ↗：把关节连接变化同<br/>步到模拟岛。" }
+  class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**apply​_​joint​_​graph​_​changes**<br/>来自crate:avian3d ↗：把关节连接变化同<br/>步到模拟岛。" }
-  class n16 node_system
+  n16@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：移除被禁用刚体的<br/>物理岛节点。" }
+  class n16 node_observer
   class n16 external_node
-  n17@{ shape: hex, label: "**build::{closure#35;3}**<br/>来自crate:avian3d ↗：移除被禁用刚体的<br/>物理岛节点。" }
-  class n17 node_observer
+  n17@{ shape: rounded, label: "**disable​_​entities​_​on​_​exit​_​state**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时禁用实体子树。" }
+  class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**disable​_​entities​_​on​_​exit​_​state**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时禁用实体子树。" }
+  n18@{ shape: rounded, label: "**enable​_​entities​_​on​_​enter​_​state**<br/>来自crate:bevy​_​state ↗：进入指定状态<br/>时重新启用实体子树。" }
   class n18 node_system
   class n18 external_node
-  n19@{ shape: rounded, label: "**enable​_​entities​_​on​_​enter​_​state**<br/>来自crate:bevy​_​state ↗：进入指定状态<br/>时重新启用实体子树。" }
+  n19@{ shape: rounded, label: "**extract​_​egui​_​camera​_​view​_​system**<br/>来自crate:bevy​_​egui ↗：为活动相机提取<br/>独立 Egui 渲染视图。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: rounded, label: "**extract​_​egui​_​camera​_​view​_​system**<br/>来自crate:bevy​_​egui ↗：为活动相机提取<br/>独立 Egui 渲染视图。" }
+  n20@{ shape: rounded, label: "**split​_​island**<br/>来自crate:avian3d ↗：根据接触与关节连<br/>接重新拆分物理岛。" }
   class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**split​_​island**<br/>来自crate:avian3d ↗：根据接触与关节连<br/>接重新拆分物理岛。" }
-  class n21 node_system
+  n21@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>来自crate:avian3d ↗：加入关节连接并发<br/>布连接图变化。" }
+  class n21 node_observer
   class n21 external_node
-  n22@{ shape: hex, label: "**add​_​joint​_​to​_​graph**<br/>来自crate:avian3d ↗：加入关节连接并发<br/>布连接图变化。" }
+  n22@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
   class n22 node_observer
   class n22 external_node
   n23@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
   class n23 node_observer
   class n23 external_node
-  n24@{ shape: hex, label: "**build::{closure#35;1}**<br/>来自crate:avian3d ↗：在实体启用时恢复<br/>刚体求解缓存。" }
-  class n24 node_observer
+  n24@{ shape: rounded, label: "**despawn​_​entities​_​when​_​state**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词销毁匹配实体。" }
+  class n24 node_system
   class n24 external_node
-  n25@{ shape: rounded, label: "**despawn​_​entities​_​when​_​state**<br/>来自crate:bevy​_​state ↗：按状态转换谓<br/>词销毁匹配实体。" }
+  n25@{ shape: rounded, label: "**enable​_​entities​_​on​_​exit​_​state**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时重新启用实体子树。" }
   class n25 node_system
   class n25 external_node
-  n26@{ shape: rounded, label: "**enable​_​entities​_​on​_​exit​_​state**<br/>来自crate:bevy​_​state ↗：离开指定状态<br/>时重新启用实体子树。" }
-  class n26 node_system
-  class n26 external_node
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
   n0 e1@-->|"存在性约束"| n2
@@ -130,45 +127,45 @@ flowchart LR
   class e4 edge_reference
   n0 e5@-->|"存在性约束"| n6
   class e5 edge_reference
-  n0 e6@-->|"存在性约束"| n7
+  n0 e6@-->|"存在性约束"| n6
   class e6 edge_reference
-  n0 e7@-->|"存在性约束"| n8
+  n0 e7@-->|"存在性约束"| n7
   class e7 edge_reference
-  n0 e8@-->|"存在性约束"| n9
+  n0 e8@-->|"存在性约束"| n8
   class e8 edge_reference
-  n0 e9@-->|"存在性约束"| n10
+  n0 e9@-->|"存在性约束"| n9
   class e9 edge_reference
-  n0 e10@-->|"存在性约束"| n11
+  n0 e10@-->|"存在性约束"| n10
   class e10 edge_reference
-  n0 e11@-->|"存在性约束"| n12
+  n0 e11@-->|"存在性约束"| n11
   class e11 edge_reference
-  n0 e12@-->|"存在性约束"| n13
+  n0 e12@-->|"存在性约束"| n12
   class e12 edge_reference
-  n0 e13@-->|"存在性约束"| n14
+  n0 e13@-->|"存在性约束"| n13
   class e13 edge_reference
-  n0 e14@-->|"存在性约束"| n15
+  n0 e14@-->|"存在性约束"| n14
   class e14 edge_reference
-  n0 e15@-->|"存在性约束"| n16
+  n0 e15@-->|"存在性约束"| n15
   class e15 edge_reference
-  n0 e16@-->|"存在性约束"| n17
+  n0 e16@-->|"存在性约束"| n16
   class e16 edge_reference
-  n0 e17@-->|"存在性约束"| n18
+  n0 e17@-->|"存在性约束"| n17
   class e17 edge_reference
-  n0 e18@-->|"存在性约束"| n19
+  n0 e18@-->|"存在性约束"| n18
   class e18 edge_reference
-  n0 e19@-->|"存在性约束"| n20
+  n0 e19@-->|"存在性约束"| n19
   class e19 edge_reference
-  n0 e20@-->|"存在性约束"| n21
+  n0 e20@-->|"存在性约束"| n20
   class e20 edge_reference
-  n0 e21@-->|"存在性约束"| n22
+  n0 e21@-->|"存在性约束"| n21
   class e21 edge_reference
-  n0 e22@-->|"存在性约束"| n23
+  n0 e22@-->|"存在性约束"| n22
   class e22 edge_reference
-  n0 e23@-->|"存在性约束"| n24
+  n0 e23@-->|"存在性约束"| n23
   class e23 edge_reference
-  n0 e24@-->|"存在性约束"| n25
+  n0 e24@-->|"存在性约束"| n24
   class e24 edge_reference
-  n0 e25@-->|"存在性约束"| n26
+  n0 e25@-->|"存在性约束"| n25
   class e25 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }

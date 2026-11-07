@@ -30,19 +30,19 @@
 }
 ---
 flowchart LR
-  accTitle: rebuild_page · 创建模板 · 对象关系
+  accTitle: Settings category content · 对象关系
   accDescr: 实体创建模板与直接关联的非组件对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_entity fill:#F8F1EF,stroke:#A6533B,stroke-width:2.2px,color:#1F3340
   classDef edge_relationship stroke:#7B4DB2,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>排列设置页可滚动的内容分组。" }
+  n0@{ shape: rounded, label: "**Settings category content**<br/>排列设置页可滚动的内容分组。" }
   class n0 node_entity
-  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>排列设置页可滚动的内容分组。" }
+  n1@{ shape: rounded, label: "**Controls settings rows**<br/>排列设置页可滚动的内容分组。" }
   class n1 node_entity
-  n2@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>排列设置页可滚动的内容分组。" }
+  n2@{ shape: rounded, label: "**Settings content columns**<br/>排列设置页可滚动的内容分组。" }
   class n2 node_entity
-  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示设置页面与分类标题。" }
+  n3@{ shape: rounded, label: "**Menu heading**<br/>显示设置页面与分类标题。" }
   class n3 node_entity
   n0 e0@-->|"子实体"| n1
   class e0 edge_relationship

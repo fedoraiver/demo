@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: spawn_menu_input_controller · 创建模板 · 对象关系
+  accTitle: Menu input controller · 对象关系
   accDescr: 实体创建模板与直接关联的非组件对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -38,21 +38,21 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_relationship stroke:#7B4DB2,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>统一路由菜单键盘与手柄操作。" }
+  n0@{ shape: rounded, label: "**Menu input controller**<br/>统一路由菜单键盘与手柄操作。" }
   class n0 node_entity
   n1@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller**<br/>菜单上下文覆盖所有页面，Esc 在游戏运行<br/>时表达暂停，而不另读底层按键。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>通过键盘或手柄移到上一个菜单按钮。" }
+  n2@{ shape: rounded, label: "**demo::ui::navigation::PreviousAction**<br/>通过键盘或手柄移到上一个菜单按钮。" }
   class n2 node_entity
-  n3@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>把向右导航输入转成聚焦设置项的增加请求。" }
+  n3@{ shape: rounded, label: "**demo::ui::navigation::RightAction**<br/>把向右导航输入转成聚焦设置项的增加请求。" }
   class n3 node_entity
-  n4@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>把向左导航输入转成聚焦设置项的减少请求。" }
+  n4@{ shape: rounded, label: "**demo::ui::navigation::LeftAction**<br/>把向左导航输入转成聚焦设置项的减少请求。" }
   class n4 node_entity
-  n5@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>将键盘与手柄返回输入统一为菜单返回请求。" }
+  n5@{ shape: rounded, label: "**demo::ui::navigation::BackAction**<br/>将键盘与手柄返回输入统一为菜单返回请求。" }
   class n5 node_entity
-  n6@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>用向下导航输入切换到下一个菜单按钮。" }
+  n6@{ shape: rounded, label: "**demo::ui::navigation::NextAction**<br/>用向下导航输入切换到下一个菜单按钮。" }
   class n6 node_entity
-  n7@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>将键盘或手柄确认输入交给当前菜单按钮。" }
+  n7@{ shape: rounded, label: "**demo::ui::navigation::ConfirmAction**<br/>将键盘或手柄确认输入交给当前菜单按钮。" }
   class n7 node_entity
   n1 e0@-->|"创建模板"| n0
   class e0 edge_write

@@ -43,18 +43,15 @@ flowchart LR
   n2@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  n3@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>箱实体被销毁时关系钩子会清空反向索引，人<br/>物仍存活则归还其原质量。" }
   class n3 node_system
-  class n3 external_node
-  n4@{ shape: rounded, label: "**restore​_​empty​_​holder​_​mass**<br/>箱实体被销毁时关系钩子会清空反向索引，人<br/>物仍存活则归还其原质量。" }
-  class n4 node_system
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
   class e1 edge_read
-  n0 e2@--> n3
+  n0 e2@--> n2
   class e2 edge_read
-  n0 e3@--> n4
+  n0 e3@--> n3
   class e3 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }

@@ -62,7 +62,7 @@ flowchart LR
   class n4 external_node
   n5@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
   class n5 node_system_set
-  n6@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n6@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>汇总 Egui 输入并同步上下文状态。" }
   class n6 node_system
   n7@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n7 node_system

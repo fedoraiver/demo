@@ -53,8 +53,6 @@ flowchart LR
   class n6 node_system
   n7@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
-  class n8 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
   n2 e1@-->|"可变访问"| n0
@@ -69,7 +67,7 @@ flowchart LR
   class e5 edge_write
   n7 e6@-->|"可变访问"| n0
   class e6 edge_write
-  n8 e7@-->|"可变访问"| n0
+  n6 e7@-->|"可变访问"| n0
   class e7 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

@@ -41,11 +41,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lean-r, label: "**UiRequest**<br/>输入系统只产生请求，集中处理系统修改状态<br/>或保存设置。" }
   class n0 node_message
-  n1@{ shape: hex, label: "**left**<br/>向当前设置字段提交减值请求。" }
+  n1@{ shape: hex, label: "**back**<br/>将返回动作提交给统一菜单请求入口。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**right**<br/>向当前设置字段提交增值请求。" }
+  n2@{ shape: hex, label: "**confirm**<br/>提交当前聚焦按钮的菜单动作。" }
   class n2 node_observer
-  n3@{ shape: hex, label: "**confirm**<br/>提交当前聚焦按钮的菜单动作。" }
+  n3@{ shape: hex, label: "**back**<br/>将返回动作提交给统一菜单请求入口。" }
   class n3 node_observer
   n4@{ shape: hex, label: "**left**<br/>向当前设置字段提交减值请求。" }
   class n4 node_observer
@@ -53,25 +53,25 @@ flowchart LR
   class n5 node_observer
   n6@{ shape: hex, label: "**right**<br/>向当前设置字段提交增值请求。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**back**<br/>将返回动作提交给统一菜单请求入口。" }
+  n7@{ shape: hex, label: "**left**<br/>向当前设置字段提交减值请求。" }
   class n7 node_observer
   n8@{ shape: hex, label: "**confirm**<br/>提交当前聚焦按钮的菜单动作。" }
   class n8 node_observer
-  n9@{ shape: hex, label: "**left**<br/>向当前设置字段提交减值请求。" }
-  class n9 node_observer
-  n10@{ shape: rounded, label: "**pointer​_​interaction**<br/>Bevy 原生 UI 已完成按钮命中；这里只读取<br/>缓冲的按下事件，不另读 MouseButton。" }
+  n9@{ shape: rounded, label: "**pointer​_​interaction**<br/>Bevy 原生 UI 已完成按钮命中；这里只读取<br/>缓冲的按下事件，不另读 MouseButton。" }
+  class n9 node_system
+  n10@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
   class n10 node_system
-  n11@{ shape: hex, label: "**back**<br/>将返回动作提交给统一菜单请求入口。" }
+  n11@{ shape: hex, label: "**left**<br/>向当前设置字段提交减值请求。" }
   class n11 node_observer
-  n12@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>Enhanced Input 负责菜单语义动作，但无<br/>法表示 UI 命中后的局部绝对横坐标。" }
-  class n12 node_system
+  n12@{ shape: hex, label: "**confirm**<br/>提交当前聚焦按钮的菜单动作。" }
+  class n12 node_observer
   n13@{ shape: hex, label: "**back**<br/>将返回动作提交给统一菜单请求入口。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**confirm**<br/>提交当前聚焦按钮的菜单动作。" }
+  n14@{ shape: hex, label: "**right**<br/>向当前设置字段提交增值请求。" }
   class n14 node_observer
   n15@{ shape: rounded, label: "**handle​_​requests**<br/>每帧只消费一项语义请求，避免鼠标与确认键<br/>同时激活，或旧页面动作穿过页面切换。" }
   class n15 node_system
-  n1 e0@-->|"消息"| n0
+  n1 e0@-->|"可变访问"| n0
   class e0 edge_publish
   n2 e1@-->|"消息"| n0
   class e1 edge_publish
@@ -83,56 +83,56 @@ flowchart LR
   class e4 edge_publish
   n6 e5@-->|"可变访问"| n0
   class e5 edge_publish
-  n7 e6@-->|"可变访问"| n0
+  n7 e6@-->|"消息"| n0
   class e6 edge_publish
-  n8 e7@-->|"可变访问"| n0
+  n8 e7@-->|"消息"| n0
   class e7 edge_publish
-  n9 e8@-->|"消息"| n0
+  n9 e8@-->|"可变访问"| n0
   class e8 edge_publish
-  n10 e9@-->|"可变访问"| n0
+  n6 e9@-->|"消息"| n0
   class e9 edge_publish
-  n11 e10@-->|"消息"| n0
+  n8 e10@-->|"可变访问"| n0
   class e10 edge_publish
-  n12 e11@-->|"可变访问"| n0
+  n10 e11@-->|"可变访问"| n0
   class e11 edge_publish
-  n11 e12@-->|"可变访问"| n0
+  n2 e12@-->|"可变访问"| n0
   class e12 edge_publish
   n3 e13@-->|"可变访问"| n0
   class e13 edge_publish
-  n12 e14@-->|"消息"| n0
+  n10 e14@-->|"消息"| n0
   class e14 edge_publish
-  n2 e15@-->|"可变访问"| n0
+  n7 e15@-->|"可变访问"| n0
   class e15 edge_publish
-  n9 e16@-->|"可变访问"| n0
+  n11 e16@-->|"消息"| n0
   class e16 edge_publish
-  n13 e17@-->|"消息"| n0
+  n12 e17@-->|"可变访问"| n0
   class e17 edge_publish
-  n8 e18@-->|"消息"| n0
+  n13 e18@-->|"消息"| n0
   class e18 edge_publish
-  n10 e19@-->|"消息"| n0
+  n9 e19@-->|"消息"| n0
   class e19 edge_publish
-  n1 e20@-->|"可变访问"| n0
+  n14 e20@-->|"可变访问"| n0
   class e20 edge_publish
-  n14 e21@-->|"可变访问"| n0
+  n12 e21@-->|"消息"| n0
   class e21 edge_publish
-  n0 e22@--> n15
-  class e22 edge_consume
-  n14 e23@-->|"消息"| n0
-  class e23 edge_publish
-  n6 e24@-->|"消息"| n0
+  n14 e22@-->|"消息"| n0
+  class e22 edge_publish
+  n0 e23@--> n15
+  class e23 edge_consume
+  n4 e24@-->|"可变访问"| n0
   class e24 edge_publish
-  n4 e25@-->|"可变访问"| n0
+  n5 e25@-->|"消息"| n0
   class e25 edge_publish
-  n5 e26@-->|"消息"| n0
+  n13 e26@-->|"可变访问"| n0
   class e26 edge_publish
-  n13 e27@-->|"可变访问"| n0
+  n11 e27@-->|"可变访问"| n0
   class e27 edge_publish
-  n7 e28@-->|"消息"| n0
+  n1 e28@-->|"消息"| n0
   class e28 edge_publish
-  e0@{ curve: basis }
+  e0@{ curve: bumpX }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: bumpX }
+  e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
@@ -143,7 +143,7 @@ flowchart LR
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
-  e14@{ curve: bumpX }
+  e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }
   e17@{ curve: basis }
@@ -151,8 +151,8 @@ flowchart LR
   e19@{ curve: basis }
   e20@{ curve: basis }
   e21@{ curve: basis }
-  e23@{ curve: basis }
-  e24@{ curve: basis }
+  e22@{ curve: basis }
+  e24@{ curve: bumpX }
   e25@{ curve: basis }
   e26@{ curve: basis }
   e27@{ curve: basis }

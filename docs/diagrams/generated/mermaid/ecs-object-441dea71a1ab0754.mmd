@@ -75,38 +75,35 @@ flowchart LR
   n12@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n13@{ shape: rounded, label: "**update​_​tilemap​_​chunk​_​indices**<br/>来自crate:bevy​_​sprite​_​render ↗：将变<br/>化的瓦片块索引打包写入材质图像。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**update​_​tilemap​_​chunk​_​indices**<br/>来自crate:bevy​_​sprite​_​render ↗：将变<br/>化的瓦片块索引打包写入材质图像。" }
+  n14@{ shape: rounded, label: "**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**update​_​editable​_​text​_​layout**<br/>来自crate:bevy​_​ui ↗：刷新可编辑文本的<br/>字形布局和编辑反馈。" }
+  n15@{ shape: rounded, label: "**text​_​system**<br/>来自crate:bevy​_​ui ↗：重排变化的 UI 文<br/>本并更新字形图集。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**text​_​system**<br/>来自crate:bevy​_​ui ↗：重排变化的 UI 文<br/>本并更新字形图集。" }
+  n16@{ shape: rounded, label: "**free​_​egui​_​textures​_​system**<br/>来自crate:bevy​_​egui ↗：回收 Egui 已<br/>释放或失效的纹理引用。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**free​_​egui​_​textures​_​system**<br/>来自crate:bevy​_​egui ↗：回收 Egui 已<br/>释放或失效的纹理引用。" }
+  n17@{ shape: rounded, label: "**update​_​egui​_​textures​_​system**<br/>来自crate:bevy​_​egui ↗：应用 Egui 托<br/>管纹理的图像增量。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**update​_​egui​_​textures​_​system**<br/>来自crate:bevy​_​egui ↗：应用 Egui 托<br/>管纹理的图像增量。" }
+  n18@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
   class n18 node_system
-  class n18 external_node
-  n19@{ shape: rounded, label: "**asset​_​events​_​condition**<br/>判断是否有待发布的资产变化。" }
-  class n19 node_system
-  n20@{ shape: hex, label: "**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
-  class n20 node_observer
+  n19@{ shape: hex, label: "**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
+  class n19 node_observer
+  class n19 external_node
+  n20@{ shape: rounded, label: "**generate​_​environment​_​map​_​light**<br/>来自crate:bevy​_​pbr ↗：为环境光生成分<br/>配漫反射和镜面目标图像。" }
+  class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**generate​_​environment​_​map​_​light**<br/>来自crate:bevy​_​pbr ↗：为环境光生成分<br/>配漫反射和镜面目标图像。" }
+  n21@{ shape: rounded, label: "**update​_​inline​_​image​_​boxes**<br/>来自crate:bevy​_​ui ↗：把内联图像尺寸同<br/>步到文本排版盒。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**update​_​inline​_​image​_​boxes**<br/>来自crate:bevy​_​ui ↗：把内联图像尺寸同<br/>步到文本排版盒。" }
-  class n22 node_system
+  n22@{ shape: hex, label: "**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
+  class n22 node_observer
   class n22 external_node
-  n23@{ shape: hex, label: "**on​_​insert​_​atmosphere​_​environment​_​**<br/>**map​_​light**<br/>来自crate:bevy​_​pbr ↗：为大气环境光补<br/>齐贴图生成组件。" }
-  class n23 node_observer
-  class n23 external_node
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
   n0 e1@--> n2
@@ -131,27 +128,27 @@ flowchart LR
   class e10 edge_read
   n12 e11@-->|"可变访问"| n0
   class e11 edge_write
-  n0 e12@--> n13
+  n0 e12@--> n10
   class e12 edge_read
-  n14 e13@-->|"可变访问"| n0
+  n13 e13@-->|"可变访问"| n0
   class e13 edge_write
-  n15 e14@-->|"可变访问"| n0
+  n14 e14@-->|"可变访问"| n0
   class e14 edge_write
-  n16 e15@-->|"可变访问"| n0
+  n15 e15@-->|"可变访问"| n0
   class e15 edge_write
-  n17 e16@-->|"可变访问"| n0
+  n16 e16@-->|"可变访问"| n0
   class e16 edge_write
-  n18 e17@-->|"可变访问"| n0
+  n17 e17@-->|"可变访问"| n0
   class e17 edge_write
-  n0 e18@--> n19
+  n0 e18@--> n18
   class e18 edge_read
-  n20 e19@-->|"可变访问"| n0
+  n19 e19@-->|"可变访问"| n0
   class e19 edge_write
-  n21 e20@-->|"可变访问"| n0
+  n20 e20@-->|"可变访问"| n0
   class e20 edge_write
-  n0 e21@--> n22
+  n0 e21@--> n21
   class e21 edge_read
-  n23 e22@-->|"可变访问"| n0
+  n22 e22@-->|"可变访问"| n0
   class e22 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -162,7 +159,7 @@ flowchart LR
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
-  e9@{ curve: bumpX }
+  e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }

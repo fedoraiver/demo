@@ -65,13 +65,10 @@ flowchart LR
   class n9 node_system
   n10@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n10 node_system
-  n11@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  n11@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
   class n11 node_system
-  class n11 external_node
-  n12@{ shape: rounded, label: "**prepare​_​erased​_​assets**<br/>在上传预算内准备擦除资产并管理重试卸载。" }
+  n12@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
   class n12 node_system
-  n13@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>构造并插入渲染所需资源。" }
-  class n13 node_system
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
@@ -92,11 +89,11 @@ flowchart LR
   class e8 edge_read
   n0 e9@--> n10
   class e9 edge_read
-  n0 e10@--> n11
+  n0 e10@--> n1
   class e10 edge_read
-  n0 e11@--> n12
+  n0 e11@--> n11
   class e11 edge_read
-  n13 e12@-->|"插入"| n0
+  n12 e12@-->|"插入"| n0
   class e12 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

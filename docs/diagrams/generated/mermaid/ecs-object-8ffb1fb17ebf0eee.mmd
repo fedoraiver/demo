@@ -30,7 +30,7 @@
 }
 ---
 flowchart LR
-  accTitle: spawn_backdrop · 创建模板 · 对象关系
+  accTitle: MenuBackdrop · 对象关系
   accDescr: 实体创建模板与直接关联的非组件对象。
   %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。
   classDef node_system fill:#EFF3F8,stroke:#3567A6,stroke-width:1.6px,color:#1F3340
@@ -38,9 +38,9 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_relationship stroke:#7B4DB2,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
-  n0@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>组织主菜单背景相机及其生命周期。" }
+  n0@{ shape: rounded, label: "**MenuBackdrop**<br/>组织主菜单背景相机及其生命周期。" }
   class n0 node_entity
-  n1@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>以纯色背景绘制主菜单与默认 UI。" }
+  n1@{ shape: rounded, label: "**MenuCamera**<br/>以纯色背景绘制主菜单与默认 UI。" }
   class n1 node_entity
   n2@{ shape: rounded, label: "**spawn​_​backdrop**<br/>创建主菜单纯色背景与独立相机。" }
   class n2 node_system

@@ -41,7 +41,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**EguiInput**<br/>保存送入当前 Egui 上下文的 RawInput" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
+  n1@{ shape: rounded, label: "**First-person camera**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
   class n1 node_entity
   class n1 external_node
   n2@{ shape: rounded, label: "**sync​_​mouse​_​capture**<br/>来自first​_​person ↗：在输入转发前确定<br/>归属；切换前约定其他按键已松开，检查器没<br/>有进行中的交互。" }
@@ -49,17 +49,15 @@ flowchart LR
   class n2 external_node
   n3@{ shape: rounded, label: "**begin​_​pass​_​system**<br/>把本轮输入交给 Egui 并开始界面帧。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n4@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>汇总 Egui 输入并同步上下文状态。" }
   class n4 node_system
   n5@{ shape: rounded, label: "**update​_​ui​_​screen​_​rect**<br/>把相机视口换算为 Egui 逻辑屏幕区域。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**update​_​ui​_​screen​_​rect**<br/>把相机视口换算为 Egui 逻辑屏幕区域。" }
+  n6@{ shape: rounded, label: "**run​_​egui​_​context​_​pass​_​loop​_​system**<br/>运行每个自动 Egui 上下文的专属调度。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**run​_​egui​_​context​_​pass​_​loop​_​system**<br/>运行每个自动 Egui 上下文的专属调度。" }
-  class n7 node_system
-  n8@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
-  class n8 node_entity
-  class n8 external_node
+  n7@{ shape: rounded, label: "**MenuCamera**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
+  class n7 node_entity
+  class n7 external_node
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference
   n2 e1@-->|"可变访问"| n0
@@ -70,15 +68,15 @@ flowchart LR
   class e3 edge_write
   n5 e4@-->|"可变访问"| n0
   class e4 edge_write
-  n6 e5@-->|"赋值"| n0
+  n5 e5@-->|"赋值"| n0
   class e5 edge_write
   n5 e6@-->|"赋值"| n0
   class e6 edge_write
-  n7 e7@-->|"可变访问"| n0
+  n6 e7@-->|"可变访问"| n0
   class e7 edge_write
-  n6 e8@-->|"可变访问"| n0
+  n5 e8@-->|"可变访问"| n0
   class e8 edge_write
-  n8 e9@-->|"可能包含"| n0
+  n7 e9@-->|"可能包含"| n0
   class e9 edge_reference
   n4 e10@-->|"可变访问"| n0
   class e10 edge_write
@@ -88,7 +86,7 @@ flowchart LR
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
-  e6@{ curve: basis }
+  e6@{ curve: bumpX }
   e7@{ curve: basis }
   e8@{ curve: basis }
   e9@{ curve: basis }

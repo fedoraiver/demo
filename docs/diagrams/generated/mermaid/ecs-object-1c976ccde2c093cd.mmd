@@ -53,11 +53,11 @@ flowchart LR
   class n1 external_node
   n2@{ shape: cyl, label: "**MenuState**<br/>页面数据与返回来源；焦点单独保存，避免导<br/>航时重建整个页面。" }
   class n2 node_resource
-  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>组织当前菜单页面与固定页脚。" }
+  n3@{ shape: rounded, label: "**Menu page root**<br/>组织当前菜单页面与固定页脚。" }
   class n3 node_entity
-  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>组织当前菜单页面与固定页脚。" }
+  n4@{ shape: rounded, label: "**Menu page root**<br/>组织当前菜单页面与固定页脚。" }
   class n4 node_entity
-  n5@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>组织当前菜单页面与固定页脚。" }
+  n5@{ shape: rounded, label: "**Menu page root**<br/>组织当前菜单页面与固定页脚。" }
   class n5 node_entity
   n6@{ shape: notch-rect, label: "**Local · previous​_​layout**<br/>识别需要重建菜单树的布局变化。" }
   class n6 node_local
@@ -69,15 +69,15 @@ flowchart LR
   n9@{ shape: rounded, label: "**Window**<br/>来自crate:bevy​_​window ↗：保存窗口的呈<br/>现模式、位置、分辨率、标题、全屏及平台行<br/>为配置" }
   class n9 node_component
   class n9 external_node
-  n10@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>组织当前菜单页面与固定页脚。" }
+  n10@{ shape: rounded, label: "**Menu page root**<br/>组织当前菜单页面与固定页脚。" }
   class n10 node_entity
-  n11@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>组织当前菜单页面与固定页脚。" }
+  n11@{ shape: rounded, label: "**Menu page root**<br/>组织当前菜单页面与固定页脚。" }
   class n11 node_entity
   n12@{ shape: rounded, label: "**MenuRoot**<br/>页面根实体；页面更换时连同视觉子树一起销<br/>毁。" }
   class n12 node_component
-  n13@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>组织当前菜单页面与固定页脚。" }
+  n13@{ shape: rounded, label: "**Menu page root**<br/>组织当前菜单页面与固定页脚。" }
   class n13 node_entity
-  n14@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>组织当前菜单页面与固定页脚。" }
+  n14@{ shape: rounded, label: "**Menu page root**<br/>组织当前菜单页面与固定页脚。" }
   class n14 node_entity
   n15@{ shape: fr-rect, label: "**GameUiPlugin**<br/>组装菜单功能，不安装窗口或重复初始化会话<br/>日志。" }
   class n15 node_plugin

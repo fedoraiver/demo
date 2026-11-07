@@ -49,31 +49,28 @@ flowchart LR
   n3@{ shape: rounded, label: "**free​_​egui​_​textures​_​system**<br/>来自crate:bevy​_​egui ↗：回收 Egui 已<br/>释放或失效的纹理引用。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n4@{ shape: rounded, label: "**asset​_​events**<br/>来自crate:bevy​_​asset ↗：发布累计的资<br/>产变化消息。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**asset​_​events**<br/>来自crate:bevy​_​asset ↗：发布累计的资<br/>产变化消息。" }
+  n5@{ shape: rounded, label: "**extract​_​chromatic​_​phase​_​textures**<br/>来自crate:bevy​_​light ↗：将已加载色度<br/>相函数纹理转换为散射曲线。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**extract​_​chromatic​_​phase​_​textures**<br/>来自crate:bevy​_​light ↗：将已加载色度<br/>相函数纹理转换为散射曲线。" }
-  class n6 node_system
-  class n6 external_node
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
   class e1 edge_read
   n0 e2@--> n3
   class e2 edge_read
-  n0 e3@--> n4
+  n0 e3@--> n1
   class e3 edge_read
-  n5 e4@-->|"可变访问"| n0
+  n4 e4@-->|"可变访问"| n0
   class e4 edge_write
-  n5 e5@-->|"赋值"| n0
+  n4 e5@-->|"赋值"| n0
   class e5 edge_write
-  n0 e6@--> n6
+  n0 e6@--> n5
   class e6 edge_read
   e0@{ curve: basis }
-  e1@{ curve: basis }
+  e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }

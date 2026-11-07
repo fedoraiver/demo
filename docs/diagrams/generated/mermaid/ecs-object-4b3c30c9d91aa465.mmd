@@ -72,7 +72,7 @@ flowchart LR
   class n9 node_system_set
   n10@{ shape: cyl, label: "**HoveredNonWindowEguiContext**<br/>保存指针当前悬停的非窗口 Egui 上下文实<br/>体" }
   class n10 node_resource
-  n11@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n11@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>汇总 Egui 输入并同步上下文状态。" }
   class n11 node_system
   n12@{ shape: rounded, label: "**EguiOutput**<br/>保存上一轮 Egui 的平台输出和像素点比例" }
   class n12 node_component
@@ -138,10 +138,6 @@ flowchart LR
   class e20 edge_set_membership
   n20 e21@--> n0
   class e21 edge_read
-  n1 layout_output_0@~~~ n5
-  n5 layout_output_1@~~~ n11
-  n11 layout_output_2@~~~ n16
-  n16 layout_output_3@~~~ n17
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
@@ -151,7 +147,7 @@ flowchart LR
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }
-  e10@{ curve: basis }
+  e10@{ curve: bumpX }
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }

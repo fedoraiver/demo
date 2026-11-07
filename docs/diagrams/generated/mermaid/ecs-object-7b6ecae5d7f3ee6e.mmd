@@ -19,7 +19,7 @@
       "htmlLabels": false,
       "nodeSpacing": 16,
       "rankSpacing": 48,
-      "padding": 4,
+      "padding": 16,
       "wrappingWidth": 280,
       "minNodeWidth": 180,
       "useMaxWidth": false,
@@ -48,10 +48,8 @@ flowchart LR
   n3@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
+  n4@{ shape: rounded, label: "**prepare​_​post​_​processing​_​pipelines**<br/>按视图颜色格式准备内置后处理管线。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**prepare​_​post​_​processing​_​pipelines**<br/>按视图颜色格式准备内置后处理管线。" }
-  class n5 node_system
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
   n0 e1@--> n2
@@ -60,13 +58,14 @@ flowchart LR
   class e2 edge_read
   n3 e3@-->|"移除"| n0
   class e3 edge_write
-  n0 e4@--> n4
+  n0 e4@--> n2
   class e4 edge_read
   n0 e5@--> n1
   class e5 edge_read
-  n0 e6@-->|"存在性约束"| n5
+  n0 e6@-->|"存在性约束"| n4
   class e6 edge_reference
   e0@{ curve: basis }
+  e1@{ curve: bumpX }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }

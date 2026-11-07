@@ -50,30 +50,21 @@ flowchart LR
   n4@{ shape: rounded, label: "**log​_​configuration**<br/>来自character ↗：记录实际玩法配置；显<br/>式保留日志分类，兼容现有过滤设置。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
+  n5@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
+  n6@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**align​_​attachments**<br/>来自item​_​interaction ↗：有限的小步对<br/>齐不会积分箱体力；受阻保留安全姿态，持续<br/>受阻则解除持握。" }
+  n7@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>来自item​_​interaction ↗：帧末跟随同一<br/>份已呈现人物姿态，零固定步时也不在箱体上<br/>叠加第二份插值。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>来自item​_​interaction ↗：帧末跟随同一<br/>份已呈现人物姿态，零固定步时也不在箱体上<br/>叠加第二份插值。" }
+  n8@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**handle​_​interaction**<br/>来自item​_​interaction ↗：拾取建立物理<br/>持握关系；释放只解除控制，保留刚体姿态、<br/>线速度和角速度。" }
+  n9@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**update​_​grounded**<br/>来自character ↗：脚底附近的小球向下探<br/>测支撑面；墙面法线和上升中的角色不能算接<br/>地。" }
-  class n10 node_system
-  class n10 external_node
-  n11@{ shape: rounded, label: "**jump​_​characters**<br/>来自character ↗：跳跃只消费一次，通过<br/>冲量改变速度；重力和位置积分全部交给<br/>Avian。" }
-  class n11 node_system
-  class n11 external_node
-  n12@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>来自item​_​interaction ↗：帧末跟随同一<br/>份已呈现人物姿态，零固定步时也不在箱体上<br/>叠加第二份插值。" }
-  class n12 node_system
-  class n12 external_node
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
@@ -82,21 +73,21 @@ flowchart LR
   class e2 edge_read
   n0 e3@--> n4
   class e3 edge_read
-  n0 e4@--> n5
+  n0 e4@--> n2
   class e4 edge_read
-  n0 e5@--> n6
+  n0 e5@--> n5
   class e5 edge_read
-  n0 e6@--> n7
+  n0 e6@--> n6
   class e6 edge_read
-  n0 e7@--> n8
+  n0 e7@--> n7
   class e7 edge_read
-  n0 e8@--> n9
+  n0 e8@--> n8
   class e8 edge_read
-  n0 e9@--> n10
+  n0 e9@--> n5
   class e9 edge_read
-  n0 e10@--> n11
+  n0 e10@--> n9
   class e10 edge_read
-  n0 e11@--> n12
+  n0 e11@--> n7
   class e11 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }

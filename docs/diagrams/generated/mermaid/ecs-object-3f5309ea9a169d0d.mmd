@@ -38,21 +38,22 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**BloomBindGroups**<br/>缓存视图 Bloom 各级降采样和上采样绑定。" }
   class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
+  n2@{ shape: rounded, label: "**prepare​_​bloom​_​bind​_​groups**<br/>为 Bloom 各 mip 层准备降采样与升采样绑<br/>定。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**prepare​_​bloom​_​bind​_​groups**<br/>为 Bloom 各 mip 层准备降采样与升采样绑<br/>定。" }
-  class n3 node_system
   n0 e0@--> n1
   class e0 edge_read
-  n0 e1@--> n2
+  n0 e1@--> n1
   class e1 edge_read
-  n3 e2@--- n0
+  n2 e2@--- n0
   class e2 edge_read
-  n3 e3@-->|"插入"| n0
+  n2 e3@-->|"插入"| n0
   class e3 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

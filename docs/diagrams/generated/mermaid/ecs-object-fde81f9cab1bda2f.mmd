@@ -38,40 +38,23 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**HeldTarget**<br/>手前的目标姿态；对齐期间与真实局部挂接姿<br/>态分离，完成后由共享刚体保持相对位置。" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
   n1@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>帧末跟随同一份已呈现人物姿态，零固定步时<br/>也不在箱体上叠加第二份插值。" }
   class n1 node_system
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
   n2@{ shape: rounded, label: "**handle​_​interaction**<br/>拾取建立物理持握关系；释放只解除控制，保<br/>留刚体姿态、线速度和角速度。" }
   class n2 node_system
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
-  n3@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>帧末跟随同一份已呈现人物姿态，零固定步时<br/>也不在箱体上叠加第二份插值。" }
+  n3@{ shape: rounded, label: "**release​_​orphaned​_​items**<br/>关系被外部解除或人物销毁时，独立箱实体仍<br/>能恢复自由刚体，不产生残留附属碰撞。" }
   class n3 node_system
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
-  n4@{ shape: rounded, label: "**release​_​orphaned​_​items**<br/>关系被外部解除或人物销毁时，独立箱实体仍<br/>能恢复自由刚体，不产生残留附属碰撞。" }
-  class n4 node_system
-  end
-  style layout_card_n4 fill:none,stroke:none
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
   n2 e1@-->|"插入"| n0
   class e1 edge_write
-  n3 e2@-->|"赋值"| n0
+  n1 e2@-->|"赋值"| n0
   class e2 edge_write
-  n3 e3@-->|"可变访问"| n0
+  n1 e3@-->|"可变访问"| n0
   class e3 edge_write
-  n0 e4@-->|"存在性约束"| n4
+  n0 e4@-->|"存在性约束"| n3
   class e4 edge_reference
   n1 e5@-->|"赋值"| n0
   class e5 edge_write

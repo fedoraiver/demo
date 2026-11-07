@@ -62,18 +62,15 @@ flowchart LR
   n7@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  n8@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
   class n8 node_system
   class n8 external_node
-  n9@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
+  n9@{ shape: rounded, label: "**prepare​_​sprite​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为精<br/>灵视图绑定参数和色调映射 LUT。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**prepare​_​sprite​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为精<br/>灵视图绑定参数和色调映射 LUT。" }
+  n10@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
   class n10 node_system
   class n10 external_node
-  n11@{ shape: rounded, label: "**check​_​views​_​need​_​specialization**<br/>来自crate:bevy​_​pbr ↗：汇总视图渲染特<br/>性并检测管线配置变化。" }
-  class n11 node_system
-  class n11 external_node
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
@@ -88,22 +85,22 @@ flowchart LR
   class e5 edge_read
   n7 e6@-->|"移除"| n0
   class e6 edge_write
-  n0 e7@--> n8
+  n0 e7@--> n1
   class e7 edge_read
   n7 e8@--- n0
   class e8 edge_read
-  n0 e9@--> n9
+  n0 e9@--> n8
   class e9 edge_read
-  n0 e10@--> n10
+  n0 e10@--> n9
   class e10 edge_read
   n0 e11@-->|"存在性约束"| n2
   class e11 edge_reference
-  n0 e12@--> n11
+  n0 e12@--> n10
   class e12 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
+  e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }

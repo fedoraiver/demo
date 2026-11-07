@@ -38,23 +38,24 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: cyl, label: "**EguiPipelines**<br/>索引每个Egui视图的专用化绘制管线。" }
   class n0 node_resource
+  end
+  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>按目标格式选择 Egui 渲染管线。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
   class n2 node_system
   n3@{ shape: rounded, label: "**queue​_​pipelines​_​system**<br/>按目标格式选择 Egui 渲染管线。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
-  class n4 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write
   n0 e1@--> n2
   class e1 edge_read
   n3 e2@-->|"插入"| n0
   class e2 edge_write
-  n0 e3@--> n4
+  n0 e3@--> n2
   class e3 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }

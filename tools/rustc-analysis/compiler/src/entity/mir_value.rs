@@ -11,6 +11,144 @@ pub struct Datum<'tcx> {
     pub kind: Kind<'tcx>,
     pub site: Option<Site>,
     pub span: Option<Span>,
+    pub argument_span: Option<Span>,
+    pub name_expression: Option<Span>,
+    pub name_uncertainty: Vec<String>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct EntityNameCandidate {
+    pub value: Option<String>,
+    pub expression: Option<Span>,
+    pub reason: Option<String>,
+}
+
+impl EntityNameCandidate {
+    pub fn unresolved(reason: impl Into<String>) -> Self {
+        Self {
+            value: None,
+            expression: None,
+            reason: Some(reason.into()),
+        }
+    }
+}
+
+/// 显式名称以后写为准，required 保留首项；互斥分支分别应用优先级。
+#[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
+pub struct NameParts {
+    paths: Vec<NamePath>,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
+struct NamePath {
+    explicit: Vec<EntityNameCandidate>,
+    required: Vec<EntityNameCandidate>,
+}
+
+impl NameParts {
+    pub fn explicit(candidate: EntityNameCandidate) -> Self {
+        Self {
+            paths: vec![NamePath {
+                explicit: vec![candidate],
+                required: vec![],
+            }],
+        }
+    }
+
+    pub fn unresolved_required(reason: impl Into<String>) -> Self {
+        Self::explicit(EntityNameCandidate::unresolved(reason)).into_required()
+    }
+
+    pub fn potential_override(reason: impl Into<String>) -> Self {
+        Self::alternatives(vec![
+            Self::default(),
+            Self::explicit(EntityNameCandidate::unresolved(reason)),
+        ])
+    }
+
+    fn into_paths(self) -> Vec<NamePath> {
+        if self.paths.is_empty() {
+            vec![NamePath::default()]
+        } else {
+            self.paths
+        }
+    }
+
+    pub fn extend(&mut self, other: Self) {
+        self.combine(other, false);
+    }
+
+    pub fn extend_direct_required(&mut self, other: Self) {
+        self.combine(other, true);
+    }
+
+    fn combine(&mut self, other: Self, direct_required: bool) {
+        let mut paths = vec![];
+        let suffixes = other.into_paths();
+        for prefix in std::mem::take(self).into_paths() {
+            for suffix in &suffixes {
+                let mut path = prefix.clone();
+                if !suffix.explicit.is_empty() {
+                    path.explicit = suffix.explicit.clone();
+                }
+                if !suffix.required.is_empty() && (direct_required || path.required.is_empty()) {
+                    path.required = suffix.required.clone();
+                }
+                if !paths.contains(&path) {
+                    paths.push(path);
+                }
+            }
+        }
+        self.paths = paths;
+    }
+
+    pub fn candidates(&self) -> Vec<EntityNameCandidate> {
+        let mut candidates = vec![];
+        for path in self.clone().into_paths() {
+            let names = if !path.explicit.is_empty() {
+                path.explicit
+            } else if !path.required.is_empty() {
+                path.required
+            } else {
+                vec![EntityNameCandidate::unresolved("创建时未确认 Name。")]
+            };
+            for candidate in names {
+                if !candidates.contains(&candidate) {
+                    candidates.push(candidate);
+                }
+            }
+        }
+        candidates
+    }
+
+    pub fn into_required(self) -> Self {
+        Self {
+            paths: self
+                .into_paths()
+                .into_iter()
+                .map(|path| NamePath {
+                    explicit: vec![],
+                    required: if path.explicit.is_empty() {
+                        path.required
+                    } else {
+                        path.explicit
+                    },
+                })
+                .collect(),
+        }
+    }
+
+    pub fn alternatives(parts: Vec<Self>) -> Self {
+        let mut paths = vec![];
+        for part in parts {
+            for path in part.into_paths() {
+                if !paths.contains(&path) {
+                    paths.push(path);
+                }
+            }
+        }
+        Self { paths }
+    }
 }
 
 /// 装配解释得到的可能组件与独立子实体；保留类型而不提前转成名称。
@@ -24,6 +162,45 @@ pub struct EntityStructure<'tcx> {
     /// 每组为同一实体的互斥结构片段；独立组不做笛卡尔拼接。
     pub alternatives: Vec<Vec<EntityStructure<'tcx>>>,
     pub gaps: Vec<String>,
+    pub name_candidates: Vec<EntityNameCandidate>,
+}
+
+impl EntityStructure<'_> {
+    pub fn same_shape(&self, other: &Self) -> bool {
+        self.components == other.components
+            && self.required == other.required
+            && self.site == other.site
+            && self.span == other.span
+            && self.gaps == other.gaps
+            && self.children.len() == other.children.len()
+            && self
+                .children
+                .iter()
+                .zip(&other.children)
+                .all(|(a, b)| a.same_shape(b))
+            && self.alternatives.len() == other.alternatives.len()
+            && self
+                .alternatives
+                .iter()
+                .zip(&other.alternatives)
+                .all(|(a, b)| a.len() == b.len() && a.iter().zip(b).all(|(a, b)| a.same_shape(b)))
+    }
+
+    pub fn merge_name_candidates(&mut self, other: &Self) {
+        for candidate in &other.name_candidates {
+            if !self.name_candidates.contains(candidate) {
+                self.name_candidates.push(candidate.clone());
+            }
+        }
+        for (child, other) in self.children.iter_mut().zip(&other.children) {
+            child.merge_name_candidates(other);
+        }
+        for (group, other) in self.alternatives.iter_mut().zip(&other.alternatives) {
+            for (candidate, other) in group.iter_mut().zip(other) {
+                candidate.merge_name_candidates(other);
+            }
+        }
+    }
 }
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Kind<'tcx> {
@@ -45,9 +222,15 @@ pub enum Kind<'tcx> {
     Sink {
         templates: Vec<(Ty<'tcx>, usize)>,
         parts: Vec<NameEvidence>,
+        names: NameParts,
         structure: EntityStructure<'tcx>,
     },
-    Snapshot(Vec<Datum<'tcx>>, Vec<NameEvidence>, EntityStructure<'tcx>),
+    Snapshot(
+        Vec<Datum<'tcx>>,
+        Vec<NameEvidence>,
+        NameParts,
+        EntityStructure<'tcx>,
+    ),
 }
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Address {
@@ -73,6 +256,9 @@ impl<'tcx> Datum<'tcx> {
             kind,
             site: None,
             span: None,
+            argument_span: None,
+            name_expression: None,
+            name_uncertainty: vec![],
         }
     }
     pub fn unknown(ty: Ty<'tcx>, reason: impl Into<String>) -> Self {
@@ -110,7 +296,7 @@ impl<'tcx> Datum<'tcx> {
                 symbols.insert(*id);
             }
             Kind::Boxed(inner) => inner.symbols(symbols),
-            Kind::Snapshot(values, _, _) => {
+            Kind::Snapshot(values, _, _, _) => {
                 for value in values {
                     value.symbols(symbols);
                 }
@@ -318,12 +504,16 @@ impl<'tcx> Memory<'tcx> {
                     fields.get(field)?.clone()
                 }
                 Kind::Boxed(inner) if field == 0 => *inner.clone(),
-                Kind::Name(name) if field == 0 => Datum::new(
-                    value.ty,
-                    name.as_ref()
-                        .map(|text| Kind::Text(text.clone()))
-                        .unwrap_or(Kind::Unknown("dynamic Name content".into())),
-                ),
+                Kind::Name(name) if field == 0 => {
+                    let mut field = Datum::new(
+                        value.ty,
+                        name.as_ref()
+                            .map(|text| Kind::Text(text.clone()))
+                            .unwrap_or(Kind::Unknown("dynamic Name content".into())),
+                    );
+                    field.name_expression = value.name_expression;
+                    field
+                }
                 _ => return None,
             };
         }
@@ -356,6 +546,9 @@ impl<'tcx> Memory<'tcx> {
             match &mut current.kind {
                 Kind::Name(name) if index == 0 && rest.is_empty() => {
                     *name = value.text();
+                    current.name_expression =
+                        value.name_expression.or(value.argument_span).or(value.span);
+                    current.name_uncertainty = value.name_uncertainty;
                     return;
                 }
                 Kind::Boxed(inner) if index == 0 => {
@@ -399,6 +592,7 @@ impl<'tcx> Memory<'tcx> {
             Kind::Sink {
                 templates,
                 parts,
+                names,
                 structure,
             } => Kind::Snapshot(
                 templates
@@ -406,6 +600,7 @@ impl<'tcx> Memory<'tcx> {
                     .map(|(_, cell)| self.snapshot_references(&self.cells[*cell], active))
                     .collect(),
                 parts.clone(),
+                names.clone(),
                 structure.clone(),
             ),
             Kind::Symbol(id, negate, reason) => match self.scalar(&value) {

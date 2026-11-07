@@ -48,44 +48,39 @@ flowchart LR
   class n2 external_node
   n3@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n3 node_observer
-  n4@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
-  class n4 node_system
-  class n4 external_node
-  n5@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  n4@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  class n4 node_observer
+  n5@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n5 node_observer
   n6@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n6 node_observer
-  n7@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
+  n7@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
   class n7 node_observer
-  n8@{ shape: hex, label: "**build::{closure#35;1}**<br/>把失去刚体归属的碰撞体迁到独立树。" }
-  class n8 node_observer
-  n9@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
-  class n9 node_system
-  class n9 external_node
+  n8@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
+  class n8 node_system
+  class n8 external_node
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
   n2 e1@-->|"插入"| n0
   class e1 edge_write
   n0 e2@-->|"存在性约束"| n3
   class e2 edge_reference
-  n4 e3@-->|"插入"| n0
+  n2 e3@-->|"插入"| n0
   class e3 edge_write
-  n0 e4@-->|"存在性约束"| n5
+  n0 e4@-->|"存在性约束"| n4
   class e4 edge_reference
-  n0 e5@-->|"存在性约束"| n6
+  n0 e5@-->|"存在性约束"| n5
   class e5 edge_reference
-  n0 e6@-->|"存在性约束"| n7
+  n0 e6@-->|"存在性约束"| n6
   class e6 edge_reference
-  n0 e7@-->|"存在性约束"| n8
+  n0 e7@-->|"存在性约束"| n7
   class e7 edge_reference
-  n9 e8@-->|"插入"| n0
+  n8 e8@-->|"插入"| n0
   class e8 edge_write
-  n2 layout_input_0@~~~ n4
-  n4 layout_input_1@~~~ n9
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
-  e3@{ curve: basis }
+  e3@{ curve: bumpX }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

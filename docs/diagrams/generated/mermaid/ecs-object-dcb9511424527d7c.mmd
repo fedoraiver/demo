@@ -40,115 +40,46 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**ColliderTransform**<br/>缓存碰撞体相对于刚体的变换。" }
   class n0 node_component
-  end
-  style layout_card_n0 fill:none,stroke:none
-  subgraph layout_card_n1[" "]
   n1@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
   class n1 node_observer
-  end
-  style layout_card_n1 fill:none,stroke:none
-  subgraph layout_card_n2[" "]
   n2@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n2 node_observer
-  end
-  style layout_card_n2 fill:none,stroke:none
-  subgraph layout_card_n3[" "]
   n3@{ shape: rounded, label: "**update​_​body​_​size​_​metrics**<br/>重算刚体的 CCD 厚度和最大扫掠半径。" }
   class n3 node_system
-  end
-  style layout_card_n3 fill:none,stroke:none
-  subgraph layout_card_n4[" "]
   n4@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
   class n4 node_observer
-  end
-  style layout_card_n4 fill:none,stroke:none
-  subgraph layout_card_n5[" "]
   n5@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
   class n5 node_system
   class n5 external_node
-  end
-  style layout_card_n5 fill:none,stroke:none
-  subgraph layout_card_n6[" "]
   n6@{ shape: rounded, label: "**propagate​_​collider​_​transforms**<br/>沿实体层级计算碰撞体相对刚体的变换。" }
   class n6 node_system
-  end
-  style layout_card_n6 fill:none,stroke:none
-  subgraph layout_card_n7[" "]
   n7@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
   class n7 node_observer
-  end
-  style layout_card_n7 fill:none,stroke:none
-  subgraph layout_card_n8[" "]
   n8@{ shape: rounded, label: "**update​_​mass​_​properties**<br/>重算已标记实体的质量属性并清除标记。" }
   class n8 node_system
-  end
-  style layout_card_n8 fill:none,stroke:none
-  subgraph layout_card_n9[" "]
   n9@{ shape: rounded, label: "**queue​_​mass​_​recomputation​_​on​_​**<br/>**collider​_​mass​_​change**<br/>在附属碰撞体质量输入变化时请求刚体重算。" }
   class n9 node_system
-  end
-  style layout_card_n9 fill:none,stroke:none
-  subgraph layout_card_n10[" "]
   n10@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
   class n10 node_system
-  end
-  style layout_card_n10 fill:none,stroke:none
-  subgraph layout_card_n11[" "]
-  n11@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
-  class n11 node_system
-  class n11 external_node
-  end
-  style layout_card_n11 fill:none,stroke:none
-  subgraph layout_card_n12[" "]
-  n12@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
-  class n12 node_observer
-  end
-  style layout_card_n12 fill:none,stroke:none
-  subgraph layout_card_n13[" "]
-  n13@{ shape: rounded, label: "**update​_​collider​_​scale**<br/>把根节点和附属碰撞体的缩放传给形状。" }
-  class n13 node_system
-  end
-  style layout_card_n13 fill:none,stroke:none
-  subgraph layout_card_n14[" "]
-  n14@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  n11@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
+  class n11 node_observer
+  n12@{ shape: rounded, label: "**update​_​collider​_​scale**<br/>把根节点和附属碰撞体的缩放传给形状。" }
+  class n12 node_system
+  n13@{ shape: hex, label: "**build::{closure#35;1}**<br/>随碰撞体集合变化重算刚体质量。" }
+  class n13 node_observer
+  n14@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
   class n14 node_observer
-  end
-  style layout_card_n14 fill:none,stroke:none
-  subgraph layout_card_n15[" "]
   n15@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
   class n15 node_observer
-  end
-  style layout_card_n15 fill:none,stroke:none
-  subgraph layout_card_n16[" "]
-  n16@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>来自item​_​interaction ↗：同步组合体内<br/>箱子的真实世界姿态和速度，不依赖人物是否<br/>具有视觉 Children。" }
+  n16@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
   class n16 node_system
   class n16 external_node
-  end
-  style layout_card_n16 fill:none,stroke:none
-  subgraph layout_card_n17[" "]
-  n17@{ shape: hex, label: "**on​_​body​_​removed**<br/>清理已移除刚体的碰撞体归属。" }
+  n17@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
   class n17 node_observer
-  end
-  style layout_card_n17 fill:none,stroke:none
-  subgraph layout_card_n18[" "]
-  n18@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
+  n18@{ shape: rounded, label: "**update​_​child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
   class n18 node_system
-  class n18 external_node
-  end
-  style layout_card_n18 fill:none,stroke:none
-  subgraph layout_card_n19[" "]
-  n19@{ shape: hex, label: "**build::{closure#35;0}**<br/>初始化新刚体的质量属性。" }
-  class n19 node_observer
-  end
-  style layout_card_n19 fill:none,stroke:none
-  subgraph layout_card_n20[" "]
-  n20@{ shape: rounded, label: "**update​_​child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
-  class n20 node_system
-  end
-  style layout_card_n20 fill:none,stroke:none
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@-->|"存在性约束"| n2
@@ -171,49 +102,49 @@ flowchart LR
   class e9 edge_read
   n0 e10@--> n10
   class e10 edge_read
-  n11 e11@-->|"可变访问"| n0
+  n5 e11@-->|"可变访问"| n0
   class e11 edge_write
-  n0 e12@-->|"存在性约束"| n12
+  n0 e12@-->|"存在性约束"| n11
   class e12 edge_reference
-  n0 e13@--> n13
+  n0 e13@--> n12
   class e13 edge_read
   n0 e14@-->|"存在性约束"| n1
   class e14 edge_reference
-  n0 e15@-->|"存在性约束"| n14
+  n0 e15@-->|"存在性约束"| n13
   class e15 edge_reference
-  n11 e16@-->|"赋值"| n0
+  n5 e16@-->|"赋值"| n0
   class e16 edge_write
   n0 e17@--> n8
   class e17 edge_read
-  n15 e18@-->|"移除"| n0
+  n14 e18@-->|"移除"| n0
   class e18 edge_write
   n0 e19@--> n2
   class e19 edge_read
-  n0 e20@-->|"存在性约束"| n13
+  n0 e20@-->|"存在性约束"| n12
   class e20 edge_reference
   n0 e21@-->|"存在性约束"| n7
   class e21 edge_reference
-  n16 e22@-->|"赋值"| n0
+  n5 e22@-->|"赋值"| n0
   class e22 edge_write
-  n16 e23@-->|"可变访问"| n0
+  n5 e23@-->|"可变访问"| n0
   class e23 edge_write
-  n0 e24@--> n12
+  n0 e24@--> n11
   class e24 edge_read
-  n17 e25@-->|"移除"| n0
+  n15 e25@-->|"移除"| n0
   class e25 edge_write
   n0 e26@-->|"存在性约束"| n9
   class e26 edge_reference
-  n0 e27@--> n14
+  n0 e27@--> n13
   class e27 edge_read
   n5 e28@-->|"赋值"| n0
   class e28 edge_write
-  n18 e29@-->|"插入"| n0
+  n16 e29@-->|"插入"| n0
   class e29 edge_write
-  n0 e30@-->|"存在性约束"| n19
+  n0 e30@-->|"存在性约束"| n17
   class e30 edge_reference
-  n0 e31@--> n20
+  n0 e31@--> n18
   class e31 edge_read
-  n0 e32@--> n19
+  n0 e32@--> n17
   class e32 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }

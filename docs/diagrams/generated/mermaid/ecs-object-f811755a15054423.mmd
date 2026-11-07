@@ -108,12 +108,6 @@ flowchart LR
   class n12 node_system
   end
   style layout_card_n12 fill:none,stroke:none
-  subgraph layout_card_n13[" "]
-  n13@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
-  class n13 node_system
-  class n13 external_node
-  end
-  style layout_card_n13 fill:none,stroke:none
   n1 e0@-->|"插入"| n0
   class e0 edge_write
   n0 e1@-->|"存在性约束"| n2
@@ -154,7 +148,7 @@ flowchart LR
   class e18 edge_write
   n0 e19@--> n2
   class e19 edge_read
-  n13 e20@-->|"插入"| n0
+  n5 e20@-->|"插入"| n0
   class e20 edge_write
   n0 e21@-->|"存在性约束"| n9
   class e21 edge_reference

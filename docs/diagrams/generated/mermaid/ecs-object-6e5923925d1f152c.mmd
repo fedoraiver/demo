@@ -52,8 +52,6 @@ flowchart LR
   class n5 node_system
   n6@{ shape: rounded, label: "**ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**ui​_​pass**<br/>把透明 UI 绘制项渲染到关联视图。" }
-  class n7 node_system
   n1 e0@-->|"移除"| n0
   class e0 edge_write
   n0 e1@--> n2
@@ -68,7 +66,7 @@ flowchart LR
   class e5 edge_write
   n0 e6@--> n6
   class e6 edge_read
-  n0 e7@--> n7
+  n0 e7@--> n6
   class e7 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }

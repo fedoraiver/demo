@@ -45,7 +45,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**spawn​_​session**<br/>装配可移动、跳跃和搬运的灰盒会话。" }
   class n0 node_system
-  n1@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>保存灰盒玩家身份与运动状态。" }
+  n1@{ shape: rounded, label: "**Player**<br/>保存灰盒玩家身份与运动状态。" }
   class n1 node_entity
   n2@{ shape: cyl, label: "**Assets#lt;StandardMaterial#gt;**<br/>来自crate:bevy​_​asset ↗：按资产身份存<br/>储对象并暂存变化消息。" }
   class n2 node_resource
@@ -56,14 +56,14 @@ flowchart LR
   n4@{ shape: rounded, label: "**ControlsCharacter**<br/>来自first​_​person ↗：控制者当前关联的<br/>角色，设备和角色状态分别保存。" }
   class n4 node_component
   class n4 external_node
-  n5@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>创建可拾取并参与物理的灰盒方块。" }
+  n5@{ shape: rounded, label: "**format!(#quot;Greybox cube {}#quot;, index +**<br/>**1)**<br/>创建可拾取并参与物理的灰盒方块。" }
   class n5 node_entity
   n6@{ shape: rounded, label: "**LockedAxes**<br/>来自crate:avian3d ↗：锁定刚体的平移或<br/>旋转轴。" }
   class n6 node_component
   class n6 external_node
-  n7@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>承载灰盒地面的显示与静态碰撞。" }
+  n7@{ shape: rounded, label: "**Greybox ground**<br/>承载灰盒地面的显示与静态碰撞。" }
   class n7 node_entity
-  n8@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>照亮灰盒地面与方块。" }
+  n8@{ shape: rounded, label: "**Greybox daylight**<br/>照亮灰盒地面与方块。" }
   class n8 node_entity
   n9@{ shape: rounded, label: "**Restitution**<br/>来自crate:avian3d ↗：配置碰撞后的弹跳<br/>恢复程度。" }
   class n9 node_component
@@ -86,7 +86,7 @@ flowchart LR
   n15@{ shape: rounded, label: "**FirstPersonCamera**<br/>来自first​_​person ↗：观察角度的唯一来<br/>源；有向转角保留到下一次安全朝向同步。" }
   class n15 node_component
   class n15 external_node
-  n16@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>从受控角色眼位呈现灰盒会话。" }
+  n16@{ shape: rounded, label: "**First-person camera**<br/>从受控角色眼位呈现灰盒会话。" }
   class n16 node_entity
   n17@{ shape: rounded, label: "**SweptCcd**<br/>来自crate:avian3d ↗：配置快速动态刚体<br/>的连续扫掠。" }
   class n17 node_component
@@ -120,7 +120,7 @@ flowchart LR
   n27@{ shape: rounded, label: "**PlayerId**<br/>来自first​_​person ↗：独立于本次运行实<br/>体标识的玩家身份。" }
   class n27 node_component
   class n27 external_node
-  n28@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载玩家键鼠玩法<br/>输入与角色控制关系。" }
+  n28@{ shape: rounded, label: "**format!(#quot;Keyboard controller {id}#quot;)**<br/>来自first​_​person ↗：承载玩家键鼠玩法<br/>输入与角色控制关系。" }
   class n28 node_entity
   class n28 external_node
   n29@{ shape: rounded, label: "**ControlsCamera**<br/>来自first​_​person ↗：控制者当前关联的<br/>第一人称相机。" }

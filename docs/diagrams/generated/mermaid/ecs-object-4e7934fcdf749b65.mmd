@@ -44,26 +44,24 @@ flowchart LR
   class n1 node_system
   n2@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
+  n3@{ shape: rounded, label: "**prepare​_​smaa​_​bind​_​groups**<br/>为视图绑定 SMAA 中间纹理与查找表。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**prepare​_​smaa​_​bind​_​groups**<br/>为视图绑定 SMAA 中间纹理与查找表。" }
+  n4@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
+  class n4 external_node
+  n5@{ shape: rounded, label: "**init​_​smaa​_​pipelines**<br/>建立 SMAA 三个阶段的布局和着色器资源。" }
   class n5 node_system
-  class n5 external_node
-  n6@{ shape: rounded, label: "**init​_​smaa​_​pipelines**<br/>建立 SMAA 三个阶段的布局和着色器资源。" }
-  class n6 node_system
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
   class e1 edge_read
-  n0 e2@--> n3
+  n0 e2@--> n2
   class e2 edge_read
-  n0 e3@--> n4
+  n0 e3@--> n3
   class e3 edge_read
-  n5 e4@-->|"移除"| n0
+  n4 e4@-->|"移除"| n0
   class e4 edge_write
-  n6 e5@-->|"插入"| n0
+  n5 e5@-->|"插入"| n0
   class e5 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

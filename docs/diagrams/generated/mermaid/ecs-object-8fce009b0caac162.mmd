@@ -17,8 +17,8 @@
     },
     "flowchart": {
       "htmlLabels": false,
-      "nodeSpacing": 16,
-      "rankSpacing": 48,
+      "nodeSpacing": 32,
+      "rankSpacing": 64,
       "padding": 16,
       "wrappingWidth": 280,
       "minNodeWidth": 180,
@@ -36,17 +36,20 @@ flowchart LR
   classDef node_component fill:#F1F5F2,stroke:#4B8060,stroke-width:1.6px,color:#1F3340
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**DynamicUniformIndex#lt;CasUniform#gt;**<br/>定位组件参数在共享 Uniform 缓冲中的位<br/>置。" }
   class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
   n1@{ shape: rounded, label: "**cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
   class n1 node_system
   class n1 external_node
-  n2@{ shape: rounded, label: "**cas**<br/>来自crate:bevy​_​anti​_​alias ↗：对视图<br/>颜色执行 CAS 锐化后处理。" }
-  class n2 node_system
-  class n2 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
   n0 e0@--> n1
   class e0 edge_read
-  n0 e1@--> n2
+  n0 e1@--> n1
   class e1 edge_read
-  e0@{ curve: basis }
+  e0@{ curve: bumpX }
   e1@{ curve: basis }

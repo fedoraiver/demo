@@ -51,11 +51,9 @@ flowchart LR
   n4@{ shape: rounded, label: "**prepare​_​sprite​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为精<br/>灵视图绑定参数和色调映射 LUT。" }
   class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**tonemapping**<br/>为启用的 HDR 视图执行色调映射。" }
+  n5@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
-  class n6 node_system
-  class n6 external_node
+  class n5 external_node
   n1 e0@--- n0
   class e0 edge_read
   n1 e1@-->|"赋值"| n0
@@ -66,11 +64,11 @@ flowchart LR
   class e3 edge_read
   n0 e4@--> n4
   class e4 edge_read
-  n0 e5@--> n5
+  n0 e5@--> n3
   class e5 edge_read
   n1 e6@-->|"可变访问"| n0
   class e6 edge_write
-  n0 e7@--> n6
+  n0 e7@--> n5
   class e7 edge_read
   n1 e8@-->|"插入"| n0
   class e8 edge_write
@@ -78,7 +76,8 @@ flowchart LR
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e5@{ curve: basis }
+  e4@{ curve: basis }
+  e5@{ curve: bumpX }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

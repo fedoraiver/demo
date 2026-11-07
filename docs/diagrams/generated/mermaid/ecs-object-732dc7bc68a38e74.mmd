@@ -17,8 +17,8 @@
     },
     "flowchart": {
       "htmlLabels": false,
-      "nodeSpacing": 16,
-      "rankSpacing": 48,
+      "nodeSpacing": 32,
+      "rankSpacing": 64,
       "padding": 16,
       "wrappingWidth": 280,
       "minNodeWidth": 180,
@@ -38,19 +38,26 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**BloomDownsamplingPipelineIds**<br/>记录 Bloom 首级和后续降采样管线。" }
   class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
   n1@{ shape: rounded, label: "**prepare​_​downsampling​_​pipeline**<br/>按预过滤和缩放设置准备 Bloom 降采样变<br/>体。" }
   class n1 node_system
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
   n2@{ shape: rounded, label: "**bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**bloom**<br/>通过降采样和上采样合成 HDR 光晕。" }
-  class n3 node_system
+  end
+  style layout_card_n2 fill:none,stroke:none
   n1 e0@-->|"插入"| n0
   class e0 edge_write
   n0 e1@--> n2
   class e1 edge_read
-  n0 e2@--> n3
+  n0 e2@--> n2
   class e2 edge_read
-  e1@{ curve: basis }
-  e2@{ curve: basis }
+  e1@{ curve: bumpX }
+  e2@{ curve: bumpX }

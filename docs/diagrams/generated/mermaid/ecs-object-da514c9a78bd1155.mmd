@@ -47,7 +47,7 @@ flowchart LR
   n2@{ shape: rounded, label: "**extract​_​cameras**<br/>来自crate:bevy​_​render ↗：把活动相机及<br/>可见实体提取到渲染世界。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
+  n3@{ shape: rounded, label: "**First-person camera**<br/>来自scene​_​assembly ↗：从受控角色眼位<br/>呈现灰盒会话。" }
   class n3 node_entity
   class n3 external_node
   n4@{ shape: rounded, label: "**repopulate**<br/>来自crate:bevy​_​picking ↗：重建指针与<br/>相机组合的拾取射线。" }
@@ -77,18 +77,15 @@ flowchart LR
   n12@{ shape: rounded, label: "**ui​_​focus​_​system**<br/>来自crate:bevy​_​ui ↗：按鼠标和触摸更新<br/>旧式 UI 交互状态。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**spawn​_​backdrop · 创建模板**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
+  n13@{ shape: rounded, label: "**MenuCamera**<br/>来自ui ↗：以纯色背景绘制主菜单与默认<br/>UI。" }
   class n13 node_entity
   class n13 external_node
-  n14@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n14@{ shape: rounded, label: "**update​_​viewport​_​render​_​target​_​size**<br/>来自crate:bevy​_​ui ↗：按 UI 视口节点尺<br/>寸调整相机图像目标。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**update​_​viewport​_​render​_​target​_​size**<br/>来自crate:bevy​_​ui ↗：按 UI 视口节点尺<br/>寸调整相机图像目标。" }
+  n15@{ shape: rounded, label: "**extract​_​shadow​_​lod​_​origin**<br/>来自crate:bevy​_​pbr ↗：解析点光与聚光<br/>阴影 LOD 的距离参考位置。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**extract​_​shadow​_​lod​_​origin**<br/>来自crate:bevy​_​pbr ↗：解析点光与聚光<br/>阴影 LOD 的距离参考位置。" }
-  class n16 node_system
-  class n16 external_node
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
@@ -115,11 +112,11 @@ flowchart LR
   class e11 edge_read
   n13 e12@-->|"可能包含"| n0
   class e12 edge_reference
-  n0 e13@--> n14
+  n0 e13@--> n1
   class e13 edge_read
-  n0 e14@--> n15
+  n0 e14@--> n14
   class e14 edge_read
-  n0 e15@--> n16
+  n0 e15@--> n15
   class e15 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }

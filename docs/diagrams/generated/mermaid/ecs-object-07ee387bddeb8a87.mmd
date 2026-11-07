@@ -49,8 +49,6 @@ flowchart LR
   class n3 node_system
   n4@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
   class n4 node_system
-  n5@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
-  class n5 node_system
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"移除"| n0
@@ -59,9 +57,10 @@ flowchart LR
   class e2 edge_write
   n0 e3@--> n4
   class e3 edge_read
-  n0 e4@--> n5
+  n0 e4@--> n4
   class e4 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e2@{ curve: bumpX }
+  e3@{ curve: bumpX }
   e4@{ curve: basis }

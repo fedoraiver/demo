@@ -72,48 +72,45 @@ flowchart LR
   n11@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
   class n11 node_system
   class n11 external_node
-  n12@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>来自crate:bevy​_​egui ↗：在渲染世界更新<br/>延期的 Egui 绘制回调。" }
+  n12@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n12 node_system
   class n12 external_node
-  n13@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  n13@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
   class n13 node_system
   class n13 external_node
-  n14@{ shape: rounded, label: "**handle​_​uncovered​_​swap​_​chains**<br/>来自crate:bevy​_​core​_​pipeline ↗：清除<br/>本帧没有相机覆盖的窗口交换链。" }
+  n14@{ shape: rounded, label: "**spawn​_​queued**<br/>来自crate:bevy​_​scene ↗：应用已就绪的<br/>场景补丁并推进排队装配。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**spawn​_​queued**<br/>来自crate:bevy​_​scene ↗：应用已就绪的<br/>场景补丁并推进排队装配。" }
+  n15@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
+  n16@{ shape: rounded, label: "**run​_​main**<br/>来自crate:bevy​_​app ↗：按主调度顺序驱<br/>动应用更新。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**run​_​main**<br/>来自crate:bevy​_​app ↗：按主调度顺序驱<br/>动应用更新。" }
+  n17@{ shape: rounded, label: "**message​_​update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
   class n17 node_system
-  class n17 external_node
-  n18@{ shape: rounded, label: "**message​_​update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
+  n18@{ shape: rounded, label: "**apply​_​extract​_​commands**<br/>来自crate:bevy​_​extract ↗：应用提取阶<br/>段累计的子世界命令。" }
   class n18 node_system
-  n19@{ shape: rounded, label: "**apply​_​extract​_​commands**<br/>来自crate:bevy​_​extract ↗：应用提取阶<br/>段累计的子世界命令。" }
+  class n18 external_node
+  n19@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  n20@{ shape: rounded, label: "**handle​_​internal​_​asset​_​events**<br/>来自crate:bevy​_​asset ↗：处理资产加<br/>载、依赖就绪及失败通知。" }
   class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**handle​_​internal​_​asset​_​events**<br/>来自crate:bevy​_​asset ↗：处理资产加<br/>载、依赖就绪及失败通知。" }
+  n21@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
   class n21 node_system
   class n21 external_node
-  n22@{ shape: rounded, label: "**extract​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：按资产变化和<br/>设备恢复请求提取渲染资产。" }
+  n22@{ shape: rounded, label: "**run​_​fixed​_​main**<br/>来自crate:bevy​_​app ↗：运行一个固定时<br/>间步的调度阶段。" }
   class n22 node_system
   class n22 external_node
-  n23@{ shape: rounded, label: "**run​_​fixed​_​main**<br/>来自crate:bevy​_​app ↗：运行一个固定时<br/>间步的调度阶段。" }
+  n23@{ shape: rounded, label: "**message​_​update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
   class n23 node_system
-  class n23 external_node
   n24@{ shape: rounded, label: "**message​_​update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
   class n24 node_system
-  n25@{ shape: rounded, label: "**message​_​update​_​system**<br/>轮换世界中已注册的消息缓冲。" }
+  n25@{ shape: rounded, label: "**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
   class n25 node_system
-  n26@{ shape: rounded, label: "**camera​_​driver**<br/>来自crate:bevy​_​core​_​pipeline ↗：为辅<br/>助视图和活动相机运行专属渲染调度。" }
-  class n26 node_system
-  class n26 external_node
+  class n25 external_node
   n1 e0@-->|"赋值"| n0
   class e0 edge_write
   n2 e1@-->|"赋值"| n0
@@ -136,35 +133,35 @@ flowchart LR
   class e9 edge_write
   n11 e10@-->|"赋值"| n0
   class e10 edge_write
-  n12 e11@-->|"赋值"| n0
+  n9 e11@-->|"赋值"| n0
   class e11 edge_write
-  n13 e12@-->|"赋值"| n0
+  n12 e12@-->|"赋值"| n0
   class e12 edge_write
-  n14 e13@-->|"赋值"| n0
+  n13 e13@-->|"赋值"| n0
   class e13 edge_write
-  n15 e14@-->|"赋值"| n0
+  n14 e14@-->|"赋值"| n0
   class e14 edge_write
-  n16 e15@-->|"赋值"| n0
+  n15 e15@-->|"赋值"| n0
   class e15 edge_write
-  n17 e16@-->|"赋值"| n0
+  n16 e16@-->|"赋值"| n0
   class e16 edge_write
-  n18 e17@-->|"赋值"| n0
+  n17 e17@-->|"赋值"| n0
   class e17 edge_write
-  n19 e18@-->|"赋值"| n0
+  n18 e18@-->|"赋值"| n0
   class e18 edge_write
-  n20 e19@-->|"赋值"| n0
+  n19 e19@-->|"赋值"| n0
   class e19 edge_write
-  n21 e20@-->|"赋值"| n0
+  n20 e20@-->|"赋值"| n0
   class e20 edge_write
-  n22 e21@-->|"赋值"| n0
+  n21 e21@-->|"赋值"| n0
   class e21 edge_write
-  n23 e22@-->|"赋值"| n0
+  n22 e22@-->|"赋值"| n0
   class e22 edge_write
-  n24 e23@-->|"赋值"| n0
+  n23 e23@-->|"赋值"| n0
   class e23 edge_write
-  n25 e24@-->|"赋值"| n0
+  n24 e24@-->|"赋值"| n0
   class e24 edge_write
-  n26 e25@-->|"赋值"| n0
+  n25 e25@-->|"赋值"| n0
   class e25 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

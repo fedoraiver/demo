@@ -41,11 +41,11 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**VolumeFill**<br/>关联音量填充条与草稿设置项。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>按草稿音量绘制滑条填充。" }
+  n1@{ shape: rounded, label: "**Volume slider fill**<br/>按草稿音量绘制滑条填充。" }
   class n1 node_entity
   n2@{ shape: rounded, label: "**update​_​volume​_​visuals**<br/>草稿由请求系统在 PreUpdate 修改，随后<br/>同帧更新已有数字和轨道填充。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>按草稿音量绘制滑条填充。" }
+  n3@{ shape: rounded, label: "**Volume slider fill**<br/>按草稿音量绘制滑条填充。" }
   class n3 node_entity
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference

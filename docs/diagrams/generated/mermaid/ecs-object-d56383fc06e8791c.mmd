@@ -43,20 +43,19 @@ flowchart LR
   class n0 node_component
   n1@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>帧末跟随同一份已呈现人物姿态，零固定步时<br/>也不在箱体上叠加第二份插值。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：创建可拾取并参<br/>与物理的灰盒方块。" }
+  n2@{ shape: rounded, label: "**format!(#quot;Greybox cube {}#quot;, index +**<br/>**1)**<br/>来自scene​_​assembly ↗：创建可拾取并参<br/>与物理的灰盒方块。" }
   class n2 node_entity
   class n2 external_node
   n3@{ shape: rounded, label: "**align​_​attachments**<br/>有限的小步对齐不会积分箱体力；受阻保留安<br/>全姿态，持续受阻则解除持握。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>帧末跟随同一份已呈现人物姿态，零固定步时<br/>也不在箱体上叠加第二份插值。" }
-  class n4 node_system
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"可能包含"| n0
   class e1 edge_reference
   n0 e2@--> n3
   class e2 edge_read
-  n0 e3@--> n4
+  n0 e3@--> n1
   class e3 edge_read
   e0@{ curve: basis }
+  e2@{ curve: basis }
   e3@{ curve: basis }

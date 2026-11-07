@@ -17,8 +17,8 @@
     },
     "flowchart": {
       "htmlLabels": false,
-      "nodeSpacing": 16,
-      "rankSpacing": 48,
+      "nodeSpacing": 32,
+      "rankSpacing": 64,
       "padding": 16,
       "wrappingWidth": 280,
       "minNodeWidth": 180,
@@ -38,19 +38,26 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**PostProcessingUniformBufferOffsets**<br/>定位相机各后处理效果的参数缓冲位置。" }
   class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
   n1@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
   class n1 node_system
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
   n2@{ shape: rounded, label: "**prepare​_​post​_​processing​_​uniforms**<br/>收集并上传逐视图色差、暗角和畸变参数。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**post​_​processing**<br/>组合执行色差、暗角和镜头畸变。" }
-  class n3 node_system
+  end
+  style layout_card_n2 fill:none,stroke:none
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"插入"| n0
   class e1 edge_write
-  n0 e2@--> n3
+  n0 e2@--> n1
   class e2 edge_read
-  e0@{ curve: basis }
-  e2@{ curve: basis }
+  e0@{ curve: bumpX }
+  e2@{ curve: bumpX }

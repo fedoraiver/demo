@@ -10,6 +10,8 @@ const oldContent = Buffer.from('previous complete artifact\n旧版本\n');
 const newContent = Buffer.from('new complete artifact\n新版本\n');
 const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const failure = code => Object.assign(new Error('Injected rename failure: ' + code), { code });
+// 精确计数只覆盖注入的重试；宿主系统的额外占用由真实替换路径处理。
+const renameOnHost = (staged, target) => replaceArtifactSync(staged, target);
 
 function fixture(t) {
   const parent = path.join(repositoryRoot, 'tmp/ecs-architecture/artifact-writer-tests');
@@ -38,7 +40,7 @@ test('text artifacts preserve UTF-8 bytes through atomic replacement and reuse i
   const files = textFixture(t), content = newContent.toString('utf8'); let calls = 0;
   writeTextArtifactSync(files.output, files.staging, files.filename, content, {
     rename: (staged, target) => {
-      calls++; unchanged({ staged, target }); fs.renameSync(staged, target);
+      calls++; unchanged({ staged, target }); renameOnHost(staged, target);
     },
   });
   assert.equal(calls, 1); assert.deepEqual(fs.readFileSync(files.target), newContent);
@@ -90,7 +92,7 @@ test('Windows transient occupancy retries the intact staged file and atomically 
       rename: (staged, target) => {
         unchanged(files);
         if (++calls === 1) throw failure(code);
-        fs.renameSync(staged, target);
+        renameOnHost(staged, target);
       } });
     assert.equal(calls, 2); assert.deepEqual(waits, [20]);
     assert.deepEqual(fs.readFileSync(files.target), newContent); assert.equal(fs.existsSync(files.staged), false);
@@ -131,7 +133,7 @@ test('a verified compiler sidecar uses the same bounded replacement path while p
     rename: (staged, target) => {
       unchanged(files); assert.equal(digest(fs.readFileSync(staged)), expected);
       if (++calls === 1) throw failure('EPERM');
-      fs.renameSync(staged, target);
+      renameOnHost(staged, target);
     } });
   assert.equal(calls, 2); assert.deepEqual(waits, [20]);
   assert.deepEqual(fs.readFileSync(files.target), newContent); assert.deepEqual(fs.readFileSync(files.source), newContent);
@@ -180,7 +182,7 @@ test('a missing target is created through the verified atomic replacement path',
   const files = fixture(t), expected = digest(newContent); let calls = 0;
   fs.unlinkSync(files.target);
   copyVerifiedArtifactSync(files.source, files.staged, files.target, expected, {
-    rename: (staged, target) => { calls++; fs.renameSync(staged, target); },
+    rename: (staged, target) => { calls++; renameOnHost(staged, target); },
   });
   assert.equal(calls, 1);
   assert.deepEqual(fs.readFileSync(files.target), newContent);

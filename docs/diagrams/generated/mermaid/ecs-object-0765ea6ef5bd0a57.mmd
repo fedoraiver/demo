@@ -52,11 +52,6 @@ flowchart LR
   class n4 node_system
   n5@{ shape: rounded, label: "**upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**upscaling**<br/>将主颜色纹理缩放写入最终输出附件。" }
-  class n6 node_system
-  n7@{ shape: rounded, label: "**msaa​_​writeback**<br/>来自crate:bevy​_​post​_​process ↗：将后<br/>处理颜色回写多采样目标。" }
-  class n7 node_system
-  class n7 external_node
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
@@ -67,13 +62,13 @@ flowchart LR
   class e3 edge_write
   n0 e4@--> n5
   class e4 edge_read
-  n0 e5@--> n6
+  n0 e5@--> n5
   class e5 edge_read
-  n0 e6@--> n7
+  n0 e6@--> n2
   class e6 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
-  e2@{ curve: basis }
+  e2@{ curve: bumpX }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }

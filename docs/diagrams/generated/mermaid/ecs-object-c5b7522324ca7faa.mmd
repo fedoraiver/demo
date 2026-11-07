@@ -38,59 +38,72 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**HeldAttachment**<br/>实际碰撞形状相对组合刚体的姿态；箱实体不<br/>成为人物的 ChildOf，避免异常销毁时连带<br/>消失。" }
   class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
   n1@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
+  n2@{ shape: rounded, label: "**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**finish​_​attachments**<br/>持握期间只保留人物的 Dynamic，碰到箱子<br/>即对同一刚体求解，内部形状自动互不碰撞。" }
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
+  n3@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
+  class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
+  n4@{ shape: rounded, label: "**align​_​attachments**<br/>有限的小步对齐不会积分箱体力；受阻保留安<br/>全姿态，持续受阻则解除持握。" }
   class n4 node_system
-  class n4 external_node
-  n5@{ shape: rounded, label: "**align​_​attachments**<br/>有限的小步对齐不会积分箱体力；受阻保留安<br/>全姿态，持续受阻则解除持握。" }
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
+  n5@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>帧末跟随同一份已呈现人物姿态，零固定步时<br/>也不在箱体上叠加第二份插值。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>帧末跟随同一份已呈现人物姿态，零固定步时<br/>也不在箱体上叠加第二份插值。" }
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
+  n6@{ shape: rounded, label: "**handle​_​interaction**<br/>拾取建立物理持握关系；释放只解除控制，保<br/>留刚体姿态、线速度和角速度。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**sync​_​held​_​presentation**<br/>帧末跟随同一份已呈现人物姿态，零固定步时<br/>也不在箱体上叠加第二份插值。" }
-  class n7 node_system
-  n8@{ shape: rounded, label: "**handle​_​interaction**<br/>拾取建立物理持握关系；释放只解除控制，保<br/>留刚体姿态、线速度和角速度。" }
-  class n8 node_system
-  n9@{ shape: rounded, label: "**sync​_​held​_​physics**<br/>同步组合体内箱子的真实世界姿态和速度，不<br/>依赖人物是否具有视觉 Children。" }
-  class n9 node_system
-  n10@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>来自first​_​person ↗：在固定模拟前及逐<br/>帧持握目标同步前设置水平朝向，站立、横移<br/>和后退时也跟随视角。" }
-  class n10 node_system
-  class n10 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
   n0 e0@--> n1
   class e0 edge_read
-  n0 e1@--> n2
+  n0 e1@--> n1
   class e1 edge_read
-  n3 e2@-->|"可变访问"| n0
+  n2 e2@-->|"可变访问"| n0
   class e2 edge_write
-  n0 e3@--> n4
+  n0 e3@--> n3
   class e3 edge_read
-  n5 e4@-->|"赋值"| n0
+  n4 e4@-->|"赋值"| n0
   class e4 edge_write
-  n0 e5@--> n6
+  n0 e5@--> n5
   class e5 edge_read
-  n0 e6@--> n7
+  n0 e6@--> n5
   class e6 edge_read
-  n5 e7@-->|"可变访问"| n0
+  n4 e7@-->|"可变访问"| n0
   class e7 edge_write
-  n8 e8@-->|"插入"| n0
+  n6 e8@-->|"插入"| n0
   class e8 edge_write
-  n0 e9@--> n9
+  n0 e9@--> n1
   class e9 edge_read
-  n0 e10@--> n10
+  n0 e10@---> n3
   class e10 edge_read
-  n3 e11@-->|"赋值"| n0
+  n2 e11@-->|"赋值"| n0
   class e11 edge_write
-  e0@{ curve: basis }
+  e0@{ curve: bumpX }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

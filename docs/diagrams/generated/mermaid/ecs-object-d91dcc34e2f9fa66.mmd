@@ -41,34 +41,34 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: cyl, label: "**GameSettings**<br/>全局玩家设置；非零类型保证帧率上限始终能<br/>够转换为等待间隔。" }
   class n0 node_resource
-  n1@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
-  class n1 node_observer
-  class n1 external_node
-  n2@{ shape: rounded, label: "**apply​_​frame​_​rate​_​limit**<br/>只同步更新策略；计时与等待由 Winit 执<br/>行，Local 仅保存已应用值以去重和记录变<br/>更。" }
+  n1@{ shape: rounded, label: "**apply​_​frame​_​rate​_​limit**<br/>只同步更新策略；计时与等待由 Winit 执<br/>行，Local 仅保存已应用值以去重和记录变<br/>更。" }
+  class n1 node_system
+  n2@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
-  class n3 node_system
+  class n2 external_node
+  n3@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
+  class n3 node_observer
   class n3 external_node
-  n4@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
-  class n4 node_observer
+  n4@{ shape: rounded, label: "**sync​_​audio​_​mix**<br/>来自audio ↗：合成设置预览或正式配置的<br/>有效音量。" }
+  class n4 node_system
   class n4 external_node
-  n5@{ shape: rounded, label: "**sync​_​audio​_​mix**<br/>来自audio ↗：合成设置预览或正式配置的<br/>有效音量。" }
-  class n5 node_system
+  n5@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
+  class n5 node_observer
   class n5 external_node
   n6@{ shape: hex, label: "**on​_​camera​_​look**<br/>来自first​_​person ↗：Fire 已携带本帧汇<br/>总位移，直接更新角度；有向水平转角留给下<br/>一次碰撞检查消费。" }
   class n6 node_observer
   class n6 external_node
   n0 e0@--> n1
   class e0 edge_read
-  n0 e1@--> n2
-  class e1 edge_read
-  n3 e2@-->|"赋值"| n0
-  class e2 edge_write
+  n2 e1@-->|"赋值"| n0
+  class e1 edge_write
+  n0 e2@--> n3
+  class e2 edge_read
   n0 e3@--> n4
   class e3 edge_read
   n0 e4@--> n5
   class e4 edge_read
-  n3 e5@-->|"可变访问"| n0
+  n2 e5@-->|"可变访问"| n0
   class e5 edge_write
   n0 e6@--> n6
   class e6 edge_read

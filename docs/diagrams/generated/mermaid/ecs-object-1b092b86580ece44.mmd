@@ -55,38 +55,36 @@ flowchart LR
   class n6 node_observer
   n7@{ shape: rounded, label: "**split​_​island**<br/>根据接触与关节连接重新拆分物理岛。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
+  n8@{ shape: rounded, label: "**apply​_​joint​_​graph​_​changes**<br/>把关节连接变化同步到模拟岛。" }
   class n8 node_system
-  n9@{ shape: rounded, label: "**apply​_​joint​_​graph​_​changes**<br/>把关节连接变化同步到模拟岛。" }
-  class n9 node_system
-  n10@{ shape: hex, label: "**build::{closure#35;2}**<br/>移除失去刚体的实体物理岛节点。" }
+  n9@{ shape: hex, label: "**build::{closure#35;2}**<br/>移除失去刚体的实体物理岛节点。" }
+  class n9 node_observer
+  n10@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
   class n10 node_observer
-  n11@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
+  n11@{ shape: hex, label: "**wake​_​on​_​replace​_​rigid​_​body**<br/>在刚体替换前请求唤醒物理岛。" }
   class n11 node_observer
-  n12@{ shape: hex, label: "**wake​_​on​_​replace​_​rigid​_​body**<br/>在刚体替换前请求唤醒物理岛。" }
+  n12@{ shape: hex, label: "**build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
   class n12 node_observer
-  n13@{ shape: hex, label: "**build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
+  n13@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
+  n14@{ shape: hex, label: "**build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
   class n14 node_observer
-  n15@{ shape: hex, label: "**build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
-  class n15 node_observer
-  n16@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
-  class n16 node_system
-  n17@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
+  n15@{ shape: rounded, label: "**update​_​sleeping​_​states**<br/>按刚体静止时间判断物理岛的休眠资格。" }
+  class n15 node_system
+  n16@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
+  class n16 node_observer
+  n17@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
   class n17 node_observer
-  n18@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
+  n18@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
   class n18 node_observer
-  n19@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
+  n19@{ shape: hex, label: "**wake​_​on​_​replace​_​rigid​_​body**<br/>在刚体替换前请求唤醒物理岛。" }
   class n19 node_observer
-  n20@{ shape: hex, label: "**wake​_​on​_​replace​_​rigid​_​body**<br/>在刚体替换前请求唤醒物理岛。" }
+  n20@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
   class n20 node_observer
-  n21@{ shape: hex, label: "**wake​_​on​_​enable​_​rigid​_​body**<br/>重置启用刚体的休眠状态并请求唤醒。" }
+  n21@{ shape: hex, label: "**build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
   class n21 node_observer
-  n22@{ shape: hex, label: "**build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
-  class n22 node_observer
-  n23@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
-  class n23 node_system
+  n22@{ shape: rounded, label: "**wake​_​on​_​changed**<br/>因外部位姿、速度或受力变化标记物理岛唤<br/>醒。" }
+  class n22 node_system
   n1 e0@--- n0
   class e0 edge_read
   n0 e1@--> n2
@@ -101,51 +99,51 @@ flowchart LR
   class e5 edge_read
   n7 e6@-->|"可变访问"| n0
   class e6 edge_write
-  n8 e7@-->|"可变访问"| n0
+  n1 e7@-->|"可变访问"| n0
   class e7 edge_write
-  n8 e8@-->|"赋值"| n0
+  n1 e8@-->|"赋值"| n0
   class e8 edge_write
-  n9 e9@--- n0
+  n8 e9@--- n0
   class e9 edge_read
-  n8 e10@--- n0
+  n1 e10@--- n0
   class e10 edge_read
-  n10 e11@-->|"移除"| n0
+  n9 e11@-->|"移除"| n0
   class e11 edge_write
-  n9 e12@-->|"可变访问"| n0
+  n8 e12@-->|"可变访问"| n0
   class e12 edge_write
-  n11 e13@-->|"插入"| n0
+  n10 e13@-->|"插入"| n0
   class e13 edge_write
   n7 e14@-->|"赋值"| n0
   class e14 edge_write
-  n0 e15@--> n12
+  n0 e15@--> n11
   class e15 edge_read
   n1 e16@-->|"赋值"| n0
   class e16 edge_write
-  n13 e17@-->|"移除"| n0
+  n12 e17@-->|"移除"| n0
   class e17 edge_write
-  n14 e18@-->|"插入"| n0
+  n13 e18@-->|"插入"| n0
   class e18 edge_write
-  n15 e19@-->|"移除"| n0
+  n14 e19@-->|"移除"| n0
   class e19 edge_write
   n1 e20@-->|"可变访问"| n0
   class e20 edge_write
-  n0 e21@--> n16
+  n0 e21@--> n15
   class e21 edge_read
-  n17 e22@-->|"插入"| n0
+  n16 e22@-->|"插入"| n0
   class e22 edge_write
-  n18 e23@-->|"插入"| n0
+  n17 e23@-->|"插入"| n0
   class e23 edge_write
-  n9 e24@-->|"赋值"| n0
+  n8 e24@-->|"赋值"| n0
   class e24 edge_write
-  n0 e25@--> n19
+  n0 e25@--> n18
   class e25 edge_read
-  n0 e26@--> n20
+  n0 e26@--> n19
   class e26 edge_read
-  n0 e27@--> n21
+  n0 e27@--> n20
   class e27 edge_read
-  n22 e28@-->|"移除"| n0
+  n21 e28@-->|"移除"| n0
   class e28 edge_write
-  n0 e29@--> n23
+  n0 e29@--> n22
   class e29 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -158,7 +156,6 @@ flowchart LR
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }
-  e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
   e14@{ curve: basis }

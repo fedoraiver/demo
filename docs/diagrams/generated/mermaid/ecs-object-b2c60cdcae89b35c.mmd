@@ -105,15 +105,12 @@ flowchart LR
   n23@{ shape: rounded, label: "**extract​_​erased​_​render​_​asset**<br/>来自crate:bevy​_​render ↗：提取变化及设<br/>备恢复后失效的擦除渲染资产。" }
   class n23 node_system
   class n23 external_node
-  n24@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>来自crate:bevy​_​egui ↗：在渲染世界更新<br/>延期的 Egui 绘制回调。" }
+  n24@{ shape: rounded, label: "**run​_​fixed​_​main**<br/>来自crate:bevy​_​app ↗：运行一个固定时<br/>间步的调度阶段。" }
   class n24 node_system
   class n24 external_node
-  n25@{ shape: rounded, label: "**run​_​fixed​_​main**<br/>来自crate:bevy​_​app ↗：运行一个固定时<br/>间步的调度阶段。" }
+  n25@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
   class n25 node_system
   class n25 external_node
-  n26@{ shape: rounded, label: "**world​_​instance​_​spawner​_​system**<br/>来自crate:bevy​_​world​_​serialization<br/>↗：推进世界资产实例的生成、销毁及更新。" }
-  class n26 node_system
-  class n26 external_node
   n1 e0@-->|"消息"| n0
   class e0 edge_publish
   n2 e1@-->|"消息"| n0
@@ -160,11 +157,11 @@ flowchart LR
   class e21 edge_publish
   n23 e22@-->|"消息"| n0
   class e22 edge_publish
-  n24 e23@-->|"消息"| n0
+  n10 e23@-->|"消息"| n0
   class e23 edge_publish
-  n25 e24@-->|"消息"| n0
+  n24 e24@-->|"消息"| n0
   class e24 edge_publish
-  n26 e25@-->|"消息"| n0
+  n25 e25@-->|"消息"| n0
   class e25 edge_publish
   e0@{ curve: basis }
   e1@{ curve: basis }

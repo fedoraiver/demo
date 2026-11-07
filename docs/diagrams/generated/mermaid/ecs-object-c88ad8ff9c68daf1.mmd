@@ -49,9 +49,6 @@ flowchart LR
   n3@{ shape: rounded, label: "**changed​_​cursor​_​options**<br/>来自crate:bevy​_​winit ↗：把光标配置变<br/>化同步到原生窗口。" }
   class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**suspend​_​controls**<br/>来自first​_​person ↗：停用玩法输入并释<br/>放光标。" }
-  class n4 node_system
-  class n4 external_node
   n1 e0@-->|"赋值"| n0
   class e0 edge_write
   n2 e1@-->|"可变访问"| n0
@@ -60,19 +57,19 @@ flowchart LR
   class e2 edge_write
   n2 e3@-->|"赋值"| n0
   class e3 edge_write
-  n4 e4@-->|"可变访问"| n0
+  n2 e4@-->|"可变访问"| n0
   class e4 edge_write
-  n4 e5@-->|"赋值"| n0
+  n2 e5@-->|"赋值"| n0
   class e5 edge_write
   n3 e6@---|"存在性约束"| n0
   class e6 edge_reference
   n1 e7@-->|"可变访问"| n0
   class e7 edge_write
-  e0@{ curve: basis }
+  e0@{ curve: bumpX }
   e1@{ curve: basis }
-  e2@{ curve: bumpX }
+  e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: bumpX }
+  e7@{ curve: basis }

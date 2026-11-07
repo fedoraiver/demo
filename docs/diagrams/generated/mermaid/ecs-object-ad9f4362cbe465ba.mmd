@@ -38,24 +38,25 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**ViewSmaaPipelines**<br/>记录当前视图三个 SMAA 管线的标识。" }
   class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**prepare​_​smaa​_​pipelines**<br/>按质量预设准备视图的三条 SMAA 管线。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
+  n3@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**extract​_​components**<br/>来自crate:bevy​_​extract ↗：批量同步或<br/>移除子世界的目标组件。" }
-  class n4 node_system
-  class n4 external_node
+  class n3 external_node
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"插入"| n0
   class e1 edge_write
-  n0 e2@--> n3
+  n0 e2@--> n1
   class e2 edge_read
-  n4 e3@-->|"移除"| n0
+  n3 e3@-->|"移除"| n0
   class e3 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

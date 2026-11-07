@@ -40,7 +40,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: lin-rect, label: "**ClearVelocityIncrements**<br/>组织速度与位置积分阶段。" }
   class n0 node_system_set
-  n1@{ shape: rounded, label: "**clear​_​velocity​_​increments**<br/>在子步循环后清零速度积分增量。" }
+  n1@{ shape: rounded, label: "**clear​_​velocity​_​increments**<br/>清零刚体的速度积分增量。" }
   class n1 node_system
   n2@{ shape: lin-rect, label: "**PostSubstep**<br/>组织约束求解的准备、子步与回写。" }
   class n2 node_system_set

@@ -50,13 +50,11 @@ flowchart LR
   class n4 node_system
   n5@{ shape: rounded, label: "**apply​_​joint​_​graph​_​changes**<br/>把关节连接变化同步到模拟岛。" }
   class n5 node_system
-  n6@{ shape: rounded, label: "**apply​_​contact​_​status​_​changes**<br/>把接触增删同步到约束图和物理岛。" }
+  n6@{ shape: rounded, label: "**wake​_​all​_​islands**<br/>批量请求唤醒当前全部休眠物理岛。" }
   class n6 node_system
-  n7@{ shape: rounded, label: "**wake​_​all​_​islands**<br/>批量请求唤醒当前全部休眠物理岛。" }
+  n7@{ shape: rounded, label: "**resource​_​exists**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
   class n7 node_system
-  n8@{ shape: rounded, label: "**resource​_​exists**<br/>来自crate:bevy​_​ecs ↗：判断指定资源是<br/>否存在。" }
-  class n8 node_system
-  class n8 external_node
+  class n7 external_node
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
   n1 e1@-->|"赋值"| n0
@@ -71,15 +69,15 @@ flowchart LR
   class e5 edge_write
   n2 e6@-->|"可变访问"| n0
   class e6 edge_write
-  n6 e7@-->|"赋值"| n0
+  n1 e7@-->|"赋值"| n0
   class e7 edge_write
-  n0 e8@--> n7
+  n0 e8@--> n6
   class e8 edge_read
   n5 e9@-->|"赋值"| n0
   class e9 edge_write
-  n0 e10@--> n8
+  n0 e10@--> n7
   class e10 edge_read
-  n6 e11@-->|"可变访问"| n0
+  n1 e11@-->|"可变访问"| n0
   class e11 edge_write
   n3 e12@-->|"赋值"| n0
   class e12 edge_write
@@ -90,7 +88,7 @@ flowchart LR
   e4@{ curve: basis }
   e5@{ curve: basis }
   e6@{ curve: basis }
-  e7@{ curve: basis }
+  e7@{ curve: bumpX }
   e8@{ curve: basis }
   e9@{ curve: basis }
   e10@{ curve: basis }

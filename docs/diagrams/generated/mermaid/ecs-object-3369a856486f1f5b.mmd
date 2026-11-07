@@ -80,27 +80,24 @@ flowchart LR
   n14@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
   class n14 node_system
   class n14 external_node
-  n15@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  n15@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**prepare​_​mesh​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为视图绑定光<br/>照、阴影及各可选渲染效果资源。" }
+  n16@{ shape: rounded, label: "**prepare​_​background​_​motion​_​vectors​_​**<br/>**bind​_​groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：为背<br/>景运动矢量绑定前后两帧视图参数。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**prepare​_​background​_​motion​_​vectors​_​**<br/>**bind​_​groups**<br/>来自crate:bevy​_​core​_​pipeline ↗：为背<br/>景运动矢量绑定前后两帧视图参数。" }
+  n17@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
   class n17 node_system
   class n17 external_node
-  n18@{ shape: rounded, label: "**prepare​_​mesh2d​_​view​_​bind​_​groups**<br/>来自crate:bevy​_​sprite​_​render ↗：为二<br/>维相机绑定视图、全局参数与色调 LUT。" }
+  n18@{ shape: rounded, label: "**prepare​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：生成并上<br/>传 UI 阴影的裁剪几何。" }
   class n18 node_system
   class n18 external_node
-  n19@{ shape: rounded, label: "**prepare​_​shadows**<br/>来自crate:bevy​_​ui​_​render ↗：生成并上<br/>传 UI 阴影的裁剪几何。" }
+  n19@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为大气查找表计<br/>算和天空绘制绑定视图资源。" }
   class n19 node_system
   class n19 external_node
-  n20@{ shape: rounded, label: "**prepare​_​atmosphere​_​bind​_​groups**<br/>来自crate:bevy​_​pbr ↗：为大气查找表计<br/>算和天空绘制绑定视图资源。" }
+  n20@{ shape: rounded, label: "**prepare​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：为 UI 切<br/>片生成裁剪几何并合并图像批次。" }
   class n20 node_system
   class n20 external_node
-  n21@{ shape: rounded, label: "**prepare​_​ui​_​slices**<br/>来自crate:bevy​_​ui​_​render ↗：为 UI 切<br/>片生成裁剪几何并合并图像批次。" }
-  class n21 node_system
-  class n21 external_node
   n0 e0@--> n1
   class e0 edge_read
   n2 e1@-->|"可变访问"| n0
@@ -129,19 +126,19 @@ flowchart LR
   class e12 edge_read
   n0 e13@--> n14
   class e13 edge_read
-  n0 e14@--> n15
+  n0 e14@--> n14
   class e14 edge_read
-  n0 e15@--> n16
+  n0 e15@--> n15
   class e15 edge_read
-  n0 e16@--> n17
+  n0 e16@--> n16
   class e16 edge_read
-  n0 e17@--> n18
+  n0 e17@--> n17
   class e17 edge_read
-  n0 e18@--> n19
+  n0 e18@--> n18
   class e18 edge_read
-  n0 e19@--> n20
+  n0 e19@--> n19
   class e19 edge_read
-  n0 e20@--> n21
+  n0 e20@--> n20
   class e20 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }

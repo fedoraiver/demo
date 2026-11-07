@@ -119,55 +119,54 @@ flowchart LR
   end
   style layout_card_n14 fill:none,stroke:none
   subgraph layout_card_n15[" "]
-  n15@{ shape: rounded, label: "**spawn​_​session**<br/>来自scene​_​assembly ↗：装配可移动、跳<br/>跃和搬运的灰盒会话。" }
+  n15@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
   class n15 node_system
   class n15 external_node
   end
   style layout_card_n15 fill:none,stroke:none
   subgraph layout_card_n16[" "]
-  n16@{ shape: rounded, label: "**finish​_​attachments**<br/>来自item​_​interaction ↗：持握期间只保<br/>留人物的 Dynamic，碰到箱子即对同一刚体<br/>求解，内部形状自动互不碰撞。" }
-  class n16 node_system
-  class n16 external_node
+  n16@{ shape: hex, label: "**build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
+  class n16 node_observer
   end
   style layout_card_n16 fill:none,stroke:none
   subgraph layout_card_n17[" "]
-  n17@{ shape: hex, label: "**build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
-  class n17 node_observer
+  n17@{ shape: rounded, label: "**propagate​_​collider​_​transforms**<br/>沿实体层级计算碰撞体相对刚体的变换。" }
+  class n17 node_system
   end
   style layout_card_n17 fill:none,stroke:none
   subgraph layout_card_n18[" "]
-  n18@{ shape: rounded, label: "**propagate​_​collider​_​transforms**<br/>沿实体层级计算碰撞体相对刚体的变换。" }
-  class n18 node_system
+  n18@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  class n18 node_observer
   end
   style layout_card_n18 fill:none,stroke:none
   subgraph layout_card_n19[" "]
-  n19@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n19@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
   class n19 node_observer
   end
   style layout_card_n19 fill:none,stroke:none
   subgraph layout_card_n20[" "]
-  n20@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
-  class n20 node_observer
+  n20@{ shape: rounded, label: "**Greybox ground**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
+  class n20 node_entity
+  class n20 external_node
   end
   style layout_card_n20 fill:none,stroke:none
   subgraph layout_card_n21[" "]
-  n21@{ shape: rounded, label: "**spawn​_​session · 创建模板**<br/>来自scene​_​assembly ↗：承载灰盒地面的<br/>显示与静态碰撞。" }
-  class n21 node_entity
-  class n21 external_node
+  n21@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
+  class n21 node_observer
   end
   style layout_card_n21 fill:none,stroke:none
   subgraph layout_card_n22[" "]
-  n22@{ shape: hex, label: "**build::{closure#35;2}**<br/>按刚体类型迁移碰撞体空间树。" }
-  class n22 node_observer
+  n22@{ shape: rounded, label: "**update​_​child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
+  class n22 node_system
   end
   style layout_card_n22 fill:none,stroke:none
   subgraph layout_card_n23[" "]
-  n23@{ shape: rounded, label: "**update​_​child​_​collider​_​position**<br/>由所属刚体位姿更新附属碰撞体的世界位姿。" }
-  class n23 node_system
+  n23@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  class n23 node_observer
   end
   style layout_card_n23 fill:none,stroke:none
   subgraph layout_card_n24[" "]
-  n24@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
+  n24@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
   class n24 node_observer
   end
   style layout_card_n24 fill:none,stroke:none
@@ -177,115 +176,110 @@ flowchart LR
   end
   style layout_card_n25 fill:none,stroke:none
   subgraph layout_card_n26[" "]
-  n26@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
+  n26@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
   class n26 node_observer
   end
   style layout_card_n26 fill:none,stroke:none
   subgraph layout_card_n27[" "]
-  n27@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
+  n27@{ shape: hex, label: "**build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
   class n27 node_observer
   end
   style layout_card_n27 fill:none,stroke:none
   subgraph layout_card_n28[" "]
-  n28@{ shape: hex, label: "**build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
+  n28@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
   class n28 node_observer
   end
   style layout_card_n28 fill:none,stroke:none
   subgraph layout_card_n29[" "]
-  n29@{ shape: hex, label: "**build::{closure#35;0}**<br/>为新增碰撞体建立刚体归属。" }
+  n29@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
   class n29 node_observer
   end
   style layout_card_n29 fill:none,stroke:none
   subgraph layout_card_n30[" "]
-  n30@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体求解缓存。" }
+  n30@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
   class n30 node_observer
   end
   style layout_card_n30 fill:none,stroke:none
   subgraph layout_card_n31[" "]
-  n31@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  n31@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
   class n31 node_observer
   end
   style layout_card_n31 fill:none,stroke:none
   subgraph layout_card_n32[" "]
-  n32@{ shape: hex, label: "**build::{closure#35;2}**<br/>在刚体唤醒时恢复求解器体。" }
-  class n32 node_observer
+  n32@{ shape: rounded, label: "**warn​_​invalid​_​mass**<br/>报告动态刚体无效的总质量或总惯量。" }
+  class n32 node_system
   end
   style layout_card_n32 fill:none,stroke:none
   subgraph layout_card_n33[" "]
-  n33@{ shape: rounded, label: "**warn​_​invalid​_​mass**<br/>报告动态刚体无效的总质量或总惯量。" }
-  class n33 node_system
+  n33@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
+  class n33 node_observer
   end
   style layout_card_n33 fill:none,stroke:none
   subgraph layout_card_n34[" "]
-  n34@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用的刚体补充物理岛节点。" }
-  class n34 node_observer
+  n34@{ shape: rounded, label: "**pre​_​process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
+  class n34 node_system
   end
   style layout_card_n34 fill:none,stroke:none
   subgraph layout_card_n35[" "]
-  n35@{ shape: rounded, label: "**pre​_​process​_​velocity​_​increments**<br/>把加速度、重力和轴锁转成子步速度增量。" }
-  class n35 node_system
+  n35@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  class n35 node_observer
   end
   style layout_card_n35 fill:none,stroke:none
   subgraph layout_card_n36[" "]
-  n36@{ shape: hex, label: "**on​_​insert​_​rigid​_​body**<br/>按刚体类型更新求解器体缓存。" }
+  n36@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
   class n36 node_observer
   end
   style layout_card_n36 fill:none,stroke:none
   subgraph layout_card_n37[" "]
-  n37@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  n37@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
   class n37 node_observer
   end
   style layout_card_n37 fill:none,stroke:none
   subgraph layout_card_n38[" "]
-  n38@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
-  class n38 node_observer
+  n38@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
+  class n38 node_system
   end
   style layout_card_n38 fill:none,stroke:none
   subgraph layout_card_n39[" "]
-  n39@{ shape: rounded, label: "**prepare​_​contact​_​constraints**<br/>从有效接触流形生成本轮求解约束。" }
-  class n39 node_system
+  n39@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  class n39 node_observer
   end
   style layout_card_n39 fill:none,stroke:none
   subgraph layout_card_n40[" "]
-  n40@{ shape: hex, label: "**on​_​collider​_​body​_​changed**<br/>随层级变化更新碰撞体刚体归属。" }
+  n40@{ shape: hex, label: "**build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
   class n40 node_observer
   end
   style layout_card_n40 fill:none,stroke:none
   subgraph layout_card_n41[" "]
-  n41@{ shape: hex, label: "**build::{closure#35;3}**<br/>移除被禁用刚体的物理岛节点。" }
+  n41@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
   class n41 node_observer
   end
   style layout_card_n41 fill:none,stroke:none
   subgraph layout_card_n42[" "]
-  n42@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
+  n42@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
   class n42 node_observer
   end
   style layout_card_n42 fill:none,stroke:none
   subgraph layout_card_n43[" "]
-  n43@{ shape: hex, label: "**add​_​to​_​tree​_​on**<br/>将可用碰撞体加入空间树。" }
-  class n43 node_observer
+  n43@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
+  class n43 node_system
   end
   style layout_card_n43 fill:none,stroke:none
   subgraph layout_card_n44[" "]
-  n44@{ shape: rounded, label: "**update​_​narrow​_​phase**<br/>更新窄相接触并输出碰撞变化消息。" }
-  class n44 node_system
+  n44@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  class n44 node_observer
   end
   style layout_card_n44 fill:none,stroke:none
   subgraph layout_card_n45[" "]
-  n45@{ shape: hex, label: "**build::{closure#35;0}**<br/>为重新启用刚体补建求解器体。" }
+  n45@{ shape: hex, label: "**build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
   class n45 node_observer
   end
   style layout_card_n45 fill:none,stroke:none
   subgraph layout_card_n46[" "]
-  n46@{ shape: hex, label: "**build::{closure#35;4}**<br/>移除静态刚体的物理岛节点。" }
+  n46@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
   class n46 node_observer
   end
   style layout_card_n46 fill:none,stroke:none
-  subgraph layout_card_n47[" "]
-  n47@{ shape: hex, label: "**build::{closure#35;1}**<br/>在实体启用时恢复刚体物理岛节点。" }
-  class n47 node_observer
-  end
-  style layout_card_n47 fill:none,stroke:none
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@-->|"存在性约束"| n2
@@ -316,77 +310,77 @@ flowchart LR
   class e13 edge_read
   n14 e14@-->|"插入"| n0
   class e14 edge_write
-  n15 e15@-->|"插入"| n0
+  n14 e15@-->|"插入"| n0
   class e15 edge_write
-  n0 e16@-->|"存在性约束"| n16
+  n0 e16@-->|"存在性约束"| n15
   class e16 edge_reference
-  n0 e17@--> n17
+  n0 e17@--> n16
   class e17 edge_read
-  n0 e18@-->|"存在性约束"| n18
+  n0 e18@-->|"存在性约束"| n17
   class e18 edge_reference
-  n0 e19@--> n19
+  n0 e19@--> n18
   class e19 edge_read
-  n0 e20@-->|"存在性约束"| n20
+  n0 e20@-->|"存在性约束"| n19
   class e20 edge_reference
   n0 e21@--> n12
   class e21 edge_read
-  n21 e22@-->|"可能包含"| n0
+  n20 e22@-->|"可能包含"| n0
   class e22 edge_reference
-  n0 e23@--> n22
+  n0 e23@--> n21
   class e23 edge_read
-  n0 e24@-->|"存在性约束"| n23
+  n0 e24@-->|"存在性约束"| n22
   class e24 edge_reference
-  n0 e25@--> n24
+  n0 e25@--> n23
   class e25 edge_read
-  n0 e26@--> n25
+  n0 e26@--> n24
   class e26 edge_read
-  n0 e27@--> n26
+  n0 e27@--> n25
   class e27 edge_read
-  n0 e28@-->|"存在性约束"| n27
+  n0 e28@-->|"存在性约束"| n26
   class e28 edge_reference
-  n0 e29@--> n28
+  n0 e29@--> n27
   class e29 edge_read
-  n0 e30@-->|"存在性约束"| n29
+  n0 e30@-->|"存在性约束"| n28
   class e30 edge_reference
-  n0 e31@--> n30
+  n0 e31@--> n29
   class e31 edge_read
   n9 e32@--- n0
   class e32 edge_read
-  n0 e33@--> n31
+  n0 e33@--> n30
   class e33 edge_read
-  n0 e34@--> n32
+  n0 e34@--> n31
   class e34 edge_read
-  n0 e35@--> n33
+  n0 e35@--> n32
   class e35 edge_read
-  n0 e36@--> n34
+  n0 e36@--> n33
   class e36 edge_read
-  n0 e37@--> n35
+  n0 e37@--> n34
   class e37 edge_read
-  n0 e38@--> n36
+  n0 e38@--> n35
   class e38 edge_read
-  n0 e39@-->|"存在性约束"| n37
+  n0 e39@-->|"存在性约束"| n36
   class e39 edge_reference
-  n0 e40@--> n38
+  n0 e40@--> n37
   class e40 edge_read
-  n0 e41@--> n39
+  n0 e41@--> n38
   class e41 edge_read
-  n0 e42@-->|"存在性约束"| n40
+  n0 e42@-->|"存在性约束"| n39
   class e42 edge_reference
-  n0 e43@--> n41
+  n0 e43@--> n40
   class e43 edge_read
-  n0 e44@--> n42
+  n0 e44@--> n41
   class e44 edge_read
-  n0 e45@--> n43
+  n0 e45@--> n42
   class e45 edge_read
-  n0 e46@-->|"存在性约束"| n43
+  n0 e46@-->|"存在性约束"| n42
   class e46 edge_reference
-  n0 e47@--> n44
+  n0 e47@--> n43
   class e47 edge_read
-  n0 e48@--> n45
+  n0 e48@--> n44
   class e48 edge_read
-  n0 e49@--> n46
+  n0 e49@--> n45
   class e49 edge_read
-  n0 e50@--> n47
+  n0 e50@--> n46
   class e50 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }

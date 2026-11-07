@@ -40,7 +40,7 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**MenuContext**<br/>组织菜单键盘与手柄输入上下文。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>统一路由菜单键盘与手柄操作。" }
+  n1@{ shape: rounded, label: "**Menu input controller**<br/>统一路由菜单键盘与手柄操作。" }
   class n1 node_entity
   n2@{ shape: rounded, label: "**handle​_​requests**<br/>每帧只消费一项语义请求，避免鼠标与确认键<br/>同时激活，或旧页面动作穿过页面切换。" }
   class n2 node_system

@@ -46,21 +46,17 @@ flowchart LR
   class n2 node_system
   n3@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**prepare​_​egui​_​pass**<br/>在渲染世界更新延期的 Egui 绘制回调。" }
-  class n4 node_system
-  n5@{ shape: rounded, label: "**egui​_​pass**<br/>把准备好的 Egui 绘制项渲染到视图目标。" }
-  class n5 node_system
   n1 e0@-->|"可变访问"| n0
   class e0 edge_write
   n2 e1@-->|"移除"| n0
   class e1 edge_write
   n0 e2@--> n3
   class e2 edge_read
-  n4 e3@-->|"移除"| n0
+  n2 e3@-->|"移除"| n0
   class e3 edge_write
-  n0 e4@--> n5
+  n0 e4@--> n3
   class e4 edge_read
   e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e4@{ curve: basis }

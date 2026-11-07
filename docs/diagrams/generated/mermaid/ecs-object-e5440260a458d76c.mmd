@@ -38,24 +38,25 @@ flowchart LR
   classDef edge_read stroke:#3567A6,stroke-width:1.6px,stroke-dasharray:6 4
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: cyl, label: "**SmaaInfoUniformBuffer**<br/>保存全部视图的 SMAA GPU 参数。" }
   class n0 node_resource
+  end
+  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**init​_​gpu​_​resource**<br/>来自crate:bevy​_​render ↗：构造并插入渲<br/>染所需资源。" }
   class n1 node_system
   class n1 external_node
   n2@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**smaa**<br/>通过三个阶段完成 SMAA 抗锯齿。" }
+  n3@{ shape: rounded, label: "**prepare​_​smaa​_​uniforms**<br/>上传各 SMAA 视图的尺寸及倒数参数。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**prepare​_​smaa​_​uniforms**<br/>上传各 SMAA 视图的尺寸及倒数参数。" }
-  class n4 node_system
   n1 e0@-->|"插入"| n0
   class e0 edge_write
   n0 e1@--> n2
   class e1 edge_read
-  n0 e2@--> n3
+  n0 e2@--> n2
   class e2 edge_read
-  n4 e3@-->|"可变访问"| n0
+  n3 e3@-->|"可变访问"| n0
   class e3 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }

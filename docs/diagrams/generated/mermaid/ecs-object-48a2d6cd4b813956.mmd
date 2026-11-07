@@ -38,16 +38,13 @@ flowchart LR
   classDef edge_order stroke:#334155,stroke-width:2px
   classDef edge_set_membership stroke:#6A778C,stroke-width:1.4px,stroke-dasharray:2 4
   classDef external_node stroke-dasharray:6 4
-  subgraph layout_card_n0[" "]
   n0@{ shape: lin-rect, label: "**ProcessInput**<br/>组织 Egui 上下文与输入准备。" }
   class n0 node_system_set
-  end
-  style layout_card_n0 fill:none,stroke:none
   n1@{ shape: rounded, label: "**write​_​window​_​touch​_​messages​_​system**<br/>把窗口触摸转换为 Egui 指针和触摸事件。" }
   class n1 node_system
   n2@{ shape: rounded, label: "**write​_​pointer​_​moved​_​and​_​button​_​**<br/>**messages​_​system**<br/>按原生事件顺序转换 Egui 指针输入。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>把界面输入和文件拖放写入 Egui 输入批<br/>次。" }
+  n3@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>汇总 Egui 输入并同步上下文状态。" }
   class n3 node_system
   n4@{ shape: lin-rect, label: "**InitContexts**<br/>组织 Egui 上下文与输入准备。" }
   class n4 node_system_set
@@ -113,12 +110,14 @@ flowchart LR
   class e15 edge_set_membership
   n17 e16@-->|"先于"| n0
   class e16 edge_order
+  n4 layout_input_0@~~~ n6
+  n6 layout_input_1@~~~ n17
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
   e4@{ curve: basis }
-  e5@{ curve: bumpX }
+  e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

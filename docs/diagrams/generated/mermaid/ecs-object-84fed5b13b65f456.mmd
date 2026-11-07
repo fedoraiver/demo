@@ -44,17 +44,16 @@ flowchart LR
   class n1 node_system
   n2@{ shape: rounded, label: "**fxaa**<br/>对启用的相机视图执行 FXAA 抗锯齿。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**fxaa**<br/>对启用的相机视图执行 FXAA 抗锯齿。" }
+  n3@{ shape: rounded, label: "**init​_​fxaa​_​pipeline**<br/>建立 FXAA 的纹理采样布局和着色器资源。" }
   class n3 node_system
-  n4@{ shape: rounded, label: "**init​_​fxaa​_​pipeline**<br/>建立 FXAA 的纹理采样布局和着色器资源。" }
-  class n4 node_system
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
   class e1 edge_read
-  n0 e2@--> n3
+  n0 e2@--> n2
   class e2 edge_read
-  n4 e3@-->|"插入"| n0
+  n3 e3@-->|"插入"| n0
   class e3 edge_write
   e0@{ curve: basis }
+  e1@{ curve: basis }
   e2@{ curve: basis }

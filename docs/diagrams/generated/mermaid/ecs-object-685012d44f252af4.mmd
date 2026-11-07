@@ -41,13 +41,13 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**SettingValue**<br/>数值文字只保存对应字段；草稿变化时原位更<br/>新 Text，不销毁滚动区域和焦点实体。" }
   class n0 node_component
-  n1@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示并更新设置草稿的当前值。" }
+  n1@{ shape: rounded, label: "**Setting value label**<br/>显示并更新设置草稿的当前值。" }
   class n1 node_entity
   n2@{ shape: rounded, label: "**update​_​settings​_​text**<br/>原位更新设置草稿数值与保存提示。" }
   class n2 node_system
-  n3@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示并更新设置草稿的当前值。" }
+  n3@{ shape: rounded, label: "**Setting value label**<br/>显示并更新设置草稿的当前值。" }
   class n3 node_entity
-  n4@{ shape: rounded, label: "**rebuild​_​page · 创建模板**<br/>显示并更新设置草稿的当前值。" }
+  n4@{ shape: rounded, label: "**Setting value label**<br/>显示并更新设置草稿的当前值。" }
   class n4 node_entity
   n1 e0@-->|"可能包含"| n0
   class e0 edge_reference

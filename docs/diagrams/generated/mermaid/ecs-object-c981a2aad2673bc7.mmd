@@ -44,26 +44,26 @@ flowchart LR
   n1@{ shape: hex, label: "**next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
   class n1 node_observer
   class n1 external_node
-  n2@{ shape: hex, label: "**previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
+  n2@{ shape: hex, label: "**next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
   class n2 node_observer
   class n2 external_node
-  n3@{ shape: hex, label: "**next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
-  class n3 node_observer
+  n3@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
+  class n3 node_system
   class n3 external_node
-  n4@{ shape: rounded, label: "**handle​_​requests**<br/>来自ui ↗：每帧只消费一项语义请求，避免<br/>鼠标与确认键同时激活，或旧页面动作穿过页<br/>面切换。" }
-  class n4 node_system
+  n4@{ shape: hex, label: "**previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
+  class n4 node_observer
   class n4 external_node
-  n5@{ shape: rounded, label: "**play​_​requests**<br/>来自audio ↗：按有效混音和播放限额处理<br/>声音请求。" }
-  class n5 node_system
+  n5@{ shape: hex, label: "**next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
+  class n5 node_observer
   class n5 external_node
-  n6@{ shape: hex, label: "**next**<br/>来自ui ↗：循环选择下一个可操作菜单按<br/>钮。" }
-  class n6 node_observer
+  n6@{ shape: rounded, label: "**play​_​requests**<br/>来自audio ↗：按有效混音和播放限额处理<br/>声音请求。" }
+  class n6 node_system
   class n6 external_node
-  n7@{ shape: hex, label: "**previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
-  class n7 node_observer
+  n7@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
+  class n7 node_system
   class n7 external_node
-  n8@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
-  class n8 node_system
+  n8@{ shape: hex, label: "**previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
+  class n8 node_observer
   class n8 external_node
   n9@{ shape: hex, label: "**previous**<br/>来自ui ↗：循环选择上一个可操作菜单按<br/>钮。" }
   class n9 node_observer
@@ -72,29 +72,29 @@ flowchart LR
   class e0 edge_write
   n2 e1@-->|"赋值"| n0
   class e1 edge_write
-  n3 e2@-->|"赋值"| n0
+  n3 e2@-->|"可变访问"| n0
   class e2 edge_write
-  n4 e3@-->|"可变访问"| n0
+  n4 e3@-->|"赋值"| n0
   class e3 edge_write
-  n0 e4@--> n5
-  class e4 edge_read
-  n6 e5@-->|"赋值"| n0
-  class e5 edge_write
+  n5 e4@-->|"赋值"| n0
+  class e4 edge_write
+  n0 e5@--> n6
+  class e5 edge_read
   n7 e6@-->|"赋值"| n0
   class e6 edge_write
   n8 e7@-->|"赋值"| n0
   class e7 edge_write
-  n9 e8@-->|"赋值"| n0
+  n3 e8@-->|"赋值"| n0
   class e8 edge_write
-  n4 e9@-->|"赋值"| n0
+  n7 e9@-->|"可变访问"| n0
   class e9 edge_write
-  n8 e10@-->|"可变访问"| n0
+  n9 e10@-->|"赋值"| n0
   class e10 edge_write
   e0@{ curve: basis }
   e1@{ curve: basis }
   e2@{ curve: basis }
   e3@{ curve: basis }
-  e5@{ curve: basis }
+  e4@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
   e8@{ curve: basis }

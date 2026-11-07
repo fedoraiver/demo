@@ -46,14 +46,11 @@ flowchart LR
   n2@{ shape: rounded, label: "**changed​_​windows**<br/>来自crate:bevy​_​winit ↗：把窗口组件变<br/>化同步到 winit 后端。" }
   class n2 node_system
   class n2 external_node
-  n3@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
-  class n3 node_system
-  class n3 external_node
   n0 e0@--> n1
   class e0 edge_consume
   n2 e1@-->|"可变访问"| n0
   class e1 edge_publish
-  n0 e2@--> n3
+  n0 e2@--> n1
   class e2 edge_consume
-  e0@{ curve: basis }
-  e2@{ curve: basis }
+  e0@{ curve: bumpX }
+  e2@{ curve: bumpX }

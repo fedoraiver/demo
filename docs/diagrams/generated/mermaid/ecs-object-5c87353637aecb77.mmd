@@ -40,103 +40,196 @@ flowchart LR
   classDef edge_write stroke:#2F7161,stroke-width:1.8px
   classDef edge_reference stroke:#7B4DB2,stroke-width:1.5px,stroke-dasharray:6 4
   classDef external_node stroke-dasharray:6 4
+  subgraph layout_card_n0[" "]
   n0@{ shape: rounded, label: "**Window**<br/>保存窗口的呈现模式、位置、分辨率、标题、<br/>全屏及平台行为配置" }
   class n0 node_component
+  end
+  style layout_card_n0 fill:none,stroke:none
+  subgraph layout_card_n1[" "]
   n1@{ shape: rounded, label: "**changed​_​windows**<br/>来自crate:bevy​_​winit ↗：把窗口组件变<br/>化同步到 winit 后端。" }
   class n1 node_system
   class n1 external_node
+  end
+  style layout_card_n1 fill:none,stroke:none
+  subgraph layout_card_n2[" "]
   n2@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>来自crate:bevy​_​input​_​focus ↗：让带导<br/>航索引的实体获得输入焦点。" }
   class n2 node_observer
   class n2 external_node
+  end
+  style layout_card_n2 fill:none,stroke:none
+  subgraph layout_card_n3[" "]
   n3@{ shape: rounded, label: "**update​_​ime​_​position**<br/>来自crate:bevy​_​ui​_​widgets ↗：把输入<br/>法候选窗口放到当前文字光标下方。" }
   class n3 node_system
   class n3 external_node
+  end
+  style layout_card_n3 fill:none,stroke:none
+  subgraph layout_card_n4[" "]
   n4@{ shape: rounded, label: "**clear​_​cancelled​_​primary​_​presses**<br/>来自ui ↗：Bevy 先从 HoverMap 排除取消<br/>的指针，随后可能无法为它发出<br/>PointerCancel。" }
   class n4 node_system
   class n4 external_node
+  end
+  style layout_card_n4 fill:none,stroke:none
+  subgraph layout_card_n5[" "]
   n5@{ shape: rounded, label: "**ui​_​focus​_​system**<br/>来自crate:bevy​_​ui ↗：按鼠标和触摸更新<br/>旧式 UI 交互状态。" }
   class n5 node_system
   class n5 external_node
+  end
+  style layout_card_n5 fill:none,stroke:none
+  subgraph layout_card_n6[" "]
   n6@{ shape: rounded, label: "**listen​_​for​_​ime​_​input​_​when​_​text​_​**<br/>**input​_​focused**<br/>来自crate:bevy​_​ui​_​widgets ↗：按可编<br/>辑焦点控制主窗口输入法。" }
   class n6 node_system
   class n6 external_node
+  end
+  style layout_card_n6 fill:none,stroke:none
+  subgraph layout_card_n7[" "]
   n7@{ shape: rounded, label: "**install​_​native​_​policy**<br/>来自window​_​policy ↗：安装并维护原生窗<br/>口比例与尺寸策略。" }
   class n7 node_system
   class n7 external_node
+  end
+  style layout_card_n7 fill:none,stroke:none
+  subgraph layout_card_n8[" "]
   n8@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>来自crate:bevy​_​input​_​focus ↗：在请求<br/>未命中焦点目标时清除焦点。" }
   class n8 node_observer
   class n8 external_node
+  end
+  style layout_card_n8 fill:none,stroke:none
+  subgraph layout_card_n9[" "]
   n9@{ shape: rounded, label: "**pointer​_​interaction**<br/>来自ui ↗：Bevy 原生 UI 已完成按钮命<br/>中；这里只读取缓冲的按下事件，不另读<br/>MouseButton。" }
   class n9 node_system
   class n9 external_node
-  n10@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：把界面输入和文<br/>件拖放写入 Egui 输入批次。" }
+  end
+  style layout_card_n9 fill:none,stroke:none
+  subgraph layout_card_n10[" "]
+  n10@{ shape: rounded, label: "**write​_​egui​_​input​_​system**<br/>来自crate:bevy​_​egui ↗：汇总 Egui 输<br/>入并同步上下文状态。" }
   class n10 node_system
   class n10 external_node
+  end
+  style layout_card_n10 fill:none,stroke:none
+  subgraph layout_card_n11[" "]
   n11@{ shape: rounded, label: "**update​_​text2d​_​layout**<br/>来自crate:bevy​_​sprite ↗：重新排版变化<br/>的二维文字并准备字形。" }
   class n11 node_system
   class n11 external_node
+  end
+  style layout_card_n11 fill:none,stroke:none
+  subgraph layout_card_n12[" "]
   n12@{ shape: rounded, label: "**update​_​cursors**<br/>来自crate:bevy​_​winit ↗：准备原生或自<br/>定义光标并保留资产重试。" }
   class n12 node_system
   class n12 external_node
+  end
+  style layout_card_n12 fill:none,stroke:none
+  subgraph layout_card_n13[" "]
   n13@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
   class n13 node_system
   class n13 external_node
+  end
+  style layout_card_n13 fill:none,stroke:none
+  subgraph layout_card_n14[" "]
   n14@{ shape: rounded, label: "**changed​_​cursor​_​options**<br/>来自crate:bevy​_​winit ↗：把光标配置变<br/>化同步到原生窗口。" }
   class n14 node_system
   class n14 external_node
+  end
+  style layout_card_n14 fill:none,stroke:none
+  subgraph layout_card_n15[" "]
   n15@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>来自crate:bevy​_​input​_​focus ↗：在请求<br/>未命中焦点目标时清除焦点。" }
   class n15 node_observer
   class n15 external_node
+  end
+  style layout_card_n15 fill:none,stroke:none
+  subgraph layout_card_n16[" "]
   n16@{ shape: rounded, label: "**despawn​_​windows**<br/>来自crate:bevy​_​winit ↗：处理原生窗口<br/>关闭并延后一轮释放包装器。" }
   class n16 node_system
   class n16 external_node
+  end
+  style layout_card_n16 fill:none,stroke:none
+  subgraph layout_card_n17[" "]
   n17@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>来自crate:bevy​_​input​_​focus ↗：让带导<br/>航索引的实体获得输入焦点。" }
   class n17 node_observer
   class n17 external_node
+  end
+  style layout_card_n17 fill:none,stroke:none
+  subgraph layout_card_n18[" "]
   n18@{ shape: rounded, label: "**sync​_​mouse​_​capture**<br/>来自first​_​person ↗：在输入转发前确定<br/>归属；切换前约定其他按键已松开，检查器没<br/>有进行中的交互。" }
   class n18 node_system
   class n18 external_node
+  end
+  style layout_card_n18 fill:none,stroke:none
+  subgraph layout_card_n19[" "]
   n19@{ shape: rounded, label: "**update​_​accessibility​_​nodes**<br/>来自crate:bevy​_​winit ↗：将当前可访问<br/>性树同步给已激活的原生适配器。" }
   class n19 node_system
   class n19 external_node
+  end
+  style layout_card_n19 fill:none,stroke:none
+  subgraph layout_card_n20[" "]
   n20@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>来自crate:bevy​_​input​_​focus ↗：让带导<br/>航索引的实体获得输入焦点。" }
   class n20 node_observer
   class n20 external_node
+  end
+  style layout_card_n20 fill:none,stroke:none
+  subgraph layout_card_n21[" "]
   n21@{ shape: hex, label: "**on​_​window​_​acquire​_​focus​_​clear**<br/>来自crate:bevy​_​input​_​focus ↗：在请求<br/>未命中焦点目标时清除焦点。" }
   class n21 node_observer
   class n21 external_node
+  end
+  style layout_card_n21 fill:none,stroke:none
+  subgraph layout_card_n22[" "]
   n22@{ shape: rounded, label: "**sample​_​slider​_​pointer**<br/>来自ui ↗：Enhanced Input 负责菜单语义<br/>动作，但无法表示 UI 命中后的局部绝对横<br/>坐标。" }
   class n22 node_system
   class n22 external_node
+  end
+  style layout_card_n22 fill:none,stroke:none
+  subgraph layout_card_n23[" "]
   n23@{ shape: rounded, label: "**sync​_​context**<br/>来自ui ↗：按主窗口焦点启停菜单输入上下<br/>文。" }
   class n23 node_system
   class n23 external_node
+  end
+  style layout_card_n23 fill:none,stroke:none
+  subgraph layout_card_n24[" "]
   n24@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>来自crate:bevy​_​input​_​focus ↗：让带导<br/>航索引的实体获得输入焦点。" }
   class n24 node_observer
   class n24 external_node
+  end
+  style layout_card_n24 fill:none,stroke:none
+  subgraph layout_card_n25[" "]
   n25@{ shape: rounded, label: "**exit​_​on​_​all​_​closed**<br/>窗口查询为空时写入 AppExit::Success，<br/>通知应用正常退出；仍有窗口时不发送退出消<br/>息。" }
   class n25 node_system
+  end
+  style layout_card_n25 fill:none,stroke:none
+  subgraph layout_card_n26[" "]
   n26@{ shape: rounded, label: "**rebuild​_​page**<br/>来自ui ↗：只在页面结构或视口变化时重<br/>建；数值、提示与焦点变化保留现有滚动控<br/>件。" }
   class n26 node_system
   class n26 external_node
+  end
+  style layout_card_n26 fill:none,stroke:none
+  subgraph layout_card_n27[" "]
   n27@{ shape: rounded, label: "**extract​_​windows**<br/>来自crate:bevy​_​render ↗：向渲染世界同<br/>步窗口配置与原生句柄。" }
   class n27 node_system
   class n27 external_node
-  n28@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
-  class n28 node_system
+  end
+  style layout_card_n27 fill:none,stroke:none
+  subgraph layout_card_n28[" "]
+  n28@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  class n28 node_observer
   class n28 external_node
-  n29@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
+  end
+  style layout_card_n28 fill:none,stroke:none
+  subgraph layout_card_n29[" "]
+  n29@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>来自crate:bevy​_​input​_​focus ↗：让带导<br/>航索引的实体获得输入焦点。" }
   class n29 node_observer
   class n29 external_node
-  n30@{ shape: hex, label: "**acquire​_​focus​_​tab​_​index**<br/>来自crate:bevy​_​input​_​focus ↗：让带导<br/>航索引的实体获得输入焦点。" }
+  end
+  style layout_card_n29 fill:none,stroke:none
+  subgraph layout_card_n30[" "]
+  n30@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n30 node_observer
   class n30 external_node
+  end
+  style layout_card_n30 fill:none,stroke:none
+  subgraph layout_card_n31[" "]
   n31@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
   class n31 node_observer
   class n31 external_node
-  n32@{ shape: hex, label: "**dialog​_​drag**<br/>来自crate:bevy​_​ui​_​widgets ↗：按累计<br/>拖动距离移动对话框。" }
-  class n32 node_observer
-  class n32 external_node
+  end
+  style layout_card_n31 fill:none,stroke:none
   n1 e0@---|"存在性约束"| n0
   class e0 edge_reference
   n0 e1@-->|"存在性约束"| n2
@@ -197,17 +290,17 @@ flowchart LR
   class e28 edge_read
   n0 e29@--> n27
   class e29 edge_read
-  n0 e30@--> n28
+  n0 e30@--> n13
   class e30 edge_read
-  n0 e31@--> n29
+  n0 e31@--> n28
   class e31 edge_read
   n6 e32@-->|"可变访问"| n0
   class e32 edge_write
-  n0 e33@-->|"存在性约束"| n30
+  n0 e33@-->|"存在性约束"| n29
   class e33 edge_reference
-  n0 e34@--> n31
+  n0 e34@--> n30
   class e34 edge_read
-  n0 e35@--> n32
+  n0 e35@--> n31
   class e35 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -223,7 +316,7 @@ flowchart LR
   e11@{ curve: basis }
   e12@{ curve: basis }
   e13@{ curve: basis }
-  e14@{ curve: bumpX }
+  e14@{ curve: basis }
   e15@{ curve: basis }
   e16@{ curve: basis }
   e17@{ curve: basis }

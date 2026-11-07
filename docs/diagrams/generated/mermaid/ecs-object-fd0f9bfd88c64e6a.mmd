@@ -54,12 +54,9 @@ flowchart LR
   n5@{ shape: rounded, label: "**extract​_​sprite​_​events**<br/>来自crate:bevy​_​sprite​_​render ↗：把主<br/>世界图像资产事件复制给精灵渲染。" }
   class n5 node_system
   class n5 external_node
-  n6@{ shape: rounded, label: "**camera​_​system**<br/>来自crate:bevy​_​render ↗：响应目标尺寸<br/>变化并更新相机投影。" }
+  n6@{ shape: rounded, label: "**free​_​egui​_​textures​_​system**<br/>来自crate:bevy​_​egui ↗：回收 Egui 已<br/>释放或失效的纹理引用。" }
   class n6 node_system
   class n6 external_node
-  n7@{ shape: rounded, label: "**free​_​egui​_​textures​_​system**<br/>来自crate:bevy​_​egui ↗：回收 Egui 已<br/>释放或失效的纹理引用。" }
-  class n7 node_system
-  class n7 external_node
   n1 e0@-->|"消息"| n0
   class e0 edge_publish
   n0 e1@--> n2
@@ -72,9 +69,9 @@ flowchart LR
   class e4 edge_publish
   n0 e5@--> n5
   class e5 edge_consume
-  n0 e6@--> n6
+  n0 e6@--> n4
   class e6 edge_consume
-  n0 e7@--> n7
+  n0 e7@--> n6
   class e7 edge_consume
   e0@{ curve: basis }
   e1@{ curve: basis }

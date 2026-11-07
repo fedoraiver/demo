@@ -44,10 +44,10 @@ flowchart LR
   class n0 node_component
   n1@{ shape: rounded, label: "**(Local#lt;'​_​, Vec#lt;Binding#gt;#gt;,**<br/>**ContextTime#lt;'​_​#gt;, InputReader#lt;'​_​, '​_​**<br/>**#gt;, Res#lt;'​_​,**<br/>**ContextInstances#lt;PreUpdate#gt;#gt;,**<br/>**Query#lt;'​_​, '​_​, FilteredEntityMut#lt;'​_​,**<br/>**'​_​#gt;#gt;, Query#lt;'​_​, '​_​, (Entity, #amp;Name,**<br/>**#amp;ActionSettings, Option#lt;#amp;Bindings#gt;,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;, #amp;mut**<br/>**ActionMock),**<br/>**Without#lt;ExternallyMocked#gt;#gt;, Query#lt;'​_​**<br/>**, '​_​, (#amp;mut ActionValue, #amp;mut**<br/>**TriggerState, #amp;mut ActionEvents,**<br/>**#amp;mut ActionTime)#gt;, Query#lt;'​_​, '​_​,**<br/>**(Entity, #amp;Binding, #amp;mut**<br/>**FirstActivation,**<br/>**Option#lt;#amp;ModifierFns#gt;,**<br/>**Option#lt;#amp;ConditionFns#gt;),**<br/>**Without#lt;ActionSettings#gt;#gt;, Query#lt;'​_​,**<br/>**'​_​, FilteredEntityMut#lt;'​_​, '​_​#gt;#gt;)**<br/>求值上下文输入并更新动作状态。" }
   class n1 node_system
-  n2@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>来自first​_​person ↗：承载玩家键鼠玩法<br/>输入与角色控制关系。" }
+  n2@{ shape: rounded, label: "**format!(#quot;Keyboard controller {id}#quot;)**<br/>来自first​_​person ↗：承载玩家键鼠玩法<br/>输入与角色控制关系。" }
   class n2 node_entity
   class n2 external_node
-  n3@{ shape: rounded, label: "**spawn​_​menu​_​input​_​controller · 创建模**<br/>**板**<br/>来自ui ↗：统一路由菜单键盘与手柄操作。" }
+  n3@{ shape: rounded, label: "**Menu input controller**<br/>来自ui ↗：统一路由菜单键盘与手柄操作。" }
   class n3 node_entity
   class n3 external_node
   n1 e0@-->|"赋值"| n0

@@ -83,12 +83,9 @@ flowchart LR
   n15@{ shape: rounded, label: "**late​_​prepass**<br/>来自crate:bevy​_​core​_​pipeline ↗：为遮<br/>挡剔除绘制晚期预通道。" }
   class n15 node_system
   class n15 external_node
-  n16@{ shape: rounded, label: "**tonemapping**<br/>来自crate:bevy​_​core​_​pipeline ↗：为启<br/>用的 HDR 视图执行色调映射。" }
+  n16@{ shape: rounded, label: "**render​_​sky**<br/>来自crate:bevy​_​pbr ↗：绑定大气查找表<br/>及视图、光照参数，按相机视口和可选分辨率<br/>覆盖设置绘制全屏天空，将结果写入视图颜色<br/>附件。" }
   class n16 node_system
   class n16 external_node
-  n17@{ shape: rounded, label: "**render​_​sky**<br/>来自crate:bevy​_​pbr ↗：绑定大气查找表<br/>及视图、光照参数，按相机视口和可选分辨率<br/>覆盖设置绘制全屏天空，将结果写入视图颜色<br/>附件。" }
-  class n17 node_system
-  class n17 external_node
   n0 e0@--> n1
   class e0 edge_read
   n0 e1@--> n2
@@ -119,9 +116,9 @@ flowchart LR
   class e13 edge_read
   n0 e14@--> n15
   class e14 edge_read
-  n0 e15@--> n16
+  n0 e15@--> n8
   class e15 edge_read
-  n0 e16@--> n17
+  n0 e16@--> n16
   class e16 edge_read
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -131,7 +128,7 @@ flowchart LR
   e5@{ curve: basis }
   e6@{ curve: basis }
   e7@{ curve: basis }
-  e8@{ curve: basis }
+  e9@{ curve: basis }
   e10@{ curve: basis }
   e11@{ curve: basis }
   e12@{ curve: basis }

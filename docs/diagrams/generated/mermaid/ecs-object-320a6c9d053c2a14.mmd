@@ -41,56 +41,52 @@ flowchart LR
   classDef external_node stroke-dasharray:6 4
   n0@{ shape: rounded, label: "**GameplayContext**<br/>控制者的步行输入上下文；角色实体不直接持<br/>有设备绑定。" }
   class n0 node_component
-  n1@{ shape: hex, label: "**request​_​interaction**<br/>为对应角色保留一次固定步交互请求。" }
+  n1@{ shape: hex, label: "**request​_​jump**<br/>一次性请求保留到固定步消费，即使本渲染帧<br/>没有固定步也不会丢失。" }
   class n1 node_observer
-  n2@{ shape: hex, label: "**record​_​movement**<br/>按事件所属的上下文查找角色，避免把一个玩<br/>家的动作写给其他角色。" }
+  n2@{ shape: hex, label: "**on​_​camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
   class n2 node_observer
   n3@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>取消移动时清零对应角色的移动输入。" }
   class n3 node_observer
-  n4@{ shape: hex, label: "**request​_​jump**<br/>一次性请求保留到固定步消费，即使本渲染帧<br/>没有固定步也不会丢失。" }
+  n4@{ shape: hex, label: "**request​_​interaction**<br/>为对应角色保留一次固定步交互请求。" }
   class n4 node_observer
-  n5@{ shape: hex, label: "**request​_​jump**<br/>一次性请求保留到固定步消费，即使本渲染帧<br/>没有固定步也不会丢失。" }
+  n5@{ shape: hex, label: "**record​_​movement**<br/>按事件所属的上下文查找角色，避免把一个玩<br/>家的动作写给其他角色。" }
   class n5 node_observer
-  n6@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>取消移动时清零对应角色的移动输入。" }
+  n6@{ shape: hex, label: "**clear​_​completed​_​movement**<br/>结束移动时清零对应角色的移动输入。" }
   class n6 node_observer
-  n7@{ shape: rounded, label: "**suspend​_​controls**<br/>停用玩法输入并释放光标。" }
-  class n7 node_system
-  n8@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>在固定模拟前及逐帧持握目标同步前设置水平<br/>朝向，站立、横移和后退时也跟随视角。" }
-  class n8 node_system
-  n9@{ shape: hex, label: "**clear​_​completed​_​movement**<br/>结束移动时清零对应角色的移动输入。" }
+  n7@{ shape: hex, label: "**record​_​movement**<br/>按事件所属的上下文查找角色，避免把一个玩<br/>家的动作写给其他角色。" }
+  class n7 node_observer
+  n8@{ shape: hex, label: "**request​_​jump**<br/>一次性请求保留到固定步消费，即使本渲染帧<br/>没有固定步也不会丢失。" }
+  class n8 node_observer
+  n9@{ shape: hex, label: "**on​_​camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
   class n9 node_observer
-  n10@{ shape: hex, label: "**on​_​camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
-  class n10 node_observer
-  n11@{ shape: rounded, label: "**sync​_​character​_​visibility**<br/>第一人称只隐藏自身视觉子树，保留业务根与<br/>独立物品。" }
+  n10@{ shape: rounded, label: "**suspend​_​controls**<br/>停用玩法输入并释放光标。" }
+  class n10 node_system
+  n11@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>在固定模拟前及逐帧持握目标同步前设置水平<br/>朝向，站立、横移和后退时也跟随视角。" }
   class n11 node_system
-  n12@{ shape: rounded, label: "**sync​_​character​_​facing**<br/>在固定模拟前及逐帧持握目标同步前设置水平<br/>朝向，站立、横移和后退时也跟随视角。" }
-  class n12 node_system
-  n13@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>取消移动时清零对应角色的移动输入。" }
+  n12@{ shape: hex, label: "**clear​_​completed​_​movement**<br/>结束移动时清零对应角色的移动输入。" }
+  class n12 node_observer
+  n13@{ shape: hex, label: "**record​_​movement**<br/>按事件所属的上下文查找角色，避免把一个玩<br/>家的动作写给其他角色。" }
   class n13 node_observer
-  n14@{ shape: hex, label: "**record​_​movement**<br/>按事件所属的上下文查找角色，避免把一个玩<br/>家的动作写给其他角色。" }
-  class n14 node_observer
-  n15@{ shape: hex, label: "**clear​_​completed​_​movement**<br/>结束移动时清零对应角色的移动输入。" }
+  n14@{ shape: rounded, label: "**sync​_​character​_​visibility**<br/>第一人称只隐藏自身视觉子树，保留业务根与<br/>独立物品。" }
+  class n14 node_system
+  n15@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>取消移动时清零对应角色的移动输入。" }
   class n15 node_observer
-  n16@{ shape: hex, label: "**on​_​camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
+  n16@{ shape: hex, label: "**clear​_​cancelled​_​movement**<br/>取消移动时清零对应角色的移动输入。" }
   class n16 node_observer
-  n17@{ shape: hex, label: "**clear​_​completed​_​movement**<br/>结束移动时清零对应角色的移动输入。" }
+  n17@{ shape: hex, label: "**request​_​interaction**<br/>为对应角色保留一次固定步交互请求。" }
   class n17 node_observer
-  n18@{ shape: rounded, label: "**suspend​_​controls**<br/>停用玩法输入并释放光标。" }
+  n18@{ shape: rounded, label: "**sync​_​mouse​_​capture**<br/>在输入转发前确定归属；切换前约定其他按键<br/>已松开，检查器没有进行中的交互。" }
   class n18 node_system
-  n19@{ shape: rounded, label: "**sync​_​mouse​_​capture**<br/>在输入转发前确定归属；切换前约定其他按键<br/>已松开，检查器没有进行中的交互。" }
-  class n19 node_system
-  n20@{ shape: rounded, label: "**spawn​_​keyboard​_​controller · 创建模板**<br/>承载玩家键鼠玩法输入与角色控制关系。" }
-  class n20 node_entity
-  n21@{ shape: hex, label: "**request​_​interaction**<br/>为对应角色保留一次固定步交互请求。" }
-  class n21 node_observer
-  n22@{ shape: hex, label: "**request​_​interaction**<br/>为对应角色保留一次固定步交互请求。" }
+  n19@{ shape: hex, label: "**request​_​jump**<br/>一次性请求保留到固定步消费，即使本渲染帧<br/>没有固定步也不会丢失。" }
+  class n19 node_observer
+  n20@{ shape: hex, label: "**request​_​interaction**<br/>为对应角色保留一次固定步交互请求。" }
+  class n20 node_observer
+  n21@{ shape: rounded, label: "**format!(#quot;Keyboard controller {id}#quot;)**<br/>承载玩家键鼠玩法输入与角色控制关系。" }
+  class n21 node_entity
+  n22@{ shape: hex, label: "**on​_​camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
   class n22 node_observer
-  n23@{ shape: hex, label: "**on​_​camera​_​look**<br/>Fire 已携带本帧汇总位移，直接更新角度；<br/>有向水平转角留给下一次碰撞检查消费。" }
+  n23@{ shape: hex, label: "**clear​_​completed​_​movement**<br/>结束移动时清零对应角色的移动输入。" }
   class n23 node_observer
-  n24@{ shape: hex, label: "**request​_​jump**<br/>一次性请求保留到固定步消费，即使本渲染帧<br/>没有固定步也不会丢失。" }
-  class n24 node_observer
-  n25@{ shape: hex, label: "**record​_​movement**<br/>按事件所属的上下文查找角色，避免把一个玩<br/>家的动作写给其他角色。" }
-  class n25 node_observer
   n0 e0@-->|"存在性约束"| n1
   class e0 edge_reference
   n0 e1@-->|"存在性约束"| n2
@@ -119,27 +115,27 @@ flowchart LR
   class e12 edge_reference
   n0 e13@-->|"存在性约束"| n14
   class e13 edge_reference
-  n0 e14@-->|"存在性约束"| n15
+  n0 e14@-->|"存在性约束"| n11
   class e14 edge_reference
-  n0 e15@-->|"存在性约束"| n16
+  n0 e15@-->|"存在性约束"| n15
   class e15 edge_reference
-  n0 e16@-->|"存在性约束"| n17
+  n0 e16@-->|"存在性约束"| n16
   class e16 edge_reference
-  n0 e17@-->|"存在性约束"| n18
+  n0 e17@-->|"存在性约束"| n10
   class e17 edge_reference
-  n0 e18@-->|"存在性约束"| n19
+  n0 e18@-->|"存在性约束"| n17
   class e18 edge_reference
-  n20 e19@-->|"可能包含"| n0
+  n0 e19@-->|"存在性约束"| n18
   class e19 edge_reference
-  n0 e20@-->|"存在性约束"| n21
+  n0 e20@-->|"存在性约束"| n19
   class e20 edge_reference
-  n0 e21@-->|"存在性约束"| n22
+  n0 e21@-->|"存在性约束"| n20
   class e21 edge_reference
-  n0 e22@-->|"存在性约束"| n23
+  n21 e22@-->|"可能包含"| n0
   class e22 edge_reference
-  n0 e23@-->|"存在性约束"| n24
+  n0 e23@-->|"存在性约束"| n22
   class e23 edge_reference
-  n0 e24@-->|"存在性约束"| n25
+  n0 e24@-->|"存在性约束"| n23
   class e24 edge_reference
   e0@{ curve: basis }
   e1@{ curve: basis }
@@ -160,8 +156,8 @@ flowchart LR
   e16@{ curve: basis }
   e17@{ curve: basis }
   e18@{ curve: basis }
+  e19@{ curve: basis }
   e20@{ curve: basis }
   e21@{ curve: basis }
-  e22@{ curve: basis }
   e23@{ curve: basis }
   e24@{ curve: basis }
