@@ -833,8 +833,16 @@ bevy_scene = "=0.20.0"
     );
     let unresolved = "use bevy_ecs::prelude::*;\nuse bevy_scene::prelude::*;\nmacro_rules! create { ($world:expr, $scene:expr) => { $world.spawn_scene($scene) }; }\nfn unresolved_source(world: &mut World, scene: Box<dyn Scene>) { create!(world, scene); }\npub fn outer(world: &mut World, scene: Box<dyn Scene>) { unresolved_source(world, scene); }\n";
     write(&root, "src/lib.rs", unresolved);
+    // 保留项目已锁定的撤回版本，避免冷缓存下重新选版使离线夹具失效。
+    fs::copy(project_root().join("Cargo.lock"), root.join("Cargo.lock")).unwrap();
     let lock = Command::new("cargo")
-        .args(["generate-lockfile", "--offline", "--manifest-path"])
+        .args([
+            "metadata",
+            "--offline",
+            "--format-version",
+            "1",
+            "--manifest-path",
+        ])
         .arg(root.join("Cargo.toml"))
         .output()
         .unwrap();

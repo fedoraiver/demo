@@ -8,6 +8,8 @@
 
 固定工具链包含 `rustfmt`、`clippy`、`rust-src`、`rustc-dev` 和 `llvm-tools-preview`。架构事实提取、[实体命名检查](testing/README.md#实体命名检查)和[具名字段检查](testing/README.md#单字段结构体约束)共用一个 rustc 宿主，宿主必须匹配被调用的编译器提交。统一入口核验 ABI、准备动态库路径并隔离 Cargo 产物；编译器数据只在回调内使用，对外输出独立的分析契约。检查方法见[编译器事实与架构模型检查](testing/README.md#编译器事实与架构模型检查)。
 
+实体命名与具名字段检查由 [GitHub Actions](testing/README.md#github-actions) 执行，本地开发无须例行运行这两个工具。本地格式、编译和针对性无窗口测试要求见[验证参考](testing/README.md#按变更类型选择检查)。
+
 API 行为以对应版本的官方文档为准，示例必须匹配项目版本，不直接套用旧版 Bevy、Unity DOTS 或其他 ECS 框架的接口及限制。
 
 ## ECS 的职责划分
