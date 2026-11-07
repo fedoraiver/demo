@@ -26,7 +26,9 @@ Agent 可阅读代码、检查格式和编译，并执行最小 `App` / `World` 
 | 修改 Rust 代码                               | 阅读相关实现，运行 `cargo fmt --all -- --check` 和 `cargo check --locked`。                                                                                                                                                                                   |
 | 修改行为                                     | 在 Rust 检查之外，增加或运行有针对性的无窗口测试，验证相关组件变化、查询过滤、消息或调度结果；运行或视觉效果交给用户手动验收。                                                                                                                                |
 
-Rust 检查命令：
+上表列出本地检查要求；实体命名与具名字段检查由 [GitHub Actions](#github-actions) 承担，本地开发无须例行运行这两个工具。
+
+本地 Rust 检查命令：
 
 ```powershell
 cargo fmt --all -- --check
@@ -43,18 +45,15 @@ cargo test --locked
 
 ## GitHub Actions
 
-[Rust rules 工作流](../../.github/workflows/rust-rules.yml)在面向 `master` 的 PR、推送到 `master` 和手动运行时执行实体命名与具名字段检查，覆盖 Windows 下的默认配置和 `debugdump`。每项规则先执行现有入口的共享工具与规则回归，再检查两种项目配置；检查范围和失败含义见下文。
+[Rust rules 工作流](../../.github/workflows/rust-rules.yml)在面向 `master` 的 PR、推送到 `master` 和手动运行时执行实体命名与具名字段检查，使用 `ubuntu-latest` 的原生 Linux 目标，覆盖默认配置和 `debugdump`。每项规则先执行现有入口的共享工具与规则回归，再检查两种项目配置；检查范围和失败含义见下文。
+
+这两项检查由云端执行，不是本地开发或提交 PR 前的必跑步骤。检查入口保留供维护工具或排查 CI 失败时按需手动调用。
 
 在 PR 的 Checks 或仓库 Actions 页面查看逐步日志、结果摘要和运行结束时的磁盘余量。云端检查不替代其他平台验证、按变更范围选择的无窗口测试或用户实机验收；单次运行结果记录在对应 Issue 或 PR。
 
 ## 单字段结构体约束
 
-修改项目 Rust 源码后、提交 PR 前，运行[具名字段检查入口](../../scripts/check-named-fields.ps1)。它使用[共享编译器工具](../../tools/rustc-analysis/Cargo.toml)，执行工具格式、共享工具与规则回归，再检查项目全部 Cargo 目标和共享工具自身。规则回归入口保留在[兼容测试包](../../tools/check-named-fields/Cargo.toml)，其 CLI、报告和 driver 委托统一实现。
-
-```powershell
-pwsh -NoProfile -File ./scripts/check-named-fields.ps1
-pwsh -NoProfile -File ./scripts/check-named-fields.ps1 -Features debugdump
-```
+GitHub Actions 调用[具名字段检查入口](../../scripts/check-named-fields.ps1)。它使用[共享编译器工具](../../tools/rustc-analysis/Cargo.toml)，执行工具格式、共享工具与规则回归，再检查项目全部 Cargo 目标和共享工具自身。规则回归入口保留在[兼容测试包](../../tools/check-named-fields/Cargo.toml)，其 CLI、报告和 driver 委托统一实现。
 
 `-Target`、`-Features`、`-AllFeatures` 只选择根项目的编译配置；嵌套工具使用独立请求，不继承这些选项。未显式指定平台时遵循各自 Cargo 配置，features 默认启用各自默认集合；嵌套工具的依赖先行顺序见[维护缓存](../diagrams/README.md#生成与校验命令)。脚本通过自身路径选择检出，退出时恢复工作目录与临时环境。工具产物位于根 `tmp/rustc-analysis/`，Cargo 分析缓存和逐次报告位于短目录 `tmp/ra/`，回归夹具也只写入根 `tmp/`。工具链与组件见[开发规范](../development.md#技术栈与版本)。
 
@@ -66,12 +65,7 @@ pwsh -NoProfile -File ./scripts/check-named-fields.ps1 -Features debugdump
 
 ## 实体命名检查
 
-实体命名约束见[开发规范](../development.md#entity实体只表示身份)。[检查入口](../../scripts/check-entity-names.ps1)使用共享 rustc 宿主的真实类型、宏来源和 MIR，检查项目生产 lib／bin 创建时的组件与 BSN 组合；创建后补名不满足规则。测试夹具、第三方内部实体和导入资产内部节点不计入规则范围。
-
-```powershell
-pwsh -NoProfile -File ./scripts/check-entity-names.ps1
-pwsh -NoProfile -File ./scripts/check-entity-names.ps1 -Features debugdump
-```
+实体命名约束见[开发规范](../development.md#entity实体只表示身份)。GitHub Actions 调用的[检查入口](../../scripts/check-entity-names.ps1)使用共享 rustc 宿主的真实类型、宏来源和 MIR，检查项目生产 lib／bin 创建时的组件与 BSN 组合；创建后补名不满足规则。测试夹具、第三方内部实体和导入资产内部节点不计入规则范围。
 
 入口执行共享工具与[实体规则回归包](../../tools/check-entity-names/Cargo.toml)的检查，再以选定配置检查生产源码。`-Target`、`-Features` 和 `-AllFeatures` 的选择与具名字段入口一致，跨目标检查需要对应 Rust 标准库。Cargo 准备构建脚本和过程宏，不执行被检查程序。
 
@@ -190,7 +184,7 @@ Windows MSVC 的启动依赖还需检查最终链接产物：[build.rs](../../bu
 
 架构维护的正式入口见[生成与校验命令](../diagrams/README.md#生成与校验命令)。共享分析工具分为无 rustc 依赖的契约层、编译器层和普通运行层；Node 只消费语义模型及原始 DOT，不重做源码扫描或新旧模型等价比较。
 
-检查具名字段、实体规则和工具回归后，按需独立提取与装配：
+架构维护需要时，独立提取与装配：
 
 ```powershell
 pwsh -NoProfile -File ./scripts/rustc-analysis.ps1 extract --workspace . --out tmp/ecs-architecture/compiler

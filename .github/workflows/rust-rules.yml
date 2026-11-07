@@ -17,7 +17,7 @@ concurrency:
 jobs:
   rules:
     name: ${{ matrix.rule }}
-    runs-on: windows-2025
+    runs-on: ubuntu-latest
     timeout-minutes: 120
     strategy:
       fail-fast: false
@@ -35,6 +35,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+
+      - name: Install Linux build dependencies
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            g++ pkg-config libx11-dev libasound2-dev libudev-dev \
+            libxkbcommon-x11-0 libwayland-dev libxkbcommon-dev
 
       - name: Install repository toolchain
         run: |
