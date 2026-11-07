@@ -1,0 +1,107 @@
+name: Rust rules
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rust-rules-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rules:
+    name: ${{ matrix.rule }}
+    runs-on: windows-2025
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        rule: [entity-names, named-fields]
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      ANALYSIS_RULE: ${{ matrix.rule }}
+      CARGO_TERM_COLOR: always
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Install repository toolchain
+        run: |
+          $toolchainJson = python -c "import json, pathlib, tomllib; print(json.dumps(tomllib.loads(pathlib.Path('rust-toolchain.toml').read_text())['toolchain']))"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $toolchain = $toolchainJson | ConvertFrom-Json
+          rustup toolchain install $toolchain.channel --profile $toolchain.profile --component ($toolchain.components -join ',')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          rustc -vV
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-PSDrive -PSProvider FileSystem | Select-Object Name, Used, Free | Format-Table
+
+      # 只缓存下载数据；编译产物和分析证据由当前检出重新生成。
+      - name: Cache Cargo downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: |
+            ~/.cargo/registry/cache
+            ~/.cargo/registry/index
+            ~/.cargo/git/db
+          key: cargo-downloads-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock', 'tools/rustc-analysis/Cargo.lock', 'tools/check-entity-names/Cargo.lock', 'tools/check-named-fields/Cargo.lock') }}
+
+      - name: Prepare locked dependencies
+        id: dependencies
+        run: |
+          # 离线 metadata 会读取完整依赖图，预取时不按目标平台裁剪。
+          $manifests = @(
+            'Cargo.toml',
+            'tools/rustc-analysis/Cargo.toml',
+            'tools/check-entity-names/Cargo.toml',
+            'tools/check-named-fields/Cargo.toml'
+          )
+          foreach ($manifest in $manifests) {
+            cargo fetch --locked --manifest-path $manifest
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
+      - name: Verify regressions and default configuration
+        id: default
+        run: |
+          pwsh -NoProfile -File "./scripts/check-$env:ANALYSIS_RULE.ps1"
+          exit $LASTEXITCODE
+
+      - name: Check debugdump configuration
+        id: debugdump
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: |
+          pwsh -NoProfile -File ./scripts/rustc-analysis.ps1 check --rule $env:ANALYSIS_RULE --workspace $env:GITHUB_WORKSPACE --features debugdump
+          exit $LASTEXITCODE
+
+      - name: Summarize checks and disk space
+        if: ${{ always() }}
+        env:
+          DEFAULT_OUTCOME: ${{ steps.default.outcome }}
+          DEBUGDUMP_OUTCOME: ${{ steps.debugdump.outcome }}
+        run: |
+          $summary = @(
+            "## $env:ANALYSIS_RULE",
+            "Default configuration and regressions: $env:DEFAULT_OUTCOME",
+            "debugdump configuration: $env:DEBUGDUMP_OUTCOME",
+            '',
+            '### Remaining disk space',
+            '| Drive | Free GiB |',
+            '| --- | ---: |'
+          )
+          foreach ($drive in Get-PSDrive -PSProvider FileSystem) {
+            $summary += ('| {0} | {1:N2} |' -f $drive.Name, ($drive.Free / 1GB))
+          }
+          $summary | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
+          Get-PSDrive -PSProvider FileSystem | Select-Object Name, Used, Free | Format-Table

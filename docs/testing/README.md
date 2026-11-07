@@ -41,6 +41,12 @@ cargo test --locked
 
 测试应检验实际业务行为和边界条件。只使用最小测试环境；即使命令属于测试，也不能借此创建窗口或启动完整游戏。
 
+## GitHub Actions
+
+[Rust rules 工作流](../../.github/workflows/rust-rules.yml)在面向 `master` 的 PR、推送到 `master` 和手动运行时执行实体命名与具名字段检查，覆盖 Windows 下的默认配置和 `debugdump`。每项规则先执行现有入口的共享工具与规则回归，再检查两种项目配置；检查范围和失败含义见下文。
+
+在 PR 的 Checks 或仓库 Actions 页面查看逐步日志、结果摘要和运行结束时的磁盘余量。云端检查不替代其他平台验证、按变更范围选择的无窗口测试或用户实机验收；单次运行结果记录在对应 Issue 或 PR。
+
 ## 单字段结构体约束
 
 修改项目 Rust 源码后、提交 PR 前，运行[具名字段检查入口](../../scripts/check-named-fields.ps1)。它使用[共享编译器工具](../../tools/rustc-analysis/Cargo.toml)，执行工具格式、共享工具与规则回归，再检查项目全部 Cargo 目标和共享工具自身。规则回归入口保留在[兼容测试包](../../tools/check-named-fields/Cargo.toml)，其 CLI、报告和 driver 委托统一实现。
