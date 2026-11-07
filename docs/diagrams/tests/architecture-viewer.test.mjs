@@ -952,6 +952,28 @@ test('top view picker selects native exports and object return retains the selec
   assert.equal(page.get('return-overview').disabled,true);
 });
 
+test('nested Schedule picker entries navigate by view ID and restore selection history',()=>{
+  const page=viewer('?workspace=D:/demo&schedule=nested-SubstepSchedule',{edit:data=>{
+    const template=data.views.find(view=>view.id==='schedule-update');
+    const labels=['Main','StateTransition','OnEnter(Running)','RunFixedMainLoop','FixedMain','FixedPostUpdate','PhysicsSchedule','SubstepSchedule','PostUpdate','EguiPrimaryContextPass'];
+    data.views.push(...labels.map(scheduleLabel=>({...template,id:'nested-'+scheduleLabel,scheduleLabel,label:'main · '+scheduleLabel})));
+    data.views.reverse();
+  }});
+  const picker=page.get('view-select'),main=picker.querySelectorAll('optgroup').find(group=>group.getAttribute('label')==='main Schedule');
+  const options=main.querySelectorAll('option');
+  assert.deepEqual(options.map(option=>option.value),['nested-Main','schedule-startup','nested-StateTransition','nested-OnEnter(Running)','nested-RunFixedMainLoop','nested-FixedMain','nested-FixedPostUpdate','nested-PhysicsSchedule','nested-SubstepSchedule','schedule-update','nested-PostUpdate','nested-EguiPrimaryContextPass']);
+  assert.equal(new Set(options.map(option=>option.value)).size,options.length);
+  const substep=options.find(option=>option.value==='nested-SubstepSchedule');
+  assert.equal(substep.textContent,'\u00a0\u00a0'.repeat(5)+'↳ SubstepSchedule · 2 systems');
+  assert.equal(page.app.view.id,substep.value);assert.equal(picker.value,substep.value);
+  page.choose('nested-EguiPrimaryContextPass');
+  assert.equal(page.app.view.scheduleLabel,'EguiPrimaryContextPass');assert.equal(picker.value,'nested-EguiPrimaryContextPass');
+  page.back();assert.equal(page.app.view.id,substep.value);assert.equal(picker.value,substep.value);
+  page.choose('schedule-render');assert.equal(page.app.view.application,'RenderApp');
+  page.back();assert.equal(page.app.view.id,substep.value);assert.equal(picker.value,substep.value);
+  assert.equal(page.location.searchParams.get('workspace'),'D:/demo');
+});
+
 test('Plugin and PluginGroup show details only while selected and return to their native object legends',()=>{
   for(const id of ['plugin-ItemPlugin','plugin-physics-0']){
     const page=viewer('?object='+id);assert.equal(page.get('details').hidden,false);

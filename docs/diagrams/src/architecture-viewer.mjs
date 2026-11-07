@@ -471,15 +471,64 @@ export async function startExternalArchitecture(options) {
   }
 }
 
-// The orchestrating schedules precede their children; this is a navigation order,
-// not a claim that independently triggered schedules form a total execution order.
-const mainScheduleOrder = ['Main', 'PreStartup', 'Startup', 'PostStartup', 'First', 'PreUpdate', 'RunFixedMainLoop', 'FixedMain', 'FixedFirst', 'FixedPreUpdate', 'FixedUpdate', 'FixedPostUpdate', 'FixedLast', 'Update', 'SpawnScene', 'PostUpdate', 'Last'];
+// 顺序与调用层级来自锁定版本的 Bevy、Avian 和 Egui；条件分支在选项提示中说明。
+const scheduleCallOrder = new Map([
+  ['main', [
+    { label: 'Main' },
+    { label: 'PreStartup', parent: 'Main', title: '仅首次启动时执行。' },
+    { label: 'Startup', parent: 'Main', title: '仅首次启动时执行。' },
+    { label: 'PostStartup', parent: 'Main', title: '仅首次启动时执行。' },
+    { label: 'First', parent: 'Main' },
+    { label: 'PreUpdate', parent: 'Main' },
+    { label: 'StateTransition', parent: 'Main', title: '普通帧在 PreUpdate 后执行。首次启动还会在 PreStartup 前执行。' },
+    { prefix: 'OnExit(', parent: 'StateTransition', title: '满足退出对应状态的条件时执行。同类选项按名称排列。' },
+    { prefix: 'OnTransition {', parent: 'StateTransition', title: '满足对应状态转换的条件时执行。同类选项按名称排列。' },
+    { prefix: 'OnEnter(', parent: 'StateTransition', title: '满足进入对应状态的条件时执行。同类选项按名称排列。' },
+    { label: 'RunFixedMainLoop', parent: 'Main' },
+    { label: 'FixedMain', parent: 'RunFixedMainLoop', title: '根据固定时间步，每帧执行零次或多次。' },
+    { label: 'FixedFirst', parent: 'FixedMain' },
+    { label: 'FixedPreUpdate', parent: 'FixedMain' },
+    { label: 'FixedUpdate', parent: 'FixedMain' },
+    { label: 'FixedPostUpdate', parent: 'FixedMain' },
+    { label: 'PhysicsSchedule', parent: 'FixedPostUpdate' },
+    { label: 'SubstepSchedule', parent: 'PhysicsSchedule', title: '在物理求解阶段按配置重复执行子步。' },
+    { label: 'FixedLast', parent: 'FixedMain' },
+    { label: 'Update', parent: 'Main' },
+    { label: 'SpawnScene', parent: 'Main' },
+    { label: 'PostUpdate', parent: 'Main' },
+    { label: 'EguiPrimaryContextPass', parent: 'PostUpdate', title: '由 PostUpdate 内的 Egui 驱动，按上下文条件每帧可执行多轮。' },
+    { label: 'Last', parent: 'Main' },
+  ]],
+  ['RenderApp', [
+    { label: 'RenderStartup', title: '在渲染设备初始化或恢复的条件下，于当次 ExtractSchedule 前执行。' },
+    { label: 'ExtractSchedule' },
+    { label: 'RenderRecovery' },
+    { label: 'First', parent: 'RenderRecovery', title: '渲染器就绪时执行。' },
+    { label: 'Render', parent: 'RenderRecovery', title: '渲染器就绪时执行。' },
+    { label: 'RenderGraph', parent: 'Render' },
+    { label: 'Core2d', parent: 'RenderGraph', title: '按相机条件触发，实际调用顺序取决于相机顺序。同层选项按名称排列。' },
+    { label: 'Core3d', parent: 'RenderGraph', title: '按相机条件触发，实际调用顺序取决于相机顺序。同层选项按名称排列。' },
+  ]],
+]);
+
+function scheduleOptionEntries(views, application) {
+  const definitions = scheduleCallOrder.get(application) || [];
+  const schedules = views.filter(view => view.application === application);
+  const labels = new Set(schedules.map(view => view.scheduleLabel));
+  const parents = new Map(definitions.filter(entry => entry.label).map(entry => [entry.label, entry.parent]));
+  return schedules.map(view => {
+    const rank = definitions.findIndex(entry => entry.label === view.scheduleLabel || entry.prefix && view.scheduleLabel.startsWith(entry.prefix));
+    const definition = definitions[rank];
+    let depth = 0;
+    for (let parent = definition?.parent; parent; parent = parents.get(parent)) {
+      if (labels.has(parent)) depth += 1;
+    }
+    return { view, rank: rank < 0 ? Infinity : rank, depth, title: definition?.title || (definition ? '' : '调用位置未确认。') };
+  }).sort((a, b) => a.rank - b.rank || a.view.scheduleLabel.localeCompare(b.view.scheduleLabel) || a.view.id.localeCompare(b.view.id));
+}
 
 export function orderScheduleOptions(views, application) {
-  const ranks = new Map((application === 'main' ? mainScheduleOrder : []).map((label, index) => [label, index]));
-  return views.filter(view => view.application === application).sort((a, b) =>
-    (ranks.get(a.scheduleLabel) ?? Infinity) - (ranks.get(b.scheduleLabel) ?? Infinity)
-    || a.scheduleLabel.localeCompare(b.scheduleLabel) || a.id.localeCompare(b.id));
+  return scheduleOptionEntries(views, application).map(entry => entry.view);
 }
 
 export function renderArchitectureViewer({ model, registry, views, features, guideSamples, objects = [], objectAliases = {}, sourceRoleLabels = {}, schedulePluginCatalog = [], scheduleInteractions = { schemaVersion: 1, views: [] }, infrastructureFeatures = projectInfrastructureFeatures(registry), runtimeAssets = { script: '' }, externalBootstrap = null }) {
@@ -487,7 +536,15 @@ export function renderArchitectureViewer({ model, registry, views, features, gui
   const scheduleViews = views.filter(view => view.aspect === 'schedule');
   const objectViews = views.filter(view => view.aspect === 'object');
   const option = (view, label) => `<option value="${escape(view.id)}">${escape(label || view.label)}</option>`;
-  const scheduleOptions = [...new Set(scheduleViews.map(view => view.application))].map(application => `<optgroup label="${escape(application)} Schedule">${orderScheduleOptions(scheduleViews, application).map(view => option(view, `${view.scheduleLabel} · ${view.systemCount} systems`)).join('')}</optgroup>`).join('');
+  const scheduleOptions = [...new Set(scheduleViews.map(view => view.application))].map(application => {
+    const options = scheduleOptionEntries(scheduleViews, application).map(({ view, depth, title }) => {
+      const label = `${view.scheduleLabel} · ${view.systemCount} systems`;
+      const indent = depth ? '\u00a0\u00a0'.repeat(depth) + '↳ ' : '';
+      const hint = title ? ` title="${escape(title)}" aria-label="${escape(label + '。' + title)}"` : '';
+      return `<option value="${escape(view.id)}"${hint}>${escape(indent + label)}</option>`;
+    }).join('');
+    return `<optgroup label="${escape(application)} Schedule">${options}</optgroup>`;
+  }).join('');
   const usedPlugins = new Set();
   const pluginOptions = (entries, label) => {
     const options = entries.map(entry => {
