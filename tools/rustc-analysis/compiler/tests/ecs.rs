@@ -1360,6 +1360,24 @@ fn extracts_real_bevy_protocols_and_bsn() {
             .iter()
             .any(|entity| !entity.children.is_empty())
     );
+    let branch_creator = |name: &str| {
+        let declaration = facts
+            .declarations
+            .iter()
+            .find(|declaration| declaration.full_name == format!("architecture_fixture::{name}"))
+            .unwrap();
+        facts
+            .callables
+            .iter()
+            .find(|callable| callable.declaration == declaration.id)
+            .unwrap()
+            .id
+            .clone()
+    };
+    let unknown_scene_creators = [
+        branch_creator("unknown_scene_after_name"),
+        branch_creator("unknown_scene_before_name"),
+    ];
     assert!(
         facts
             .entities
@@ -1368,7 +1386,9 @@ fn extracts_real_bevy_protocols_and_bsn() {
                 gap.kind.as_str(),
                 "entity-alternative" | "entity-multiplicity"
             ) || gap.reason.contains("独立结构候选")
-                || gap.reason.contains("没有可达返回状态"))),
+                || gap.reason.contains("没有可达返回状态")
+                || (gap.kind == "entity-structure"
+                    && unknown_scene_creators.contains(&entity.creator)))),
         "{:?}",
         facts.entities
     );
@@ -1396,25 +1416,43 @@ fn extracts_real_bevy_protocols_and_bsn() {
                 && entity.components.contains(&button))),
         "Distinct branch shapes were merged"
     );
-    let branch_creator = |name: &str| {
-        let declaration = facts
-            .declarations
-            .iter()
-            .find(|declaration| declaration.full_name == format!("architecture_fixture::{name}"))
-            .unwrap();
-        facts
-            .callables
-            .iter()
-            .find(|callable| callable.declaration == declaration.id)
-            .unwrap()
-            .id
-            .clone()
-    };
     let by_id: std::collections::BTreeMap<_, _> = facts
         .entities
         .iter()
         .map(|entity| (&entity.id, entity))
         .collect();
+    for expected in [
+        "Direct",
+        "Deferred",
+        "Scene root",
+        "Scene child",
+        "Choice host",
+        "Repeated template",
+        "Required fixture name",
+        "Explicit fixture name",
+        "Helper fixture name",
+        "Cloned fixture name",
+        "NamedFixtureRoot",
+        "NamedFixtureChild",
+    ] {
+        assert!(
+            facts.entities.iter().any(|entity| entity
+                .name_candidates
+                .iter()
+                .any(|candidate| candidate.value.as_deref() == Some(expected))),
+            "Missing compiler-confirmed Name {expected}"
+        );
+    }
+    let direct = facts
+        .entities
+        .iter()
+        .flat_map(|entity| &entity.name_candidates)
+        .find(|candidate| candidate.value.as_deref() == Some("Direct"))
+        .unwrap();
+    assert_eq!(
+        direct.expression.as_ref().unwrap().snippet.trim(),
+        "\"Direct\""
+    );
     let root = branch_creator("branch_assembly");
     let branches: Vec<_> = facts
         .entities
@@ -1438,6 +1476,23 @@ fn extracts_real_bevy_protocols_and_bsn() {
         assert!(branch.components.contains(expected));
         assert_eq!(branch.children.len(), 1);
         let child = by_id[&branch.children[0]];
+        let expected_names = if branch.components.contains(&text) {
+            ("Text branch", "Text child")
+        } else {
+            ("Button branch", "Button child")
+        };
+        assert!(
+            branch
+                .name_candidates
+                .iter()
+                .any(|candidate| candidate.value.as_deref() == Some(expected_names.0))
+        );
+        assert!(
+            child
+                .name_candidates
+                .iter()
+                .any(|candidate| candidate.value.as_deref() == Some(expected_names.1))
+        );
         assert!(
             child.components.contains(expected),
             "Child ordinal crossed a structural candidate boundary"
@@ -1530,6 +1585,329 @@ fn extracts_real_bevy_protocols_and_bsn() {
             .gaps
             .iter()
             .any(|gap| gap.kind == "entity-multiplicity")
+    );
+    assert_eq!(repeated[0].name_candidates.len(), 1);
+    assert_eq!(
+        repeated[0].name_candidates[0].value.as_deref(),
+        Some("Repeated template")
+    );
+    for creator in ["same_shape_names", "same_shape_scene_names"] {
+        let creator = branch_creator(creator);
+        let templates: Vec<_> = facts
+            .entities
+            .iter()
+            .filter(|entity| entity.creator == creator)
+            .collect();
+        assert_eq!(
+            templates.len(),
+            1,
+            "Names must not introduce structural alternatives"
+        );
+        assert_eq!(templates[0].name_candidates.len(), 2);
+        assert!(templates[0].alternatives.is_empty());
+    }
+    let creator = branch_creator("same_shape_unknown_name");
+    let templates: Vec<_> = facts
+        .entities
+        .iter()
+        .filter(|entity| entity.creator == creator)
+        .collect();
+    assert_eq!(templates.len(), 1);
+    assert!(
+        templates[0]
+            .name_candidates
+            .iter()
+            .any(|candidate| candidate.value.as_deref() == Some("Confirmed name"))
+    );
+    assert!(
+        templates[0]
+            .name_candidates
+            .iter()
+            .any(|candidate| candidate.value.is_none()
+                && candidate.expression.is_none()
+                && candidate.reason.is_some())
+    );
+    let creator = branch_creator("required_names");
+    let templates: Vec<_> = facts
+        .entities
+        .iter()
+        .filter(|entity| entity.creator == creator)
+        .collect();
+    assert_eq!(templates.len(), 2);
+    assert!(
+        templates
+            .iter()
+            .all(|entity| entity.name_candidates.len() == 1)
+    );
+    let creator = branch_creator("dynamic_names");
+    let expressions: std::collections::BTreeSet<_> = facts
+        .entities
+        .iter()
+        .filter(|entity| entity.creator == creator)
+        .flat_map(|entity| &entity.name_candidates)
+        .filter_map(|candidate| candidate.expression.as_ref())
+        .map(|source| source.snippet.trim().to_owned())
+        .collect();
+    assert_eq!(
+        expressions,
+        std::collections::BTreeSet::from([
+            "format!(\"Named item {}\", index)".to_owned(),
+            "format!(\"From item {}\", index)".to_owned(),
+            "format!(\"Set item {}\", index)".to_owned(),
+            "format!(\"BSN item {}\", index)".to_owned(),
+            "format!(\"BSN child {}\", index)".to_owned(),
+        ])
+    );
+    let creator = branch_creator("constant_name");
+    let constants: Vec<_> = facts
+        .entities
+        .iter()
+        .filter(|entity| entity.creator == creator)
+        .collect();
+    assert_eq!(constants.len(), 1);
+    assert_eq!(constants[0].name_candidates.len(), 1);
+    let constant = &constants[0].name_candidates[0];
+    assert_eq!(constant.value.as_deref(), Some("Constant fixture name"));
+    assert_eq!(
+        constant.expression.as_ref().unwrap().snippet.trim(),
+        "CONSTANT_ENTITY_NAME"
+    );
+    let creator = branch_creator("type_named_entities");
+    let type_names: Vec<_> = facts
+        .entities
+        .iter()
+        .filter(|entity| entity.creator == creator)
+        .flat_map(|entity| &entity.name_candidates)
+        .collect();
+    assert_eq!(type_names.len(), 4);
+    assert!(
+        type_names
+            .iter()
+            .all(|name| name.reason.is_none() && name.expression.is_some())
+    );
+    let fixture_crate = arguments
+        .iter()
+        .find_map(|argument| argument.strip_prefix("--crate-name="))
+        .unwrap();
+    assert_eq!(
+        type_names
+            .iter()
+            .map(|name| name.value.clone().unwrap())
+            .collect::<std::collections::BTreeSet<_>>(),
+        std::collections::BTreeSet::from([
+            format!("{fixture_crate}::Position"),
+            "architecture_external::ExternalGenericPlugin<architecture_external::ExternalMarker>"
+                .to_owned(),
+            "alloc::vec::Vec<core::option::Option<alloc::string::String>>".to_owned(),
+            "u32".to_owned(),
+        ])
+    );
+    let creator = branch_creator("forwarded_dynamic_name");
+    let forwarded: Vec<_> = facts
+        .entities
+        .iter()
+        .filter(|entity| entity.creator == creator)
+        .collect();
+    assert_eq!(forwarded.len(), 1);
+    assert_eq!(forwarded[0].name_candidates.len(), 1);
+    let forwarded = &forwarded[0].name_candidates[0];
+    assert!(forwarded.value.is_none());
+    assert!(forwarded.reason.is_none());
+    assert_eq!(
+        forwarded.expression.as_ref().unwrap().snippet.trim(),
+        "format!(\"Forwarded item {}\", index)"
+    );
+    let creator = branch_creator("dynamic_parameter_name");
+    let parameter: Vec<_> = facts
+        .entities
+        .iter()
+        .filter(|entity| entity.creator == creator)
+        .collect();
+    assert_eq!(parameter.len(), 1);
+    assert_eq!(parameter[0].name_candidates.len(), 1);
+    let parameter = &parameter[0].name_candidates[0];
+    assert!(parameter.value.is_none());
+    assert!(parameter.reason.is_none());
+    assert_eq!(
+        parameter.expression.as_ref().unwrap().snippet.trim(),
+        "value"
+    );
+    for (function, expected) in [
+        ("mutated_dynamic_name", "value"),
+        ("mutated_static_name", "value"),
+        ("unknown_text_modifier", "value"),
+        ("unknown_static_text_modifier", "value"),
+        ("unknown_dyn_text_modifier", "value"),
+        ("unknown_text_factory", "make()"),
+        ("trimmed_parameter_name", "text.trim()"),
+        ("rebound_trimmed_name", "view"),
+    ] {
+        let creator = branch_creator(function);
+        let templates: Vec<_> = facts
+            .entities
+            .iter()
+            .filter(|entity| entity.creator == creator)
+            .collect();
+        assert_eq!(templates.len(), 1, "Unexpected templates for {function}");
+        assert_eq!(templates[0].name_candidates.len(), 1);
+        let name = &templates[0].name_candidates[0];
+        assert!(name.value.is_none(), "Stale text retained in {function}");
+        assert!(name.reason.is_none());
+        assert_eq!(name.expression.as_ref().unwrap().snippet.trim(), expected);
+    }
+    for (function, original) in [
+        ("rebound_shared_text", Some("Original shared name")),
+        ("rebound_mutable_text", None),
+    ] {
+        let creator = branch_creator(function);
+        let names: Vec<_> = facts
+            .entities
+            .iter()
+            .filter(|entity| entity.creator == creator)
+            .flat_map(|entity| &entity.name_candidates)
+            .collect();
+        assert_eq!(names.len(), 2, "Unexpected names in {function}");
+        assert_eq!(
+            names
+                .iter()
+                .filter(|name| name.value.as_deref() == original)
+                .count(),
+            if original.is_some() { 1 } else { 2 }
+        );
+        let borrowed = names
+            .iter()
+            .find(|name| {
+                name.expression
+                    .as_ref()
+                    .is_some_and(|source| source.snippet.trim() == "String::clone(borrowed)")
+            })
+            .unwrap();
+        assert!(borrowed.value.is_none());
+        assert!(borrowed.reason.is_none());
+        if original.is_none() {
+            assert!(names.iter().any(|name| {
+                name.expression
+                    .as_ref()
+                    .is_some_and(|source| source.snippet.trim() == "value")
+            }));
+        }
+    }
+    let creator = branch_creator("branch_required_scene_name");
+    let branches: Vec<_> = facts
+        .entities
+        .iter()
+        .filter(|entity| entity.creator == creator && entity.alternatives.is_empty())
+        .collect();
+    let names: std::collections::BTreeSet<_> = branches
+        .iter()
+        .flat_map(|entity| &entity.name_candidates)
+        .map(|candidate| candidate.value.as_deref())
+        .collect();
+    assert_eq!(
+        names,
+        std::collections::BTreeSet::from([
+            Some("Branch explicit name"),
+            Some("Required fixture name")
+        ])
+    );
+    for (function, expected, uncertain) in [
+        ("unknown_scene_after_name", "Before unknown scene", true),
+        ("unknown_scene_before_name", "After unknown scene", false),
+        (
+            "unknown_component_after_name",
+            "Before unknown component",
+            false,
+        ),
+    ] {
+        let creator = branch_creator(function);
+        let templates: Vec<_> = facts
+            .entities
+            .iter()
+            .filter(|entity| entity.creator == creator)
+            .collect();
+        assert_eq!(templates.len(), 1, "Unexpected templates for {function}");
+        let names = &templates[0].name_candidates;
+        assert!(
+            names
+                .iter()
+                .any(|candidate| candidate.value.as_deref() == Some(expected)),
+            "Lost known Name in {function}"
+        );
+        assert_eq!(
+            names.iter().any(|candidate| candidate.reason.is_some()),
+            uncertain,
+            "Wrong uncertainty for {function}"
+        );
+        assert_eq!(
+            names.len(),
+            if uncertain { 2 } else { 1 },
+            "Unexpected Name candidates for {function}"
+        );
+    }
+    for (function, expected) in [
+        ("required_bundle_first", "First required name"),
+        ("required_bundle_reversed", "Second required name"),
+        ("required_inherited_first", "First required name"),
+        ("required_direct_override", "Direct required name"),
+    ] {
+        let creator = branch_creator(function);
+        let templates: Vec<_> = facts
+            .entities
+            .iter()
+            .filter(|entity| entity.creator == creator)
+            .collect();
+        assert_eq!(templates.len(), 1, "Unexpected templates for {function}");
+        assert_eq!(
+            templates[0]
+                .name_candidates
+                .iter()
+                .map(|candidate| candidate.value.as_deref())
+                .collect::<Vec<_>>(),
+            vec![Some(expected)],
+            "Wrong required priority for {function}"
+        );
+    }
+}
+
+#[test]
+fn name_alternatives_preserve_each_branch_priority() {
+    use analysis_compiler::entity::mir_value::{EntityNameCandidate, NameParts};
+    let name = |value: &str| {
+        NameParts::explicit(EntityNameCandidate {
+            value: Some(value.to_owned()),
+            expression: None,
+            reason: None,
+        })
+    };
+    let mut names = NameParts::alternatives(vec![name("Explicit A"), NameParts::default()]);
+    names.extend(name("Required B").into_required());
+    assert_eq!(
+        names
+            .candidates()
+            .iter()
+            .map(|candidate| candidate.value.as_deref())
+            .collect::<std::collections::BTreeSet<_>>(),
+        std::collections::BTreeSet::from([Some("Explicit A"), Some("Required B")])
+    );
+    names.extend(name("Final explicit"));
+    assert_eq!(
+        names
+            .candidates()
+            .iter()
+            .map(|candidate| candidate.value.as_deref())
+            .collect::<Vec<_>>(),
+        vec![Some("Final explicit")]
+    );
+    let mut required = name("First required").into_required();
+    required.extend(name("Later inherited").into_required());
+    assert_eq!(
+        required.candidates()[0].value.as_deref(),
+        Some("First required")
+    );
+    required.extend_direct_required(name("Direct required").into_required());
+    assert_eq!(
+        required.candidates()[0].value.as_deref(),
+        Some("Direct required")
     );
 }
 impl Callbacks for Extractor {

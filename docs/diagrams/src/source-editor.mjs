@@ -67,7 +67,7 @@ export function inferWorkspaceRoot(pageUrl) {
   }
 }
 
-function validatedSource(source) {
+export function normalizeSourceEntry(source) {
   if (!source || typeof source.path !== 'string' || !source.path || /[\u0000-\u001f\u007f]/.test(source.path)) {
     throw new Error('Invalid source path');
   }
@@ -96,7 +96,7 @@ function validatedSource(source) {
 }
 
 function sourceLocation(root, source) {
-  const relative = validatedSource(source);
+  const relative = normalizeSourceEntry(source);
   const base = relative.dependency ? normalizeWorkspaceRoot(relative.dependency.root) : root;
   const path = base ? normalizeWorkspaceRoot(base).replace(/\/$/, '') + '/' + relative.path : relative.path;
   return { path, line: relative.line, column: relative.column };
@@ -104,7 +104,7 @@ function sourceLocation(root, source) {
 
 /** 创建 VS Code 文件协议；路径各段编码，行列始终显式保留。 */
 export function vscodeUri(root, source) {
-  const relative = validatedSource(source);
+  const relative = normalizeSourceEntry(source);
   const normalized = normalizeWorkspaceRoot(relative.dependency ? relative.dependency.root : root);
   const location = sourceLocation(normalized, source);
   const encoded = location.path.split('/').map((part, index) =>
@@ -191,7 +191,7 @@ function createSourceEditor({ document, pageUrl, getPageUrl, getStorage, navigat
   function sourceFor(anchor) {
     const { vscodeDependencyName: name, vscodeDependencyVersion: version, vscodeDependencyRoot: root } = anchor.dataset;
     const dependency = [name, version, root].some(value => value !== undefined) ? { name, version, root } : undefined;
-    return validatedSource({ path: anchor.dataset.vscodePath, line: Number(anchor.dataset.vscodeLine),
+    return normalizeSourceEntry({ path: anchor.dataset.vscodePath, line: Number(anchor.dataset.vscodeLine),
       column: anchor.dataset.vscodeColumn === undefined ? undefined : Number(anchor.dataset.vscodeColumn), dependency });
   }
   function clearCopyFeedback(controls) {
@@ -342,7 +342,7 @@ export function sourceEditorAssets() {
 <div class="source-editor-buttons"><button type="submit">保存目录</button><button type="button" data-workspace-reset>恢复默认</button><button type="button" data-workspace-cancel>取消</button></div>
 </form>
 </dialog>`;
-  const helpers = [normalizeWorkspaceRoot, inferWorkspaceRoot, validatedSource, sourceLocation, vscodeUri, createSourceEditor]
+  const helpers = [normalizeWorkspaceRoot, inferWorkspaceRoot, normalizeSourceEntry, sourceLocation, vscodeUri, createSourceEditor]
     .map(fn => fn.toString()).join('\n');
   const script = `const sourceEditor = (() => {\n${helpers}\nreturn createSourceEditor({ document, pageUrl: location.href, getPageUrl: () => location.href, getStorage: () => globalThis.localStorage, navigator: globalThis.navigator, history: globalThis.history });\n})();`;
   return { style, markup, script };

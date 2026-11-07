@@ -9,6 +9,7 @@ import { summarizeModel } from '../../../.agents/skills/update-ecs-architecture/
 import { sourceFingerprint } from '../src/debugdump-input.mjs';
 import { renderGraphView } from '../src/architecture-renderer.mjs';
 import { checkObjectViews } from '../src/check-ecs.mjs';
+import { projectObjectRelation } from '../src/architecture-object-relations.mjs';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
@@ -77,6 +78,72 @@ test('explicit identities preserve duplicate registrations and isolated objects'
   assert.equal(catalog.graphFor('isolated').nodes.length, 1);
   const duplicate = structuredClone(model); duplicate.objects.push(duplicate.objects[0]);
   assert.throws(() => validateCompilerModel(duplicate), /Duplicate compiler object identity/);
+});
+
+test('object cards fold repeated registrations of one callable without changing raw relations or Schedule identity', t => {
+  const { model } = fixture(t);
+  for (const [index, record] of model.objects.filter(record => record.kind === 'System').entries()) Object.assign(record, {
+    name: 'demo::scene_assembly::spawn_session', callableIds: ['spawn-session-callable'],
+    registrations: [{ application: 'main', schedule: index ? 'OnExit(MainMenu)' : 'Startup', scope: 'runtime' }],
+  });
+  model.relations.push({ id: 'create-second', from: 'registration-2', to: 'template-root', kind: 'create',
+    sourceEntries: [{ path: 'src/main.rs', line: 1, column: 8, role: 'create' }], sourceGaps: ['second registration proof'] });
+  const registry = Object.fromEntries(model.objects.map(record => [record.id, record]));
+  const before = JSON.stringify(model), catalog = createCompilerObjectCatalog(model, registry);
+  const graph = catalog.graphFor('type-component');
+  assert.deepEqual(graph.nodes.map(node => node.id), ['type-component', 'template-root', 'registration-1']);
+  assert.deepEqual(graph.nodes.find(node => node.id === 'registration-1').sourceNodeIds, ['registration-1', 'registration-2']);
+  assert.equal(graph.links.find(link => link.id === 'mutable').from, 'registration-2');
+  assert.equal(graph.links.find(link => link.id === 'mutable').displayFrom, 'registration-1');
+  for (const link of graph.links) {
+    const { displayFrom, displayTo, ...fact } = link;
+    assert.deepEqual(fact, catalog.links.find(candidate => candidate.id === link.id));
+  }
+  const entityGraph = catalog.graphFor('template-root');
+  assert.deepEqual(entityGraph.nodes.map(node => node.id), ['template-root', 'registration-1']);
+  assert.deepEqual(entityGraph.links.map(link => link.id), ['entity-reference', 'create-second']);
+  assert.deepEqual(entityGraph.links[1].sourceGaps, ['second registration proof']);
+  const secondGraph = catalog.graphFor('registration-2');
+  assert.equal(secondGraph.centerNodeId, 'registration-2');
+  assert.equal(secondGraph.nodes.filter(node => node.id === 'registration-2').length, 1);
+  assert.ok(!secondGraph.nodes.some(node => node.id === 'registration-1'));
+  const views = catalog.objects.map(object => renderGraphView({ id: object.viewId, objectId: object.id, centerNodeId: object.id,
+    feature: object.feature, aspect: 'object', label: object.id, summary: '一跳对象关系。' }, catalog.graphFor(object.id), registry, model.features));
+  assert.equal(checkObjectViews(views, catalog), catalog.objects.length);
+  const componentView = views.find(view => view.objectId === 'type-component');
+  assert.equal(componentView.links.find(link => link.id === 'read').nativeReverse, true);
+  const projected = projectObjectRelation(componentView, 'mutable');
+  assert.deepEqual(projected.nodes.map(node => node.id), ['type-component', 'registration-1']);
+  assert.equal(projected.links[0].from, 'registration-2');
+  assert.equal(projected.links[0].displayFrom, 'registration-1');
+  assert.deepEqual(catalog.objects.map(object => object.id), model.objects.map(object => object.id));
+  assert.equal(JSON.stringify(model), before);
+  componentView.nodes.find(node => node.id === 'registration-1').sourceNodeIds.pop();
+  assert.throws(() => checkObjectViews(views, catalog), /direct-neighbor coverage mismatch/);
+});
+
+test('card folding never equates names, generic instances, applications, conditions, groups, observers or Local state', t => {
+  const { model, object } = fixture(t), source = model.relations[0].sourceEntries;
+  const system = (id, extra = {}) => ({ ...object(id, 'System'), name: 'same_function', callableIds: ['same-callable'],
+    registrations: [{ application: 'main', schedule: 'Update', scope: 'runtime' }], ...extra });
+  const extras = [system('same-a'), system('same-b'), system('other-callable', { callableIds: ['other-generic-callable'], declarationId: 'same-generic-declaration' }),
+    system('other-app', { registrations: [{ application: 'RenderApp', schedule: 'Render', scope: 'runtime' }] }),
+    system('unknown-app', { registrations: [{ schedule: 'Update', scope: 'runtime' }] }),
+    system('condition', { registrationScope: 'runtime-system-condition', registrations: [{ application: 'main', schedule: 'Update', scope: 'runtime-system-condition' }] }),
+    system('group', { kind: 'System group', callableIds: ['same-callable', 'other-callable'] }), system('observer', { kind: 'Observer' }),
+    system('local-a', { kind: 'Local' }), system('local-b', { kind: 'Local' })];
+  extras[0].declarationId = 'same-generic-declaration';
+  model.objects.push(...extras);
+  for (const record of extras) model.relations.push({ id: 'read-' + record.id, from: record.id, to: 'type-component', kind: 'read', sourceEntries: source });
+  const catalog = createCompilerObjectCatalog(model), graph = catalog.graphFor('type-component');
+  assert.equal(graph.nodes.filter(node => node.id === 'same-a').length, 1);
+  assert.ok(!graph.nodes.some(node => node.id === 'same-b'));
+  for (const record of extras.slice(2)) assert.ok(graph.nodes.some(node => node.id === record.id), record.id);
+  assert.equal(graph.links.filter(link => link.displayFrom === 'same-a').length, 1);
+  assert.deepEqual(graph.nodes.find(node => node.id === 'same-a').sourceNodeIds, ['same-a', 'same-b']);
+  const localGraph = catalog.graphFor('local-a');
+  assert.deepEqual(localGraph.nodes.map(node => node.id), ['local-a', 'type-component']);
+  assert.ok(localGraph.nodes.every(node => !node.sourceNodeIds), 'Unrelated members of a callable family must not imply shared local state');
 });
 
 test('one-hop presentation keeps full facts while hiding Entity components and Plugin neighbors', t => {

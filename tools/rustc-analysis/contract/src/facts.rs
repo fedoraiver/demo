@@ -270,6 +270,17 @@ pub struct EntityTemplate {
     pub possible: bool,
     #[serde(default)]
     pub source_evidence: Vec<SourceEvidence>,
+    #[serde(default)]
+    pub name_candidates: Vec<EntityNameCandidate>,
+}
+
+/// 同一创建模板的可达名称；表达式来自编译器确认的 Name 赋值位置。
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct EntityNameCandidate {
+    pub value: Option<String>,
+    pub expression: Option<SourceEvidence>,
+    pub reason: Option<String>,
 }
 
 /// 同一实体模板的结构候选，不表示额外子实体或同时存在的结构。

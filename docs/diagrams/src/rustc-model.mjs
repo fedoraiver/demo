@@ -320,13 +320,34 @@ export function createCompilerObjectCatalog(model, inputRegistry) {
   const links = model.relations.filter(link => NODE_KINDS[registry[link.from]?.kind]?.visualType && NODE_KINDS[registry[link.to]?.kind]?.visualType).map(presentRelation);
   const neighbors = new Map(objects.map(object => [object.id, []]));
   for (const link of links) for (const id of unique([link.from, link.to])) neighbors.get(id)?.push(link);
+  const systemFamilies = new Map(model.objects.flatMap(record => {
+    const registrations = record.registrations || [], applications = unique(registrations.map(entry => entry.application));
+    if (record.kind !== 'System' || record.callableIds?.length !== 1 || typeof record.callableIds[0] !== 'string' || !record.callableIds[0]
+      || (record.registrationScope && record.registrationScope !== 'runtime') || !registrations.length
+      || registrations.some(entry => entry.scope !== 'runtime') || applications.length !== 1
+      || typeof applications[0] !== 'string' || !applications[0].trim()) return [];
+    return [[record.id, JSON.stringify([applications[0], record.callableIds[0]])]];
+  }));
   function graphFor(id) {
     const object = objectById[id]; requireCondition(object, 'Unknown compiler architecture object: ' + id);
     const incident = neighbors.get(id), selected = ['Plugin', 'PluginGroup'].includes(object.kind) ? [] : object.kind === 'Entity'
       ? incident.filter(link => [link.from, link.to].every(endpoint => registry[endpoint].kind !== 'Component')) : incident;
     const ids = unique([id, ...selected.flatMap(link => [link.from, link.to])]);
-    return { centerNodeId: id, empty: false, nodes: ids.map(endpoint => ({ id: endpoint,
-      role: registry[endpoint].feature === object.feature ? 'internal' : 'external', group: endpoint === id ? '当前对象' : '直接关联对象' })), links: selected.map(link => ({ ...link })) };
+    // 仅折叠当前一跳中同一应用的具体函数卡片；注册对象、关系端点及证据仍独立。
+    const families = Map.groupBy(ids, endpoint => systemFamilies.has(endpoint) ? 'system:' + systemFamilies.get(endpoint) : 'object:' + endpoint);
+    const displayIds = new Map(), members = new Map();
+    for (const family of families.values()) {
+      const display = family.includes(id) ? id : [...family].sort()[0];
+      members.set(display, [...family].sort());
+      for (const endpoint of family) displayIds.set(endpoint, display);
+    }
+    return { centerNodeId: id, empty: false, nodes: unique(ids.map(endpoint => displayIds.get(endpoint))).map(endpoint => ({ id: endpoint,
+      ...(members.get(endpoint).length > 1 ? { sourceNodeIds: members.get(endpoint) } : {}),
+      role: registry[endpoint].feature === object.feature ? 'internal' : 'external', group: endpoint === id ? '当前对象' : '直接关联对象' })),
+    links: selected.map(link => ({ ...link,
+      ...(displayIds.get(link.from) !== link.from ? { displayFrom: displayIds.get(link.from) } : {}),
+      ...(displayIds.get(link.to) !== link.to ? { displayTo: displayIds.get(link.to) } : {}),
+    })) };
   }
   return { objects, objectById, links, graphFor, unresolvedAccesses: [] };
 }

@@ -519,7 +519,7 @@ export function checkObjectViews(views, catalog) {
   const objectViews = views.filter(view => view.aspect === 'object');
   requireCondition(objectViews.length === objects.size, `Expected ${objects.size} object views`);
   const seen = new Set();
-  const nodeKeys = nodes => nodes.map(({ id, role }) => [id, role]).sort(([a], [b]) => a.localeCompare(b));
+  const nodeKeys = nodes => nodes.map(({ id, role, sourceNodeIds }) => [id, role, sourceNodeIds]).sort(([a], [b]) => a.localeCompare(b));
   for (const view of objectViews) {
     const object = objects.get(view.objectId);
     requireCondition(object && !seen.has(object.id) && view.id === object.viewId && view.feature === object.feature, `Object view identity mismatch: ${view.id}`);

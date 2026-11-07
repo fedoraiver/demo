@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import vm from 'node:vm';
-import { inferWorkspaceRoot, normalizeWorkspaceRoot, sourceEditorAssets, vscodeUri } from '../src/source-editor.mjs';
+import { inferWorkspaceRoot, normalizeSourceEntry, normalizeWorkspaceRoot, sourceEditorAssets, vscodeUri } from '../src/source-editor.mjs';
 import { testDocument } from './test-dom.mjs';
 
 test('normalizes Windows, UNC and POSIX absolute workspace roots without depending on the host OS', () => {
@@ -54,6 +54,14 @@ test('builds exact VS Code line and column URIs for Windows, UNC and POSIX paths
   assert.equal(vscodeUri('C:/', { path: 'main.rs', line: 1 }), 'vscode://file/C:/main.rs:1:1');
   assert.equal(vscodeUri('D:/工作 目录#%', { path: 'src/中文 #%.rs', line: 5, column: 9 }),
     'vscode://file/D:/%E5%B7%A5%E4%BD%9C%20%E7%9B%AE%E5%BD%95%23%25/src/%E4%B8%AD%E6%96%87%20%23%25.rs:5:9');
+});
+
+test('shared source normalization preserves editor validation and leaves semantic evidence intact',()=>{
+  const source={path:'src\\scene.rs',line:7,role:'operation',guardKind:'unless',expression:'ready',expansions:[{name:'scene!'}],dependency:{name:'example',version:'1.2.3',root:'E:\\cargo\\example'}},original=structuredClone(source);
+  assert.deepEqual(normalizeSourceEntry(source),{path:'src/scene.rs',line:7,column:1,dependency:source.dependency});
+  assert.deepEqual(source,original);
+  for(const invalid of [{...source,path:'../outside.rs'},{...source,column:0},{...source,dependency:{...source.dependency,name:'../example'}}])assert.throws(()=>normalizeSourceEntry(invalid));
+  assert.equal(vscodeUri('D:/demo',source),'vscode://file/E:/cargo/example/src/scene.rs:7:1');
 });
 
 test('Cargo dependency locations use their validated root independently of the project workspace', () => {

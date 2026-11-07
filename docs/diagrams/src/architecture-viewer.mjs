@@ -1,7 +1,7 @@
 import { isDenseObjectView } from './architecture-object-relations.mjs';
 import { computeObjectFocus } from './architecture-focus.mjs';
 import { architectureRelationsAssets, createArchitectureRelations, createLazyObjectRelationRenderer } from './architecture-relations.mjs';
-import { sourceEditorAssets } from './source-editor.mjs';
+import { normalizeSourceEntry, normalizeWorkspaceRoot, sourceEditorAssets } from './source-editor.mjs';
 import { architectureShellStyle } from './architecture-shell.mjs';
 import { architectureNavigationAssets, defaultArchitectureSchedule, resolveArchitectureSelection, architectureUrl, createArchitectureNavigation } from './architecture-navigation.mjs';
 import { INFRASTRUCTURE_FEATURES, projectInfrastructureFeatures, projectPluginMenu } from './architecture-infrastructure.mjs';
@@ -40,7 +40,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   const objectView=id=>objectViews.find(candidate=>candidate.objectId===canonical(id));
   const pluginView=target=>['Plugin','PluginGroup'].includes(DATA.registry[target?.objectId]?.kind);
   const ownerObject=feature=>{const entry=DATA.model.features.find(entry=>entry.id===feature)||DATA.infrastructureFeatures.find(entry=>entry.id===feature);return canonical(entry?.overviewNode)};
-  const visibleNode=id=>canonical(id);
+  const visibleNode=(id,target=view)=>{const key=canonical(id);return target?.aspect==='object'?target.nodes?.find(node=>node.id===key||node.sourceNodeIds?.includes(key))?.id||key:key};
   function objectContext(id){const record=DATA.registry[id]||{},owners=(componentEntities.get(id)||[]).map(owner=>DATA.registry[owner]?.name),schedules=(record.registrations||[]).map(registration=>registration.schedule).filter(Boolean);return[record.owner,...owners,...new Set(schedules),id].filter(Boolean).join(' · ')}
   function objectResults(ids){return ids.map(id=>'<button class="result" data-object="'+safe(id)+'">'+safe(DATA.registry[id]?.name||id)+'<small>'+safe([DATA.registry[id]?.kind,objectContext(id)].filter(Boolean).join(' · '))+'</small></button>').join('')}
   function transform(){diagram.style.transform='translate('+panX+'px,'+panY+'px) scale('+scale+')';interaction.setScale(scale);const percent=scale*100;document.getElementById('zoom-label').textContent=(percent<1?Number(percent.toPrecision(2)):Math.round(percent))+'%'}
@@ -104,9 +104,17 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   function sourcesList(entries){
     if(!entries?.length)return '';
     const labels={definition:'定义位置',registration:'注册位置',create:'创建位置',destroy:'销毁位置',initialize:'初始化位置',insert:'插入位置',remove:'移除位置',parameter:'参数位置',cleanup:'清理实现',message_definition:'消息类型定义',action_definition:'动作类型定义',build:'构建实现',install:'安装位置',assembly:'装配位置',run:'运行入口',configure:'配置位置',implementation:'实际实现',close:'关闭位置',related:'相关实现',operation:'操作位置',...DATA.sourceRoleLabels},groups=new Map();
-    for(const entry of entries){if(!entry.path||!Number.isSafeInteger(entry.line)||entry.line<1)continue;const role=entry.role||'related';if(!groups.has(role))groups.set(role,[]);groups.get(role).push(entry)}
+    const locations=new Map();
+    for(const entry of entries){
+      if(!entry.path||!Number.isSafeInteger(entry.line)||entry.line<1)continue;
+      const role=entry.role||'related',title=labels[role]||role,label=String(entry.label||'').trim();let key;
+      try{const location=normalizeSourceEntry(entry),dependency=location.dependency;key=JSON.stringify([role,dependency?[dependency.name,dependency.version,normalizeWorkspaceRoot(dependency.root)]:null,location.path,location.line,location.column])}catch{/* 无效定位逐条保留，由源码编辑器显示原因。 */}
+      let item=key&&locations.get(key);
+      if(!item){item={source:entry,labels:[]};if(key)locations.set(key,item);if(!groups.has(role))groups.set(role,[]);groups.get(role).push(item)}
+      if(label&&label!==title&&label!==role&&!item.labels.includes(label))item.labels.push(label);
+    }
     if(!groups.size)return '';
-    return'<section class="source-section"><h3>源码位置</h3>'+[...groups].map(([role,sources])=>{const title=labels[role]||role;return'<h4 class="source-group-label">'+safe(title)+'</h4>'+sources.map(source=>{const dependency=source.dependency,label=String(source.label||'').trim();return'<div class="source-entry">'+(label&&label!==title?'<p class="source-entry-label">'+safe(label)+'</p>':'')+'<div class="source-actions"><a class="source" data-vscode-path="'+safe(source.path)+'" data-vscode-line="'+source.line+'"'+(source.column!==undefined?' data-vscode-column="'+safe(source.column)+'"':'')+(dependency?' data-vscode-dependency-name="'+safe(dependency.name)+'" data-vscode-dependency-version="'+safe(dependency.version)+'" data-vscode-dependency-root="'+safe(dependency.root)+'"':'')+'>在 VS Code 中打开</a></div></div>'}).join('')}).join('')+'</section>';
+    return'<section class="source-section"><h3>源码位置</h3>'+[...groups].map(([role,sources])=>{const title=labels[role]||role;return'<h4 class="source-group-label">'+safe(title)+'</h4>'+sources.map(({source,labels})=>{const dependency=source.dependency;return'<div class="source-entry">'+(labels.length?'<p class="source-entry-label">'+safe(labels.join('；'))+'</p>':'')+'<div class="source-actions"><a class="source" data-vscode-path="'+safe(source.path)+'" data-vscode-line="'+source.line+'"'+(source.column!==undefined?' data-vscode-column="'+safe(source.column)+'"':'')+(dependency!==undefined?' data-vscode-dependency-name="'+safe(dependency?.name)+'" data-vscode-dependency-version="'+safe(dependency?.version)+'" data-vscode-dependency-root="'+safe(dependency?.root)+'"':'')+'>在 VS Code 中打开</a></div></div>'}).join('')}).join('')+'</section>';
   }
   function guide(){
     if(view.aspect==='schedule'){
@@ -170,7 +178,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
       if(target){
         const selected=canonical(selection.node),nodeAliases=(DATA.objectAliases?.[selected]||[]).filter(id=>objectView(id));
         aliasCandidates=nodeAliases.length>1?nodeAliases:[];
-        const node=nodeAliases.length===1?nodeAliases[0]:selected;
+        const node=visibleNode(nodeAliases.length===1?nodeAliases[0]:selected,target);
         selection={...selection,object:target.objectId,node:aliasCandidates.length?selected:(target.nodes?target.nodes.some(candidate=>candidate.id===node):Boolean(DATA.registry[node]))?node:pluginView(target)?null:target.centerNodeId||target.objectId};updateUrl();return;
       }
       aliasCandidates=aliases.filter(id=>objectView(id));
@@ -563,7 +571,7 @@ export function renderArchitectureViewer({ model, registry, views, features, gui
   const editor = sourceEditorAssets(), navigation = architectureNavigationAssets(features, scheduleViews), splitter = architectureSplitterAssets(), interaction = architectureInteractionAssets(), gestures = architectureGestureAssets(), search = architectureSearchAssets(), relations = architectureRelationsAssets();
   const navigationScript = externalBootstrap ? `const architectureNavigationFactory=(()=>{const infrastructureIds=${JSON.stringify(INFRASTRUCTURE_FEATURES.map(feature => feature.id))};\n${[defaultArchitectureSchedule,resolveArchitectureSelection,architectureUrl,createArchitectureNavigation].map(fn=>fn.toString()).join('\n')}\nreturn createArchitectureNavigation;})();` : navigation.script;
   const dependencies = 'document,location,history,window,requestAnimationFrame,sourceEditor,createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction,createGestures:createArchitectureGestures,createObjectSearch:createArchitectureSearch,createScheduleRenderer:window.createScheduleRenderer';
-  const focusScript = computeObjectFocus.toString();
+  const focusScript = [normalizeWorkspaceRoot,normalizeSourceEntry,computeObjectFocus].map(fn=>fn.toString()).join('\n');
   const startup = externalBootstrap ? `${focusScript}\n${assetLoaderAssets().script}\n${startExternalArchitecture.toString()}\nwindow.architectureReady=startExternalArchitecture({bootstrap:JSON.parse(document.getElementById("architecture-data").textContent),${dependencies},createNavigation:architectureNavigationFactory,createViewer:(${createArchitectureViewer.toString()})});` : `${focusScript}\nconst architectureViewer=(${createArchitectureViewer.toString()})({data:JSON.parse(document.getElementById("architecture-data").textContent),${dependencies},navigation:architectureNavigation});`;
   return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Crect width='10' height='10' rx='2' fill='%232563EB'/%3E%3C/svg%3E"><title>demo · ECS 架构</title><style>
 ${architectureShellStyle}

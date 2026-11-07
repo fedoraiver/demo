@@ -4,6 +4,7 @@ import { renderGraphView, mermaidConfiguration, entityComponentColumns, dataLayo
 import { NODE_STYLES, EDGE_STYLES, EXTERNAL_REFERENCE_STYLE } from '../src/architecture-style.mjs';
 import { INFRASTRUCTURE_FEATURES } from '../src/architecture-infrastructure.mjs';
 import { VIEWER_BACKGROUND } from '../src/viewer-theme.mjs';
+import { mermaidRenderIdentity } from '../src/mermaid-cache.mjs';
 
 function isolatedView(record, { role = 'internal', aspect = 'data' } = {}) {
   const graph = { centerNodeId: record.id, nodes: [{ id: record.id, role }], links: [] };
@@ -90,6 +91,27 @@ test('short titles preserve distinct generic identities, links and escaped type 
   assert.match(view.mermaid, /Assets#lt;Wrapper#lt;T#gt;#gt;/);
   assert.deepEqual(view.links.map(({ id, from, to }) => ({ id, from, to })), graph.links.map(({ id, from, to }) => ({ id, from, to })));
   assert.deepEqual({ registry, graph }, before);
+});
+
+test('Entity Name titles retain source text and changing a name invalidates rendered geometry', () => {
+  const names = ['HUD::状态 "active"_label', 'format!("Block {}", index)', 'Name ∈ {Floor | Wall}', 'Entity @ src/scene.rs:12'];
+  const registry = Object.fromEntries(names.map((name, index) => ['entity-' + index,
+    { kind: 'Entity', name, description: '保存该创建模板的实体身份。', display_summary: '场景中的实体。', feature: 'fixture' }]));
+  registry['entity-copy'] = { ...registry['entity-0'] };
+  const graph = { centerNodeId: 'entity-0', nodes: Object.keys(registry).map(id => ({ id, role: 'internal' })), links: [
+    { id: 'child', from: 'entity-0', to: 'entity-copy', kind: 'relationship' },
+  ] };
+  const definition = { id: 'entity-names', aspect: 'object', label: 'Entity', summary: '实体模板' };
+  const view = renderGraphView(definition, graph, registry, []);
+  assert.deepEqual(view.nodes.map(node => [node.id, node.nameLabel]), [...names.map((name, index) => ['entity-' + index, name]), ['entity-copy', names[0]]]);
+  assert.match(view.mermaid.replace(/[\u200B\uFEFF]/g, ''), /HUD::状态 #quot;active#quot;_label/);
+  assert.match(view.mermaid, /format!\(#quot;Block \{\}#quot;, index\)/);
+  assert.deepEqual(view.links.map(({ id, from, to }) => ({ id, from, to })), graph.links.map(({ id, from, to }) => ({ id, from, to })));
+  const before = mermaidRenderIdentity(view, registry, '{}');
+  const renamed = { ...registry, 'entity-0': { ...registry['entity-0'], name: 'HUD::新名称' } };
+  const updated = renderGraphView(definition, graph, renamed, []);
+  assert.notEqual(mermaidRenderIdentity(updated, renamed, '{}').fingerprint, before.fingerprint);
+  assert.deepEqual(updated.nodes.map(node => node.id), view.nodes.map(node => node.id));
 });
 
 test('purpose fallback stays complete and external components retain only their provider context', () => {

@@ -442,6 +442,447 @@ fn old_compiler_fact_bundle_is_rejected() {
 }
 
 #[test]
+fn entity_names_preserve_values_expressions_candidates_and_legacy_templates() {
+    let fixture = Fixture::new(true);
+    let mut facts = fixture.read("facts.json");
+    let source: SourceEvidence =
+        serde_json::from_value(facts["units"][0]["accesses"][0]["source"].clone()).unwrap();
+    let candidate =
+        |value: Option<&str>, expression: Option<&str>, reason: Option<&str>| EntityNameCandidate {
+            value: value.map(str::to_owned),
+            expression: expression.map(|snippet| SourceEvidence {
+                snippet: snippet.into(),
+                role: "compiler-name-expression".into(),
+                ..source.clone()
+            }),
+            reason: reason.map(str::to_owned),
+        };
+    let literal = candidate(
+        Some("角色 :: Player / #1！"),
+        Some("\"角色 :: Player / #1！\""),
+        None,
+    );
+    let dynamic = candidate(
+        None,
+        Some("  format!(\"箱体 {}\", index)  "),
+        Some("runtime index"),
+    );
+    let unknown = candidate(None, None, Some("opaque name source"));
+    let cases = [
+        ("literal", vec![literal.clone()]),
+        ("same-name", vec![literal.clone()]),
+        ("empty", vec![candidate(Some(""), Some("\"\""), None)]),
+        ("whitespace", vec![candidate(Some("  "), None, None)]),
+        ("dynamic", vec![dynamic.clone()]),
+        ("legacy", vec![]),
+        ("unknown", vec![unknown.clone()]),
+        ("blank-expression", vec![candidate(None, Some("  "), None)]),
+        (
+            "alternatives",
+            vec![
+                candidate(Some("B"), None, None),
+                unknown,
+                candidate(Some("A"), None, None),
+                candidate(Some("B"), None, None),
+            ],
+        ),
+    ];
+    let mut annotations = fixture.read("annotations.json");
+    let entities: Vec<_> = cases
+        .into_iter()
+        .map(|(id, name_candidates)| EntityTemplate {
+            id: id.into(),
+            creator: "callable".into(),
+            source: Some(source.clone()),
+            name_candidates,
+            ..Default::default()
+        })
+        .collect();
+    for entity in &entities {
+        annotations["items"][format!("entity:{}", entity.id)] = json!({"description":"在此创建点装配独立实体。","summary":"装配独立实体。","evidenceHash":entity_purpose_hash(entity, "body")});
+    }
+    facts["units"][0]["entities"] = json!(entities);
+    // 旧事实没有新增字段时继续反序列化，不要求重新提取才能显示明确的名称缺口。
+    facts["units"][0]["entities"][5]
+        .as_object_mut()
+        .unwrap()
+        .remove("nameCandidates");
+    fixture.write("annotations.json", &annotations);
+    fixture.write("facts.json", &facts);
+    fixture.build().unwrap();
+    let model = fixture.read("model.json");
+    let entity = |template: &str| {
+        model["objects"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|object| object["templateId"] == template)
+            .unwrap()
+    };
+    assert_eq!(entity("literal")["name"], "角色 :: Player / #1！");
+    assert_eq!(entity("empty")["name"], "Name(\"\")");
+    assert_eq!(entity("whitespace")["name"], "  ");
+    assert_eq!(entity("dynamic")["name"], "  format!(\"箱体 {}\", index)  ");
+    for id in ["legacy", "unknown", "blank-expression"] {
+        assert_eq!(entity(id)["name"], "Entity @ src/main.rs:1");
+        assert!(!entity(id)["sourceGaps"].as_array().unwrap().is_empty());
+    }
+    assert!(
+        entity("legacy")["nameCandidates"]
+            .as_array()
+            .unwrap()
+            .is_empty()
+    );
+    assert_eq!(
+        entity("unknown")["nameCandidates"][0]["reason"],
+        "opaque name source"
+    );
+    assert_eq!(
+        entity("alternatives")["name"],
+        "Name ∈ {A | B | Entity @ src/main.rs:1}"
+    );
+    assert_eq!(
+        entity("alternatives")["nameCandidates"]
+            .as_array()
+            .unwrap()
+            .len(),
+        3
+    );
+    assert_eq!(entity("literal")["name"], entity("same-name")["name"]);
+    assert_ne!(entity("literal")["id"], entity("same-name")["id"]);
+    assert_eq!(entity("literal")["id"], identifier("entity", "literal"));
+    assert_eq!(entity("literal")["description"], "在此创建点装配独立实体。");
+    assert_eq!(entity("literal")["display_summary"], "装配独立实体。");
+    let proof = &entity("dynamic")["nameCandidates"][0];
+    assert_eq!(proof["expression"], "  format!(\"箱体 {}\", index)  ");
+    assert!(proof["value"].is_null());
+    assert_eq!(proof["sourceEntries"][0]["path"], "src/main.rs");
+    assert_eq!(proof["sourceEntries"][0]["role"], "assembly");
+    assert!(
+        entity("dynamic")["sourceEntries"]
+            .as_array()
+            .unwrap()
+            .contains(&proof["sourceEntries"][0]),
+        "Without a structural assembly range, the exact name location remains a detail entry"
+    );
+
+    // 输入顺序和重复候选不改变名称、证据或持久身份。
+    facts["units"][0]["entities"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
+    for template in facts["units"][0]["entities"].as_array_mut().unwrap() {
+        if let Some(candidates) = template
+            .get_mut("nameCandidates")
+            .and_then(Value::as_array_mut)
+        {
+            candidates.reverse();
+        }
+    }
+    fixture.write("facts.json", &facts);
+    fixture.build().unwrap();
+    assert_eq!(fixture.read("model.json")["objects"], model["objects"]);
+
+    // 名称表达式也必须通过统一源码校验，不能成为未核验的展示证据。
+    let template = facts["units"][0]["entities"]
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .find(|template| template["id"] == "dynamic")
+        .unwrap();
+    template["nameCandidates"][0]["expression"]["sha256"] = json!("stale-name-source");
+    fixture.write("facts.json", &facts);
+    assert!(fixture.build().is_err());
+    assert!(
+        fixture.read("model.json")["bindingErrors"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|error| error
+                .as_str()
+                .unwrap()
+                .contains("Compiler source evidence changed"))
+    );
+}
+
+#[test]
+fn entity_name_locations_share_only_their_own_complete_assembly_span() {
+    let fixture = Fixture::new(true);
+    let contents = "fn system() {}\r\nstruct Marker;\r\n";
+    fs::write(fixture.root.join("src/main.rs"), contents).unwrap();
+    fs::write(fixture.root.join("src/helper.rs"), contents).unwrap();
+    let mut runtime = fixture.read("runtime.json");
+    runtime["sourceFingerprint"] = json!(source_fingerprint(&fixture.root).unwrap());
+    fixture.replace_runtime(&runtime);
+    let mut manifest = fixture.read("debugdump/manifest.json");
+    manifest["sourceFingerprint"] = runtime["sourceFingerprint"].clone();
+    fixture.write("debugdump/manifest.json", &manifest);
+    let mut facts = fixture.read("facts.json");
+    let source: SourceEvidence =
+        serde_json::from_value(facts["units"][0]["accesses"][0]["source"].clone()).unwrap();
+    let raw_hash = digest(contents);
+    facts["units"][0]["sourceFiles"][0]["sha256"] = json!(raw_hash);
+    facts["units"][0]["sourceFiles"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"path":fixture.root.join("src/helper.rs"),"sha256":raw_hash}));
+    let assembly = SourceEvidence {
+        expansions: vec![Expansion {
+            name: "bsn!".into(),
+            path: "src/main.rs".into(),
+            line: 1,
+            column: 1,
+        }],
+        ..source.clone()
+    };
+    let expression = SourceEvidence {
+        column: 4,
+        end_column: 10,
+        snippet: "system".into(),
+        role: "assembly".into(),
+        ..source.clone()
+    };
+    let outside = SourceEvidence {
+        line: 2,
+        column: 1,
+        end_line: 2,
+        end_column: 14,
+        ..expression.clone()
+    };
+    let incomplete = SourceEvidence {
+        end_line: 0,
+        end_column: 0,
+        ..assembly.clone()
+    };
+    let empty = SourceEvidence {
+        end_column: 1,
+        ..assembly.clone()
+    };
+    let helper = SourceEvidence {
+        path: fixture.root.join("src/helper.rs").to_string_lossy().into(),
+        ..assembly.clone()
+    };
+    let cases = [
+        ("parent", Some(assembly.clone()), expression.clone(), true),
+        ("child", None, expression.clone(), false),
+        (
+            "branch-with-assembly",
+            Some(assembly.clone()),
+            expression.clone(),
+            true,
+        ),
+        ("branch-without-assembly", None, expression.clone(), false),
+        ("outside", Some(assembly.clone()), outside, false),
+        ("helper", Some(helper), expression.clone(), false),
+        (
+            "partial-overlap",
+            Some(assembly.clone()),
+            SourceEvidence {
+                end_line: 2,
+                end_column: 1,
+                ..expression.clone()
+            },
+            false,
+        ),
+        (
+            "unknown-assembly-range",
+            Some(incomplete),
+            expression.clone(),
+            false,
+        ),
+        (
+            "empty-assembly-range",
+            Some(empty),
+            expression.clone(),
+            false,
+        ),
+        (
+            "reversed-assembly-range",
+            Some(SourceEvidence {
+                column: 8,
+                end_column: 4,
+                ..assembly.clone()
+            }),
+            expression.clone(),
+            false,
+        ),
+        (
+            "same-start-overrun",
+            Some(assembly.clone()),
+            SourceEvidence {
+                column: 1,
+                end_line: 2,
+                end_column: 1,
+                ..expression.clone()
+            },
+            false,
+        ),
+        (
+            "unknown-name-range",
+            Some(assembly.clone()),
+            SourceEvidence {
+                end_line: 0,
+                end_column: 0,
+                ..expression.clone()
+            },
+            false,
+        ),
+        (
+            "different-hash",
+            Some(assembly.clone()),
+            SourceEvidence {
+                sha256: raw_hash.clone(),
+                ..expression.clone()
+            },
+            false,
+        ),
+        (
+            "missing-hash",
+            Some(SourceEvidence {
+                sha256: String::new(),
+                ..assembly.clone()
+            }),
+            SourceEvidence {
+                sha256: String::new(),
+                ..expression.clone()
+            },
+            false,
+        ),
+    ];
+    let mut annotations = fixture.read("annotations.json");
+    let mut entities: Vec<_> = cases
+        .iter()
+        .map(|(id, assembly, expression, _)| EntityTemplate {
+            id: (*id).into(),
+            creator: "callable".into(),
+            source: Some(source.clone()),
+            source_evidence: assembly.iter().cloned().collect(),
+            name_candidates: vec![EntityNameCandidate {
+                value: Some((*id).into()),
+                expression: Some(expression.clone()),
+                reason: None,
+            }],
+            ..Default::default()
+        })
+        .collect();
+    entities[0].children.push("child".into());
+    entities[0].alternatives.push(EntityAlternativeGroup {
+        id: "name-branches".into(),
+        candidates: vec![
+            "branch-with-assembly".into(),
+            "branch-without-assembly".into(),
+        ],
+        source: Some(assembly),
+        selection: "one-of".into(),
+    });
+    for entity in &mut entities[2..4] {
+        entity.alternative_group = Some("name-branches".into());
+        entity.alternative_selection = Some("one-of".into());
+        entity.alternative_context = vec!["name-branches".into()];
+        entity.possible = true;
+    }
+    for entity in &entities {
+        annotations["items"][format!("entity:{}", entity.id)] = json!({"description":"保留该模板的名称与装配来源。","summary":"保留装配来源。","evidenceHash":entity_purpose_hash(entity, "body")});
+    }
+    facts["units"][0]["entities"] = json!(entities);
+    fixture.write("annotations.json", &annotations);
+    fixture.write("facts.json", &facts);
+    fixture.build().unwrap();
+    let model = fixture.read("model.json");
+    for (id, assembly, expression, covered) in &cases {
+        let entity = model["objects"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|object| object["templateId"] == *id)
+            .unwrap();
+        assert_eq!(entity["name"], *id);
+        let proof = &entity["nameCandidates"][0]["sourceEntries"][0];
+        assert_eq!(proof["path"], "src/main.rs");
+        assert_eq!(proof["line"], expression.line);
+        assert_eq!(proof["column"], expression.column);
+        assert_eq!(proof["sha256"], raw_hash);
+        let sources = entity["sourceEntries"].as_array().unwrap();
+        assert_eq!(
+            sources
+                .iter()
+                .filter(|entry| entry["role"] == "create")
+                .count(),
+            1
+        );
+        assert_eq!(sources.contains(proof), !*covered, "{id}");
+        assert_eq!(
+            sources
+                .iter()
+                .filter(|entry| entry["role"] == "assembly")
+                .count(),
+            usize::from(assembly.is_some()) + usize::from(!*covered),
+            "{id}"
+        );
+    }
+    assert_eq!(model["sourceFiles"].as_array().unwrap().len(), 2);
+    assert_eq!(fixture.read("facts.json"), facts);
+    facts["units"][0]["entities"][0]["nameCandidates"][0]["expression"]["sha256"] =
+        json!("stale-name-source");
+    fixture.write("facts.json", &facts);
+    assert!(fixture.build().is_err());
+    assert!(
+        fixture.read("model.json")["bindingErrors"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|error| error
+                .as_str()
+                .unwrap()
+                .contains("Compiler source evidence changed"))
+    );
+}
+
+#[test]
+fn entity_name_metadata_spans_do_not_enter_purpose_evidence() {
+    let mut entity = EntityTemplate {
+        id: "named-template".into(),
+        creator: "callable".into(),
+        name_candidates: vec![EntityNameCandidate {
+            value: Some("Player".into()),
+            expression: Some(SourceEvidence {
+                path: "src/main.rs".into(),
+                line: 1,
+                snippet: "\"Player\"".into(),
+                ..Default::default()
+            }),
+            ..Default::default()
+        }],
+        ..Default::default()
+    };
+    let before = entity_purpose_hash(&entity, "creator-and-helper-behavior");
+    let expression = entity.name_candidates[0].expression.as_mut().unwrap();
+    expression.line = 40;
+    expression.end_line = 40;
+    expression.sha256 = "moved-source-hash".into();
+    expression.expansions.push(Expansion {
+        name: "bsn".into(),
+        path: "src/main.rs".into(),
+        line: 39,
+        column: 3,
+    });
+    assert_eq!(
+        before,
+        entity_purpose_hash(&entity, "creator-and-helper-behavior")
+    );
+    // 初始化语义由 creator/helper 行为覆盖；显示候选不重复定义用途算法。
+    entity.name_candidates.clear();
+    assert_eq!(
+        before,
+        entity_purpose_hash(&entity, "creator-and-helper-behavior")
+    );
+    assert_ne!(
+        before,
+        entity_purpose_hash(&entity, "changed-creator-behavior")
+    );
+}
+
+#[test]
 fn entity_purpose_reuses_semantics_after_source_only_changes() {
     let fixture = Fixture::new(true);
     let mut facts = fixture.read("facts.json");
@@ -1072,6 +1513,80 @@ fn repeated_registration_retains_instances_and_access_capability() {
         Some("insert" | "remove" | "modify")
     )));
     assert_eq!(model["sourceFiles"].as_array().unwrap().len(), 1);
+}
+
+#[test]
+fn system_registration_sources_preserve_all_callable_sites_without_guessing_instances() {
+    for positions in [vec![], vec![(1u64, 3u64)], vec![(1, 3), (2, 5)]] {
+        let fixture = Fixture::new(true);
+        let mut facts = fixture.read("facts.json");
+        let source = facts["units"][0]["declarations"][0]["source"].clone();
+        let source_sha = source["sha256"].clone();
+        let mut registrations = vec![];
+        for &(line, column) in &positions {
+            for role in ["registration", "operation"] {
+                let mut proof = source.clone();
+                proof["line"] = json!(line);
+                proof["column"] = json!(column);
+                proof["role"] = json!(role);
+                registrations.push(json!({"owner":"plugin-build","kind":"add_systems",
+                    "target":"callable","typeId":null,"source":proof}));
+            }
+        }
+        let mut unrelated = source.clone();
+        unrelated["column"] = json!(99);
+        registrations.push(json!({"owner":"plugin-build","kind":"add_systems",
+            "target":"other-callable","typeId":null,"source":unrelated}));
+        registrations.push(json!({"owner":"plugin-build","kind":"add_systems",
+            "target":"callable","typeId":null,"source":null}));
+        facts["units"][0]["registrations"] = json!(registrations);
+        fixture.write("facts.json", &facts);
+        fixture.build().unwrap();
+        let model = fixture.read("model.json");
+        let systems: Vec<_> = model["objects"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|object| object["kind"] == "System")
+            .collect();
+        assert_eq!(systems.len(), 2);
+        assert_ne!(systems[0]["id"], systems[1]["id"]);
+        for system in systems {
+            let sources: Vec<_> = system["sourceEntries"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|source| source["role"] == "registration")
+                .collect();
+            assert_eq!(sources.len(), positions.len());
+            let actual: BTreeSet<_> = sources
+                .iter()
+                .map(|source| {
+                    assert_eq!(source["path"], "src/main.rs");
+                    assert_eq!(source["sha256"], source_sha);
+                    assert_eq!(
+                        source["label"],
+                        if positions.len() > 1 {
+                            "该函数的注册位置（不限于当前调度）"
+                        } else {
+                            "注册位置"
+                        }
+                    );
+                    (
+                        source["line"].as_u64().unwrap(),
+                        source["column"].as_u64().unwrap(),
+                    )
+                })
+                .collect();
+            assert_eq!(actual, positions.iter().copied().collect());
+        }
+        registrations.reverse();
+        facts["units"][0]["registrations"] = json!(registrations);
+        fixture.write("facts.json", &facts);
+        fixture.build().unwrap();
+        assert_eq!(fixture.read("model.json")["objects"], model["objects"]);
+        assert_eq!(fixture.read("facts.json"), facts);
+    }
 }
 
 #[test]
