@@ -45,9 +45,11 @@ cargo test --locked
 
 ## GitHub Actions
 
-[Rust rules 工作流](../../.github/workflows/rust-rules.yml)在面向 `master` 的 PR、推送到 `master` 和手动运行时执行实体命名与具名字段检查，使用 `ubuntu-latest` 的原生 Linux 目标，覆盖默认配置和 `debugdump`。每项规则先执行现有入口的共享工具与规则回归，再检查两种项目配置；检查范围和失败含义见下文。
+[Rust 检查工作流](../../.github/workflows/rust-rules.yml)在面向 `master` 的 PR、推送到 `master` 和手动运行时使用 `ubuntu-latest` 的原生 Linux 目标。格式检查覆盖根项目及 `tools/rustc-analysis/Cargo.toml`、`tools/check-entity-names/Cargo.toml`、`tools/check-named-fields/Cargo.toml`；根项目不是 Cargo workspace，因此分别指定清单。格式检查通过后执行其余任务。
 
-这两项检查由云端执行，不是本地开发或提交 PR 前的必跑步骤。检查入口保留供维护工具或排查 CI 失败时按需手动调用。
+根项目在默认配置和 `debugdump` 下分别执行 `cargo check --locked --all-targets [features]`、`cargo clippy --locked --all-targets [features] -- --no-deps -W clippy::pedantic` 和 `cargo test --locked [features] -- --test-threads=1`，其中 `[features]` 在 `debugdump` 配置下为 `--features debugdump`，默认配置省略。Clippy 保留默认级别并额外启用 pedantic 警告，不启用 nursery 或 restriction；警告不阻断检查，编译检查通过后即使 Clippy 失败仍执行测试。通用检查仅设置 `CARGO_PROFILE_DEV_DEBUG=0` 和 `CARGO_PROFILE_TEST_DEBUG=0`，减少链接与磁盘开销，不改变优化或断言配置。
+
+实体命名与具名字段检查也覆盖默认配置和 `debugdump`；每项规则先执行共享工具与规则回归，再检查两种项目配置，嵌套工具由这些规则任务验证。检查范围和失败含义见下文。这两项自定义检查由云端执行，不是本地开发或提交 PR 前的必跑步骤；检查入口保留供维护工具或排查 CI 失败时按需手动调用。
 
 在 PR 的 Checks 或仓库 Actions 页面查看逐步日志、结果摘要和运行结束时的磁盘余量。云端检查不替代其他平台验证、按变更范围选择的无窗口测试或用户实机验收；单次运行结果记录在对应 Issue 或 PR。
 

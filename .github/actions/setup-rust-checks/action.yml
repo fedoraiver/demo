@@ -1,0 +1,59 @@
+name: Prepare Rust checks
+description: Install the repository toolchain and optional Linux build prerequisites
+
+inputs:
+  prepare-build:
+    description: Prepare native build dependencies and locked Cargo downloads
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Install Linux build dependencies
+      if: ${{ inputs.prepare-build == 'true' }}
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install --no-install-recommends -y \
+          g++ pkg-config libx11-dev libasound2-dev libudev-dev \
+          libxkbcommon-x11-0 libwayland-dev libxkbcommon-dev
+
+    - name: Install repository toolchain
+      shell: pwsh
+      run: |
+        $toolchainJson = python -c "import json, pathlib, tomllib; print(json.dumps(tomllib.loads(pathlib.Path('rust-toolchain.toml').read_text())['toolchain']))"
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        $toolchain = $toolchainJson | ConvertFrom-Json
+        rustup toolchain install $toolchain.channel --profile $toolchain.profile --component ($toolchain.components -join ',')
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        rustc -vV
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        Get-PSDrive -PSProvider FileSystem | Select-Object Name, Used, Free | Format-Table
+
+    # 只缓存下载数据；编译产物和分析证据由当前检出重新生成。
+    - name: Cache Cargo downloads
+      if: ${{ inputs.prepare-build == 'true' }}
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      with:
+        path: |
+          ~/.cargo/registry/cache
+          ~/.cargo/registry/index
+          ~/.cargo/git/db
+        key: cargo-downloads-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock', 'tools/rustc-analysis/Cargo.lock', 'tools/check-entity-names/Cargo.lock', 'tools/check-named-fields/Cargo.lock') }}
+
+    - name: Prepare locked dependencies
+      if: ${{ inputs.prepare-build == 'true' }}
+      shell: pwsh
+      run: |
+        # 离线 metadata 会读取完整依赖图，预取时不按目标平台裁剪。
+        $manifests = @(
+          'Cargo.toml',
+          'tools/rustc-analysis/Cargo.toml',
+          'tools/check-entity-names/Cargo.toml',
+          'tools/check-named-fields/Cargo.toml'
+        )
+        foreach ($manifest in $manifests) {
+          cargo fetch --locked --manifest-path $manifest
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        }

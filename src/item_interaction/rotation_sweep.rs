@@ -216,49 +216,51 @@ impl QueryDispatcher for CarryPathDispatcher {
                         second,
                     )?
                     .intersecting;
-            while can_separate {
-                let first_pose = first_motion.position_at_time(time);
-                let second_pose = second_motion.position_at_time(time);
-                let Some(contact) = DefaultQueryDispatcher.contact(
-                    &first_pose.inv_mul(&second_pose),
-                    first,
-                    second,
-                    0.0,
-                )?
-                else {
-                    break;
-                };
-                let normal = first_pose.rotation * contact.normal1;
-                let closing = (first_motion.linvel - second_motion.linvel).dot(normal)
-                    + maximum_rotation_closing(first_motion, first_map, first_pose, normal)
-                    + maximum_rotation_closing(second_motion, second_map, second_pose, -normal);
-                let curvature = rotation_curvature(first_motion, first, normal)
-                    + rotation_curvature(second_motion, second, normal);
-                let remaining = end - time;
-                // 对所有支撑点的法向位移给出连续上界；证明整段不增加穿入后才允许原接触。
-                if closing * remaining + 0.5 * curvature * remaining.powi(2) <= CONTACT_MARGIN {
-                    return Ok(None);
+            if can_separate {
+                loop {
+                    let first_pose = first_motion.position_at_time(time);
+                    let second_pose = second_motion.position_at_time(time);
+                    let Some(contact) = DefaultQueryDispatcher.contact(
+                        &first_pose.inv_mul(&second_pose),
+                        first,
+                        second,
+                        0.0,
+                    )?
+                    else {
+                        break;
+                    };
+                    let normal = first_pose.rotation * contact.normal1;
+                    let closing = (first_motion.linvel - second_motion.linvel).dot(normal)
+                        + maximum_rotation_closing(first_motion, first_map, first_pose, normal)
+                        + maximum_rotation_closing(second_motion, second_map, second_pose, -normal);
+                    let curvature = rotation_curvature(first_motion, first, normal)
+                        + rotation_curvature(second_motion, second, normal);
+                    let remaining = end - time;
+                    // 对所有支撑点的法向位移给出连续上界；证明整段不增加穿入后才允许原接触。
+                    if closing * remaining + 0.5 * curvature * remaining.powi(2) <= CONTACT_MARGIN {
+                        return Ok(None);
+                    }
+                    let opening = if closing < 0.0 && curvature > 0.0 {
+                        (-closing / curvature).min(remaining)
+                    } else {
+                        0.0
+                    };
+                    if opening > 0.0 && time + opening > time {
+                        // 该区间的所有点都向外分离，不是跳过几个采样姿态；离开后仍连续扫剩余弧。
+                        time += opening;
+                        continue;
+                    }
+                    return Ok(Some(ShapeCastHit {
+                        time_of_impact: time,
+                        witness1: contact.point1,
+                        witness2: contact.point2,
+                        normal1: contact.normal1,
+                        normal2: contact.normal2,
+                        status: ShapeCastStatus::PenetratingOrWithinTargetDist,
+                        subshape1: contact.subshape1,
+                        subshape2: contact.subshape2,
+                    }));
                 }
-                let opening = if closing < 0.0 && curvature > 0.0 {
-                    (-closing / curvature).min(remaining)
-                } else {
-                    0.0
-                };
-                if opening > 0.0 && time + opening > time {
-                    // 该区间的所有点都向外分离，不是跳过几个采样姿态；离开后仍连续扫剩余弧。
-                    time += opening;
-                    continue;
-                }
-                return Ok(Some(ShapeCastHit {
-                    time_of_impact: time,
-                    witness1: contact.point1,
-                    witness2: contact.point2,
-                    normal1: contact.normal1,
-                    normal2: contact.normal2,
-                    status: ShapeCastStatus::PenetratingOrWithinTargetDist,
-                    subshape1: contact.subshape1,
-                    subshape2: contact.subshape2,
-                }));
             }
             Ok(details::cast_shapes_nonlinear_support_map_support_map(
                 self,
