@@ -2,7 +2,7 @@
 import { ARCHITECTURE_TEXT_STYLE, NODE_STYLES, EDGE_STYLES } from './architecture-style.mjs';
 import { VIEWER_BACKGROUND } from './viewer-theme.mjs';
 
-export const SCHEDULE_THEME_VERSION = 5;
+export const SCHEDULE_THEME_VERSION = 6;
 export const SCHEDULE_THEME = {
   version: SCHEDULE_THEME_VERSION,
   background: VIEWER_BACKGROUND,
@@ -10,7 +10,8 @@ export const SCHEDULE_THEME = {
   fontSize: ARCHITECTURE_TEXT_STYLE.fontSize,
   textColor: ARCHITECTURE_TEXT_STYLE.color,
   nodeMargin: 8,
-  clusterLabelMargin: 8,
+  // 无衬线回退字形比 Viz 的标题度量更宽，侧单元格在原生布局前补足背景余量。
+  clusterLabelMargin: 16,
   clusterLabelPadding: 4,
   clusterTitleLayer: 'native-foreground',
   splines: 'polyline',

@@ -106,7 +106,7 @@ test('themed default and filtered labels share short titles while original names
   assert.equal(themed.nodes.find(node => node.name === 'context').attributes.label, 'SystemTypeSet:generate_environment_map_light');
   assert.match(themed.subgraphs[0].graphAttributes.label.html, /ExitSchedules\(PhantomData&lt;AppState&gt;\)/);
   assert.doesNotMatch(themed.subgraphs[0].graphAttributes.label.html, /demo::/);
-  const shortPadding = Math.ceil(8 + 'ExitSchedules(PhantomData<AppState>)'.length * 14 * 0.025);
+  const shortPadding = Math.ceil(16 + 'ExitSchedules(PhantomData<AppState>)'.length * 14 * 0.025);
   assert.ok(themed.subgraphs[0].graphAttributes.label.html.includes(`<TD WIDTH="${shortPadding}">`));
   assert.equal(Number(a.attributes.margin.split(',')[0]), (8 + 'In multiple sets, Sets'.length * 14 * 0.025) / 72);
   const filtered = scheduleGraphInput(filterScheduleGraph(source, { includeNames: [full] }), SCHEDULE_THEME);

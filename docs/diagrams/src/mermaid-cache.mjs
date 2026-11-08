@@ -5,26 +5,30 @@ import { execFileSync } from 'node:child_process';
 import { NODE_STYLES } from './architecture-style.mjs';
 import { pathsForRepository } from './paths.mjs';
 import { replaceArtifactSync } from './architecture-artifact-writer.mjs';
+import { architectureBrowserPath } from './architecture-browser.mjs';
 
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const geometryFields = ['svg', 'mermaid', 'width', 'height', 'bounds', 'routing', 'sections', 'entityGroups', 'layoutLinks'];
 const cachePath = workspace => path.join(workspace, 'tmp/ecs-architecture/mermaid-build/geometry-cache');
 
-export function mermaidDependencyIdentity(workspace) {
+export function mermaidDependencyIdentity(workspace, { environment = process.env, platform = process.platform } = {}) {
   const lock = JSON.parse(fs.readFileSync(path.join(pathsForRepository(workspace).packageRoot, 'package-lock.json'), 'utf8'));
-  // 这两个独立工具不参与 Mermaid 布局，保留既有 v3 依赖投影。
+  // 这两个独立工具不参与 Mermaid 布局。
   for (const name of ['@viz-js/viz', 'smol-toml']) {
     delete lock.packages[''].devDependencies[name];
     delete lock.packages['node_modules/' + name];
   }
-  return JSON.stringify(lock, null, 2) + '\n';
+  const browser = architectureBrowserPath({ environment, platform, required: false });
+  return JSON.stringify({ lock, platform, architecture: process.arch,
+    browser: browser ? hash(fs.readFileSync(browser)) : null,
+    renderContext: environment.MERMAID_RENDER_CONTEXT || null }, null, 2) + '\n';
 }
 
-// 与既有 v3 布局缓存保持同一输入协议；定位证据不参与 SVG 编译。
+// 只散列实际绘图输入；定位证据不参与 SVG 编译。
 export function mermaidRenderIdentity(view, registry, dependencies) {
-  const inputs = { version: 3, id: view.id, definition: view.mermaid, dependencies,
+  const inputs = { version: 4, id: view.id, definition: view.mermaid, dependencies,
     categories: view.nodes.map(node => [node.id, node.visualType, NODE_STYLES[node.visualType].label]),
-    titles: view.nodes.map(node => [node.id, registry[node.id].name, registry[node.id].description, registry[node.id].feature]),
+    titles: view.nodes.map(node => [node.id, registry[node.id].name, registry[node.id].feature]),
     componentDetails: view.componentDetails };
   return { fingerprint: hash(JSON.stringify(inputs)),
     inputs: Object.fromEntries(Object.entries(inputs).filter(([, value]) => value !== undefined)
@@ -65,7 +69,7 @@ export function createMermaidCache(workspace) {
   let published = new Map();
   try {
     const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-    if (manifest.schemaVersion === 1 && Array.isArray(manifest.views)) published = new Map(manifest.views.map(entry => [entry.id, entry]));
+    if (manifest.schemaVersion === 2 && Array.isArray(manifest.views)) published = new Map(manifest.views.map(entry => [entry.id, entry]));
   } catch { /* 首次生成或损坏的旧清单不作为可复用输入。 */ }
 
   function readReference(reference) {

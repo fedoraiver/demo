@@ -1,11 +1,11 @@
 // 预检只读取编译器已发布的模型和证据，不运行 Cargo、浏览器或写正式产物。
 import path from 'node:path';
 import fs from 'node:fs';
-import { prepareArchitecture } from '../../../../docs/diagrams/src/architecture-preparation.mjs';
-import { sha256, sourceFingerprint } from '../../../../docs/diagrams/src/debugdump-input.mjs';
+import { prepareArchitecture } from './architecture-preparation.mjs';
+import { sha256, sourceFingerprint } from './debugdump-input.mjs';
 import { summarizeModel } from './maintenance-summary.mjs';
-import { summarizeAnalysisGaps } from '../../../../docs/diagrams/src/rustc-model.mjs';
-import { createMermaidCache, mermaidDependencyIdentity, mermaidRenderIdentity } from '../../../../docs/diagrams/src/mermaid-cache.mjs';
+import { summarizeAnalysisGaps } from './rustc-model.mjs';
+import { createMermaidCache, mermaidDependencyIdentity, mermaidRenderIdentity } from './mermaid-cache.mjs';
 
 export async function preflightArchitecture({ workspace, debugdumpDirectory } = {}) {
   const prepared = await prepareArchitecture({ workspace, debugdumpDirectory });

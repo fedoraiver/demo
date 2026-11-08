@@ -3,13 +3,14 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { planMaintenance, runMaintenance, maintenanceStatus, maintenanceReport } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-runner.mjs';
-import { fileSnapshot, digest, dependencyState, normalizedEnvironment, relevantInputNames } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-inputs.mjs';
+import { execFileSync } from 'node:child_process';
+import { planMaintenance, runMaintenance, maintenanceStatus, maintenanceReport } from '../src/maintenance-runner.mjs';
+import { fileSnapshot, digest, dependencyState, normalizedEnvironment, relevantInputNames } from '../src/maintenance-inputs.mjs';
 import { sourceFingerprint, scheduleId, sha256, DEBUGDUMP_MANIFEST } from '../src/debugdump-input.mjs';
-import { summarizeModel, compareModelSummaries } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-summary.mjs';
-import { exportContextInputs, captureExportContext, validateExportContext } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-export-context.mjs';
-import { loadCompilerSelection, resolveCompilerSelection } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-compiler-selection.mjs';
-import { maintenanceScripts } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-paths.mjs';
+import { summarizeModel, compareModelSummaries } from '../src/maintenance-summary.mjs';
+import { exportContextInputs, captureExportContext, validateExportContext } from '../src/maintenance-export-context.mjs';
+import { loadCompilerSelection, resolveCompilerSelection } from '../src/maintenance-compiler-selection.mjs';
+import { maintenanceScripts } from '../src/maintenance-paths.mjs';
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 fs.mkdirSync(path.join(repository, 'tmp'), { recursive: true });
@@ -45,7 +46,7 @@ test('plan is read-only without npm dependencies; validates real DOT content and
   const plan = await planMaintenance({ workspace: f.workspace, debugdumpDirectory: 'docs/diagrams/generated/dot' });
   assert.equal(plan.dependencies.valid, false);
   assert.equal(plan.debugdump.valid, true);
-  assert.deepEqual(plan.manual, { svg: 'skipped-by-default', browser: 'not-required', protocol: 'not-required' });
+  assert.equal(Object.hasOwn(plan, 'manual'), false);
   assert.deepEqual(plan.stages.map(stage => stage.id), ['dependencies', 'extract', 'model', 'preflight', 'build', 'check', 'test']);
   assert.equal(plan.stages.find(stage => stage.id === 'extract').action, 'extract');
   assert.deepEqual(fileSnapshot(f.workspace, ['.']), before);
@@ -60,7 +61,7 @@ test('real child records argv, PID, timestamps, exit and raw streams; unchanged 
   const f = fixture(t), stages = pipeline();
   const first = await runMaintenance({ workspace: f.workspace, pipeline: stages });
   assert.equal(first.status, 'passed');
-  assert.deepEqual(first.manual, { svg: 'skipped-by-default', browser: 'not-required', protocol: 'not-required' });
+  assert.equal(Object.hasOwn(first, 'manual'), false);
   for (const record of first.stages) {
     assert.equal(record.command, process.execPath);
     assert.ok(record.pid > 0);
@@ -78,8 +79,7 @@ test('real child records argv, PID, timestamps, exit and raw streams; unchanged 
   assert.equal(fs.readFileSync(path.join(f.workspace, 'executions.txt'), 'utf8'), 'produce\nverify\n');
   assert.equal((await maintenanceStatus({ workspace: f.workspace })).status, 'passed');
   const report = await maintenanceReport({ workspace: f.workspace, format: 'markdown' });
-  assert.match(report, /SVG 目测 skipped-by-default/);
-  assert.match(report, /HTTP／浏览器与 VS Code 协议无需验收（not-required）/);
+  assert.doesNotMatch(report, /SVG 目测|not-required|待补用途/);
   assert.doesNotMatch(report, /待实际执行/);
 });
 
@@ -124,42 +124,14 @@ test('Windows transient state replacement failure retries before starting the re
   assert.equal(saved.status, 'passed', saved.error);
 });
 
-test('not-started status and reports use the current manual acceptance policy', async t => {
+test('not-started status has no manual acceptance gate', async t => {
   const f = fixture(t);
   const status = await maintenanceStatus({ workspace: f.workspace });
   assert.equal(status.status, 'not-started');
-  assert.deepEqual(status.manual, { svg: 'skipped-by-default', browser: 'not-required', protocol: 'not-required' });
-  assert.deepEqual((await maintenanceReport({ workspace: f.workspace })).manual, status.manual);
+  assert.equal(Object.hasOwn(status, 'manual'), false);
   const report = await maintenanceReport({ workspace: f.workspace, format: 'markdown' });
-  assert.match(report, /HTTP／浏览器与 VS Code 协议无需验收（not-required）/);
-  assert.doesNotMatch(report, /待实际执行/);
-  assert.equal(fs.existsSync(path.join(f.workspace, 'tmp')), false);
-});
-
-test('legacy report projection preserves historical bytes and persists current manual policy on resume', async t => {
-  const f = fixture(t), stages = pipeline();
-  const first = await runMaintenance({ workspace: f.workspace, pipeline: stages });
-  const filename = path.join(f.workspace, 'tmp/ecs-architecture/maintenance', first.runId, 'state.json');
-  for (const [manual, svg] of [
-    [undefined, 'skipped-by-default'],
-    [{ svg: 'pending', browser: 'pending', protocol: 'pending' }, 'skipped-by-default'],
-    [{ svg: 'passed', browser: 'passed', protocol: 'passed' }, 'passed'],
-  ]) {
-    const bytes = JSON.stringify({ ...first, manual });
-    fs.writeFileSync(filename, bytes);
-    const status = await maintenanceStatus({ workspace: f.workspace, runId: first.runId });
-    assert.deepEqual(status.manual, { svg, browser: 'not-required', protocol: 'not-required' });
-    assert.deepEqual((await maintenanceReport({ workspace: f.workspace, runId: first.runId })).manual, status.manual);
-    const report = await maintenanceReport({ workspace: f.workspace, runId: first.runId, format: 'markdown' });
-    assert.match(report, /HTTP／浏览器与 VS Code 协议无需验收（not-required）/);
-    assert.doesNotMatch(report, /待实际执行/);
-    assert.equal(fs.readFileSync(filename, 'utf8'), bytes);
-  }
-  fs.writeFileSync(filename, JSON.stringify({ ...first, manual: { svg: 'pending', browser: 'pending', protocol: 'pending' } }));
-  const resumed = await runMaintenance({ workspace: f.workspace, resume: first.runId, pipeline: stages });
-  assert.deepEqual(resumed.manual, { svg: 'skipped-by-default', browser: 'not-required', protocol: 'not-required' });
-  assert.deepEqual(JSON.parse(fs.readFileSync(filename, 'utf8')).manual, resumed.manual);
-  assert.equal(resumed.stages.length, first.stages.length);
+  assert.match(report, /not-started/);
+  assert.doesNotMatch(report, /SVG 目测|not-required/);
 });
 
 test('changing input invalidates producer and every downstream stage; HEAD metadata cannot reuse it', async t => {
@@ -169,10 +141,55 @@ test('changing input invalidates producer and every downstream stage; HEAD metad
   const status = await maintenanceStatus({ workspace: f.workspace });
   assert.equal(status.status, 'stale');
   assert.deepEqual(status.invalidated, ['produce', 'verify']);
+  assert.match(await maintenanceReport({ workspace: f.workspace, format: 'markdown' }), /已失效阶段：produce、verify/);
   const resumed = await runMaintenance({ workspace: f.workspace, resume: first.runId, pipeline: stages });
   assert.equal(resumed.status, 'passed');
   assert.deepEqual(resumed.stages.map(stage => stage.attempt), [1, 1, 2, 2]);
   assert.equal(fs.readFileSync(path.join(f.workspace, 'output.txt'), 'utf8'), 'input two');
+});
+
+function presentationPipeline() {
+  return ['extract', 'model', 'build', 'check', 'test'].map(id => ({ id, inputs: ['input.txt'], outputs: [id + '.txt'],
+    command: { command: process.execPath, args: ['-e', `const fs=require('fs');fs.appendFileSync('executions.txt','${id}\\n');fs.writeFileSync('${id}.txt',${id === 'build' ? "require('child_process').execFileSync('git',['-c','safe.directory='+process.cwd(),'rev-parse','HEAD'],{encoding:'utf8'}).trim()" : JSON.stringify(id)});`] } }));
+}
+
+function commitFixture(f) {
+  const git = args => execFileSync('git', ['-c', `safe.directory=${f.workspace.replaceAll('\\', '/')}`, '-c', 'user.name=Maintenance Fixture',
+    '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', '-C', f.workspace, ...args], { encoding: 'utf8', windowsHide: true });
+  git(['init', '-q', '-b', 'main']); git(['add', '--', 'input.txt']); git(['commit', '-q', '-m', 'fixture']);
+  return git;
+}
+
+test('a new commit refreshes page provenance without extracting unchanged facts', async t => {
+  const f = fixture(t), git = commitFixture(f), stages = presentationPipeline();
+  const first = await runMaintenance({ workspace: f.workspace, pipeline: stages });
+  assert.equal(first.status, 'passed');
+  const before = fs.readFileSync(path.join(f.workspace, 'build.txt'), 'utf8');
+  git(['commit', '-q', '--allow-empty', '-m', 'new provenance']);
+  assert.deepEqual((await maintenanceStatus({ workspace: f.workspace })).invalidated, ['build', 'check', 'test']);
+  const resumed = await runMaintenance({ workspace: f.workspace, resume: first.runId, pipeline: stages });
+  assert.equal(resumed.status, 'passed');
+  assert.deepEqual(resumed.stages.map(stage => [stage.id, stage.attempt]), [['extract', 1], ['model', 1], ['build', 1], ['check', 1], ['test', 1], ['build', 2], ['check', 2], ['test', 2]]);
+  assert.notEqual(fs.readFileSync(path.join(f.workspace, 'build.txt'), 'utf8'), before);
+  assert.equal(fs.readFileSync(path.join(f.workspace, 'build.txt'), 'utf8'), git(['rev-parse', 'HEAD']).trim());
+});
+
+test('render context changes invalidate whole presentation stages before geometry-cache reuse', async t => {
+  const f = fixture(t); commitFixture(f);
+  f.put('docs/diagrams/package-lock.json', JSON.stringify({ lockfileVersion: 3, packages: { '': { devDependencies: {} } } }));
+  const previous = Object.fromEntries(['MERMAID_CHROMIUM_PATH', 'MERMAID_RENDER_CONTEXT'].map(key => [key, process.env[key]]));
+  t.after(() => { for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; } });
+  process.env.MERMAID_CHROMIUM_PATH = process.execPath; process.env.MERMAID_RENDER_CONTEXT = 'font-set-one';
+  const stages = presentationPipeline(), first = await runMaintenance({ workspace: f.workspace, pipeline: stages });
+  assert.equal(first.status, 'passed');
+  assert.equal(first.stages.find(stage => stage.id === 'build').inputs.rendering.available, true);
+  process.env.MERMAID_RENDER_CONTEXT = 'font-set-two';
+  assert.deepEqual((await maintenanceStatus({ workspace: f.workspace })).invalidated, ['build', 'check', 'test']);
+  const resumed = await runMaintenance({ workspace: f.workspace, resume: first.runId, pipeline: stages });
+  assert.equal(resumed.status, 'passed');
+  assert.equal(resumed.stages.filter(stage => stage.id === 'extract').length, 1);
+  assert.equal(resumed.stages.filter(stage => stage.id === 'model').length, 1);
+  assert.equal(resumed.stages.filter(stage => stage.id === 'build').length, 2);
 });
 
 test('missing or altered output rebuilds even when all inputs are unchanged', async t => {
@@ -194,6 +211,10 @@ test('nonzero exit stops downstream, preserves exact exit code, and supports ret
   assert.equal(failed.stages.length, 1);
   assert.equal(failed.stages[0].exitCode, 17);
   assert.match(fs.readFileSync(failed.stages[0].stderr, 'utf8'), /deliberate failure/);
+  const report = await maintenanceReport({ workspace: f.workspace, runId: failed.runId, format: 'markdown' });
+  assert.match(report, /失败：Stage produce failed \(exit 17, signal none\)/);
+  assert.match(report, /produce-1\.stdout\.log/);
+  assert.match(report, /produce-1\.stderr\.log/);
   const resumed = await runMaintenance({ workspace: f.workspace, resume: true, pipeline: pipeline() });
   assert.equal(resumed.status, 'passed');
   assert.deepEqual(resumed.stages.map(stage => stage.id), ['produce', 'produce', 'verify']);
@@ -249,21 +270,16 @@ test('new untracked input modules change the plan content fingerprint', async t 
   assert.notEqual(digest(skillChange.inputs), digest(compilerChange.inputs));
 });
 
-test('missing purposes pause the model stage and resume only after annotations are supplied', async t => {
-  const f = fixture(t), model = { schemaVersion: 1, compiler: 'pinned', configuration: {}, inputs: { sourceFingerprint: sourceFingerprint(f.workspace) },
-    objects: [], relations: [], features: [], sourceFiles: [], annotationsRequired: [{ key: 'fixture::system', kind: 'System' }], scheduleInteractions: { schemaVersion: 1, views: [] } };
-  const script = `const fs=require('fs');const missing=!fs.existsSync('annotations.json');const model=${JSON.stringify(model)};if(!missing)model.annotationsRequired=[];fs.mkdirSync('tmp/ecs-architecture/compiler',{recursive:true});fs.writeFileSync('tmp/ecs-architecture/compiler/model.json',JSON.stringify(model));process.exit(missing?3:0);`;
-  const stages = [{ id: 'model', inputs: ['input.txt', 'annotations.json'], outputs: ['tmp/ecs-architecture/compiler/model.json'], command: { command: process.execPath, args: ['-e', script] } }, pipeline()[1]];
-  const pending = await runMaintenance({ workspace: f.workspace, pipeline: stages });
-  assert.equal(pending.status, 'needs-descriptions'); assert.equal(pending.stages.length, 1);
-  assert.equal(pending.stages[0].exitCode, 3); assert.equal(pending.annotationsRequired.pending, 1);
-  f.put('annotations.json', '{"fixture::system":{"description":"维护当前状态。"}}');
-  const resumed = await runMaintenance({ workspace: f.workspace, resume: pending.runId, pipeline: stages });
-  assert.equal(resumed.status, 'passed');
-  assert.deepEqual(resumed.stages.map(stage => [stage.id, stage.attempt]), [['model', 1], ['model', 2], ['verify', 1]]);
+test('any nonzero model exit fails and stops downstream without an AI handoff', async t => {
+  const f = fixture(t);
+  const stages = [{ id: 'model', inputs: ['input.txt'], outputs: [], command: { command: process.execPath, args: ['-e', 'process.exit(3)'] } }, pipeline()[1]];
+  const state = await runMaintenance({ workspace: f.workspace, pipeline: stages });
+  assert.equal(state.status, 'failed');
+  assert.equal(state.stages.length, 1);
+  assert.equal(state.stages[0].exitCode, 3);
 });
 
-test('Skill helper content invalidates downstream reuse while installed dependencies remain reusable', async t => {
+test('Maintenance helper content invalidates downstream reuse while installed dependencies remain reusable', async t => {
   const f = fixture(t), helper = `${maintenanceScripts}/maintenance-paths.mjs`;
   f.put('docs/diagrams/node_modules/.package-lock.json', '{"packages":{}}');
   f.put(helper, 'export const helper = "before";');
@@ -396,8 +412,46 @@ test('actual child emitting CLI style pretty JSON records the entire preflight d
   assert.equal(state.preflightModel.objects.id.name, 'test');
   assert.match(fs.readFileSync(state.stages[0].stdout, 'utf8'), /\n  "counts"/);
   const report = await maintenanceReport({ workspace: f.workspace, runId: state.runId, format: 'markdown' });
-  assert.match(report, /分析边界：1 项/); assert.match(report, /mir-budget 1/); assert.match(report, /MIR analysis budget reached/);
+  assert.match(report, /分析边界：1 项/); assert.match(report, /mir-budget 1/);
+  assert.doesNotMatch(report, /MIR analysis budget reached/);
   assert.equal(state.preflightModel.analysisGaps[0].owner, 'unit');
+});
+
+test('markdown report summarizes multi-megabyte evidence without losing the complete JSON or raw logs', async t => {
+  const f = fixture(t), runId = 'large-report-fixture';
+  const directory = `tmp/ecs-architecture/maintenance/${runId}`;
+  const names = Array.from({ length: 250 }, (_, index) => `object-${index}`);
+  const detail = 'analysis-only-detail '.repeat(400);
+  const comparison = { added: names, retired: [], preserved: names,
+    changed: names.map(id => ({ id, before: { field: detail }, after: { field: 'changed-field-detail' } })) };
+  const state = { schemaVersion: 1, runId, workspace: f.workspace, status: 'failed', error: `Stage build failed (exit 17, signal none)\n${detail}`,
+    stages: [{ id: 'build', status: 'failed', attempt: 2, durationMs: 123, exitCode: 17, signal: null,
+      stdout: path.join(f.workspace, directory, 'build-2.stdout.log'), stderr: path.join(f.workspace, directory, 'build-2.stderr.log'),
+      inputs: { files: names.map(name => ({ name, evidence: detail })) } }],
+    preflightModel: { analysisGaps: names.map(owner => ({ owner, unit: 'fixture', kind: 'mir-budget', reason: detail, sourceEntries: [] })) },
+    modelChanges: { available: true, objects: comparison, relationships: comparison, registrations: names, generics: [], projections: [], sources: names } };
+  f.put(`${directory}/state.json`, JSON.stringify(state));
+  f.put(`${directory}/build-2.stdout.log`, 'complete stdout');
+  f.put(`${directory}/build-2.stderr.log`, 'specific build failure');
+  const before = fs.readFileSync(path.join(f.workspace, directory, 'state.json'));
+  assert.ok(before.length > 1024 * 1024);
+  const report = await maintenanceReport({ workspace: f.workspace, runId, format: 'markdown' });
+  assert.ok(Buffer.byteLength(report) < 16 * 1024);
+  assert.match(report, /失败：Stage build failed \(exit 17, signal none\)…（完整错误见 JSON）/);
+  assert.match(report, /\| build \| failed \| 2 \| 123 \| 17 \/ — \|/);
+  assert.ok(report.includes(`${directory}/state.json`));
+  assert.ok(report.includes(`${directory}/build-2.stderr.log`));
+  assert.match(report, /分析边界：250 项/);
+  assert.match(report, /mir-budget 250/);
+  assert.match(report, /对象：新增 250，退役 0，保留 250，变化 250/);
+  assert.doesNotMatch(report, /analysis-only-detail|changed-field-detail|```/);
+  const full = await maintenanceReport({ workspace: f.workspace, runId, format: 'json' });
+  assert.equal(full.error, state.error);
+  assert.deepEqual(full.stages[0].inputs, state.stages[0].inputs);
+  assert.deepEqual(full.preflightModel, state.preflightModel);
+  assert.deepEqual(full.modelChanges, state.modelChanges);
+  assert.deepEqual(fs.readFileSync(path.join(f.workspace, directory, 'state.json')), before);
+  assert.equal(fs.readFileSync(path.join(f.workspace, directory, 'build-2.stderr.log'), 'utf8'), 'specific build failure');
 });
 
 test('export context binds selectors, config contents, actual toolchain bytes and DOT provenance', async t => {
@@ -463,6 +517,24 @@ test('installed dependencies omit incompatible optional platforms without reques
   assert.equal(dependencyState(f.workspace).valid, true);
   fs.unlinkSync(path.join(f.workspace, 'docs/diagrams/node_modules/current/package.json'));
   assert.equal(dependencyState(f.workspace).valid, false);
+});
+
+for (const libc of ['glibc', 'musl']) test(`optional dependency validation selects ${libc} and still rejects its missing compatible package`, t => {
+  const f = fixture(t), base = { version: '1.0.0', integrity: 'fixture', resolved: 'https://fixture.invalid/native' };
+  const records = {
+    'node_modules/native-a': { ...base, optional: true, os: ['linux'], cpu: ['x64'], libc: ['glibc'] },
+    'node_modules/native-b': { ...base, optional: true, os: ['linux'], cpu: ['x64'], libc: ['musl'] },
+    'node_modules/another-cpu': { ...base, optional: true, os: ['linux'], cpu: ['arm64'], libc: [libc] },
+  };
+  const selected = libc === 'glibc' ? 'node_modules/native-a' : 'node_modules/native-b';
+  f.put('docs/diagrams/package-lock.json', JSON.stringify({ packages: { '': {}, ...records } }));
+  f.put('docs/diagrams/node_modules/.package-lock.json', JSON.stringify({ packages: { [selected]: records[selected] } }));
+  f.put('docs/diagrams/' + selected + '/package.json', '{"version":"1.0.0"}');
+  const environment = { platform: 'linux', arch: 'x64', libc };
+  assert.equal(dependencyState(f.workspace, environment).valid, true);
+  f.put('docs/diagrams/node_modules/.package-lock.json', '{"packages":{}}');
+  const missing = dependencyState(f.workspace, environment);
+  assert.equal(missing.valid, false); assert.ok(missing.reason.includes(selected));
 });
 
 test('compiler selectors use direct env before CARGO_BUILD env before hierarchical config', t => {

@@ -1,8 +1,8 @@
-import { readArchitectureData } from '../../../../docs/diagrams/src/architecture-artifacts.mjs';
+import { readArchitectureData } from './architecture-artifacts.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { digest } from './maintenance-inputs.mjs';
-import { summarizeAnalysisGaps } from '../../../../docs/diagrams/src/rustc-model.mjs';
+import { summarizeAnalysisGaps } from './rustc-model.mjs';
 
 const pick = (record, fields) => Object.fromEntries(fields.filter(key => record[key] !== undefined).map(key => [key, record[key]]));
 const sorted = entries => Object.fromEntries(entries.sort(([a], [b]) => a.localeCompare(b)));

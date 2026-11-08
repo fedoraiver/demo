@@ -2,8 +2,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { repositoryRoot } from './maintenance-paths.mjs';
 
-const help = `ECS architecture maintenance (local execution only)
+const help = `ECS architecture maintenance
   plan | preflight | run [--resume RUN_ID] | status | report
+  pack-pages [--out PATH] | check-pages [--directory PATH]
+  verify-pages --url URL --expected PATH [--commit SHA --evidence PATH]
   visual plan | render | record | bind | report
 
 Common: --workspace PATH
@@ -18,11 +20,13 @@ Visual record: --input OBSERVATIONS_JSON
 Visual bind: --commit COMMIT
 `;
 
-const commands = new Set(['plan', 'preflight', 'run', 'status', 'report']);
+const commands = new Set(['plan', 'preflight', 'run', 'status', 'report', 'pack-pages', 'check-pages', 'verify-pages']);
 const visualCommands = new Set(['plan', 'render', 'record', 'bind', 'report']);
 const allowed = {
+  'pack-pages': ['workspace', 'out'], 'check-pages': ['workspace', 'directory'],
+  'verify-pages': ['workspace', 'url', 'expected', 'commit', 'evidence'],
   plan: ['workspace'], preflight: ['workspace', 'debugdump'], run: ['workspace', 'debugdump', 'resume'],
-  status: ['workspace', 'run-id'], report: ['workspace', 'run-id', 'format', 'plan', 'index'],
+  status: ['workspace', 'run-id'], report: ['workspace', 'run-id', 'format'],
   'visual plan': ['workspace', 'index', 'batch', 'outdir', 'sample', 'seed', 'scope', 'force-object', 'force-view'],
   'visual render': ['workspace', 'plan', 'from', 'to', 'browser'],
   'visual record': ['workspace', 'plan', 'input', 'index'],
@@ -76,11 +80,13 @@ export function parseMaintenanceArgs(argv, defaultWorkspace = repositoryRoot) {
   if (['visual render', 'visual record'].includes(command) && !values.plan) throw new Error('--plan is required');
   if (command === 'visual record' && !values.input) throw new Error('--input is required');
   if (command === 'visual bind' && !values.commit) throw new Error('--commit is required');
-  const names = { debugdump: 'debugdumpDirectory', 'run-id': 'runId', index: 'indexPath', plan: 'planPath', input: 'observationFile',
+  if (command === 'verify-pages' && (!values.url || !values.expected)) throw new Error('verify-pages requires --url and --expected');
+  const names = { expected: 'expectedFile', evidence: 'evidenceDirectory', ...(command === 'verify-pages' ? { commit: 'expectedCommit' } : {}),
+    out: 'outdir', debugdump: 'debugdumpDirectory', 'run-id': 'runId', index: 'indexPath', plan: 'planPath', input: 'observationFile',
     'force-object': 'forcedObjectIds', 'force-view': 'forcedViewIds' };
   const options = Object.fromEntries(Object.entries(values).map(([key, value]) => [names[key] || key, value]));
   options.workspace = path.resolve(values.workspace || defaultWorkspace);
-  for (const key of ['debugdumpDirectory', 'indexPath', 'outdir', 'planPath', 'observationFile', 'browser']) {
+  for (const key of ['debugdumpDirectory', 'indexPath', 'outdir', 'planPath', 'observationFile', 'browser', 'directory', 'expectedFile', 'evidenceDirectory']) {
     if (options[key]) options[key] = path.resolve(options.workspace, options[key]);
   }
   return { command, options };
@@ -94,16 +100,14 @@ export async function dispatchMaintenance({ command, options }) {
     const name = { plan: 'planVisual', render: 'renderVisual', record: 'recordVisual', bind: 'bindVisual', report: 'visualReport' }[command.split(' ')[1]];
     return module[name](options);
   }
+  if (command === 'pack-pages' || command === 'check-pages') {
+    const module = await import('./pages-package.mjs');
+    return module[command === 'pack-pages' ? 'packPages' : 'checkPages'](options);
+  }
+  if (command === 'verify-pages') return (await import('./maintenance-deployment.mjs')).verifyDeployedPages(options);
   const runner = await import('./maintenance-runner.mjs');
   const name = { plan: 'planMaintenance', run: 'runMaintenance', status: 'maintenanceStatus', report: 'maintenanceReport' }[command];
   const result = await runner[name](options);
-  if (command === 'report') {
-    let visual;
-    try { visual = await (await import('./maintenance-visual.mjs')).visualReport(options); }
-    catch (error) { visual = { status: 'unavailable', reason: error.message }; }
-    if (typeof result === 'string') return result + '\n\n## SVG evidence\n\n```json\n' + JSON.stringify(visual, null, 2) + '\n```\n';
-    return { automatic: result, visual };
-  }
   return result;
 }
 
@@ -111,7 +115,6 @@ export async function main(argv = process.argv.slice(2)) {
   const result = await dispatchMaintenance(parseMaintenanceArgs(argv));
   console.log(typeof result === 'string' ? result : JSON.stringify(result, null, 2));
   if (result && typeof result === 'object' && ['failed', 'interrupted'].includes(result.automatic?.status ?? result.status)) process.exitCode = 1;
-  if (result && typeof result === 'object' && (result.automatic?.status ?? result.status) === 'needs-descriptions') process.exitCode = 3;
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

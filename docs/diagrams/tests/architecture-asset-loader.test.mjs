@@ -59,7 +59,7 @@ test('module integrity, import failures and cancellation permit retries without 
   contents = 'x'.repeat(Buffer.byteLength(source)); await assert.rejects(loader.loadModule(resource), /hash mismatch/); assert.equal(imports, 0);
   contents = source; await assert.rejects(loader.loadModule(resource), /Cannot import/); rejectImport = false;
   assert.deepEqual(await loader.loadModule(resource), { ready: true }); assert.equal(imports, 2); assert.equal(revoked.length, 2);
-  const foreign = { ...resource, url: 'https://example.com/runtime.mjs' }; await assert.rejects(loader.loadModule(foreign), /HTTP server/); loader.dispose();
+  const foreign = { ...resource, url: 'https://example.com/runtime.mjs' }; await assert.rejects(loader.loadModule(foreign), /same-origin HTTP or HTTPS server/); loader.dispose();
   let finishImport; const cancelled = new AbortController(), cancelledRevoked = [];
   const waiting = createArchitectureAssetLoader({ baseUrl, crypto: webcrypto, fetch: async () => new Response(source),
     URL: { createObjectURL: () => 'blob:pending', revokeObjectURL: url => cancelledRevoked.push(url) },
@@ -131,6 +131,6 @@ test('native guide CSS selector suffixes do not hide unsafe CSS URLs or schemes'
 test('optional missing SVG resources preserve empty views and foreign origins and bad hashes are refused',async()=>{
   const fixture=resourceFixture(),ref=fixture.refs[0];delete ref.resources.svg;
   const loader=createArchitectureAssetLoader({...fixture,baseUrl,crypto:webcrypto,DOMParser});assert.equal((await loader.loadView(ref)).svg,null);assert.equal(fixture.calls.length,1);loader.dispose();
-  await assert.rejects(readArchitectureResource({url:'https://example.com/a.svg',sha256:hash('')},{baseUrl,fetch:fixture.fetch,crypto:webcrypto}),/HTTP server/);
+  await assert.rejects(readArchitectureResource({url:'https://example.com/a.svg',sha256:hash('')},{baseUrl,fetch:fixture.fetch,crypto:webcrypto}),/same-origin HTTP or HTTPS server/);
   await assert.rejects(readArchitectureResource({url:'../missing',sha256:'wrong'},{baseUrl,fetch:fixture.fetch,crypto:webcrypto}),/descriptor/);new vm.Script(assetLoaderAssets().script);
 });

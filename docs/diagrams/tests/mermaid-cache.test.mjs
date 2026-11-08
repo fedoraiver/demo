@@ -5,7 +5,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import { repositoryRoot } from '../src/paths.mjs';
-import { createMermaidCache, mermaidGeometryRecord, mermaidRenderIdentity, restoreMermaidGeometry } from '../src/mermaid-cache.mjs';
+import { createMermaidCache, mermaidDependencyIdentity, mermaidGeometryRecord, mermaidRenderIdentity, restoreMermaidGeometry } from '../src/mermaid-cache.mjs';
+import { architectureBrowserPath } from '../src/architecture-browser.mjs';
 
 const temporary = path.join(repositoryRoot, 'tmp/ecs-architecture/reuse-fix/cache-unit-tests');
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
@@ -47,15 +48,33 @@ function publish(workspace, result, fingerprint) {
   const entry = { id: result.id, renderFingerprint: fingerprint,
     data: put(`data/views/${result.id}.json`, JSON.stringify({ ...metadata, renderFingerprint: fingerprint })),
     svg: put('svg/object/fixture.svg', svg), mermaid: put('mermaid/fixture.mmd', mermaid) };
-  put('data/manifest.json', JSON.stringify({ schemaVersion: 1, views: [entry] }));
+  put('data/manifest.json', JSON.stringify({ schemaVersion: 2, views: [entry] }));
   return { generated, entry };
 }
+
+test('automatically selected browsers and font context participate in geometry identity', t => {
+  const { workspace } = fixture(t), packageRoot = path.join(workspace, 'docs/diagrams');
+  fs.mkdirSync(packageRoot, { recursive: true });
+  fs.copyFileSync(path.join(repositoryRoot, 'docs/diagrams/package-lock.json'), path.join(packageRoot, 'package-lock.json'));
+  const environment = { ProgramFiles: path.join(workspace, 'programs'), MERMAID_RENDER_CONTEXT: 'fonts-v1' };
+  const browser = path.join(environment.ProgramFiles, 'Google/Chrome/Application/chrome.exe');
+  fs.mkdirSync(path.dirname(browser), { recursive: true }); fs.writeFileSync(browser, 'browser-v1');
+  assert.equal(architectureBrowserPath({ environment, platform: 'win32' }), browser);
+  const identity = mermaidDependencyIdentity(workspace, { environment, platform: 'win32' });
+  assert.equal(mermaidDependencyIdentity(workspace, { environment: { ...environment, MERMAID_CHROMIUM_PATH: browser }, platform: 'win32' }), identity);
+  fs.writeFileSync(browser, 'browser-v2');
+  assert.notEqual(mermaidDependencyIdentity(workspace, { environment, platform: 'win32' }), identity);
+  fs.writeFileSync(browser, 'browser-v1');
+  assert.notEqual(mermaidDependencyIdentity(workspace, { environment: { ...environment, MERMAID_RENDER_CONTEXT: 'fonts-v2' }, platform: 'win32' }), identity);
+  assert.throws(() => architectureBrowserPath({ environment: { MERMAID_CHROMIUM_PATH: browser + '.missing' } }), /does not exist/);
+});
 
 test('SVG input identity ignores source positions and tracks visible or embedded titles', () => {
   const identity = mermaidRenderIdentity(view, registry, '{}');
   const moved = structuredClone(view); moved.links[0].sourceEntries[0].line = 200;
   assert.deepEqual(mermaidRenderIdentity(moved, registry, '{}'), identity);
-  assert.notEqual(mermaidRenderIdentity(view, { a: { ...registry.a, description: '更新对象数据。' } }, '{}').fingerprint, identity.fingerprint);
+  assert.deepEqual(mermaidRenderIdentity(view, { a: { ...registry.a, description: '不参与绘图的旧字段。' } }, '{}'), identity);
+  assert.notEqual(mermaidRenderIdentity(view, { a: { ...registry.a, name: 'NewName' } }, '{}').fingerprint, identity.fingerprint);
   assert.notEqual(mermaidRenderIdentity({ ...view, mermaid: view.mermaid + 'n1[B]\n' }, registry, '{}').fingerprint, identity.fingerprint);
 });
 

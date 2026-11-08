@@ -81,6 +81,7 @@ async function compileFixture(view, graph, name, registry = {}, options = {}) {
     assert.equal(result.routing.rule, 'axis-or-curve');
     checkMermaidGeometry(result.svg, result);
     checkMermaidStyles(result, registry);
+    checkMermaidSource(result, registry, new Map());
     const inspection = inspectViewRoutes(result);
     assert.deepEqual(inspection.collisions, []);
     assert(inspection.edges.every(edge => !edge.arrowIssues.length && (edge.axis ? !edge.curved : edge.curved)),
@@ -92,44 +93,31 @@ async function compileFixture(view, graph, name, registry = {}, options = {}) {
   }
 }
 
-test('captured InputFocus output fanout clears a near-collinear read using one native output context', { skip: !chromium, timeout: 180000 }, async () => {
+test('captured InputFocus output fanout retains every read under strict native routing', { skip: !chromium, timeout: 180000 }, async () => {
   const fixture = JSON.parse(fs.readFileSync(new URL('./fixtures/native-input-focus.json', import.meta.url), 'utf8'));
-  const { graph, registry, features, targetEdgeId } = fixture, before = structuredClone(fixture), attempts = [];
+  const { graph, registry, features, targetEdgeId } = fixture, before = structuredClone(fixture);
   const view = renderGraphView(fixture.view, graph, registry, features);
-  const result = await compileFixture(view, graph, 'input-focus', registry, { onAttempt: attempt => attempts.push(attempt) });
+  const result = await compileFixture(view, graph, 'input-focus', registry);
   assert.equal(result.nodes.length, 38); assert.equal(result.links.length, 65);
   assert.deepEqual(view.layoutLinks, []);
-  assert.equal(result.layoutLinks.length, 8);
-  assert.ok(result.layoutLinks.every(link => link.mermaidId.startsWith('layout_output_')));
-  assert.equal(attempts.length, 1);
-  assert.equal(attempts[0].layoutError, null);
-  assert.deepEqual(attempts[0].invalid.map(edge => [edge.id, edge.axis, edge.curved, edge.collisions, edge.arrowIssues]), [[targetEdgeId, null, false, [], []]]);
   const edge = inspectViewRoutes(result).edges.find(item => item.id === targetEdgeId);
-  assert.equal(edge.curved, true);
+  assert.deepEqual(edge.arrowIssues, []);
   assert.deepEqual(nativeLabelMismatches(result), []);
   assert.equal(result.nodes.find(node => node.id === graph.links.find(link => link.id === targetEdgeId).to).nameLabel, 'update_accessibility_nodes');
   assert.deepEqual(fixture, before);
 });
 
-// 该夹具需遍历多组原生排版候选，预留完整编译与清理时间。
-test('captured SSAO parallel input operations clear a near-collinear removal using native output neighbors', { skip: !chromium, timeout: 300000 }, async () => {
+test('captured SSAO parallel input operations retain exact removal evidence with fact-only cards', { skip: !chromium, timeout: 300000 }, async () => {
   const fixture = JSON.parse(fs.readFileSync(new URL('./fixtures/native-ssao-input.json', import.meta.url), 'utf8'));
-  const { graph, registry, features, targetEdgeId } = fixture, before = structuredClone(fixture), attempts = [];
+  const { graph, registry, features, targetEdgeId } = fixture, before = structuredClone(fixture);
   const view = renderGraphView(fixture.view, graph, registry, features);
-  const result = await compileFixture(view, graph, 'ssao-input', registry, { onAttempt: attempt => attempts.push(attempt) });
+  const result = await compileFixture(view, graph, 'ssao-input', registry);
   assert.equal(result.nodes.length, 5); assert.equal(result.links.length, 6);
   assert.deepEqual(view.layoutLinks, []);
-  assert.deepEqual(result.layoutLinks, [
-    { mermaidId: 'layout_output_0', from: 'n2', to: 'n3' },
-    { mermaidId: 'layout_output_1', from: 'n3', to: 'n4' },
-  ]);
-  assert.ok(attempts.length > 0, 'The original native layout reproduces the near-collinear input failure');
-  assert.equal(attempts[0].layoutError, null);
-  assert.deepEqual(attempts[0].invalid.map(edge => [edge.id, edge.axis, edge.curved, edge.collisions, edge.arrowIssues]), [[targetEdgeId, null, false, [], []]]);
   const removal = result.links.find(link => link.id === targetEdgeId);
   assert.equal(removal.operation, 'remove'); assert.equal(removal.displayLabel, '移除');
   assert.equal(result.links[0].nativeReverse, true);
-  assert.equal(inspectViewRoutes(result).edges.find(edge => edge.id === targetEdgeId).curved, true);
+  assert.equal(inspectViewRoutes(result).edges.find(edge => edge.id === targetEdgeId).arrowIssues.length, 0);
   assert.deepEqual(nativeLabelMismatches(result), []);
   assert.deepEqual(fixture, before);
 });
@@ -268,8 +256,6 @@ for (const [filename, nodes, links] of [['native-volumetric-fog.json', 5, 6], ['
     const view = renderGraphView(fixture.view, graph, registry, features);
     const result = await compileFixture(view, graph, filename.replace('.json', ''), registry);
     assert.equal(result.nodes.length, nodes); assert.equal(result.links.length, links);
-    assert.deepEqual(result.layoutLinks, []);
-    if (filename === 'native-volumetric-fog.json') assert.deepEqual([...result.mermaid.matchAll(/subgraph layout_card_(n\d+)/g)].map(match => match[1]), ['n0']);
     assert.deepEqual(nativeLabelMismatches(result), []);
     assert.deepEqual(result.links.find(link => link.id === fixture.targetEdgeId).bodyOperations,
       view.links.find(link => link.id === fixture.targetEdgeId).bodyOperations);
@@ -296,6 +282,61 @@ test('Rust lifetime, underscore and pointer symbols remain literal through nativ
     feature: 'fixture', label: name, summary: '完整系统名称。' }, graph, registry, [{ id: 'fixture', label: '示例' }]);
   const compiled = await compileFixture(view, graph, 'lifetime-literals', registry);
   assert.equal(compiled.nodes[0].displayLabel, view.nodes[0].displayLabel);
+});
+
+test('captured entity Name expressions preserve quotes and literal escapes in native SVG labels', { skip: !chromium, timeout: 180000 }, async () => {
+  const records = [
+    ['entity-688c484938d1bc3da575b848', 'format!("Menu button: {title}")'],
+    ['entity-0097372e0c50008e9e475029', 'format!("Volume row: {title}")'],
+    ['entity-02cc770652a42b7fa22de70a', 'Menu button icon container'],
+    ['quoted-underscore', 'HUD::状态 "active"_label'],
+    ['quoted-generic', `format!("&mut Vec<T> for 'a")`],
+    ['quoted-braces', '"quote" and {outer}'],
+    ['quoted-escape', String.raw`Name("first \" second")`],
+    ['literal-escape', String.raw`literal \n \u0022`],
+  ];
+  const registry = Object.fromEntries(records.map(([id, name]) => [id, { id, kind: 'Entity', name, feature: 'ui' }]));
+  const graph = { centerNodeId: records[2][0], nodes: records.map(([id]) => ({ id, role: 'internal' })), links: [
+    { id: 'relation-2f94ad76abbcc3cfd0e5674d', from: records[0][0], to: records[2][0], kind: 'relationship' },
+  ] };
+  const view = renderGraphView({ id: 'native-entity-name-expressions', aspect: 'object', objectId: graph.centerNodeId,
+    feature: 'ui', label: 'Entity Name expressions', summary: '实体创建名称与直接关系。' }, graph, registry, [{ id: 'ui', label: 'ui' }]);
+  const before = structuredClone({ registry, graph, view });
+  fs.mkdirSync(temporary, { recursive: true });
+  const browser = await puppeteer.launch({ executablePath: chromium, headless: true });
+  try {
+    const captured = renderGraphView({ ...view, id: 'native-captured-name-expressions' }, { ...graph, nodes: graph.nodes.slice(0, 3) }, registry, [{ id: 'ui', label: 'ui' }]);
+    const native = await compileNativeView(browser, captured, registry);
+    assert.deepEqual(nativeLabelMismatches(native), [], 'Native SVG must contain the original quotes, braces and backslashes');
+    const compiled = await compileRoutedView(view, registry, (candidate, entries) => compileNativeView(browser, candidate, entries));
+    assert.deepEqual(compiled.nodes.map(node => node.displayLabel), records.map(([, name]) => name));
+    assert.deepEqual(compiled.links, view.links);
+    checkMermaidGeometry(compiled.svg, compiled); checkMermaidStyles(compiled, registry); checkMermaidSource(compiled, registry, new Map());
+    assert.deepEqual(nativeLabelMismatches(compiled), []);
+    assert.deepEqual({ registry, graph, view }, before);
+    fs.writeFileSync(path.join(temporary, 'entity-name-expressions.svg'), compiled.svg);
+  } finally { await browser.close(); }
+});
+
+test('captured Observer closure indices and literal entity spellings stay visible in native SVG', { skip: !chromium, timeout: 180000 }, async () => {
+  const registry = {
+    'observer-047dad1ad3396d088fb4a662': { kind: 'Observer', feature: 'avian', name: 'avian3d::collider_tree::update::{impl#1}::build::{closure#2}' },
+    'observer-05b2d8cd6050f7f647a66083': { kind: 'Observer', feature: 'avian', name: 'avian3d::dynamics::rigid_body::mass_properties::{impl#3}::build::{closure#1}' },
+    'literal-punctuation': { kind: 'Entity', feature: 'avian', name: String.raw`Name #1 "quote" \ *pointer_ [item] {field} & <Type>` },
+    'literal-entities': { kind: 'Entity', feature: 'avian', name: 'literal #quot; #35; #amp; #96; &amp;' },
+  };
+  const graph = { centerNodeId: Object.keys(registry)[0], nodes: Object.keys(registry).map(id => ({ id, role: 'internal' })), links: [] };
+  const view = renderGraphView({ id: 'native-compiler-closure-indices', aspect: 'object', objectId: graph.centerNodeId,
+    label: 'Compiler closure indices', summary: '编译器闭包身份与字面名称。' }, graph, registry, [{ id: 'avian', label: 'Avian' }]);
+  const browser = await puppeteer.launch({ executablePath: chromium, headless: true });
+  try {
+    const native = await compileNativeView(browser, view, registry);
+    assert.deepEqual(nativeLabelMismatches(native), [], 'Closure # indices and source entity-like text must remain literal');
+    const compiled = await compileRoutedView(view, registry, (candidate, records) => compileNativeView(browser, candidate, records));
+    assert.deepEqual(compiled.nodes.slice(0, 2).map(node => node.nameLabel), ['build::{closure#2}', 'build::{closure#1}']);
+    assert.deepEqual(nativeLabelMismatches(compiled), []);
+    checkMermaidGeometry(compiled.svg, compiled); checkMermaidStyles(compiled, registry); checkMermaidSource(compiled, registry, new Map());
+  } finally { await browser.close(); }
 });
 
 test('complete nested generic names fit native cards without truncating compiler identities', { skip: !chromium, timeout: 180000 }, async () => {
@@ -339,7 +380,7 @@ test('short SVG titles retain full provenance, distinct callable identities and 
     for (const node of result.nodes) {
       const element = elements.find(item => item.attrs['data-id'] === node.id);
       assert.equal(element.attrs['aria-label'].split(' · ')[0], registry[node.id].name);
-      assert.equal(element.children.find(item => item.tag === 'title').text, `${registry[node.id].name} · ${registry[node.id].description}`);
+      assert.equal(element.children.find(item => item.tag === 'title').text, registry[node.id].name);
     }
     assert.deepEqual({ graph, registry, view }, before);
     fs.writeFileSync(path.join(directory, 'short-titles.svg'), result.svg);

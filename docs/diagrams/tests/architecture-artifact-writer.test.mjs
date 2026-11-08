@@ -52,27 +52,14 @@ test('text artifacts preserve UTF-8 bytes through atomic replacement and reuse i
   assert.equal(fs.readFileSync(files.staged, 'utf8'), 'untouched staging bytes');
 });
 
-test('text artifacts reject the 100 MiB UTF-8 byte boundary before touching output or staging', t => {
-  const files = textFixture(t), limit = 100 * 1024 * 1024, atLimit = 'é'.repeat(limit / 2);
-  assert.equal(atLimit.length, limit / 2); assert.equal(Buffer.byteLength(atLimit), limit);
-  const options = { rename: () => assert.fail('An oversized text artifact must not reach replacement') };
-  assert.throws(() => writeTextArtifactSync(files.output, files.staging, files.filename, atLimit, options),
-    { message: 'Architecture artifact exceeds 100 MiB: ' + files.filename });
-  assert.deepEqual(fs.readFileSync(files.target), oldContent); assert.equal(fs.existsSync(files.staging), false);
-  fs.mkdirSync(path.dirname(files.staged), { recursive: true }); fs.writeFileSync(files.staged, 'untouched staging bytes');
-  assert.throws(() => writeTextArtifactSync(files.output, files.staging, files.filename, atLimit + 'a', options),
-    { message: 'Architecture artifact exceeds 100 MiB: ' + files.filename });
-  assert.deepEqual(fs.readFileSync(files.target), oldContent);
-  assert.equal(fs.readFileSync(files.staged, 'utf8'), 'untouched staging bytes');
-
-  const belowLimit = atLimit.slice(0, -1) + 'a';
-  assert.equal(Buffer.byteLength(belowLimit), limit - 1);
-  writeTextArtifactSync(files.output, files.staging, files.filename, belowLimit);
-  assert.equal(fs.statSync(files.target).size, limit - 1); assert.equal(fs.existsSync(files.staged), false);
+test('audit text artifacts preserve UTF-8 bytes beyond the former Git file limit', t => {
+  const files = textFixture(t), previousLimit = 100 * 1024 * 1024, content = 'é'.repeat(previousLimit / 2) + 'a';
+  writeTextArtifactSync(files.output, files.staging, files.filename, content);
+  assert.equal(fs.statSync(files.target).size, previousLimit + 1); assert.equal(fs.existsSync(files.staged), false);
   const file = fs.openSync(files.target, 'r'), bytes = Buffer.alloc(2);
   try {
     fs.readSync(file, bytes, 0, 2, 0); assert.deepEqual(bytes, Buffer.from('é'));
-    fs.readSync(file, bytes, 0, 1, limit - 2); assert.equal(bytes[0], 'a'.charCodeAt(0));
+    fs.readSync(file, bytes, 0, 1, previousLimit); assert.equal(bytes[0], 'a'.charCodeAt(0));
   } finally { fs.closeSync(file); }
 });
 

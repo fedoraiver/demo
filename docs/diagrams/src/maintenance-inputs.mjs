@@ -2,8 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { maintenanceScripts } from './maintenance-paths.mjs';
-import { hashFile } from '../../../../docs/diagrams/src/stream-files.mjs';
+import { hashFile } from './stream-files.mjs';
 
 export const digest = value => crypto.createHash('sha256').update(typeof value === 'string' || Buffer.isBuffer(value) ? value : JSON.stringify(value)).digest('hex');
 export const slash = value => value.replaceAll('\\', '/');
@@ -32,22 +31,24 @@ export function fileSnapshot(workspace, names, { optional = true } = {}) {
 
 export function relevantInputNames(workspace) {
   const names = ['Cargo.toml', 'Cargo.lock', 'src', 'docs/diagrams/package.json', 'docs/diagrams/package-lock.json',
-    'docs/diagrams/src', 'docs/diagrams/catalog', 'docs/diagrams/tests', 'tools/rustc-analysis', 'scripts/rustc-analysis.ps1', maintenanceScripts];
+    'docs/diagrams/src', 'docs/diagrams/tests', 'tools/rustc-analysis', 'scripts/rustc-analysis.ps1'];
   for (const name of ['build.rs', '.cargo/config.toml', 'rust-toolchain', 'rust-toolchain.toml']) if (fs.existsSync(path.join(workspace, name))) names.push(name);
   const root = path.join(workspace, 'docs/diagrams');
   if (fs.existsSync(root)) for (const name of fs.readdirSync(root)) if (name.endsWith('.mjs')) names.push(`docs/diagrams/${name}`);
   return names;
 }
 
-export function dependencyState(workspace) {
+export function dependencyState(workspace, { platform = process.platform, arch = process.arch, libc } = {}) {
   const root = path.join(workspace, 'docs/diagrams');
   try {
+    // npm 按原生 libc 选择 Linux 可选包；不从依赖名称猜测兼容性。
+    const selectedLibc = libc ?? (platform === 'linux' ? (process.report.getReport().header.glibcVersionRuntime ? 'glibc' : 'musl') : undefined);
     const locked = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json'), 'utf8'));
     const installed = JSON.parse(fs.readFileSync(path.join(root, 'node_modules/.package-lock.json'), 'utf8'));
     for (const [name, record] of Object.entries(locked.packages || {})) {
       if (!name) continue;
       const supports = (selectors, value) => !selectors || !selectors.includes(`!${value}`) && (!selectors.some(item => !item.startsWith('!')) || selectors.includes(value));
-      if (record.optional && (!supports(record.os, process.platform) || !supports(record.cpu, process.arch))) continue;
+      if (record.optional && (!supports(record.os, platform) || !supports(record.cpu, arch) || !supports(record.libc, selectedLibc))) continue;
       const actual = installed.packages?.[name];
       if (!actual || ['version', 'integrity', 'resolved'].some(key => record[key] !== actual[key])) throw new Error(`Installed lock mismatch: ${name}`);
       const manifest = JSON.parse(fs.readFileSync(path.join(root, name, 'package.json'), 'utf8'));

@@ -1,23 +1,18 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { exportProducerInputs, maintenanceScripts, repositoryRoot } from './maintenance-paths.mjs';
+import { exportProducerInputs, repositoryRoot } from './maintenance-paths.mjs';
 import { fileSnapshot, relevantInputNames, dependencyState, npmCommand, headMetadata, digest, processAlive, executablePath } from './maintenance-inputs.mjs';
 import { atomicJson, executeMaintenanceCommand } from './maintenance-execution.mjs';
 import { readModelSummary } from './maintenance-summary.mjs';
 import { exportContextInputs } from './maintenance-export-context.mjs';
+import { mermaidDependencyIdentity } from './mermaid-cache.mjs';
 
 const now = () => new Date().toISOString();
 const maintenanceRoot = workspace => path.join(workspace, 'tmp/ecs-architecture/maintenance');
 const generated = 'docs/diagrams/generated';
 const sourceRoot = repositoryRoot;
-// 历史状态也按当前用户验收约定呈现，持久化由运行和恢复入口负责。
-const manualChecks = previous => ({
-  ...previous,
-  svg: previous?.svg && previous.svg !== 'pending' ? previous.svg : 'skipped-by-default',
-  browser: 'not-required',
-  protocol: 'not-required',
-});
+const renderedStages = new Set(['build', 'check', 'test']);
 const requireWorkspace = workspace => {
   if (!workspace) throw new Error('--workspace is required');
   const resolved = fs.realpathSync(path.resolve(workspace));
@@ -36,11 +31,11 @@ const loadRun = (workspace, runId) => {
   }
   if (!runId) return null;
   const state = JSON.parse(fs.readFileSync(path.join(root, safeRunId(runId), 'state.json'), 'utf8'));
-  return { ...state, manual: manualChecks(state.manual) };
+  return state;
 };
 
 async function validDump(workspace, debugdumpDirectory) {
-  const { readDebugdump, DEBUGDUMP_MANIFEST } = await import('../../../../docs/diagrams/src/debugdump-input.mjs');
+  const { readDebugdump, DEBUGDUMP_MANIFEST } = await import('./debugdump-input.mjs');
   const directory = path.resolve(workspace, debugdumpDirectory || 'tmp/ecs-architecture/compiler/debugdump');
   const filename = directory === path.join(workspace, generated, 'dot') ? DEBUGDUMP_MANIFEST : 'manifest.json';
   try {
@@ -73,7 +68,7 @@ export async function planMaintenance({ workspace, debugdumpDirectory } = {}) {
   const plannedStages = [
     { id: 'dependencies', action: dependencies.valid ? 'reuse' : 'install', reason: dependencies.reason },
     { id: 'extract', action: analysis.facts ? 'validate' : 'extract', reason: 'Collect rustc facts and the matching real Schedule snapshot' },
-    { id: 'model', action: analysis.pending ? 'needs-descriptions' : 'compose', reason: 'Compose the compiler semantic graph and Chinese purpose annotations' },
+    { id: 'model', action: 'compose', reason: 'Compose the compiler semantic graph' },
     { id: 'preflight', action: 'validate' }, { id: 'build', action: 'build' }, { id: 'check', action: 'check' }, { id: 'test', action: 'full-node-tests' },
   ];
   if (previous) {
@@ -93,29 +88,28 @@ export async function planMaintenance({ workspace, debugdumpDirectory } = {}) {
   return { schemaVersion: 1, workspace, head: headMetadata(workspace), inputs: fileSnapshot(workspace, relevantInputNames(workspace)),
     dependencies, debugdump: dump, analysis,
     dependencyInputs: previous?.dependencyInputs || [],
-    stages: plannedStages, manual: manualChecks() };
+    stages: plannedStages };
 }
 
 async function compilerAnalysisState(workspace) {
   const directory = path.join(workspace, 'tmp/ecs-architecture/compiler');
   const facts = path.join(directory, 'facts.json'), runtime = path.join(directory, 'runtime.json'), model = path.join(directory, 'model.json');
-  const result = { directory, facts: fs.existsSync(facts) && fs.existsSync(runtime), model: false, pending: 0 };
+  const result = { directory, facts: fs.existsSync(facts) && fs.existsSync(runtime), model: false };
   if (fs.existsSync(model)) {
     try {
-      const { readCompilerModel } = await import('../../../../docs/diagrams/src/rustc-model.mjs');
-      const value = readCompilerModel(workspace, { allowPending: true }).model;
-      result.model = true; result.pending = value.annotationsRequired?.length || 0;
+      const { readCompilerModel } = await import('./rustc-model.mjs');
+      const value = readCompilerModel(workspace).model;
+      result.model = value.schemaVersion === 2;
     } catch (error) { result.reason = error.message; }
   }
   return result;
 }
 
 function defaultPipeline({ workspace, dependencies }) {
-  const cli = path.join(workspace, maintenanceScripts, 'maintenance-cli.mjs');
+  const cli = path.join(workspace, 'docs/diagrams/maintain.mjs');
   const compilerDirectory = path.join(workspace, 'tmp/ecs-architecture/compiler');
   const exportDirectory = path.join(compilerDirectory, 'debugdump');
   const facts = path.join(compilerDirectory, 'facts.json'), runtime = path.join(compilerDirectory, 'runtime.json'), model = path.join(compilerDirectory, 'model.json');
-  const annotations = path.join(workspace, 'docs/diagrams/catalog/annotations.json');
   const inputs = relevantInputNames(workspace);
   const node = (filename, args = []) => ({ command: process.execPath, args: [filename, ...args] });
   const analysis = args => ({ command: 'pwsh', args: ['-NoProfile', '-File', path.join(workspace, 'scripts/rustc-analysis.ps1'), ...args] });
@@ -133,7 +127,7 @@ function defaultPipeline({ workspace, dependencies }) {
     { id: 'extract', inputs: compilerInputs, outputs: [facts, runtime, exportDirectory, path.join(compilerDirectory, 'analysis-summary.json')],
       command: analysis(['extract', '--workspace', workspace, '--out', compilerDirectory]),
       validate: async () => {
-        const { readDebugdump } = await import('../../../../docs/diagrams/src/debugdump-input.mjs');
+        const { readDebugdump } = await import('./debugdump-input.mjs');
         const dump = readDebugdump(exportDirectory, workspace);
         const snapshot = JSON.parse(fs.readFileSync(runtime, 'utf8'));
         if (snapshot?.schemaVersion !== 1 || snapshot.sourceFingerprint !== dump.manifest.sourceFingerprint || !Array.isArray(snapshot.schedules)) throw new Error('Invalid compiler runtime snapshot');
@@ -143,14 +137,8 @@ function defaultPipeline({ workspace, dependencies }) {
         if (cache.schemaVersion !== 2 || cache.incremental !== true || ['compiled', 'reused', 'recovered', 'attempts', 'cargoMs', 'bindingMs', 'totalMs'].some(key => !Number.isSafeInteger(cache[key]) || cache[key] < 0)) throw new Error('Invalid analysis cache summary');
         return { files: fileSnapshot(workspace, [facts, runtime, exportDirectory, path.join(compilerDirectory, 'analysis-summary.json')], { optional: false }), sourceFingerprint: dump.manifest.sourceFingerprint, cache };
       } },
-    { id: 'model', inputs: [...compilerInputs, 'tools/rustc-analysis/runner/src/model.rs', 'tools/rustc-analysis/runner/src/model_tests.rs', facts, runtime, annotations], outputs: [model, path.join(compilerDirectory, 'model.calls.ndjson'), path.join(compilerDirectory, 'purpose-summary.json')],
-      command: analysis(['model', '--facts', facts, '--runtime', runtime, '--annotations', annotations, '--out', model]),
-      validate: () => {
-        const purpose = JSON.parse(fs.readFileSync(path.join(compilerDirectory, 'purpose-summary.json'), 'utf8'));
-        if (purpose.schemaVersion !== 1 || ['certified', 'fallback', 'annotationHits', 'pending'].some(key => !Number.isSafeInteger(purpose[key]) || purpose[key] < 0)) throw new Error('Invalid purpose cache summary');
-        // 逐声明诊断留在阶段输出，运行状态只保存计数，避免反复复制完整 helper 缺口。
-        return { purpose: Object.fromEntries(['schemaVersion', 'certified', 'fallback', 'annotationHits', 'pending'].map(key => [key, purpose[key]])) };
-      } },
+    { id: 'model', inputs: [...compilerInputs, 'tools/rustc-analysis/runner/src/model.rs', 'tools/rustc-analysis/runner/src/model_tests.rs', facts, runtime], outputs: [model, path.join(compilerDirectory, 'model.calls.ndjson')],
+      command: analysis(['model', '--facts', facts, '--runtime', runtime, '--out', model]) },
     { id: 'preflight', inputs: [...inputs, model, path.join(compilerDirectory, 'model.calls.ndjson'), exportDirectory], outputs: [],
       command: node(cli, ['preflight', '--workspace', workspace, '--debugdump', exportDirectory]), dependencyInputs: true },
     { id: 'build', inputs: [...inputs, model, path.join(compilerDirectory, 'model.calls.ndjson'), exportDirectory], outputs: [generated],
@@ -161,9 +149,16 @@ function defaultPipeline({ workspace, dependencies }) {
       args: ['--test', '--test-concurrency=1', ...fs.readdirSync(path.join(workspace, 'docs/diagrams/tests')).filter(name => name.endsWith('.test.mjs')).sort().map(name => path.join(workspace, 'docs/diagrams/tests', name))] }), dependencyInputs: true },
   ];
 }
+function renderContextIdentity(workspace) {
+  try { return { available: true, sha256: digest(mermaidDependencyIdentity(workspace)) }; }
+  catch (error) { return { available: false, reason: error.message }; }
+}
+
 function stageInputs(workspace, stage, state, tools) {
   return { files: fileSnapshot(workspace, stage.inputs || []), tools,
     exportContext: exportContextInputs(workspace),
+    // 提交只改变发布归属；浏览器与字体只改变呈现，均不使编译事实重新提取。
+    ...(renderedStages.has(stage.id) ? { sourceCommit: headMetadata(workspace), rendering: renderContextIdentity(workspace) } : {}),
     producer: stage.producer || { command: typeof stage.command === 'function' ? stage.command.toString() : stage.command,
       action: stage.action?.toString(), validate: stage.validate?.toString(), finalize: stage.finalize?.toString(), after: stage.after?.toString(), outputs: stage.outputs || [] },
     ...(stage.dumpManifest ? { export: exportProvenance(JSON.parse(fs.readFileSync(stage.dumpManifest, 'utf8'))) } : {}),
@@ -211,8 +206,7 @@ export async function runMaintenance({ workspace, resume, debugdumpDirectory, pi
       stages: checkpoint ? [...new Map(checkpoint.stages.map(stage => [stage.id, stage])).values()].map(stage => ({ ...structuredClone(stage), sourceRunId: checkpoint.runId })) : [],
       dependencyInputs: structuredClone(checkpoint?.dependencyInputs || []), events: [],
       ...(checkpoint ? { sourceRunId: checkpoint.runId,
-        finalModel: checkpoint.finalModel, preflightModel: checkpoint.preflightModel } : {}),
-      manual: manualChecks() };
+        finalModel: checkpoint.finalModel, preflightModel: checkpoint.preflightModel } : {}) };
     if (state.workspace !== workspace) throw new Error('Resume workspace mismatch');
     state.events.push({ kind: resume ? 'resume' : 'start', at: now(), pid: process.pid });
     state.status = 'running'; state.pid = process.pid; state.head = headMetadata(workspace); state.updatedAt = now();
@@ -270,11 +264,6 @@ export async function runMaintenance({ workspace, resume, debugdumpDirectory, pi
         record.outputs = fileSnapshot(workspace, record.outputPaths, { optional: false });
         record.status = 'passed'; save(); handedOffAt = now();
       } catch (error) {
-        if (stage.id === 'model' && record.exitCode === 3) {
-          record.status = 'needs-descriptions'; record.error = 'Complete the Chinese descriptions requested by model.json, then resume this run';
-          state.status = 'needs-descriptions'; state.error = record.error; state.annotationsRequired = await compilerAnalysisState(workspace);
-          state.endedAt = now(); save(); return state;
-        }
         record.status = record.status === 'interrupted' ? 'interrupted' : 'failed'; record.error = error.message; record.endedAt ||= now();
         state.status = record.status; state.error = error.message; state.endedAt = now(); save(); return state;
       }
@@ -296,7 +285,7 @@ export async function runMaintenance({ workspace, resume, debugdumpDirectory, pi
 export async function maintenanceStatus({ workspace, runId } = {}) {
   workspace = requireWorkspace(workspace);
   const state = loadRun(workspace, runId);
-  if (!state) return { schemaVersion: 1, workspace, status: 'not-started', manual: manualChecks() };
+  if (!state) return { schemaVersion: 1, workspace, status: 'not-started' };
   const result = structuredClone(state), tools = toolsForRun();
   const latest = new Map(state.stages.map(stage => [stage.id, stage]));
   result.invalidated = [];
@@ -319,31 +308,32 @@ export async function maintenanceReport({ workspace, runId, format = 'json' } = 
   if (format === 'json') return state;
   if (!['markdown', 'md'].includes(format)) throw new Error(`Unknown report format: ${format}`);
   const stages = new Map((state.stages || []).map(stage => [stage.id, stage]));
+  const logPath = filename => path.relative(state.workspace, filename).split(path.sep).join('/');
   const lines = [`# ECS 架构图维护`, '', `自动检查：${state.status}`, `工作区：${state.workspace}`, `运行：${state.runId || '未开始'}`, '',
-    '| 阶段 | 结果 | PID | 开始 | 结束 | 退出码 | 原始日志 |', '| --- | --- | --- | --- | --- | --- | --- |',
-    ...[...stages.values()].map(stage => `| ${stage.id} | ${stage.status} | ${stage.pid ?? '—'} | ${stage.startedAt || '—'} | ${stage.endedAt || '—'} | ${stage.exitCode ?? '—'} | ${[stage.stdout, stage.stderr].filter(Boolean).join(', ') || '—'} |`), '',
-    `SVG 目测 ${state.manual.svg}。HTTP／浏览器与 VS Code 协议无需验收（not-required）。`];
-  if (state.error) lines.push('', `失败：${state.error}`);
+    '| 阶段 | 结果 | attempt | 耗时 ms | 退出码 / 信号 | 原始日志 |', '| --- | --- | --- | --- | --- | --- |',
+    ...[...stages.values()].map(stage => `| ${stage.id} | ${stage.status} | ${stage.attempt} | ${stage.durationMs ?? '—'} | ${stage.exitCode ?? '—'} / ${stage.signal || '—'} | ${[stage.stdout, stage.stderr].filter(Boolean).map(logPath).join(', ') || '—'} |`)];
+  if (state.error) {
+    const error = state.error.split(/\r?\n/, 1)[0].slice(0, 2000);
+    lines.push('', `失败：${error}${error !== state.error ? '…（完整错误见 JSON）' : ''}`);
+  }
+  if (state.invalidated?.length) lines.push('', `已失效阶段：${state.invalidated.join('、')}。`);
+  if (state.runId) lines.push('', `完整 JSON、输入、分析边界和对象差异：${logPath(path.join(maintenanceRoot(state.workspace), state.runId, 'state.json'))}（随执行日志 artifact 保存）。`);
   const cache = stages.get('extract')?.validation?.cache;
   if (cache) lines.push('', `编译报告：新编译 ${cache.compiled}，复用 ${cache.reused}，局部恢复包 ${cache.recovered}；Cargo ${cache.cargoMs} ms，证据绑定 ${cache.bindingMs} ms，总计 ${cache.totalMs} ms。`);
-  const purpose = stages.get('model')?.validation?.purpose;
-  if (purpose) lines.push('', `用途证据：局部证明 ${purpose.certified}，保守回退 ${purpose.fallback}，有效说明命中 ${purpose.annotationHits}，待补 ${purpose.pending}。`);
   const modelSummary = state.finalModel?.summary || state.preflightModel;
   if (modelSummary?.analysisGaps) {
     const gaps = modelSummary.analysisGaps;
     lines.push('', `分析边界：${gaps.length} 项。`);
     if (gaps.length) {
       const counts = modelSummary.analysisGapSummary?.byKind || Object.fromEntries([...Map.groupBy(gaps, gap => gap.kind)].map(([kind, entries]) => [kind, entries.length]));
-      lines.push(`分类：${Object.entries(counts).map(([kind, count]) => `${kind} ${count}`).join('；')}。`, '',
-        ...gaps.map(gap => `- ${gap.unit} · ${gap.kind} · ${gap.owner}：${gap.reason}${gap.sourceEntries.length ? '（' + gap.sourceEntries.map(source => `${source.path}:${source.line}`).join('，') + '）' : ''}`));
+      lines.push(`分类：${Object.entries(counts).sort(([a], [b]) => a.localeCompare(b)).map(([kind, count]) => `${kind} ${count}`).join('；')}。`);
     }
   }
   if (state.modelChanges?.available) {
     const changes = state.modelChanges;
-    lines.push('', `对象：新增 ${changes.objects.added.length}，退役 ${changes.objects.retired.length}，保留 ${changes.objects.preserved.length}。`,
-      `关系：新增 ${changes.relationships.added.length}，退役 ${changes.relationships.retired.length}，保留 ${changes.relationships.preserved.length}。`,
-      `注册变化 ${changes.registrations.length}；泛型变化 ${changes.generics.length}；投影变化 ${changes.projections.length}；源码变化 ${changes.sources.length}。`, '',
-      '详细身份及字段差异：', '', '```json', JSON.stringify(changes, null, 2), '```');
+    lines.push('', `对象：新增 ${changes.objects.added.length}，退役 ${changes.objects.retired.length}，保留 ${changes.objects.preserved.length}，变化 ${changes.objects.changed.length}。`,
+      `关系：新增 ${changes.relationships.added.length}，退役 ${changes.relationships.retired.length}，保留 ${changes.relationships.preserved.length}，变化 ${changes.relationships.changed.length}。`,
+      `注册变化 ${changes.registrations.length}；泛型变化 ${changes.generics.length}；投影变化 ${changes.projections.length}；源码变化 ${changes.sources.length}。`);
   }
   return lines.join('\n') + '\n';
 }

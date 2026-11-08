@@ -92,7 +92,7 @@ export function normalizeMermaidSvg(view, source, registry, { clusterLabelBounds
     if (!primitives.length || (container && primitives.length !== 1)) throw new Error(`Mermaid native outline missing: ${view.id}/${node.id}`);
     for (const primitive of primitives) primitive.setAttribute('data-shape-part', node.instance);
     const title = document.createElementNS(svg.namespaceURI, 'title');
-    title.textContent = [record.name || node.id, record.description].filter(Boolean).join(' · ');
+    title.textContent = record.name || node.id;
     element.insertBefore(title, element.firstChild);
     nodeElements.set(node.id, element);
   }

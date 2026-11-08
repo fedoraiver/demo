@@ -1,7 +1,7 @@
 export async function readArchitectureResource(resource, { baseUrl = globalThis.location?.href, fetch: fetcher = globalThis.fetch, crypto = globalThis.crypto, signal, json = false } = {}) {
   if (!resource || typeof resource.url !== 'string' || !/^[a-f0-9]{64}$/i.test(resource.sha256 || '')) throw new Error('Invalid architecture resource descriptor');
   const base = new URL(baseUrl), url = new URL(resource.url, base);
-  if (!['http:', 'https:'].includes(base.protocol) || url.origin !== base.origin || !['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new Error('Architecture resources require the local HTTP server');
+  if (!['http:', 'https:'].includes(base.protocol) || url.origin !== base.origin || !['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new Error('Architecture resources require a same-origin HTTP or HTTPS server');
   if (!crypto?.subtle || typeof fetcher !== 'function') throw new Error('Architecture resource loading is unavailable');
   if (resource.bytes !== undefined && (!Number.isSafeInteger(resource.bytes) || resource.bytes < 0)) throw new Error('Invalid architecture resource size');
   const response = await fetcher(url.href, { signal, cache: 'no-cache', credentials: 'same-origin', redirect: 'error' });

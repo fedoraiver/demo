@@ -103,6 +103,19 @@ test('legacy page and artifact basenames redirect to their new paths only when t
   }
 });
 
+test('preview can serve an independently packed site inside the workspace', async t => {
+  const data = fixture(t, { empty: true }), directory = path.join(data.root, 'tmp/ecs-architecture/pages');
+  for (const [name, text] of Object.entries(files)) {
+    const filename = path.join(directory, name);
+    fs.mkdirSync(path.dirname(filename), { recursive: true }); fs.writeFileSync(filename, text);
+  }
+  const output = [], preview = data.track(await runServeCli(['--directory', directory, '--port', '0'], { repository: data.root, output: text => output.push(text) }));
+  assert.equal((await request(preview, '/pages/ecs-architecture.html')).body, files['pages/ecs-architecture.html']);
+  assert.equal(output.length, 1);
+  await assert.rejects(data.start({ directory: path.dirname(data.root) }), /inside the workspace/);
+  await assert.rejects(runServeCli(['--directory', directory, '--directory', directory]), /Usage/);
+});
+
 test('preview refuses traversal before URL normalization and never exposes repository directories', async t => {
   const data = fixture(t), preview = await data.start();
   fs.writeFileSync(path.join(data.root, 'secret.txt'), 'repository secret');

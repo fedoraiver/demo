@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { digest } from './maintenance-inputs.mjs';
-import { replaceArtifactSync } from '../../../../docs/diagrams/src/architecture-artifact-writer.mjs';
+import { replaceArtifactSync } from './architecture-artifact-writer.mjs';
 
 export function atomicJson(filename, value) {
   const staged = `${filename}.${process.pid}.new`;

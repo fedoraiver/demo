@@ -3,7 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { availableParallelism } from 'node:os';
 import { atomicJson, contained, hash, imageValid, loadPlan, locked } from './maintenance-visual.mjs';
-import { validateArchitectureSvg } from '../../../../docs/diagrams/src/architecture-asset-loader.mjs';
+import { validateArchitectureSvg } from './architecture-asset-loader.mjs';
 import { importDiagramDependency } from './maintenance-paths.mjs';
 
 const overviewBounds = { width: 2400, height: 1800 };
@@ -48,7 +48,7 @@ export async function renderVisual({ planPath, from = 1, to, browser }) {
     }
     const jobs = visualRenderJobCount();
     const [{ default: puppeteer }, { DOMParser }] = await Promise.all([importDiagramDependency('puppeteer'), importDiagramDependency('@xmldom/xmldom')]);
-    const candidates = browser ? [browser] : [process.env.MERMAID_CHROMIUM_PATH, puppeteer.executablePath()].filter(Boolean);
+    const candidates = browser ? [browser] : [process.env.MERMAID_CHROMIUM_PATH, await puppeteer.executablePath()].filter(Boolean);
     const executablePath = candidates.find(filename => fs.existsSync(filename));
     if (!executablePath) throw new Error('A local compile Chromium executable is required; set MERMAID_CHROMIUM_PATH or browser');
     const pngDirectory = path.join(output, 'png');
@@ -94,7 +94,7 @@ export async function renderVisual({ planPath, from = 1, to, browser }) {
         }
         if (hash(fs.readFileSync(source)) !== item.sha256) throw new Error('SVG changed while rendering: ' + item.path);
         verifyFrozenManifest();
-        return { ...item, status: 'pending', nativeSize: size, overviewScale: scale, overview, nativeTiles, images, renderedAt: new Date().toISOString(), method: 'local Chromium static SVG compilation; pending child inspection' };
+        return { ...item, status: 'pending', nativeSize: size, overviewScale: scale, overview, nativeTiles, images, renderedAt: new Date().toISOString(), method: 'local Chromium static SVG compilation; pending inspection' };
       }
       let next = 0, failure, unflushed = 0;
       const orderedRecords = () => [...records.values()].sort((a, b) => a.sampleIndex - b.sampleIndex);

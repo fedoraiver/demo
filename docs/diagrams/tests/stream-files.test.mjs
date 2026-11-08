@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { repositoryRoot } from '../src/paths.mjs';
 import { hashFile, visitNdjson } from '../src/stream-files.mjs';
-import { fileSnapshot } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-inputs.mjs';
+import { fileSnapshot } from '../src/maintenance-inputs.mjs';
 
 function fixture(t, content) {
   const parent = path.join(repositoryRoot, 'tmp/ecs-architecture/stream-tests'); fs.mkdirSync(parent, { recursive: true });

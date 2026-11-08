@@ -5,424 +5,66 @@ use std::sync::atomic::{AtomicU64, Ordering};
 static NEXT: AtomicU64 = AtomicU64::new(0);
 
 #[test]
-fn purpose_universe_tracks_impls_and_requires_complete_coverage() {
-    let dependency = PurposeDependency {
-        trait_id: "trait".into(),
-        member_id: "member".into(),
-    };
-    let member = PurposeMember {
-        trait_id: "trait".into(),
-        member_id: "member".into(),
-        has_value: true,
-        evidence_hash: "default".into(),
-        ..Default::default()
-    };
-    let view = |crate_id: &str| PurposeCrateView {
-        crate_identity: crate_id.into(),
-        metadata_hash: "v1".into(),
-    };
-    let coverage = |crate_id: &str| PurposeCoverage {
-        crate_identity: crate_id.into(),
-        metadata_hash: "v1".into(),
-        complete: true,
-        traits: Some(vec!["trait".into()]),
-        ..Default::default()
-    };
-    let base = vec![
-        PurposeInventory {
-            crate_identity: "library".into(),
-            metadata_hash: "v1".into(),
-            required_crates: vec!["library".into(), "project".into()],
-            required_views: vec![view("library"), view("project")],
-            coverage: vec![coverage("library")],
-            traits: vec![PurposeTrait {
-                owner_crate: "library".into(),
-                metadata_hash: "v1".into(),
-                trait_id: "trait".into(),
-                complete: true,
-                members: vec![member.clone()],
-                ..Default::default()
-            }],
-            ..Default::default()
-        },
-        PurposeInventory {
-            crate_identity: "project".into(),
-            metadata_hash: "v1".into(),
-            required_views: vec![view("project")],
-            coverage: vec![coverage("project")],
-            ..Default::default()
-        },
-    ];
-    let before = purpose_dependency_hash(&base, &dependency).unwrap();
-    let mut with_impl = base.clone();
-    with_impl[1].implementations.push(PurposeImplementation {
-        owner_crate: "project".into(),
-        metadata_hash: "v1".into(),
-        trait_id: "trait".into(),
-        implementation_id: "impl".into(),
-        complete: true,
-        header_hash: "header".into(),
-        members: vec![PurposeMember {
-            implementation_member_id: Some("impl-member".into()),
-            evidence_hash: "body".into(),
-            ..member.clone()
-        }],
-        ..Default::default()
-    });
-    let after = purpose_dependency_hash(&with_impl, &dependency).unwrap();
-    assert_ne!(before, after, "Adding an impl changes the trait universe");
-    let mut metadata_only = with_impl.clone();
-    metadata_only[0].required_views[1].metadata_hash = "v2".into();
-    metadata_only[1].metadata_hash = "v2".into();
-    metadata_only[1].required_views[0].metadata_hash = "v2".into();
-    metadata_only[1].coverage[0].metadata_hash = "v2".into();
-    metadata_only[1].implementations[0].metadata_hash = "v2".into();
-    assert_eq!(
-        after,
-        purpose_dependency_hash(&metadata_only, &dependency).unwrap(),
-        "Native metadata gates matching views but must not enter portable purpose evidence"
-    );
-    let mut omitted = with_impl.clone();
-    omitted[0].coverage.push(coverage("project"));
-    assert!(
-        purpose_dependency_hash(&omitted, &dependency).is_none(),
-        "Two complete reports for one view cannot disagree on an empty impl set"
-    );
-    assert!(
-        purpose_dependency_proof(&omitted, &dependency)
-            .unwrap_err()
-            .starts_with("conflicting-implementation-set:")
-    );
-    let mut changed_header = with_impl.clone();
-    changed_header[1].implementations[0].header_hash = "changed-predicates".into();
-    assert_ne!(
-        after,
-        purpose_dependency_hash(&changed_header, &dependency).unwrap()
-    );
-    let mut conflicting = with_impl.clone();
-    let mut conflict = conflicting[1].implementations[0].clone();
-    conflict.header_hash = "conflict".into();
-    conflicting[0].implementations.push(conflict);
-    conflicting[0].coverage.push(coverage("project"));
-    assert!(purpose_dependency_hash(&conflicting, &dependency).is_none());
-    let mut unproven_impl = with_impl.clone();
-    unproven_impl[1].implementations[0].complete = false;
-    assert!(purpose_dependency_hash(&unproven_impl, &dependency).is_none());
-    with_impl[1].implementations[0].members[0].evidence_hash = "changed-body".into();
-    assert_ne!(
-        after,
-        purpose_dependency_hash(&with_impl, &dependency).unwrap()
-    );
-    with_impl[1].implementations[0].members[0].unresolved_behavior = true;
-    assert!(purpose_dependency_hash(&with_impl, &dependency).is_none());
-    assert!(
-        purpose_dependency_proof(&with_impl, &dependency)
-            .unwrap_err()
-            .starts_with("implementation-helper:")
-    );
-    let mut incomplete = base.clone();
-    incomplete[1].coverage[0].complete = false;
-    assert!(purpose_dependency_hash(&incomplete, &dependency).is_none());
-    assert!(
-        purpose_dependency_proof(&incomplete, &dependency)
-            .unwrap_err()
-            .starts_with("incomplete-certificate:")
-    );
-    incomplete = base.clone();
-    incomplete[1].coverage[0].traits = Some(vec![]);
-    assert!(purpose_dependency_hash(&incomplete, &dependency).is_none());
-    assert!(
-        purpose_dependency_proof(&incomplete, &dependency)
-            .unwrap_err()
-            .starts_with("missing-certificate:")
-    );
-    incomplete[0].coverage.push(coverage("project"));
-    assert_eq!(
-        before,
-        purpose_dependency_hash(&incomplete, &dependency).unwrap(),
-        "A matching metadata view may provide a scoped certificate"
-    );
-    incomplete = base.clone();
-    incomplete[0].required_crates.push("missing".into());
-    assert!(purpose_dependency_hash(&incomplete, &dependency).is_none());
-    assert!(
-        purpose_dependency_proof(&incomplete, &dependency)
-            .unwrap_err()
-            .starts_with("missing-view:")
-    );
-    incomplete = base.clone();
-    incomplete[0].traits[0].complete = false;
-    incomplete[0].traits[0].reason = "auto trait 的候选包含未建模的内建实现".into();
-    assert!(purpose_dependency_hash(&incomplete, &dependency).is_none());
-    let unsupported = purpose_dependency_proof(&incomplete, &dependency).unwrap_err();
-    assert!(unsupported.starts_with("unsupported-trait:") && unsupported.contains("内建实现"));
-    incomplete = base.clone();
-    incomplete[0].traits[0].members[0].unresolved_behavior = true;
-    assert!(
-        purpose_dependency_proof(&incomplete, &dependency)
-            .unwrap_err()
-            .starts_with("default-helper:")
-    );
-    assert!(
-        purpose_dependency_proof(
-            &base,
-            &PurposeDependency {
-                member_id: "unknown".into(),
-                ..dependency.clone()
-            }
-        )
-        .unwrap_err()
-        .starts_with("unknown-member:")
-    );
-    incomplete = base;
-    incomplete[0].traits[0].members[0].has_value = false;
-    incomplete[1].implementations.push(PurposeImplementation {
-        owner_crate: "project".into(),
-        metadata_hash: "v1".into(),
-        trait_id: "trait".into(),
-        implementation_id: "impl".into(),
-        complete: true,
-        header_hash: "header".into(),
-        ..Default::default()
-    });
-    assert!(purpose_dependency_hash(&incomplete, &dependency).is_none());
-    assert!(
-        purpose_dependency_proof(&incomplete, &dependency)
-            .unwrap_err()
-            .starts_with("missing-default:")
-    );
-}
-
-#[test]
-fn purpose_certificates_cannot_fill_a_missing_or_conflicting_native_view() {
-    let dependency = PurposeDependency {
-        trait_id: "trait".into(),
-        member_id: "member".into(),
-    };
-    let view = |metadata: &str| PurposeCrateView {
-        crate_identity: "project".into(),
-        metadata_hash: metadata.into(),
-    };
-    let inventory = |metadata: &str| PurposeInventory {
-        crate_identity: "project".into(),
-        metadata_hash: metadata.into(),
-        required_crates: vec!["project".into()],
-        required_views: vec![view(metadata)],
-        coverage: vec![PurposeCoverage {
-            crate_identity: "project".into(),
-            metadata_hash: metadata.into(),
-            complete: true,
-            ..Default::default()
-        }],
-        traits: vec![PurposeTrait {
-            owner_crate: "project".into(),
-            metadata_hash: metadata.into(),
-            trait_id: "trait".into(),
-            complete: true,
-            members: vec![PurposeMember {
-                trait_id: "trait".into(),
-                member_id: "member".into(),
-                has_value: true,
-                evidence_hash: "default".into(),
-                ..Default::default()
-            }],
-            ..Default::default()
-        }],
-        ..Default::default()
-    };
-    let first = inventory("v1");
-    let baseline = purpose_dependency_hash(&[first.clone()], &dependency).unwrap();
-    let second = inventory("v2");
-    assert_eq!(
-        baseline,
-        purpose_dependency_hash(&[first.clone(), second.clone()], &dependency).unwrap(),
-        "Equivalent complete views have the same portable purpose evidence"
-    );
-
-    let mut conflicting = second.clone();
-    conflicting.implementations.push(PurposeImplementation {
-        owner_crate: "project".into(),
-        metadata_hash: "v2".into(),
-        trait_id: "trait".into(),
-        implementation_id: "impl".into(),
-        header_hash: "header".into(),
-        complete: true,
-        ..Default::default()
-    });
-    assert!(
-        purpose_dependency_hash(&[first.clone(), conflicting], &dependency).is_none(),
-        "An empty complete impl set cannot be unioned with a different native view"
-    );
-
-    let mut missing = first.clone();
-    missing.coverage[0].traits = Some(vec![]);
-    missing.traits.clear();
-    assert!(
-        purpose_dependency_hash(&[missing.clone(), second.clone()], &dependency).is_none(),
-        "A scoped certificate for v2 cannot certify the uncovered v1 view"
-    );
-    missing.required_views.push(view("v2"));
-    missing.coverage.push(second.coverage[0].clone());
-    missing.traits.push(second.traits[0].clone());
-    assert!(
-        purpose_dependency_hash(&[missing, second], &dependency).is_none(),
-        "Importing a covered view does not cover another required view"
-    );
-
-    let mut unbound_certificate = first.clone();
-    unbound_certificate.coverage.push(PurposeCoverage {
-        crate_identity: "unloaded".into(),
-        metadata_hash: "v1".into(),
-        complete: true,
-        ..Default::default()
-    });
-    assert!(
-        purpose_dependency_hash(&[unbound_certificate], &dependency).is_none(),
-        "A certificate must belong to a native view actually loaded by its producer"
-    );
-}
-
-#[test]
-fn certified_dispatch_reuses_unrelated_unit_and_invalidates_for_new_impl() {
-    let fixture = Fixture::new(true);
-    let mut facts = fixture.read("facts.json");
-    let dependency = PurposeDependency {
-        trait_id: "trait".into(),
-        member_id: "member".into(),
-    };
-    let member = PurposeMember {
-        trait_id: "trait".into(),
-        member_id: "member".into(),
-        has_value: true,
-        evidence_hash: "default".into(),
-        ..Default::default()
-    };
-    facts["units"][0]["behaviorHash"] = json!("unit-before");
-    facts["units"][0]["declarations"][0]["purposeDependencies"] = json!([dependency]);
-    facts["units"][0]["calls"] = json!([CallFact {
-        caller: "callable".into(),
-        callee: None,
-        declaration: Some("member".into()),
-        unresolved_reason: Some("unresolved-call".into()),
-        ..Default::default()
-    }]);
-    facts["units"][0]["purposeInventory"] = json!(PurposeInventory {
-        crate_identity: "project".into(),
-        metadata_hash: "v1".into(),
-        required_crates: vec!["project".into()],
-        required_views: vec![PurposeCrateView {
-            crate_identity: "project".into(),
-            metadata_hash: "v1".into()
-        }],
-        coverage: vec![PurposeCoverage {
-            crate_identity: "project".into(),
-            metadata_hash: "v1".into(),
-            complete: true,
-            ..Default::default()
-        }],
-        traits: vec![PurposeTrait {
-            owner_crate: "project".into(),
-            metadata_hash: "v1".into(),
-            trait_id: "trait".into(),
-            complete: true,
-            members: vec![member.clone()],
-            ..Default::default()
-        }],
-        ..Default::default()
-    });
-    fixture.write("facts.json", &facts);
-    assert!(fixture.build().is_err());
-    let pending = fixture.read("pending-descriptions.json");
-    let summary = fixture.read("purpose-summary.json");
-    assert_eq!(summary["schemaVersion"], 1);
-    assert!(summary["pending"].as_u64().unwrap() > 0);
-    assert_eq!(summary["certified"], 1);
-    assert_eq!(summary["fallback"], 0);
-    assert!(summary["fallbacks"].as_array().unwrap().is_empty());
-    let mut annotations = fixture.read("annotations.json");
-    let purpose = pending
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|entry| entry["key"] == "demo::sample::system")
-        .unwrap();
-    annotations["items"]["demo::sample::system"]["evidenceHash"] = purpose["evidenceHash"].clone();
-    fixture.write("annotations.json", &annotations);
+fn model_builds_without_language_annotations_and_keeps_source_evidence() {
+    let fixture = Fixture::new();
     fixture.build().unwrap();
-
-    assert!(
-        fixture.read("purpose-summary.json")["annotationHits"]
-            .as_u64()
-            .unwrap()
-            > 0
-    );
-
-    facts["units"][0]["calls"][0]["unresolvedReason"] = json!("dynamic-call");
-    fixture.write("facts.json", &facts);
-    assert!(
-        fixture.build().is_err(),
-        "A certified member identity must never hide an explicitly dynamic call"
-    );
-    let dynamic = fixture.read("purpose-summary.json");
-    assert_eq!(dynamic["fallback"], 1);
-    assert!(
-        dynamic["fallbacks"][0]["reasons"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .any(|reason| reason.as_str().unwrap().starts_with("dynamic-call:"))
-    );
-    facts["units"][0]["calls"][0]["unresolvedReason"] = json!("unresolved-call");
-    facts["units"][0]["behaviorHash"] = json!("unrelated-project-change");
-    fixture.write("facts.json", &facts);
-    fixture
-        .build()
-        .expect("Unrelated owning-unit behavior must not invalidate a certified trait dependency");
-    facts["units"][0]["purposeInventory"]["implementations"] = json!([PurposeImplementation {
-        owner_crate: "project".into(),
-        metadata_hash: "v1".into(),
-        trait_id: "trait".into(),
-        implementation_id: "new-impl".into(),
-        complete: true,
-        header_hash: "header".into(),
-        members: vec![PurposeMember {
-            implementation_member_id: Some("impl-member".into()),
-            evidence_hash: "implementation".into(),
-            ..member
-        }],
-        ..Default::default()
-    }]);
-    fixture.write("facts.json", &facts);
-    assert!(
-        fixture.build().is_err(),
-        "A new impl must invalidate the purpose"
-    );
-    facts["units"][0]["purposeInventory"]["implementations"][0]["complete"] = json!(false);
-    facts["units"][0]["purposeInventory"]["implementations"][0]["reason"] =
-        json!("specialization 成员没有完整覆盖");
-    fixture.write("facts.json", &facts);
-    assert!(fixture.build().is_err());
-    let summary = fixture.read("purpose-summary.json");
-    assert_eq!(summary["fallback"], 1);
-    assert!(
-        summary["fallbacks"][0]["reasons"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .any(|reason| {
-                let reason = reason.as_str().unwrap();
-                reason.starts_with("incomplete-implementation:")
-                    && reason.contains("specialization")
-            }),
-        "The production dependency cache retains the compiler's concrete fallback reason"
-    );
+    let model = fixture.read("model.json");
+    assert_eq!(model["schemaVersion"], 2);
+    assert_eq!(model["callGraph"]["schemaVersion"], 2);
+    assert!(model.get("annotationsRequired").is_none());
+    for object in model["objects"].as_array().unwrap() {
+        assert!(object.get("description").is_none());
+        assert!(object.get("display_summary").is_none());
+    }
+    assert!(!model["sourceFiles"].as_array().unwrap().is_empty());
+    for filename in [
+        "annotations.json",
+        "pending-descriptions.json",
+        "purpose-summary.json",
+    ] {
+        assert!(!fixture.root.join(filename).exists());
+    }
 }
 
 #[test]
-fn old_compiler_fact_units_are_not_treated_as_certified() {
-    let fixture = Fixture::new(true);
+fn owning_structure_comparison_normalizes_records_and_preserves_distinct_instances() {
+    let fixture = Fixture::new();
+    let mut first: UnitFacts =
+        serde_json::from_value(fixture.read("facts.json")["units"][0].clone()).unwrap();
+    let mut access = first.accesses[0].clone();
+    access.parameter = "another-query".into();
+    first.accesses.push(access);
+    first.types[0].roles.push("QueryData".into());
+    first.calls.push(CallFact {
+        caller: "callable".into(),
+        callee: Some("helper".into()),
+        ..Default::default()
+    });
+    let mut second = first.clone();
+    second.accesses.reverse();
+    second.accesses.push(second.accesses[0].clone());
+    second.types[0].roles.reverse();
+    second.types[0].display = "Marker".into();
+    second.calls.push(second.calls[0].clone());
+    assert_eq!(owning_structures(&first), owning_structures(&second));
+    let mut generic = second.callables[0].clone();
+    generic.id = "another-generic-instance".into();
+    second.callables.push(generic);
+    let original = owning_structures(&first);
+    let expanded = owning_structures(&second);
+    assert!(
+        original
+            .iter()
+            .all(|(id, structure)| expanded.get(id) == Some(structure))
+    );
+    assert_eq!(expanded.len(), original.len() + 1);
+}
+
+#[test]
+fn old_compiler_fact_units_are_rejected() {
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
-    facts["units"][0]["schemaVersion"] = json!(1);
+    facts["units"][0]["schemaVersion"] = json!(2);
     fixture.write("facts.json", &facts);
     let error = fixture.build().unwrap_err().to_string();
     assert!(
@@ -433,9 +75,9 @@ fn old_compiler_fact_units_are_not_treated_as_certified() {
 
 #[test]
 fn old_compiler_fact_bundle_is_rejected() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
-    facts["schemaVersion"] = json!(1);
+    facts["schemaVersion"] = json!(2);
     fixture.write("facts.json", &facts);
     let error = fixture.build().unwrap_err().to_string();
     assert!(error.contains("Unsupported analysis schema"), "{error}");
@@ -443,7 +85,7 @@ fn old_compiler_fact_bundle_is_rejected() {
 
 #[test]
 fn entity_names_preserve_values_expressions_candidates_and_legacy_templates() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let source: SourceEvidence =
         serde_json::from_value(facts["units"][0]["accesses"][0]["source"].clone()).unwrap();
@@ -487,7 +129,7 @@ fn entity_names_preserve_values_expressions_candidates_and_legacy_templates() {
             ],
         ),
     ];
-    let mut annotations = fixture.read("annotations.json");
+
     let entities: Vec<_> = cases
         .into_iter()
         .map(|(id, name_candidates)| EntityTemplate {
@@ -498,16 +140,14 @@ fn entity_names_preserve_values_expressions_candidates_and_legacy_templates() {
             ..Default::default()
         })
         .collect();
-    for entity in &entities {
-        annotations["items"][format!("entity:{}", entity.id)] = json!({"description":"在此创建点装配独立实体。","summary":"装配独立实体。","evidenceHash":entity_purpose_hash(entity, "body")});
-    }
+
     facts["units"][0]["entities"] = json!(entities);
     // 旧事实没有新增字段时继续反序列化，不要求重新提取才能显示明确的名称缺口。
     facts["units"][0]["entities"][5]
         .as_object_mut()
         .unwrap()
         .remove("nameCandidates");
-    fixture.write("annotations.json", &annotations);
+
     fixture.write("facts.json", &facts);
     fixture.build().unwrap();
     let model = fixture.read("model.json");
@@ -551,8 +191,7 @@ fn entity_names_preserve_values_expressions_candidates_and_legacy_templates() {
     assert_eq!(entity("literal")["name"], entity("same-name")["name"]);
     assert_ne!(entity("literal")["id"], entity("same-name")["id"]);
     assert_eq!(entity("literal")["id"], identifier("entity", "literal"));
-    assert_eq!(entity("literal")["description"], "在此创建点装配独立实体。");
-    assert_eq!(entity("literal")["display_summary"], "装配独立实体。");
+
     let proof = &entity("dynamic")["nameCandidates"][0];
     assert_eq!(proof["expression"], "  format!(\"箱体 {}\", index)  ");
     assert!(proof["value"].is_null());
@@ -607,7 +246,7 @@ fn entity_names_preserve_values_expressions_candidates_and_legacy_templates() {
 
 #[test]
 fn entity_name_locations_share_only_their_own_complete_assembly_span() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let contents = "fn system() {}\r\nstruct Marker;\r\n";
     fs::write(fixture.root.join("src/main.rs"), contents).unwrap();
     fs::write(fixture.root.join("src/helper.rs"), contents).unwrap();
@@ -749,7 +388,7 @@ fn entity_name_locations_share_only_their_own_complete_assembly_span() {
             false,
         ),
     ];
-    let mut annotations = fixture.read("annotations.json");
+
     let mut entities: Vec<_> = cases
         .iter()
         .map(|(id, assembly, expression, _)| EntityTemplate {
@@ -781,11 +420,9 @@ fn entity_name_locations_share_only_their_own_complete_assembly_span() {
         entity.alternative_context = vec!["name-branches".into()];
         entity.possible = true;
     }
-    for entity in &entities {
-        annotations["items"][format!("entity:{}", entity.id)] = json!({"description":"保留该模板的名称与装配来源。","summary":"保留装配来源。","evidenceHash":entity_purpose_hash(entity, "body")});
-    }
+
     facts["units"][0]["entities"] = json!(entities);
-    fixture.write("annotations.json", &annotations);
+
     fixture.write("facts.json", &facts);
     fixture.build().unwrap();
     let model = fixture.read("model.json");
@@ -838,257 +475,12 @@ fn entity_name_locations_share_only_their_own_complete_assembly_span() {
     );
 }
 
-#[test]
-fn entity_name_metadata_spans_do_not_enter_purpose_evidence() {
-    let mut entity = EntityTemplate {
-        id: "named-template".into(),
-        creator: "callable".into(),
-        name_candidates: vec![EntityNameCandidate {
-            value: Some("Player".into()),
-            expression: Some(SourceEvidence {
-                path: "src/main.rs".into(),
-                line: 1,
-                snippet: "\"Player\"".into(),
-                ..Default::default()
-            }),
-            ..Default::default()
-        }],
-        ..Default::default()
-    };
-    let before = entity_purpose_hash(&entity, "creator-and-helper-behavior");
-    let expression = entity.name_candidates[0].expression.as_mut().unwrap();
-    expression.line = 40;
-    expression.end_line = 40;
-    expression.sha256 = "moved-source-hash".into();
-    expression.expansions.push(Expansion {
-        name: "bsn".into(),
-        path: "src/main.rs".into(),
-        line: 39,
-        column: 3,
-    });
-    assert_eq!(
-        before,
-        entity_purpose_hash(&entity, "creator-and-helper-behavior")
-    );
-    // 初始化语义由 creator/helper 行为覆盖；显示候选不重复定义用途算法。
-    entity.name_candidates.clear();
-    assert_eq!(
-        before,
-        entity_purpose_hash(&entity, "creator-and-helper-behavior")
-    );
-    assert_ne!(
-        before,
-        entity_purpose_hash(&entity, "changed-creator-behavior")
-    );
-}
-
-#[test]
-fn entity_purpose_reuses_semantics_after_source_only_changes() {
-    let fixture = Fixture::new(true);
-    let mut facts = fixture.read("facts.json");
-    let mut entity = EntityTemplate {
-        id: "stable-template".into(),
-        creator: "callable".into(),
-        source: serde_json::from_value(facts["units"][0]["accesses"][0]["source"].clone()).unwrap(),
-        components: vec!["marker-type".into()],
-        ..Default::default()
-    };
-    facts["units"][0]["entities"] = json!([entity]);
-    fixture.write("facts.json", &facts);
-    assert!(fixture.build().is_err());
-    let pending = fixture.read("pending-descriptions.json");
-    let purpose = pending
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|entry| entry["kind"] == "Entity")
-        .unwrap();
-    let mut annotations = fixture.read("annotations.json");
-    annotations["items"]["entity:stable-template"] = json!({"description":"在该创建点装配需要处理的标记实体。","summary":"装配标记实体。","evidenceHash":purpose["evidenceHash"]});
-    fixture.write("annotations.json", &annotations);
-    fixture.build().unwrap();
-
-    // 位置和完整文件校验随输入更新；声明、装配与用途语义保持不变。
-    let contents = "\n\n\nfn system() {}\nstruct Marker;\nconst UNRELATED: u32 = 10;\n";
-    fs::write(fixture.root.join("src/main.rs"), contents).unwrap();
-    let hash = digest(contents);
-    for declaration in facts["units"][0]["declarations"].as_array_mut().unwrap() {
-        declaration["source"]["sha256"] = json!(hash);
-        declaration["source"]["line"] = json!(4);
-        declaration["source"]["endLine"] = json!(4);
-    }
-    facts["units"][0]["sourceFiles"][0]["sha256"] = json!(hash);
-    facts["units"][0]["accesses"][0]["source"]["sha256"] = json!(hash);
-    let source = entity.source.as_mut().unwrap();
-    source.sha256 = hash;
-    source.line += 3;
-    source.end_line += 3;
-    facts["units"][0]["entities"] = json!([entity]);
-    fixture.write("facts.json", &facts);
-    let mut runtime = fixture.read("runtime.json");
-    runtime["sourceFingerprint"] = json!(source_fingerprint(&fixture.root).unwrap());
-    fixture.replace_runtime(&runtime);
-    let mut manifest = fixture.read("debugdump/manifest.json");
-    manifest["sourceFingerprint"] = runtime["sourceFingerprint"].clone();
-    fixture.write("debugdump/manifest.json", &manifest);
-    fixture
-        .build()
-        .expect("Source-only movement must reuse the entity purpose");
-
-    let mut facts = fixture.read("facts.json");
-    facts["units"][0]["entities"][0]["components"] = json!([]);
-    fixture.write("facts.json", &facts);
-    assert!(
-        fixture.build().is_err(),
-        "An assembly change must invalidate the purpose"
-    );
-}
-
-#[test]
-fn entity_purpose_tracks_creator_and_reachable_helper_behavior() {
-    let fixture = Fixture::new(true);
-    let mut facts = fixture.read("facts.json");
-    facts["units"][0]["entities"] = json!([EntityTemplate {
-        id: "semantic-template".into(),
-        creator: "callable".into(),
-        source: serde_json::from_value(facts["units"][0]["accesses"][0]["source"].clone()).unwrap(),
-        ..Default::default()
-    }]);
-    let mut helper = facts["units"][0]["declarations"][0].clone();
-    helper["id"] = json!("helper-definition");
-    helper["name"] = json!("helper");
-    helper["fullName"] = json!("demo::sample::helper");
-    helper["evidenceHash"] = json!("helper-initializer-before");
-    facts["units"][0]["declarations"]
-        .as_array_mut()
-        .unwrap()
-        .push(helper);
-    let mut callable = facts["units"][0]["callables"][0].clone();
-    callable["id"] = json!("helper-callable");
-    callable["declaration"] = json!("helper-definition");
-    callable["display"] = json!("demo::sample::helper");
-    callable["systemTypeIds"] = json!([]);
-    facts["units"][0]["callables"]
-        .as_array_mut()
-        .unwrap()
-        .push(callable);
-    facts["units"][0]["calls"] = json!([CallFact {
-        caller: "callable".into(),
-        callee: Some("helper-callable".into()),
-        declaration: Some("helper-definition".into()),
-        ..Default::default()
-    }]);
-    fixture.write("facts.json", &facts);
-    assert!(fixture.build().is_err());
-    let mut annotations = fixture.read("annotations.json");
-    for purpose in fixture
-        .read("pending-descriptions.json")
-        .as_array()
-        .unwrap()
-    {
-        annotations["items"][purpose["key"].as_str().unwrap()] = json!({"description":"创建该模板所需的命名和初始化数据。","summary":"创建命名与初始化数据。","evidenceHash":purpose["evidenceHash"]});
-    }
-    fixture.write("annotations.json", &annotations);
-    fixture.build().unwrap();
-    for declaration in [0, 2] {
-        let mut changed = facts.clone();
-        changed["units"][0]["declarations"][declaration]["evidenceHash"] =
-            json!("name-or-initializer-after");
-        fixture.write("facts.json", &changed);
-        assert!(fixture.build().is_err());
-        assert!(
-            fixture
-                .read("pending-descriptions.json")
-                .as_array()
-                .unwrap()
-                .iter()
-                .any(|purpose| purpose["key"] == "entity:semantic-template")
-        );
-    }
-}
-
-#[test]
-fn unresolved_uses_require_complete_portable_context_and_track_other_owning_units() {
-    let fixture = Fixture::new(true);
-    let mut facts = fixture.read("facts.json");
-    facts["units"][0]["behaviorHash"] = json!("caller-hir");
-    facts["units"][0]["declarations"][0]["unresolvedBehavior"] = json!(true);
-    let dependency = UnitFacts {
-        schema_version: FACT_SCHEMA_VERSION,
-        crate_name: "implementation".into(),
-        crate_identity: "implementation-unit".into(),
-        behavior_hash: "impl-before".into(),
-        source_files: serde_json::from_value(facts["units"][0]["sourceFiles"].clone()).unwrap(),
-        ..Default::default()
-    };
-    facts["units"]
-        .as_array_mut()
-        .unwrap()
-        .push(json!(dependency));
-    fixture.write("facts.json", &facts);
-    assert!(fixture.build().is_err());
-    let pending = fixture.read("pending-descriptions.json");
-    let mut annotations = fixture.read("annotations.json");
-    annotations["items"]["demo::sample::system"]["evidenceHash"] =
-        pending[0]["evidenceHash"].clone();
-    fixture.write("annotations.json", &annotations);
-    fixture.build().unwrap();
-
-    let fallback_summary = fixture.read("purpose-summary.json");
-    assert_eq!(fallback_summary["fallback"], 1);
-    let fallbacks = fallback_summary["fallbacks"].as_array().unwrap();
-    assert_eq!(
-        fallbacks.len(),
-        1,
-        "Repeated registrations retain one declaration-level fallback record"
-    );
-    assert_eq!(fallbacks[0]["declaration"], "function");
-    assert_eq!(fallbacks[0]["name"], "demo::sample::system");
-    assert!(
-        fallbacks[0]["reasons"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .any(|reason| reason.as_str().unwrap().starts_with("compiler-unresolved:"))
-    );
-
-    let mut changed = facts.clone();
-    changed["units"][1]["behaviorHash"] = json!("impl-after");
-    fixture.write("facts.json", &changed);
-    assert!(
-        fixture.build().is_err(),
-        "An owning impl change must invalidate unresolved callers"
-    );
-
-    changed["units"][1]["behaviorHash"] = json!("");
-    fixture.write("facts.json", &changed);
-    let error = fixture.build().unwrap_err().to_string();
-    assert!(error.contains("binding is incomplete"), "{error}");
-    assert!(
-        fixture.read("model.json")["bindingErrors"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .any(|error| error
-                .as_str()
-                .unwrap()
-                .contains("Portable owning-unit behavior evidence is incomplete"))
-    );
-
-    // 普通声明不因其他编译单元的无关变化扩大失效范围。
-    changed["units"][0]["declarations"][0]["unresolvedBehavior"] = json!(false);
-    annotations["items"]["demo::sample::system"]["evidenceHash"] = json!("body");
-    fixture.write("annotations.json", &annotations);
-    fixture.write("facts.json", &changed);
-    fixture.build().unwrap();
-}
-
 struct Fixture {
     root: PathBuf,
 }
 
 impl Fixture {
-    fn new(with_description: bool) -> Self {
+    fn new() -> Self {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../../tmp/ecs-architecture/model-tests")
             .join(format!(
@@ -1125,22 +517,6 @@ impl Fixture {
             schema_version: FACT_SCHEMA_VERSION,
             crate_name: "demo".into(),
             crate_identity: "compiled-crate".into(),
-            purpose_inventory: PurposeInventory {
-                crate_identity: "model-fixture".into(),
-                metadata_hash: "fixture-view".into(),
-                required_crates: vec!["model-fixture".into()],
-                required_views: vec![PurposeCrateView {
-                    crate_identity: "model-fixture".into(),
-                    metadata_hash: "fixture-view".into(),
-                }],
-                coverage: vec![PurposeCoverage {
-                    crate_identity: "model-fixture".into(),
-                    metadata_hash: "fixture-view".into(),
-                    complete: true,
-                    ..Default::default()
-                }],
-                ..Default::default()
-            },
             source_files: vec![SourceFile {
                 path: source.path.clone(),
                 sha256: source.sha256.clone(),
@@ -1154,7 +530,7 @@ impl Fixture {
                     crate_name: "demo".into(),
                     kind: "Fn".into(),
                     source: Some(source.clone()),
-                    evidence_hash: "body".into(),
+
                     ..Default::default()
                 },
                 Declaration {
@@ -1165,7 +541,7 @@ impl Fixture {
                     crate_name: "demo".into(),
                     kind: "Struct".into(),
                     source: Some(source.clone()),
-                    docs: "标识需要处理的实体。".into(),
+
                     ..Default::default()
                 },
             ],
@@ -1180,7 +556,7 @@ impl Fixture {
             callables: vec![Callable {
                 id: "callable".into(),
                 declaration: "function".into(),
-                body_analyzed: true,
+
                 display: "demo::sample::system".into(),
                 system_type_ids: vec!["system-runtime".into()],
                 ..Default::default()
@@ -1228,15 +604,6 @@ impl Fixture {
         fixture.write("runtime.json", &runtime);
         fixture.write("debugdump/manifest.json",&json!({"schemaVersion":1,"sourceFingerprint":runtime.source_fingerprint,"schedules":runtime.schedules.iter().map(|schedule|json!({"id":schedule.id,"app":schedule.app,"label":schedule.label,"filename":schedule.dot_filename,"sha256":schedule.dot_sha256})).collect::<Vec<_>>()}));
         fixture.write("facts.json", &json!({"schemaVersion":FACT_SCHEMA_VERSION,"compiler":"fixed-compiler","configuration":"same-build","workspace":fixture.root,"packages":[],"units":[unit],"runtimeSha256":digest(fs::read(fixture.root.join("runtime.json")).unwrap())}));
-        let items = if with_description {
-            json!({"demo::sample::system":{"description":"处理带标记的实体。","summary":"处理实体。","evidenceHash":"body"}})
-        } else {
-            json!({})
-        };
-        fixture.write(
-            "annotations.json",
-            &json!({"schemaVersion":1,"items":items}),
-        );
         fixture
     }
     fn write(&self, name: &str, value: &impl serde::Serialize) {
@@ -1253,7 +620,6 @@ impl Fixture {
         build(
             &self.root.join("facts.json"),
             &self.root.join("runtime.json"),
-            &self.root.join("annotations.json"),
             &self.root.join("model.json"),
         )
     }
@@ -1267,7 +633,7 @@ impl Fixture {
 
 #[test]
 fn call_graph_sidecar_preserves_recursive_call_proofs_and_deduplicates_unit_copies() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let source = facts["units"][0]["declarations"][0]["source"].clone();
     let call = json!({"caller":"callable","callee":"callable","declaration":"function","source":source,"deferred":true,"conditions":[source]});
@@ -1298,11 +664,9 @@ fn call_graph_sidecar_preserves_recursive_call_proofs_and_deduplicates_unit_copi
 
 #[test]
 fn call_graph_and_representative_paths_are_stable_across_unit_and_call_order() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
-    unit.behavior_hash = "stable-call-fixture".into();
-    unit.declarations[0].docs = "通过辅助调用处理实体，并保留调用条件与代表路径。".into();
     let source = unit.declarations[0].source.clone().unwrap();
     let call = |caller: &str, callee: &str, column: usize| CallFact {
         caller: caller.into(),
@@ -1363,6 +727,10 @@ fn call_graph_and_representative_paths_are_stable_across_unit_and_call_order() {
     second.crate_identity = "second-compiled-unit".into();
     second.accesses.clear();
     second.operations.clear();
+    // 第二单元只有导入的调用观测，不声称拥有已删去访问和操作的完整声明。
+    for declaration in &mut second.declarations {
+        declaration.local = false;
+    }
     let mut previous = None;
     for (reverse_units, reverse_calls) in
         [(false, false), (true, false), (false, true), (true, true)]
@@ -1489,7 +857,7 @@ fn call_graph_and_representative_paths_are_stable_across_unit_and_call_order() {
 
 #[test]
 fn repeated_registration_retains_instances_and_access_capability() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     fixture.build().unwrap();
     let model = fixture.read("model.json");
     let systems: Vec<_> = model["objects"]
@@ -1518,7 +886,7 @@ fn repeated_registration_retains_instances_and_access_capability() {
 #[test]
 fn system_registration_sources_preserve_all_callable_sites_without_guessing_instances() {
     for positions in [vec![], vec![(1u64, 3u64)], vec![(1, 3), (2, 5)]] {
-        let fixture = Fixture::new(true);
+        let fixture = Fixture::new();
         let mut facts = fixture.read("facts.json");
         let source = facts["units"][0]["declarations"][0]["source"].clone();
         let source_sha = source["sha256"].clone();
@@ -1592,7 +960,7 @@ fn system_registration_sources_preserve_all_callable_sites_without_guessing_inst
 #[test]
 fn type_identity_preserves_native_declaration_across_display_and_storage_projections() {
     for storage in ["Component", "NonSend"] {
-        let fixture = Fixture::new(true);
+        let fixture = Fixture::new();
         let mut facts = fixture.read("facts.json");
         facts["units"][0]["declarations"][1]["local"] = json!(true);
         facts["units"][0]["types"][0]["display"] = json!("presentation::DifferentName");
@@ -1617,7 +985,7 @@ fn type_identity_preserves_native_declaration_across_display_and_storage_project
 
 #[test]
 fn same_display_name_cannot_substitute_for_runtime_type_identity() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut runtime = fixture.read("runtime.json");
     runtime["schedules"][0]["systems"][0]["typeId"] = json!("unrelated-runtime-type");
     fixture.replace_runtime(&runtime);
@@ -1637,24 +1005,8 @@ fn same_display_name_cannot_substitute_for_runtime_type_identity() {
 }
 
 #[test]
-fn missing_description_produces_a_source_backed_request() {
-    let fixture = Fixture::new(false);
-    assert!(
-        fixture
-            .build()
-            .unwrap_err()
-            .to_string()
-            .contains("Chinese descriptions are pending")
-    );
-    let pending = fixture.read("pending-descriptions.json");
-    assert_eq!(pending[0]["key"], "demo::sample::system");
-    assert_eq!(pending[0]["evidenceHash"], "body");
-    assert_eq!(pending[0]["sourceEntries"][0]["path"], "src/main.rs");
-}
-
-#[test]
 fn changed_source_and_mixed_builds_are_rejected() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     fs::write(fixture.root.join("src/main.rs"), "fn replacement() {}\n").unwrap();
     assert!(
         fixture
@@ -1663,7 +1015,7 @@ fn changed_source_and_mixed_builds_are_rejected() {
             .to_string()
             .contains("fingerprint is stale")
     );
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     fs::write(
         fixture.root.join("runtime.json"),
         format!(
@@ -1683,14 +1035,12 @@ fn changed_source_and_mixed_builds_are_rejected() {
 
 #[test]
 fn local_state_is_scoped_to_each_registration_and_slot() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     facts["units"][0]["accesses"][0]["storage"] = json!("Local");
     facts["units"][0]["accesses"][0]["parameter"] = json!("state");
     fixture.write("facts.json", &facts);
-    let mut annotations = fixture.read("annotations.json");
-    annotations["items"]["demo::sample::system|state"] = json!({"description":"保存该系统实例的处理进度。","summary":"保存处理进度。","evidenceHash":"body"});
-    fixture.write("annotations.json", &annotations);
+
     fixture.build().unwrap();
     let model = fixture.read("model.json");
     let locals: Vec<_> = model["objects"]
@@ -1724,7 +1074,7 @@ fn local_state_is_scoped_to_each_registration_and_slot() {
 #[test]
 fn partial_parameter_evidence_is_paired_and_independent_of_unit_order() {
     for with_direct_access in [true, false] {
-        let fixture = Fixture::new(true);
+        let fixture = Fixture::new();
         let mut facts = fixture.read("facts.json");
         let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
         let mut declaration = unit.declarations[0].clone();
@@ -1735,7 +1085,7 @@ fn partial_parameter_evidence_is_paired_and_independent_of_unit_order() {
         unit.callables.push(Callable {
             id: "helper-callable".into(),
             declaration: "helper-declaration".into(),
-            body_analyzed: true,
+
             display: "demo::sample::helper".into(),
             ..Default::default()
         });
@@ -1762,15 +1112,10 @@ fn partial_parameter_evidence_is_paired_and_independent_of_unit_order() {
         };
         let mut second = unit;
         second.accesses = vec![helper.clone(), helper];
-        let mut annotations = fixture.read("annotations.json");
-        annotations["items"]["demo::sample::system"]["evidenceHash"] = json!(digest(
-            serde_json::to_vec(&BTreeMap::from([
-                ("function", "body"),
-                ("helper-declaration", "body")
-            ]))
-            .unwrap()
-        ));
-        fixture.write("annotations.json", &annotations);
+        for declaration in &mut second.declarations {
+            declaration.local = false;
+        }
+
         let mut previous = None;
         for reverse in [false, true] {
             facts["units"] = if reverse {
@@ -1841,7 +1186,7 @@ fn partial_parameter_evidence_is_paired_and_independent_of_unit_order() {
 
 #[test]
 fn direct_parameter_consensus_preserves_only_unambiguous_compatible_scalars() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let mut first = facts["units"][0]["accesses"][0].clone();
     first["scope"] = json!("main");
@@ -1910,7 +1255,7 @@ fn local_parameter_evidence_keeps_storage_domain_without_choosing_a_world() {
 
 #[test]
 fn native_type_display_candidates_are_stable_across_reordered_and_repeated_units() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
     unit.types[0].kind = "adt".into();
@@ -1967,16 +1312,8 @@ fn native_type_display_candidates_are_stable_across_reordered_and_repeated_units
             );
         }
         assert_eq!(marker["declarationId"], "marker-declaration");
-        assert_eq!(marker["description"], "标识需要处理的实体。");
-        assert_eq!(model["annotationsRequired"], json!([]));
-        let mut purpose = fixture.read("purpose-summary.json");
-        for field in ["compiler", "configuration", "inputs"] {
-            assert_eq!(purpose[field], model[field]);
-        }
-        // 单元排列改变 facts 字节摘要；先检查真实绑定，再比较用途语义。
-        purpose.as_object_mut().unwrap().remove("inputs");
-        let output = json!({"objects":model["objects"],"relations":model["relations"],"features":model["features"],
-            "purpose":purpose});
+
+        let output = json!({"objects":model["objects"],"relations":model["relations"],"features":model["features"]});
         if let Some(previous) = &previous {
             assert_eq!(previous, &output);
         }
@@ -1986,7 +1323,7 @@ fn native_type_display_candidates_are_stable_across_reordered_and_repeated_units
 
 #[test]
 fn feature_representatives_are_existing_plugins_and_stable_across_native_order() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
     unit.declarations[0].name = "main".into();
@@ -2019,7 +1356,6 @@ fn feature_representatives_are_existing_plugins_and_stable_across_native_order()
             name: name.into(),
             crate_name: crate_name.into(),
             kind: "Struct".into(),
-            docs: "装配该功能的已登记插件。".into(),
             source: source.clone(),
             ..Default::default()
         });
@@ -2051,10 +1387,9 @@ fn feature_representatives_are_existing_plugins_and_stable_across_native_order()
         source,
         ..Default::default()
     });
-    let mut annotations = fixture.read("annotations.json");
-    annotations["items"]["demo::main"] =
-        json!({"description":"装配示例插件。","summary":"装配插件。","evidenceHash":"body"});
-    fixture.write("annotations.json", &annotations);
+
+    first.registrations.extend(second.registrations.clone());
+    second.registrations = first.registrations.clone();
     let mut previous = None;
     for reverse in [false, true, false] {
         first.accesses.reverse();
@@ -2133,12 +1468,7 @@ fn feature_representatives_are_existing_plugins_and_stable_across_native_order()
             .unwrap();
         assert_eq!(application["overviewNode"], "app-main");
         assert_eq!(application["plugin"], "App");
-        let mut purpose = fixture.read("purpose-summary.json");
-        for field in ["compiler", "configuration", "inputs"] {
-            assert_eq!(purpose[field], model[field]);
-        }
-        purpose.as_object_mut().unwrap().remove("inputs");
-        let projection = json!({"objects":model["objects"],"relations":model["relations"],"features":model["features"],"purpose":purpose});
+        let projection = json!({"objects":model["objects"],"relations":model["relations"],"features":model["features"]});
         if let Some(previous) = &previous {
             assert_eq!(previous, &projection);
         }
@@ -2169,39 +1499,9 @@ fn automatic_feature_representatives_preserve_explicit_existing_choices() {
 }
 
 #[test]
-fn stale_or_unbound_prose_requires_new_evidence() {
-    for hash in [Some("previous-body"), None] {
-        let fixture = Fixture::new(true);
-        let mut annotations = fixture.read("annotations.json");
-        if let Some(hash) = hash {
-            annotations["items"]["demo::sample::system"]["evidenceHash"] = json!(hash);
-        } else {
-            annotations["items"]["demo::sample::system"]
-                .as_object_mut()
-                .unwrap()
-                .remove("evidenceHash");
-        }
-        fixture.write("annotations.json", &annotations);
-        assert!(
-            fixture
-                .build()
-                .unwrap_err()
-                .to_string()
-                .contains("Chinese descriptions are pending")
-        );
-        let pending = fixture.read("pending-descriptions.json");
-        assert_eq!(pending[0]["previousDescription"], "处理带标记的实体。");
-        assert_eq!(pending[0]["evidenceHash"], "body");
-    }
-}
-
-#[test]
 fn helper_calls_preserve_immediate_and_queued_operation_contexts() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
-    facts["units"][0]["behaviorHash"] = json!("helper-call-context");
-    facts["units"][0]["declarations"][0]["docs"] =
-        json!("调用辅助处理，并保留立即与延迟插入的上下文。");
     let source = facts["units"][0]["accesses"][0]["source"].clone();
     facts["units"][0]["calls"] = json!([
         {"caller":"callable","callee":"helper","source":source,"deferred":false},
@@ -2240,68 +1540,8 @@ fn helper_calls_preserve_immediate_and_queued_operation_contexts() {
 }
 
 #[test]
-fn purpose_only_calls_invalidate_prose_without_propagating_business_operations() {
-    let fixture = Fixture::new(true);
-    let mut facts = fixture.read("facts.json");
-    let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
-    let mut helper = unit.declarations[0].clone();
-    helper.id = "purpose-helper".into();
-    helper.full_name = "demo::sample::purpose_helper".into();
-    helper.name = "purpose_helper".into();
-    helper.evidence_hash = "helper-before".into();
-    unit.declarations.push(helper);
-    let mut callable = unit.callables[0].clone();
-    callable.id = "purpose-helper-callable".into();
-    callable.declaration = "purpose-helper".into();
-    callable.system_type_ids.clear();
-    unit.callables.push(callable);
-    unit.purpose_calls.push(CallFact {
-        caller: "callable".into(),
-        callee: Some("purpose-helper-callable".into()),
-        declaration: Some("purpose-helper".into()),
-        ..Default::default()
-    });
-    unit.operations.push(OperationFact {
-        id: "private-helper-insert".into(),
-        owner: "purpose-helper-callable".into(),
-        method: "insert".into(),
-        target_type: Some("marker-type".into()),
-        kind: "insert".into(),
-        source: unit.declarations[0].source.clone(),
-        scope: "current".into(),
-        ..Default::default()
-    });
-    facts["units"][0] = json!(unit);
-    fixture.write("facts.json", &facts);
-    assert!(fixture.build().is_err());
-    let before = fixture.read("pending-descriptions.json")[0]["evidenceHash"].clone();
-    let mut annotations = fixture.read("annotations.json");
-    annotations["items"]["demo::sample::system"]["evidenceHash"] = before.clone();
-    fixture.write("annotations.json", &annotations);
-    fixture.build().unwrap();
-    let model = fixture.read("model.json");
-    assert_eq!(model["callGraph"]["edgeCount"], 0);
-    assert!(
-        !model["relations"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .any(|relation| relation["kind"] == "insert"),
-        "Private purpose edges cannot assign business ownership or execution contexts"
-    );
-    facts["units"][0]["declarations"][2]["evidenceHash"] = json!("helper-after");
-    fixture.write("facts.json", &facts);
-    assert!(fixture.build().is_err());
-    assert_ne!(
-        fixture.read("pending-descriptions.json")[0]["evidenceHash"],
-        before,
-        "Private helper bodies still participate in purpose evidence"
-    );
-}
-
-#[test]
 fn automatic_system_sets_keep_real_ordering_endpoints() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut runtime = fixture.read("runtime.json");
     runtime["schedules"][0]["sets"] = json!([{"key":"automatic-second","graphName":"not-a-rendered-cluster","label":"SystemTypeSet(second)","typeId":"automatic-set-type","systemType":"system-runtime","conditions":[]}]);
     runtime["schedules"][0]["hierarchy"] = json!([{"from":"automatic-second","to":"second"}]);
@@ -2339,204 +1579,12 @@ fn automatic_system_sets_keep_real_ordering_endpoints() {
 }
 
 #[test]
-fn work_budget_causes_follow_exact_unresolved_declarations_without_changing_purpose_hashes() {
-    for owner in ["function", "budget-helper"] {
-        let fixture = Fixture::new(true);
-        let mut facts = fixture.read("facts.json");
-        let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
-        unit.behavior_hash = "complete-owning-behavior".into();
-        let mut helper = unit.declarations[0].clone();
-        helper.id = "budget-helper".into();
-        helper.full_name = "demo::sample::budget_helper".into();
-        helper.name = "budget_helper".into();
-        unit.declarations.push(helper);
-        let mut callable = unit.callables[0].clone();
-        callable.id = "budget-helper-callable".into();
-        callable.declaration = "budget-helper".into();
-        callable.system_type_ids.clear();
-        unit.callables.push(callable);
-        unit.calls.push(CallFact {
-            caller: "callable".into(),
-            callee: Some("budget-helper-callable".into()),
-            declaration: Some("budget-helper".into()),
-            ..Default::default()
-        });
-        unit.gaps = vec![
-            Gap {
-                owner: owner.into(),
-                kind: "purpose-work-budget".into(),
-                reason: "exact-declaration-budget".into(),
-                ..Default::default()
-            },
-            Gap {
-                owner: "callable".into(),
-                kind: "purpose-work-budget".into(),
-                reason: "callable-owner-must-not-match".into(),
-                ..Default::default()
-            },
-            Gap {
-                owner: owner.into(),
-                kind: "other-kind".into(),
-                reason: "other-kind-must-not-match".into(),
-                ..Default::default()
-            },
-        ];
-        facts["units"][0] = json!(unit);
-        fixture.write("facts.json", &facts);
-        assert!(fixture.build().is_err());
-        let evidence = |fixture: &Fixture| {
-            fixture
-                .read("pending-descriptions.json")
-                .as_array()
-                .unwrap()
-                .iter()
-                .find(|row| row["key"] == "demo::sample::system")
-                .unwrap()["evidenceHash"]
-                .as_str()
-                .unwrap()
-                .to_owned()
-        };
-        let mut annotations = fixture.read("annotations.json");
-        annotations["items"]["demo::sample::system"]["evidenceHash"] = json!(evidence(&fixture));
-        fixture.write("annotations.json", &annotations);
-        fixture.build().unwrap();
-        assert_eq!(fixture.read("purpose-summary.json")["fallback"], 0);
-
-        let declaration = facts["units"][0]["declarations"]
-            .as_array_mut()
-            .unwrap()
-            .iter_mut()
-            .find(|declaration| declaration["id"] == owner)
-            .unwrap();
-        declaration["unresolvedBehavior"] = json!(true);
-        fixture.write("facts.json", &facts);
-        assert!(fixture.build().is_err());
-        let before = evidence(&fixture);
-        let summary = fixture.read("purpose-summary.json");
-        let fallback = summary["fallbacks"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .find(|fallback| fallback["declaration"] == "function")
-            .unwrap();
-        let reasons = fallback["reasons"].as_array().unwrap();
-        assert!(reasons.iter().any(|reason| {
-            let reason = reason.as_str().unwrap();
-            reason.starts_with("purpose-work-budget:")
-                && reason.contains("exact-declaration-budget")
-                && reason.contains(owner)
-        }));
-        assert!(!reasons.iter().any(|reason| {
-            let reason = reason.as_str().unwrap();
-            reason.contains("callable-owner-must-not-match")
-                || reason.contains("other-kind-must-not-match")
-        }));
-
-        facts["units"][0]["gaps"][0]["reason"] = json!("updated-declaration-budget");
-        fixture.write("facts.json", &facts);
-        assert!(fixture.build().is_err());
-        assert_eq!(
-            evidence(&fixture),
-            before,
-            "Diagnostic wording must not enter the purpose fingerprint"
-        );
-        assert!(
-            fixture.read("purpose-summary.json")["fallbacks"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .filter(|fallback| fallback["declaration"] == "function")
-                .flat_map(|fallback| fallback["reasons"].as_array().unwrap())
-                .any(|reason| reason
-                    .as_str()
-                    .unwrap()
-                    .contains("updated-declaration-budget"))
-        );
-    }
-}
-
-#[test]
-fn changing_a_reachable_helper_invalidates_system_prose() {
-    let fixture = Fixture::new(true);
-    let mut facts = fixture.read("facts.json");
-    let mut helper = facts["units"][0]["declarations"][0].clone();
-    helper["id"] = json!("helper-declaration");
-    helper["fullName"] = json!("demo::sample::helper");
-    helper["evidenceHash"] = json!("helper-before");
-    facts["units"][0]["declarations"]
-        .as_array_mut()
-        .unwrap()
-        .push(helper);
-    let mut callable = facts["units"][0]["callables"][0].clone();
-    callable["id"] = json!("helper-callable");
-    callable["declaration"] = json!("helper-declaration");
-    callable["systemTypeIds"] = json!([]);
-    facts["units"][0]["callables"]
-        .as_array_mut()
-        .unwrap()
-        .push(callable);
-    facts["units"][0]["calls"] =
-        json!([{"caller":"callable","callee":"helper-callable","source":null,"deferred":false}]);
-    fixture.write("facts.json", &facts);
-    assert!(
-        fixture
-            .build()
-            .unwrap_err()
-            .to_string()
-            .contains("Chinese descriptions are pending")
-    );
-    let old_hash = fixture.read("pending-descriptions.json")[0]["evidenceHash"].clone();
-    let mut annotations = fixture.read("annotations.json");
-    annotations["items"]["demo::sample::system"]["evidenceHash"] = old_hash.clone();
-    fixture.write("annotations.json", &annotations);
-    fixture.build().unwrap();
-    facts["units"][0]["declarations"][2]["evidenceHash"] = json!("helper-after");
-    fixture.write("facts.json", &facts);
-    assert!(
-        fixture
-            .build()
-            .unwrap_err()
-            .to_string()
-            .contains("Chinese descriptions are pending")
-    );
-    assert_ne!(
-        fixture.read("pending-descriptions.json")[0]["evidenceHash"],
-        old_hash
-    );
-    facts["units"][0]["behaviorHash"] = json!("helper-owning-unit");
-    facts["units"][0]["declarations"][2]["unresolvedBehavior"] = json!(true);
-    fixture.write("facts.json", &facts);
-    assert!(fixture.build().is_err());
-    let summary = fixture.read("purpose-summary.json");
-    assert!(
-        summary["fallbacks"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .any(|fallback| {
-                fallback["declaration"] == "function"
-                    && fallback["reasons"]
-                        .as_array()
-                        .unwrap()
-                        .iter()
-                        .any(|reason| {
-                            let reason = reason.as_str().unwrap();
-                            reason.starts_with("compiler-helper:")
-                                && reason.contains("demo::sample::helper")
-                        })
-            }),
-        "A caller's sidecar names the reachable helper that forced conservative fallback"
-    );
-}
-
-#[test]
 fn system_and_set_conditions_own_their_access_evidence() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let mut declaration = facts["units"][0]["declarations"][0].clone();
     declaration["id"] = json!("predicate-declaration");
     declaration["fullName"] = json!("demo::sample::predicate");
-    declaration["docs"] = json!("判断是否执行当前工作。");
     facts["units"][0]["declarations"]
         .as_array_mut()
         .unwrap()
@@ -2596,7 +1644,7 @@ fn system_and_set_conditions_own_their_access_evidence() {
 
 #[test]
 fn unrendered_dependency_source_is_still_verified() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let helper = fixture.root.join("helper.rs");
     fs::write(&helper, "fn unused_source_evidence() {}\n").unwrap();
     let mut facts = fixture.read("facts.json");
@@ -2618,7 +1666,7 @@ fn unrendered_dependency_source_is_still_verified() {
 
 #[test]
 fn composite_members_keep_independent_local_slots() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     facts["units"][0]["accesses"][0]["storage"] = json!("Local");
     facts["units"][0]["accesses"][0]["parameter"] = json!("state");
@@ -2636,9 +1684,7 @@ fn composite_members_keep_independent_local_slots() {
         .unwrap()
         .push(access);
     fixture.write("facts.json", &facts);
-    let mut annotations = fixture.read("annotations.json");
-    annotations["items"]["demo::sample::system|state"] = json!({"description":"保存该成员实例的处理状态。","summary":"保存成员状态。","evidenceHash":"body"});
-    fixture.write("annotations.json", &annotations);
+
     fixture.build().unwrap();
     let model = fixture.read("model.json");
     let locals: Vec<_> = model["objects"]
@@ -2660,7 +1706,7 @@ fn composite_members_keep_independent_local_slots() {
 
 #[test]
 fn unit_and_type_analysis_gaps_are_never_discarded() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     facts["units"][0]["gaps"] = json!([
         {"owner":"unit","kind":"mir-budget","reason":"已达到实例分析预算。","source":null},
@@ -2682,7 +1728,7 @@ fn unit_and_type_analysis_gaps_are_never_discarded() {
 
 #[test]
 fn events_flow_to_receivers_and_triggers_flow_to_events() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     facts["units"][0]["types"][0]["roles"] = json!(["Event"]);
     facts["units"][0]["accesses"][0]["mode"] = json!("event");
@@ -2716,7 +1762,7 @@ fn events_flow_to_receivers_and_triggers_flow_to_events() {
 
 #[test]
 fn unresolved_entity_operation_keeps_fact_and_context_without_inventing_template() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     facts["units"][0]["operations"] = json!([{"id":"despawn-runtime-entity","owner":"callable","method":"resolved-despawn","targetType":null,"kind":"despawn","deferred":true,"scope":"current","source":null,"callChain":[],"conditions":[]}]);
     fixture.write("facts.json", &facts);
@@ -2747,7 +1793,7 @@ fn unresolved_entity_operation_keeps_fact_and_context_without_inventing_template
 
 #[test]
 fn generic_bounds_and_opaque_types_keep_access_facts_without_concrete_objects() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
     unit.types.extend([
@@ -2819,7 +1865,7 @@ fn generic_bounds_and_opaque_types_keep_access_facts_without_concrete_objects() 
     fixture.write("facts.json", &facts);
     fixture.build().unwrap();
     let model = fixture.read("model.json");
-    assert!(model["annotationsRequired"].as_array().unwrap().is_empty());
+
     assert!(
         model["objects"]
             .as_array()
@@ -2855,10 +1901,9 @@ fn generic_bounds_and_opaque_types_keep_access_facts_without_concrete_objects() 
 
 #[test]
 fn helper_local_values_preserve_origin_gaps_without_allocating_caller_storage() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
-    unit.declarations[0].docs = "调用共用辅助处理。".into();
     let mut helper_declaration = unit.declarations[0].clone();
     helper_declaration.id = "helper-declaration".into();
     helper_declaration.full_name = "demo::sample::registered_helper".into();
@@ -2867,7 +1912,7 @@ fn helper_local_values_preserve_origin_gaps_without_allocating_caller_storage() 
     unit.callables.push(Callable {
         id: "registered-helper".into(),
         declaration: "helper-declaration".into(),
-        body_analyzed: true,
+
         display: "demo::sample::registered_helper".into(),
         system_type_ids: vec!["helper-runtime".into()],
         ..Default::default()
@@ -2875,7 +1920,7 @@ fn helper_local_values_preserve_origin_gaps_without_allocating_caller_storage() 
     unit.callables.push(Callable {
         id: "result-helper".into(),
         declaration: "helper-declaration".into(),
-        body_analyzed: true,
+
         display: "demo::sample::registered_helper".into(),
         ..Default::default()
     });
@@ -2907,21 +1952,7 @@ fn helper_local_values_preserve_origin_gaps_without_allocating_caller_storage() 
     let mut runtime = fixture.read("runtime.json");
     runtime["schedules"][0]["systems"][1]["typeId"] = json!("helper-runtime");
     fixture.replace_runtime(&runtime);
-    let mut annotations = fixture.read("annotations.json");
-    for key in [
-        "demo::sample::system|state",
-        "demo::sample::registered_helper|cache",
-    ] {
-        annotations["items"][key] = json!({"description":"保存此注册实例的局部处理状态。","summary":"保存局部状态。","evidenceHash":"body"});
-    }
-    annotations["items"]["demo::sample::system|state"]["evidenceHash"] = json!(digest(
-        serde_json::to_vec(&BTreeMap::from([
-            ("function", "body"),
-            ("helper-declaration", "body")
-        ]))
-        .unwrap()
-    ));
-    fixture.write("annotations.json", &annotations);
+
     fixture.build().unwrap();
     let model = fixture.read("model.json");
     let objects = model["objects"].as_array().unwrap();
@@ -2961,12 +1992,11 @@ fn helper_local_values_preserve_origin_gaps_without_allocating_caller_storage() 
         && gap["registeredOwners"].as_array().unwrap().len() == 2
         && gap["rootOwners"].as_array().unwrap().is_empty()
         && gap["access"]["parameter"] == "arg0.0"));
-    assert!(model["annotationsRequired"].as_array().unwrap().is_empty());
 }
 
 #[test]
 fn creation_operations_bind_only_unique_root_templates_at_the_same_compiler_callsite() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
     let source = unit.accesses[0].source.clone();
@@ -2999,11 +2029,7 @@ fn creation_operations_bind_only_unique_root_templates_at_the_same_compiler_call
         ..Default::default()
     });
     unit.entities.extend([root, child]);
-    let mut annotations = fixture.read("annotations.json");
-    for entity in &unit.entities {
-        annotations["items"][format!("entity:{}", entity.id)] = json!({"description":"此创建点装配独立实体。","summary":"装配独立实体。","evidenceHash":entity_purpose_hash(entity, "body")});
-    }
-    fixture.write("annotations.json", &annotations);
+
     facts["units"][0] = serde_json::to_value(&unit).unwrap();
     fixture.write("facts.json", &facts);
     fixture.build().unwrap();
@@ -3055,7 +2081,7 @@ fn creation_operations_bind_only_unique_root_templates_at_the_same_compiler_call
 
 #[test]
 fn tuple_bundle_operations_keep_known_components_and_the_unresolved_remainder() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
     unit.types.extend([
@@ -3143,39 +2169,14 @@ fn tuple_bundle_operations_keep_known_components_and_the_unresolved_remainder() 
 
 #[test]
 fn repeated_dependency_gaps_merge_all_unit_provenance_without_duplicate_source_gaps() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
-    facts["units"][0]["behaviorHash"] = json!("owning-hir-with-runtime-callback");
     facts["units"][0]["gaps"] = json!([{"owner":"callable","kind":"dynamic-call","reason":"回调目标在运行时决定。","source":null}]);
     let mut second = facts["units"][0].clone();
     second["crateIdentity"] = json!("second-unit");
     facts["units"].as_array_mut().unwrap().push(second);
     fixture.write("facts.json", &facts);
-    let error = fixture.build().unwrap_err().to_string();
-    assert!(
-        error.contains("Chinese descriptions are pending"),
-        "{error}"
-    );
-    let pending = fixture.read("pending-descriptions.json");
-    let mut annotations = fixture.read("annotations.json");
-    annotations["items"]["demo::sample::system"]["evidenceHash"] = pending
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|entry| entry["key"] == "demo::sample::system")
-        .unwrap()["evidenceHash"]
-        .clone();
-    fixture.write("annotations.json", &annotations);
     fixture.build().unwrap();
-    let summary = fixture.read("purpose-summary.json");
-    assert_eq!(summary["fallback"], 1);
-    assert!(
-        summary["fallbacks"][0]["reasons"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .any(|reason| reason.as_str().unwrap().starts_with("dynamic-call:"))
-    );
     let model = fixture.read("model.json");
     let gaps = model["analysisGaps"].as_array().unwrap();
     assert_eq!(gaps.len(), 1);
@@ -3191,246 +2192,8 @@ fn repeated_dependency_gaps_merge_all_unit_provenance_without_duplicate_source_g
 }
 
 #[test]
-fn implicit_drop_diagnostics_stay_private_without_weakening_fallback_or_business_evidence() {
-    let fixture = Fixture::new(true);
-    let mut facts = fixture.read("facts.json");
-    let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
-    unit.behavior_hash = "owning-behavior-v1".into();
-    let first_source = unit.declarations[0].source.clone().unwrap();
-    let mut second_source = first_source.clone();
-    second_source.line = 2;
-    second_source.end_line = 2;
-    second_source.expansions.push(Expansion {
-        name: "drop-fixture".into(),
-        path: second_source.path.clone(),
-        line: 2,
-        column: 1,
-    });
-    let drop_reason = "隐式析构尚未解析完整 drop glue；保留用途回退。";
-    let drop_gap = |source: &SourceEvidence| Gap {
-        owner: "callable".into(),
-        kind: "implicit-drop".into(),
-        reason: drop_reason.into(),
-        source: Some(source.clone()),
-    };
-    unit.gaps = vec![
-        drop_gap(&first_source),
-        drop_gap(&second_source),
-        drop_gap(&first_source),
-        Gap {
-            owner: "callable".into(),
-            kind: "dynamic-call".into(),
-            reason: "业务回调目标在运行时决定。".into(),
-            source: Some(first_source.clone()),
-        },
-        Gap {
-            owner: "callable".into(),
-            kind: "unresolved-call".into(),
-            reason: "业务调用尚不能唯一解析。".into(),
-            source: Some(second_source.clone()),
-        },
-        Gap {
-            owner: "callable".into(),
-            kind: "implicit-drop-other".into(),
-            reason: "未知种类不得按名称前缀移动。".into(),
-            source: Some(first_source.clone()),
-        },
-    ];
-    unit.purpose_calls = [&first_source, &second_source]
-        .into_iter()
-        .map(|source| CallFact {
-            caller: "callable".into(),
-            callee: None,
-            declaration: None,
-            unresolved_reason: Some("implicit-drop".into()),
-            source: Some(source.clone()),
-            deferred: false,
-            conditions: vec![],
-        })
-        .collect();
-    unit.operations.push(OperationFact {
-        id: "unresolved-spawn".into(),
-        owner: "callable".into(),
-        method: "resolved-spawn".into(),
-        kind: "create".into(),
-        source: Some(first_source.clone()),
-        ..Default::default()
-    });
-    let mut second_unit = unit.clone();
-    second_unit.crate_identity = "second-unit".into();
-    facts["units"] = json!([unit, second_unit]);
-    fixture.write("facts.json", &facts);
-    let original_facts = fs::read(fixture.root.join("facts.json")).unwrap();
-    assert!(
-        fixture
-            .build()
-            .unwrap_err()
-            .to_string()
-            .contains("Chinese descriptions are pending")
-    );
-    let pending = fixture.read("pending-descriptions.json");
-    let before_hash = pending
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|entry| entry["key"] == "demo::sample::system")
-        .unwrap()["evidenceHash"]
-        .clone();
-    let mut annotations = fixture.read("annotations.json");
-    annotations["items"]["demo::sample::system"]["evidenceHash"] = before_hash.clone();
-    fixture.write("annotations.json", &annotations);
-    fixture.build().unwrap();
-    assert_eq!(
-        fs::read(fixture.root.join("facts.json")).unwrap(),
-        original_facts,
-        "Partitioning public output must not alter compiler facts or purpose calls"
-    );
-    let model = fixture.read("model.json");
-    let summary = fixture.read("purpose-summary.json");
-    for field in ["compiler", "configuration", "inputs"] {
-        assert_eq!(summary[field], model[field]);
-    }
-    assert_eq!(summary["inputs"]["factsSha256"], digest(&original_facts));
-    assert_eq!(summary["fallback"], 1);
-    assert_eq!(summary["certified"], 0);
-    assert_eq!(summary["pending"], 0);
-    assert_eq!(
-        summary["compilerGapSummary"],
-        json!({"count":2,"byKind":{"implicit-drop":2}})
-    );
-    let private = summary["compilerGaps"].as_array().unwrap();
-    assert_eq!(private.len(), 2);
-    let public = model["analysisGaps"].as_array().unwrap();
-    for kind in [
-        "dynamic-call",
-        "unresolved-call",
-        "operation-target",
-        "implicit-drop-other",
-    ] {
-        assert!(public.iter().any(|gap| gap["kind"] == kind), "{kind}");
-    }
-    assert!(public.iter().all(|gap| gap["kind"] != "implicit-drop"));
-    for gap in private {
-        assert_eq!(gap["kind"], "implicit-drop");
-        assert_eq!(gap["owner"], "callable");
-        assert_eq!(gap["reason"], drop_reason);
-        assert_eq!(gap["unit"], "compiled-crate");
-        assert_eq!(gap["units"], json!(["compiled-crate", "second-unit"]));
-        assert_eq!(gap["sourceEntries"].as_array().unwrap().len(), 1);
-        let counterpart_kind = if gap["sourceEntries"][0]["line"] == 1 {
-            "dynamic-call"
-        } else {
-            "unresolved-call"
-        };
-        let counterpart = public
-            .iter()
-            .find(|entry| entry["kind"] == counterpart_kind)
-            .unwrap();
-        assert_eq!(gap["sourceEntries"], counterpart["sourceEntries"]);
-        assert_eq!(gap["sourceEntries"][0]["path"], "src/main.rs");
-        assert_eq!(gap["sourceEntries"][0]["sha256"], first_source.sha256);
-    }
-    assert!(
-        private
-            .iter()
-            .any(|gap| gap["sourceEntries"][0]["expansions"][0]["name"] == "drop-fixture")
-    );
-    assert!(
-        summary["fallbacks"][0]["reasons"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .any(|reason| reason.as_str().unwrap().starts_with("implicit-drop:"))
-    );
-    for object in model["objects"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .filter(|object| object["kind"] == "System")
-    {
-        assert!(
-            object["sourceGaps"]
-                .as_array()
-                .unwrap()
-                .contains(&json!(drop_reason))
-        );
-    }
-
-    // 删除诊断副本仍保留真实 opaque purpose calls，验证业务投影和用途门控未受输出分区影响。
-    let mut control = facts.clone();
-    for unit in control["units"].as_array_mut().unwrap() {
-        unit["gaps"]
-            .as_array_mut()
-            .unwrap()
-            .retain(|gap| gap["kind"] != "implicit-drop");
-    }
-    fixture.write("facts.json", &control);
-    fixture.build().unwrap();
-    let control_model = fixture.read("model.json");
-    let control_summary = fixture.read("purpose-summary.json");
-    assert_eq!(control_summary["fallback"], 1);
-    assert_eq!(control_summary["compilerGaps"], json!([]));
-    assert_eq!(
-        control_summary["compilerGapSummary"],
-        json!({"count":0,"byKind":{}})
-    );
-    for field in ["compiler", "configuration", "inputs"] {
-        assert_eq!(control_summary[field], control_model[field]);
-    }
-    for (field, value) in model.as_object().unwrap() {
-        if !matches!(field.as_str(), "objects" | "inputs") {
-            assert_eq!(value, &control_model[field], "Business model field {field}");
-        }
-    }
-    let mut objects = model["objects"].clone();
-    for object in objects.as_array_mut().unwrap() {
-        object["sourceGaps"]
-            .as_array_mut()
-            .unwrap()
-            .retain(|reason| reason != drop_reason);
-    }
-    assert_eq!(objects, control_model["objects"]);
-
-    for unit in facts["units"].as_array_mut().unwrap() {
-        unit["gaps"]
-            .as_array_mut()
-            .unwrap()
-            .retain(|gap| gap["kind"] == "implicit-drop");
-    }
-    fixture.write("facts.json", &facts);
-    fixture.build().unwrap();
-    let drop_only = fixture.read("purpose-summary.json");
-    assert_eq!(drop_only["fallback"], 1);
-    assert!(
-        drop_only["fallbacks"][0]["reasons"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .all(|reason| reason.as_str().unwrap().starts_with("implicit-drop:")),
-        "Opaque drop calls alone must require owning fallback, independently of shared business gaps"
-    );
-    for unit in facts["units"].as_array_mut().unwrap() {
-        unit["behaviorHash"] = json!("owning-behavior-v2");
-    }
-    fixture.write("facts.json", &facts);
-    assert!(fixture.build().is_err());
-    let changed = fixture.read("pending-descriptions.json");
-    let after_hash = &changed
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|entry| entry["key"] == "demo::sample::system")
-        .unwrap()["evidenceHash"];
-    assert_ne!(&before_hash, after_hash);
-    let changed_summary = fixture.read("purpose-summary.json");
-    assert_eq!(changed_summary["fallback"], 1);
-    assert_eq!(changed_summary["compilerGapSummary"]["count"], 2);
-    assert!(changed_summary["pending"].as_u64().unwrap() > 0);
-}
-
-#[test]
 fn structure_alternatives_preserve_group_boundaries_sources_and_real_children() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
     let source = unit.declarations[0].source.clone();
@@ -3518,11 +2281,7 @@ fn structure_alternatives_preserve_group_boundaries_sources_and_real_children() 
         source: source.clone(),
         ..Default::default()
     });
-    let mut annotations = fixture.read("annotations.json");
-    for entity in &unit.entities {
-        annotations["items"][format!("entity:{}", entity.id)] = json!({"description":"保留此原生创建结构及其独立候选。","summary":"保留独立创建结构。","evidenceHash":entity_purpose_hash(entity, "body")});
-    }
-    fixture.write("annotations.json", &annotations);
+
     facts["units"][0] = serde_json::to_value(unit).unwrap();
     fixture.write("facts.json", &facts);
     fixture.build().unwrap();
@@ -3616,7 +2375,7 @@ fn structure_alternatives_preserve_group_boundaries_sources_and_real_children() 
 
 #[test]
 fn resource_supertrait_does_not_reclassify_resource_as_component() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     facts["units"][0]["types"][0]["roles"] = json!(["Component", "Resource"]);
     facts["units"][0]["accesses"][0]["storage"] = json!("Resource");
@@ -3643,7 +2402,7 @@ fn resource_supertrait_does_not_reclassify_resource_as_component() {
 
 #[test]
 fn runtime_access_without_compiler_type_is_reported_explicitly() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut runtime = fixture.read("runtime.json");
     runtime["schedules"][0]["systems"][0]["accesses"] =
         json!([{"typeId":"unknown-type","name":"runtime-created data","mode":"read"}]);
@@ -3664,7 +2423,7 @@ fn runtime_access_without_compiler_type_is_reported_explicitly() {
 #[test]
 fn owning_unit_hir_evidence_wins_regardless_of_unit_order() {
     for foreign_first in [true, false] {
-        let fixture = Fixture::new(true);
+        let fixture = Fixture::new();
         let mut facts = fixture.read("facts.json");
         let mut local = facts["units"][0].clone();
         local["declarations"][0]["local"] = json!(true);
@@ -3672,7 +2431,7 @@ fn owning_unit_hir_evidence_wins_regardless_of_unit_order() {
         foreign["crateName"] = json!("dependency-consumer");
         foreign["crateIdentity"] = json!("another-compiled-unit");
         foreign["declarations"][0]["local"] = json!(false);
-        foreign["declarations"][0]["evidenceHash"] = json!("conservative-file-hash");
+        foreign["declarations"][0]["source"] = json!(null);
         facts["units"] = if foreign_first {
             json!([foreign, local])
         } else {
@@ -3680,30 +2439,24 @@ fn owning_unit_hir_evidence_wins_regardless_of_unit_order() {
         };
         fixture.write("facts.json", &facts);
         fixture.build().unwrap();
-        assert!(
-            fixture.read("model.json")["annotationsRequired"]
-                .as_array()
-                .unwrap()
-                .is_empty()
-        );
     }
 }
 
 #[test]
-fn conflicting_owning_unit_cfg_behavior_is_rejected() {
-    let fixture = Fixture::new(true);
+fn conflicting_owning_unit_structures_are_rejected() {
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let mut first = facts["units"][0].clone();
     first["declarations"][0]["local"] = json!(true);
     let mut second = first.clone();
     second["crateIdentity"] = json!("another-native-cfg-unit");
-    second["declarations"][0]["evidenceHash"] = json!("different-cfg-body");
+    second["accesses"][0]["mode"] = json!("shared_access");
     for units in [json!([first, second]), json!([second, first])] {
         facts["units"] = units;
         fixture.write("facts.json", &facts);
         let error = fixture.build().unwrap_err().to_string();
         assert!(
-            error.contains("Conflicting owning-unit behavior"),
+            error.contains("Conflicting owning-unit architecture structure"),
             "{error}"
         );
     }
@@ -3711,13 +2464,12 @@ fn conflicting_owning_unit_cfg_behavior_is_rejected() {
 
 #[test]
 fn helper_ownership_does_not_expand_static_registration_targets() {
-    let fixture = Fixture::new(true);
+    let fixture = Fixture::new();
     let mut facts = fixture.read("facts.json");
     let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
     let source = unit.declarations[0].source.clone();
     unit.declarations[0].full_name = "demo::sample::foo".into();
     unit.declarations[0].name = "foo".into();
-    unit.declarations[0].docs = "执行自身工作，并调用共享辅助逻辑。".into();
     unit.callables[0].display = "demo::sample::foo".into();
     unit.declarations.extend([
         Declaration {
@@ -3727,7 +2479,6 @@ fn helper_ownership_does_not_expand_static_registration_targets() {
             name: "bar".into(),
             crate_name: "demo".into(),
             kind: "Fn".into(),
-            docs: "执行独立工作，也可供其他函数调用。".into(),
             source: source.clone(),
             ..Default::default()
         },
@@ -3737,7 +2488,6 @@ fn helper_ownership_does_not_expand_static_registration_targets() {
             name: "PluginB".into(),
             crate_name: "demo".into(),
             kind: "Struct".into(),
-            docs: "注册独立工作系统。".into(),
             source: source.clone(),
             ..Default::default()
         },
@@ -3748,7 +2498,6 @@ fn helper_ownership_does_not_expand_static_registration_targets() {
             name: "build".into(),
             crate_name: "demo".into(),
             kind: "AssocFn".into(),
-            docs: "将独立工作系统加入调度。".into(),
             source: source.clone(),
             ..Default::default()
         },
@@ -3776,7 +2525,7 @@ fn helper_ownership_does_not_expand_static_registration_targets() {
         Callable {
             id: "bar-callable".into(),
             declaration: "bar-declaration".into(),
-            body_analyzed: true,
+
             display: "demo::sample::bar".into(),
             system_type_ids: vec!["bar-runtime".into()],
             ..Default::default()
@@ -3784,7 +2533,7 @@ fn helper_ownership_does_not_expand_static_registration_targets() {
         Callable {
             id: "plugin-b-build".into(),
             declaration: "plugin-b-build-declaration".into(),
-            body_analyzed: true,
+
             display: "demo::sample::PluginB::build".into(),
             parameters: vec![Parameter {
                 slot: "self".into(),

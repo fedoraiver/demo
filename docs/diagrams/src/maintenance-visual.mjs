@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { pathsForRepository } from '../../../../docs/diagrams/src/paths.mjs';
+import { pathsForRepository } from './paths.mjs';
 
 export const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const canonical = value => JSON.stringify(value, (_, item) => item && typeof item === 'object' && !Array.isArray(item) ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b))) : item);
@@ -43,7 +43,9 @@ export function currentArtifacts(workspace, { gitObjectFormat } = {}) {
   workspace = path.resolve(workspace);
   const generatedRoot = pathsForRepository(workspace).generatedDirectory;
   const manifestPath = contained(generatedRoot, 'data/manifest.json'), manifestBytes = fs.readFileSync(manifestPath), manifest = JSON.parse(manifestBytes);
-  if (manifest.schemaVersion !== 1 || !Array.isArray(manifest.views) || !manifest.guides) throw new Error('Unsupported artifact manifest');
+  if (manifest.schemaVersion !== 2 || !Array.isArray(manifest.views) || !manifest.guides
+    || !manifest.pages || typeof manifest.pages !== 'object' || Array.isArray(manifest.pages) || !Array.isArray(manifest.licenses)
+    || Object.hasOwn(manifest, 'model') || Object.hasOwn(manifest, 'callGraph')) throw new Error('Unsupported artifact manifest');
   if (gitObjectFormat && !['sha1', 'sha256'].includes(gitObjectFormat)) throw new Error('Unsupported Git object format');
   const gitBlobs = {};
   const blob = bytes => crypto.createHash(gitObjectFormat).update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
@@ -60,6 +62,7 @@ export function currentArtifacts(workspace, { gitObjectFormat } = {}) {
     }
     for (const child of Object.values(value)) verify(child);
   }
+  // 页面与许可同样属于冻结输入；只将视图及图例 SVG 列为目测项。
   verify(manifest);
   const runtime = JSON.parse(readReference(generatedRoot, manifest.runtime)), entries = [];
   const ids = new Set();
@@ -108,7 +111,7 @@ export function imageValid(image) {
   } catch { return false; }
 }
 function actualObservation(item) {
-  return ['passed', 'failed'].includes(item.status) && item.actualInspection === true && item.reviewer?.role === 'child' && nonblank(item.reviewer.id) && nonblank(item.reviewer.model) && nonblank(item.reviewer.reasoningEffort)
+  return ['passed', 'failed'].includes(item.status) && item.actualInspection === true && nonblank(item.reviewer?.id)
     && nonblank(item.notes) && nonblank(item.observedWith) && typeof item.checkedAt === 'string' && /(?:Z|[+-]\d\d:\d\d)$/.test(item.checkedAt) && Number.isFinite(Date.parse(item.checkedAt))
     && Array.isArray(item.images) && item.images.length > 0 && item.images.every(imageValid);
 }
@@ -196,7 +199,7 @@ export async function recordVisual({ planPath, observation, observationFile, ind
   if (rendered.schemaVersion !== 2 || rendered.planSha256 !== planSha256) throw new Error('Render proof does not match plan');
   const records = observations.map(item => {
     const expected = plan.items.find(row => row.path === item.path), render = rendered.records.find(row => row.path === item.path);
-    if (!expected || !render || key(expected) !== key(render) || !actualObservation(item)) throw new Error('Invalid actual child observation: ' + item.path);
+    if (!expected || !render || key(expected) !== key(render) || !actualObservation(item)) throw new Error('Invalid actual observation: ' + item.path);
     for (const field of fields) if (item[field] !== undefined && item[field] !== expected[field]) throw new Error('Observation identity mismatch: ' + field);
     if (JSON.stringify([...item.images].sort((a, b) => a.path.localeCompare(b.path))) !== JSON.stringify([...render.images].sort((a, b) => a.path.localeCompare(b.path))) || !render.images.every(imageValid)) throw new Error('Observation image evidence differs from rendered SVG');
     const record = { ...expected, ...item, workspace: plan.workspace, manifestSha256: plan.manifestSha256, buildId: plan.buildId, planPath: loaded.planPath, planSha256, renderProofSha256: hash(canonical(render)) };

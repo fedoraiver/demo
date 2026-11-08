@@ -20,387 +20,7 @@ struct OriginExtractor {
     origins: Vec<analysis_contract::PackageOrigin>,
 }
 
-fn purpose_inventory_fixture(name: &str, source_text: &str, metadata: &str) -> UnitFacts {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../../tmp/rustc-analysis/fixtures/purpose-inventory")
-        .join(name);
-    fs::create_dir_all(&root).unwrap();
-    let source = root.join("lib.rs");
-    fs::write(&source, source_text).unwrap();
-    let compiler = Command::new("rustc")
-        .args(["--print", "sysroot"])
-        .output()
-        .unwrap();
-    assert!(compiler.status.success());
-    let arguments = vec![
-        "rustc".into(),
-        source.to_string_lossy().into_owned(),
-        format!("--crate-name={name}"),
-        "--crate-type=lib".into(),
-        "--edition=2024".into(),
-        "--sysroot".into(),
-        String::from_utf8(compiler.stdout).unwrap().trim().into(),
-        "--out-dir".into(),
-        root.to_string_lossy().into_owned(),
-        "-Zalways-encode-mir".into(),
-        "-Zmir-opt-level=0".into(),
-        format!("-Cmetadata={metadata}"),
-    ];
-    let mut extractor = Extractor { facts: None };
-    rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
-    extractor.facts.unwrap()
-}
-
-#[test]
-fn purpose_inventory_separates_local_hashes_from_trait_defaults_impls_and_helpers() {
-    let mut versions = vec![];
-    for (helper, required, unrelated, metadata, blank_lines) in [
-        (1, 2, 3, "a", 0),
-        (1, 2, 7, "a", 0),
-        (9, 2, 3, "a", 0),
-        (1, 8, 3, "a", 0),
-        (1, 2, 3, "b", 3),
-    ] {
-        let source = format!(
-            "{}pub mod component {{ pub trait Component {{}} }}\nconst fn helper() -> u32 {{ {helper} }}\npub trait Named {{ const VALUE: u32 = Self::REQUIRED + helper(); const REQUIRED: u32; }}\npub trait Other {{ const VALUE: u32; }}\npub struct Marker;\nimpl Named for Marker {{ const REQUIRED: u32 = {required}; }}\nimpl Other for Marker {{ const VALUE: u32 = {unrelated}; }}\npub fn generic<T: Named>() -> u32 {{ T::VALUE }}\n",
-            "\n".repeat(blank_lines)
-        );
-        versions.push(purpose_inventory_fixture("bevy_ecs", &source, metadata));
-    }
-    let generic = |facts: &UnitFacts| {
-        facts
-            .declarations
-            .iter()
-            .find(|d| d.full_name == "bevy_ecs::generic")
-            .unwrap()
-            .clone()
-    };
-    let baseline = generic(&versions[0]);
-    assert!(!baseline.unresolved_behavior);
-    assert_eq!(baseline.purpose_dependencies.len(), 1);
-    for facts in &versions[1..] {
-        let current = generic(facts);
-        assert_eq!(
-            baseline.evidence_hash, current.evidence_hash,
-            "Unresolved impl candidates do not enter the local HIR hash"
-        );
-        assert_eq!(baseline.purpose_dependencies, current.purpose_dependencies);
-    }
-    let dependency = &baseline.purpose_dependencies[0];
-    let default = |facts: &UnitFacts| {
-        facts
-            .purpose_inventory
-            .traits
-            .iter()
-            .find(|t| t.trait_id == dependency.trait_id)
-            .unwrap()
-            .members
-            .iter()
-            .find(|m| m.member_id == dependency.member_id)
-            .unwrap()
-            .clone()
-    };
-    let original = default(&versions[0]);
-    assert!(original.has_value);
-    assert_eq!(
-        original.dependencies.len(),
-        1,
-        "The default retains its dependency on Self::REQUIRED"
-    );
-    assert_ne!(
-        original.evidence_hash,
-        default(&versions[2]).evidence_hash,
-        "The actual const helper body is part of default evidence"
-    );
-    assert_eq!(original.evidence_hash, default(&versions[1]).evidence_hash);
-    assert_eq!(
-        original.evidence_hash,
-        default(&versions[4]).evidence_hash,
-        "Metadata and line movement preserve portable default evidence"
-    );
-    let implementation_member = |facts: &UnitFacts| {
-        facts
-            .purpose_inventory
-            .implementations
-            .iter()
-            .find(|i| i.trait_id == dependency.trait_id)
-            .unwrap()
-            .members[0]
-            .clone()
-    };
-    let required = implementation_member(&versions[0]);
-    assert!(required.has_value && required.implementation_member_id.is_some());
-    assert_eq!(required.member_id, original.dependencies[0].member_id);
-    assert_ne!(
-        required.evidence_hash,
-        implementation_member(&versions[3]).evidence_hash
-    );
-    assert_eq!(
-        required.evidence_hash,
-        implementation_member(&versions[1]).evidence_hash
-    );
-    let definition = versions[0]
-        .purpose_inventory
-        .traits
-        .iter()
-        .find(|t| t.trait_id == dependency.trait_id)
-        .unwrap();
-    let missing_default = definition
-        .members
-        .iter()
-        .find(|m| m.member_id == required.member_id)
-        .unwrap();
-    assert!(!missing_default.has_value && !missing_default.evidence_hash.is_empty());
-}
-
-#[test]
-fn purpose_inventory_proves_empty_local_impl_sets_even_in_early_return_units_and_rejects_auto_traits()
- {
-    let facts = purpose_inventory_fixture(
-        "inventory_only",
-        "#![feature(auto_traits)]\npub trait Plain { const REQUIRED: u32; }\npub auto trait Automatic {}\n",
-        "fixed",
-    );
-    assert!(
-        facts.declarations.is_empty(),
-        "The no-ECS protocol path must still emit its inventory"
-    );
-    let inventory = &facts.purpose_inventory;
-    assert!(!inventory.crate_identity.is_empty());
-    assert!(!inventory.metadata_hash.is_empty());
-    assert!(
-        inventory
-            .required_views
-            .iter()
-            .any(|view| view.crate_identity == inventory.crate_identity
-                && view.metadata_hash == inventory.metadata_hash)
-    );
-    assert!(
-        inventory
-            .required_crates
-            .contains(&inventory.crate_identity)
-    );
-    assert!(
-        inventory
-            .coverage
-            .iter()
-            .any(|c| c.crate_identity == inventory.crate_identity
-                && c.metadata_hash == inventory.metadata_hash
-                && c.complete
-                && c.traits.is_none())
-    );
-    assert!(inventory.implementations.is_empty());
-    assert_eq!(inventory.traits.len(), 2);
-    assert!(
-        inventory
-            .traits
-            .iter()
-            .all(|item| item.owner_crate == inventory.crate_identity
-                && item.metadata_hash == inventory.metadata_hash)
-    );
-    assert_eq!(inventory.traits.iter().filter(|t| t.complete).count(), 1);
-    let plain = inventory.traits.iter().find(|t| t.complete).unwrap();
-    assert_eq!(plain.members.len(), 1);
-    assert!(!plain.members[0].has_value);
-    assert!(!plain.members[0].evidence_hash.is_empty());
-}
-
-#[test]
-fn caller_purpose_tracks_a_downstream_impl_used_inside_a_dependency_generic() {
-    use analysis_contract::runtime::{RuntimeSchedule, RuntimeSnapshot, RuntimeSystem};
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../../tmp/rustc-analysis/fixtures/downstream-constant-purpose");
-    let dependency = root.join("dependency");
-    let consumer = root.join("consumer");
-    fs::create_dir_all(dependency.join("src")).unwrap();
-    fs::create_dir_all(consumer.join("src")).unwrap();
-    fs::create_dir_all(consumer.join("debugdump")).unwrap();
-    let dependency_source = dependency.join("src/lib.rs");
-    let consumer_source = consumer.join("src/lib.rs");
-    fs::write(
-        dependency.join("Cargo.toml"),
-        "[package]\nname=\"bevy_ecs\"\nversion=\"0.1.0\"\n",
-    )
-    .unwrap();
-    fs::write(
-        consumer.join("Cargo.toml"),
-        "[package]\nname=\"consumer\"\nversion=\"0.1.0\"\n",
-    )
-    .unwrap();
-    fs::write(consumer.join("Cargo.lock"), "version = 4\n").unwrap();
-    fs::write(&dependency_source, "").unwrap();
-    fs::write(&consumer_source, "").unwrap();
-    let root = root.canonicalize().unwrap();
-    let dependency = dependency.canonicalize().unwrap();
-    let consumer = consumer.canonicalize().unwrap();
-    let origins = [
-        (&dependency, &dependency_source, "bevy_ecs"),
-        (&consumer, &consumer_source, "consumer"),
-    ]
-    .into_iter()
-    .map(|(root, source, name)| analysis_contract::PackageOrigin {
-        root: analysis_contract::normalized(root).unwrap(),
-        identity: format!("exact-package:{name}:1"),
-        targets: vec![analysis_contract::PackageTargetOrigin {
-            source: analysis_contract::normalized(source).unwrap(),
-            name: name.into(),
-            kind: vec!["lib".into()],
-        }],
-    })
-    .collect::<Vec<_>>();
-    let compiler = Command::new("rustc")
-        .args(["--print", "sysroot"])
-        .output()
-        .unwrap();
-    assert!(compiler.status.success());
-    let sysroot = String::from_utf8(compiler.stdout).unwrap();
-    let artifact = dependency.join("libfixture.rlib");
-    let digest = |bytes: &[u8]| format!("{:x}", sha2::Sha256::digest(bytes));
-    let mut hashes = vec![];
-    for (label, number, metadata) in [
-        ("Original", 1, "first"),
-        ("Changed", 1, "first"),
-        ("Original", 2, "first"),
-        ("Original", 1, "second"),
-    ] {
-        fs::write(&dependency_source, format!("pub mod component {{ pub trait Component {{}} }}\npub const NUMBER: u32 = {number};\npub trait Named {{ const LABEL: &'static str; const NUMBER: u32; }}\npub fn create<T: Named>() -> (&'static str, u32) {{ (T::LABEL, T::NUMBER) }}\n")).unwrap();
-        fs::write(&consumer_source, format!("struct Marker;\nimpl bevy_ecs::Named for Marker {{ const LABEL: &'static str = {label:?}; const NUMBER: u32 = bevy_ecs::NUMBER; }}\npub fn entry() {{ let _values = bevy_ecs::create::<Marker>(); }}\n")).unwrap();
-        let compiled = Command::new("rustc")
-            .arg(&dependency_source)
-            .args([
-                "--crate-name=bevy_ecs",
-                "--crate-type=rlib",
-                "--edition=2024",
-                "-Zalways-encode-mir",
-            ])
-            .arg(format!("-Cmetadata={metadata}"))
-            .arg("-o")
-            .arg(&artifact)
-            .output()
-            .unwrap();
-        assert!(
-            compiled.status.success(),
-            "{}",
-            String::from_utf8_lossy(&compiled.stderr)
-        );
-        let mut units = vec![];
-        for (source, name) in [
-            (&dependency_source, "bevy_ecs"),
-            (&consumer_source, "consumer"),
-        ] {
-            let mut arguments = vec![
-                "rustc".into(),
-                source.to_string_lossy().into_owned(),
-                format!("--crate-name={name}"),
-                "--crate-type=lib".into(),
-                "--edition=2024".into(),
-                "--sysroot".into(),
-                sysroot.trim().into(),
-                "--out-dir".into(),
-                root.to_string_lossy().into_owned(),
-                "-Zalways-encode-mir".into(),
-                "-Zmir-opt-level=0".into(),
-            ];
-            if name == "consumer" {
-                arguments.extend([
-                    "--extern".into(),
-                    format!("bevy_ecs={}", artifact.display()),
-                ]);
-            } else {
-                arguments.push(format!("-Cmetadata={metadata}"));
-            }
-            let mut extractor = OriginExtractor {
-                facts: None,
-                origins: origins.clone(),
-            };
-            rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
-            units.push(extractor.facts.unwrap());
-        }
-        // 测试仅模拟 runtime 绑定；声明、泛型实例、初始化体和调用边均来自上面的真实编译。
-        units[1]
-            .callables
-            .iter_mut()
-            .find(|callable| callable.display == "consumer::entry")
-            .unwrap()
-            .system_type_ids
-            .push("entry-runtime".into());
-        let dot = "digraph { entry; }\n";
-        let schedule_id = digest(b"main\0Update")[..16].to_owned();
-        fs::write(consumer.join("debugdump/schedule.dot"), dot).unwrap();
-        let runtime = RuntimeSnapshot {
-            schema_version: 1,
-            source_fingerprint: rustc_analysis::model::source_fingerprint(&consumer).unwrap(),
-            target: "fixture".into(),
-            schedules: vec![RuntimeSchedule {
-                id: schedule_id.clone(),
-                app: "main".into(),
-                label: "Update".into(),
-                dot_filename: "schedule.dot".into(),
-                dot_sha256: digest(dot.as_bytes()),
-                systems: vec![RuntimeSystem {
-                    key: "entry".into(),
-                    graph_name: "entry".into(),
-                    name: "consumer::entry".into(),
-                    type_id: "entry-runtime".into(),
-                    access_scope: "finite".into(),
-                    ..Default::default()
-                }],
-                ..Default::default()
-            }],
-            ..Default::default()
-        };
-        let runtime_bytes = serde_json::to_vec(&runtime).unwrap();
-        fs::write(consumer.join("runtime.json"), &runtime_bytes).unwrap();
-        fs::write(consumer.join("debugdump/manifest.json"), serde_json::to_vec(&serde_json::json!({"schemaVersion":1,"sourceFingerprint":runtime.source_fingerprint,"schedules":[{"id":schedule_id,"app":"main","label":"Update","filename":"schedule.dot","sha256":digest(dot.as_bytes())}]})).unwrap()).unwrap();
-        fs::write(consumer.join("facts.json"), serde_json::to_vec(&serde_json::json!({"schemaVersion":analysis_contract::facts::FACT_SCHEMA_VERSION,"compiler":"fixed-compiler","configuration":"fixed-build","workspace":consumer,"packages":[{"name":"bevy_ecs","version":"0.1.0","manifest_path":dependency.join("Cargo.toml")}],"units":units,"runtimeSha256":digest(&runtime_bytes)})).unwrap()).unwrap();
-        fs::write(
-            consumer.join("annotations.json"),
-            b"{\"schemaVersion\":1,\"items\":{}}",
-        )
-        .unwrap();
-        let result = rustc_analysis::model::build(
-            &consumer.join("facts.json"),
-            &consumer.join("runtime.json"),
-            &consumer.join("annotations.json"),
-            &consumer.join("model.json"),
-        );
-        assert!(
-            result
-                .unwrap_err()
-                .to_string()
-                .contains("Chinese descriptions are pending")
-        );
-        let pending: serde_json::Value =
-            serde_json::from_slice(&fs::read(consumer.join("pending-descriptions.json")).unwrap())
-                .unwrap();
-        hashes.push(
-            pending
-                .as_array()
-                .unwrap()
-                .iter()
-                .find(|purpose| purpose["key"] == "consumer::entry")
-                .unwrap()["evidenceHash"]
-                .clone(),
-        );
-    }
-    assert_ne!(
-        hashes[0], hashes[1],
-        "A downstream impl value must invalidate the caller's final purpose"
-    );
-    assert_eq!(
-        hashes[0], hashes[3],
-        "Dependency metadata alone must not invalidate the final caller purpose"
-    );
-    assert_ne!(
-        hashes[0], hashes[2],
-        "A foreign initializer used by the downstream impl must invalidate the final caller purpose"
-    );
-}
-
 impl Callbacks for OriginExtractor {
-    fn config(&mut self, config: &mut interface::Config) {
-        config.opts.unstable_opts.metadata_crate_hash = false;
-    }
     fn after_analysis<'tcx>(&mut self, _: &interface::Compiler, tcx: TyCtxt<'tcx>) -> Compilation {
         self.facts =
             Some(analysis_compiler::ecs::extract_with_origins(tcx, &self.origins).unwrap());
@@ -461,12 +81,7 @@ fn exact_package_target_identity_is_stable_across_workspace_roots_and_distinguis
             .declarations
             .iter()
             .filter(|declaration| declaration.crate_name == "bevy_ecs")
-            .map(|declaration| {
-                (
-                    declaration.full_name.clone(),
-                    (declaration.id.clone(), declaration.evidence_hash.clone()),
-                )
-            })
+            .map(|declaration| (declaration.full_name.clone(), declaration.id.clone()))
             .collect::<std::collections::BTreeMap<_, _>>();
         let callables = facts
             .callables
@@ -480,7 +95,7 @@ fn exact_package_target_identity_is_stable_across_workspace_roots_and_distinguis
             .filter(|ty| {
                 declarations
                     .values()
-                    .any(|(id, _)| ty.declaration.as_ref() == Some(id))
+                    .any(|id| ty.declaration.as_ref() == Some(id))
             })
             .map(|ty| ty.id.clone())
             .collect::<std::collections::BTreeSet<_>>();
@@ -591,524 +206,7 @@ fn owning_and_importing_compiler_units_agree_on_exact_package_identity() {
 }
 
 #[test]
-fn purpose_evidence_tracks_name_initializer_and_helper_body_changes() {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../../tmp/rustc-analysis/fixtures/reuse-initializer-evidence");
-    fs::create_dir_all(&root).unwrap();
-    let source = root.join("lib.rs");
-    let compiler = Command::new("rustc")
-        .args(["--print", "sysroot"])
-        .output()
-        .unwrap();
-    assert!(compiler.status.success());
-    let sysroot = String::from_utf8(compiler.stdout).unwrap();
-    let arguments = vec![
-        "rustc".into(),
-        source.to_string_lossy().into_owned(),
-        "--crate-name=bevy_ecs".into(),
-        "--crate-type=lib".into(),
-        "--edition=2024".into(),
-        "--sysroot".into(),
-        sysroot.trim().into(),
-        "--out-dir".into(),
-        root.to_string_lossy().into_owned(),
-        "-Zalways-encode-mir".into(),
-        "-Zmir-opt-level=0".into(),
-    ];
-    let mut versions = vec![];
-    for (name, value, helper) in [
-        ("Original", 1, 1),
-        ("Changed", 1, 1),
-        ("Original", 2, 1),
-        ("Original", 1, 2),
-    ] {
-        fs::write(&source, format!("#![allow(dead_code)]\npub mod component {{ pub trait Component {{}} }}\nstruct Name(&'static str);\nfn create() {{ let _name = Name({name:?}); let _initial_value = {value}; helper(); }}\nfn helper() {{ let _ = {helper}; }}\n")).unwrap();
-        let mut extractor = Extractor { facts: None };
-        rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
-        versions.push(
-            extractor
-                .facts
-                .unwrap()
-                .declarations
-                .into_iter()
-                .filter(|declaration| {
-                    matches!(
-                        declaration.full_name.as_str(),
-                        "bevy_ecs::create" | "bevy_ecs::helper"
-                    )
-                })
-                .map(|declaration| (declaration.full_name, declaration.evidence_hash))
-                .collect::<std::collections::BTreeMap<_, _>>(),
-        );
-    }
-    assert_ne!(
-        versions[0]["bevy_ecs::create"],
-        versions[1]["bevy_ecs::create"]
-    );
-    assert_ne!(
-        versions[0]["bevy_ecs::create"],
-        versions[2]["bevy_ecs::create"]
-    );
-    assert_eq!(
-        versions[0]["bevy_ecs::create"],
-        versions[3]["bevy_ecs::create"]
-    );
-    assert_ne!(
-        versions[0]["bevy_ecs::helper"],
-        versions[3]["bevy_ecs::helper"]
-    );
-}
-
-// for 展开生成的 const trait 函数路径不填 node_args，提取仍须完成三种具体迭代。
-#[test]
-fn purpose_evidence_resolves_const_trait_functions_in_desugared_for_loops() {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../../tmp/rustc-analysis/fixtures/desugared-const-trait-functions");
-    fs::create_dir_all(&root).unwrap();
-    let source = root.join("lib.rs");
-    fs::write(
-        &source,
-        r#"
-pub mod component { pub trait Component {} }
-pub fn borrowed(values: &[u32]) -> u32 {
-    let mut total = 0;
-    for value in values { total += value; }
-    total
-}
-pub fn owned(values: Vec<u32>) -> u32 {
-    let mut total = 0;
-    for value in values { total += value; }
-    total
-}
-pub fn mutable(values: &mut [u32]) {
-    for value in values { *value += 1; }
-}
-"#,
-    )
-    .unwrap();
-    let compiler = Command::new("rustc")
-        .args(["--print", "sysroot"])
-        .output()
-        .unwrap();
-    assert!(compiler.status.success());
-    let sysroot = String::from_utf8(compiler.stdout).unwrap();
-    let arguments = vec![
-        "rustc".into(),
-        source.to_string_lossy().into_owned(),
-        "--crate-name=bevy_ecs".into(),
-        "--crate-type=lib".into(),
-        "--edition=2024".into(),
-        "--sysroot".into(),
-        sysroot.trim().into(),
-        "--out-dir".into(),
-        root.to_string_lossy().into_owned(),
-        "-Zalways-encode-mir".into(),
-        "-Zmir-opt-level=0".into(),
-    ];
-    let mut extractor = Extractor { facts: None };
-    rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
-    let facts = extractor.facts.unwrap();
-    for function in ["borrowed", "owned", "mutable"] {
-        let declaration = facts
-            .declarations
-            .iter()
-            .find(|declaration| declaration.full_name == format!("bevy_ecs::{function}"))
-            .unwrap();
-        assert!(!declaration.evidence_hash.is_empty());
-    }
-}
-
-#[test]
-fn purpose_evidence_tracks_referenced_constants_without_hashing_unrelated_declarations() {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../../tmp/rustc-analysis/fixtures/reuse-constant-evidence");
-    fs::create_dir_all(&root).unwrap();
-    let source = root.join("lib.rs");
-    let compiler = Command::new("rustc")
-        .args(["--print", "sysroot"])
-        .output()
-        .unwrap();
-    assert!(compiler.status.success());
-    let sysroot = String::from_utf8(compiler.stdout).unwrap();
-    let arguments = vec![
-        "rustc".into(),
-        source.to_string_lossy().into_owned(),
-        "--crate-name=bevy_ecs".into(),
-        "--crate-type=lib".into(),
-        "--edition=2024".into(),
-        "--sysroot".into(),
-        sysroot.trim().into(),
-        "--out-dir".into(),
-        root.to_string_lossy().into_owned(),
-        "-Zalways-encode-mir".into(),
-        "-Zmir-opt-level=0".into(),
-    ];
-    let mut versions = vec![];
-    for (name, value, unrelated) in [
-        ("Original", 1, 1),
-        ("Changed", 1, 1),
-        ("Original", 2, 1),
-        ("Original", 1, 2),
-    ] {
-        fs::write(&source, format!("#![allow(dead_code)]\npub mod component {{ pub trait Component {{}} }}\nstruct Name(&'static str);\nconst NAME: &str = {name:?};\nconst fn initial_value() -> u32 {{ {value} }}\nconst VALUE: u32 = initial_value();\nconst UNRELATED: u32 = {unrelated};\nstruct Node(&'static Node);\nstatic LEFT: Node = Node(&RIGHT);\nstatic RIGHT: Node = Node(&LEFT);\nfn create() {{ let _name = Name(NAME); let _initial_value = VALUE; let _cyclic_reference = &LEFT; }}\n")).unwrap();
-        let mut extractor = Extractor { facts: None };
-        rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
-        versions.push(
-            extractor
-                .facts
-                .unwrap()
-                .declarations
-                .into_iter()
-                .find(|declaration| declaration.full_name == "bevy_ecs::create")
-                .unwrap()
-                .evidence_hash,
-        );
-    }
-    assert_ne!(versions[0], versions[1]);
-    assert_ne!(versions[0], versions[2]);
-    assert_eq!(
-        versions[0], versions[3],
-        "An unrelated constant must not invalidate the creator purpose"
-    );
-}
-
-#[test]
-fn purpose_evidence_tracks_referenced_external_constant_values() {
-    let versions = external_initializer_evidence("const");
-    assert_ne!(versions[0], versions[1]);
-    assert_ne!(versions[0], versions[2]);
-    assert_eq!(versions[0], versions[3]);
-}
-
-#[test]
-fn purpose_evidence_tracks_referenced_external_static_values() {
-    let versions = external_initializer_evidence("static");
-    assert_ne!(versions[0], versions[1]);
-    assert_ne!(versions[0], versions[2]);
-    assert_ne!(
-        versions[0], versions[5],
-        "Equal allocation bytes with different static types must not reuse a purpose"
-    );
-    assert_eq!(
-        versions[0], versions[4],
-        "A dependency metadata-only change must reuse the static purpose"
-    );
-}
-
-#[test]
-fn purpose_evidence_tracks_external_cyclic_static_relocations() {
-    let versions = external_initializer_evidence("relocation");
-    assert_ne!(
-        versions[0], versions[1],
-        "Pointer relocation targets affect static evidence"
-    );
-    assert_ne!(
-        versions[0], versions[2],
-        "Values reached through a cyclic static reference affect evidence"
-    );
-    assert_eq!(
-        versions[0], versions[3],
-        "Unreferenced static values must not affect the caller"
-    );
-    assert_eq!(
-        versions[0], versions[4],
-        "Native allocation IDs and dependency metadata must not enter static evidence"
-    );
-}
-
-#[test]
-fn purpose_evidence_tracks_external_const_function_mir() {
-    let versions = external_initializer_evidence("const-function");
-    assert_ne!(versions[0], versions[1]);
-    assert_ne!(versions[0], versions[2]);
-    assert_eq!(versions[0], versions[3]);
-    assert_eq!(
-        versions[0], versions[4],
-        "External const fn MIR evidence must ignore dependency metadata"
-    );
-}
-
-#[test]
-fn foreign_generic_trait_uncertainty_is_retained_without_metadata_identity() {
-    let versions = external_initializer_evidence("trait");
-    assert_eq!(
-        versions[0], versions[4],
-        "A dependency metadata-only change must reuse unresolved trait purposes"
-    );
-}
-
-fn external_initializer_evidence(storage: &str) -> Vec<String> {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(format!(
-        "../../../tmp/rustc-analysis/fixtures/reuse-external-{storage}-evidence"
-    ));
-    let dependency = root.join("dependency");
-    let consumer = root.join("consumer");
-    fs::create_dir_all(&dependency).unwrap();
-    fs::create_dir_all(&consumer).unwrap();
-    let dependency_source = dependency.join("lib.rs");
-    let consumer_source = consumer.join("lib.rs");
-    fs::write(&dependency_source, "").unwrap();
-    let consumer_code = if storage == "trait" {
-        "struct Marker;\nimpl bevy_ecs::Named for Marker { const LABEL: &'static str = bevy_ecs::NAME; }\nfn create<T: bevy_ecs::Named>() { let _name = T::LABEL; }\npub fn entry() { create::<Marker>(); }\n"
-    } else if storage == "relocation" {
-        "pub fn create() { let _root = bevy_ecs::ROOT; }\n"
-    } else if storage == "const-function" {
-        "pub fn create() { let _name = bevy_ecs::name(); let _number = bevy_ecs::number(); }\n"
-    } else {
-        "pub fn create() { let _name = bevy_ecs::NAME; let _number = bevy_ecs::NUMBER; }\n"
-    };
-    fs::write(&consumer_source, consumer_code).unwrap();
-    let artifact = dependency.join("libfixture.rlib");
-    let compiler = Command::new("rustc")
-        .args(["--print", "sysroot"])
-        .output()
-        .unwrap();
-    assert!(compiler.status.success());
-    let sysroot = String::from_utf8(compiler.stdout).unwrap();
-    let origins = [
-        (&dependency, &dependency_source, "bevy_ecs"),
-        (&consumer, &consumer_source, "consumer"),
-    ]
-    .into_iter()
-    .map(|(root, source, name)| analysis_contract::PackageOrigin {
-        root: analysis_contract::normalized(root).unwrap(),
-        identity: format!("exact-package:{name}:1"),
-        targets: vec![analysis_contract::PackageTargetOrigin {
-            source: analysis_contract::normalized(source).unwrap(),
-            name: name.into(),
-            kind: vec!["lib".into()],
-        }],
-    })
-    .collect::<Vec<_>>();
-    let arguments = vec![
-        "rustc".into(),
-        consumer_source.to_string_lossy().into_owned(),
-        "--crate-name=consumer".into(),
-        "--crate-type=lib".into(),
-        "--edition=2024".into(),
-        "--sysroot".into(),
-        sysroot.trim().into(),
-        "--out-dir".into(),
-        root.to_string_lossy().into_owned(),
-        "--extern".into(),
-        format!("bevy_ecs={}", artifact.display()),
-        "-Zalways-encode-mir".into(),
-        "-Zmir-opt-level=0".into(),
-    ];
-    let mut versions = vec![];
-    for (name, number, unrelated, metadata) in [
-        ("Original", 1, 1, "first"),
-        ("Changed", 1, 1, "first"),
-        ("Original", 2, 1, "first"),
-        ("Original", 1, 2, "first"),
-        ("Original", 1, 1, "second"),
-        ("Original", 1, 1, "typechange"),
-    ] {
-        let declaration_storage = if storage == "trait" { "const" } else { storage };
-        let (number_type, number_value) = if storage == "static" {
-            if metadata == "typechange" {
-                ("f32", "0.0".to_owned())
-            } else {
-                ("u32", (number - 1).to_string())
-            }
-        } else {
-            ("u32", number.to_string())
-        };
-        let dependency_code = if storage == "relocation" {
-            let target = if name == "Original" { "LEFT" } else { "RIGHT" };
-            format!(
-                "pub mod component {{ pub trait Component {{}} }}\npub struct Node {{ pub value: u32, pub next: &'static Node }}\npub static LEFT: Node = Node {{ value: {number}, next: &RIGHT }};\npub static RIGHT: Node = Node {{ value: 29, next: &LEFT }};\npub static ROOT: &Node = &{target};\npub static UNRELATED: u32 = {unrelated};\n"
-            )
-        } else if storage == "const-function" {
-            format!(
-                "pub mod component {{ pub trait Component {{}} }}\npub const fn name() -> &'static str {{ {name:?} }}\npub const fn number() -> u32 {{ {number} }}\npub const UNRELATED: u32 = {unrelated};\n"
-            )
-        } else {
-            format!(
-                "pub mod component {{ pub trait Component {{}} }}\npub trait Named {{ const LABEL: &'static str; }}\npub {declaration_storage} NAME: &str = {name:?};\npub {declaration_storage} NUMBER: {number_type} = {number_value};\npub const UNRELATED: u32 = {unrelated};\n"
-            )
-        };
-        fs::write(&dependency_source, dependency_code).unwrap();
-        let compiled = Command::new("rustc")
-            .args([
-                dependency_source.as_os_str(),
-                "--crate-name=bevy_ecs".as_ref(),
-                "--crate-type=rlib".as_ref(),
-                "--edition=2024".as_ref(),
-                format!("-Cmetadata={metadata}").as_ref(),
-                "-o".as_ref(),
-                artifact.as_os_str(),
-            ])
-            .output()
-            .unwrap();
-        assert!(
-            compiled.status.success(),
-            "{}",
-            String::from_utf8_lossy(&compiled.stderr)
-        );
-        let mut extractor = OriginExtractor {
-            facts: None,
-            origins: origins.clone(),
-        };
-        rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
-        let facts = extractor.facts.unwrap();
-        let declaration = facts
-            .declarations
-            .iter()
-            .find(|declaration| declaration.full_name == "consumer::create")
-            .unwrap();
-        if storage == "const-function" {
-            assert!(
-                !declaration.unresolved_behavior,
-                "A plain foreign const fn has certified CTFE evidence even when runtime MIR is not encoded"
-            );
-        }
-        if storage == "trait" {
-            assert!(!declaration.unresolved_behavior);
-            assert_eq!(declaration.purpose_dependencies.len(), 1);
-            let dependency = &declaration.purpose_dependencies[0];
-            let inventory = &facts.purpose_inventory;
-            let implementation = inventory
-                .implementations
-                .iter()
-                .find(|implementation| {
-                    implementation.owner_crate == inventory.crate_identity
-                        && implementation.trait_id == dependency.trait_id
-                })
-                .unwrap();
-            assert!(
-                implementation.members.iter().any(|member| {
-                    member.trait_id == dependency.trait_id
-                        && member.member_id == dependency.member_id
-                        && member.has_value
-                        && member.implementation_member_id.is_some()
-                }),
-                "The generic reference must retain the exact foreign trait/member mapping"
-            );
-            let foreign_view = inventory
-                .required_views
-                .iter()
-                .find(|view| {
-                    serde_json::from_str::<serde_json::Value>(&view.crate_identity)
-                        .ok()
-                        .is_some_and(|identity| {
-                            identity["package"] == "exact-package:bevy_ecs:1"
-                                && identity["crate"] == "bevy_ecs"
-                        })
-                })
-                .unwrap();
-            assert!(
-                !inventory.coverage.iter().any(|coverage| {
-                    coverage.crate_identity == foreign_view.crate_identity
-                        && coverage.metadata_hash == foreign_view.metadata_hash
-                        && coverage.complete
-                        && coverage
-                            .traits
-                            .as_ref()
-                            .is_none_or(|traits| traits.contains(&dependency.trait_id))
-                }),
-                "A consumer-only inventory cannot certify the foreign owning view; the model must fall back without its report"
-            );
-            if let Some(previous) = versions.first() {
-                assert_eq!(
-                    previous, &declaration.evidence_hash,
-                    "Foreign impl candidates and owning unit summaries must not leak into the generic declaration's local hash"
-                );
-            }
-        }
-        versions.push(declaration.evidence_hash.clone());
-    }
-    versions
-}
-
-#[test]
-fn purpose_evidence_tracks_generic_trait_impl_constant_values() {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../../tmp/rustc-analysis/fixtures/reuse-generic-constant-evidence");
-    fs::create_dir_all(&root).unwrap();
-    let source = root.join("lib.rs");
-    let compiler = Command::new("rustc")
-        .args(["--print", "sysroot"])
-        .output()
-        .unwrap();
-    assert!(compiler.status.success());
-    let sysroot = String::from_utf8(compiler.stdout).unwrap();
-    let mut versions = vec![];
-    for (name, metadata, blank_lines) in [
-        ("Original", "a", 0),
-        ("Changed", "a", 0),
-        ("Original", "b", 3),
-    ] {
-        fs::write(&source, format!("#![allow(dead_code)]\n{}pub mod component {{ pub trait Component {{}} }}\ntrait Named {{ const LABEL: &'static str; }}\nstruct Marker;\nimpl Named for Marker {{ const LABEL: &'static str = {name:?}; }}\nfn create<T: Named>() {{ let _name = T::LABEL; }}\nfn entry() {{ create::<Marker>(); }}\n", "\n".repeat(blank_lines))).unwrap();
-        let arguments = vec![
-            "rustc".into(),
-            source.to_string_lossy().into_owned(),
-            "--crate-name=bevy_ecs".into(),
-            "--crate-type=lib".into(),
-            "--edition=2024".into(),
-            "--sysroot".into(),
-            sysroot.trim().into(),
-            "--out-dir".into(),
-            root.to_string_lossy().into_owned(),
-            "-Zalways-encode-mir".into(),
-            "-Zmir-opt-level=0".into(),
-            format!("-Cmetadata={metadata}"),
-        ];
-        let mut extractor = Extractor { facts: None };
-        rustc_driver::compiler_entrypoint(&arguments, &mut extractor);
-        let facts = extractor.facts.unwrap();
-        let creator = facts
-            .declarations
-            .iter()
-            .find(|declaration| declaration.full_name == "bevy_ecs::create")
-            .unwrap();
-        assert!(!creator.unresolved_behavior);
-        assert_eq!(creator.purpose_dependencies.len(), 1);
-        let dependency = &creator.purpose_dependencies[0];
-        let implementation = facts
-            .purpose_inventory
-            .implementations
-            .iter()
-            .find(|implementation| implementation.trait_id == dependency.trait_id)
-            .unwrap();
-        let member = implementation
-            .members
-            .iter()
-            .find(|member| member.member_id == dependency.member_id)
-            .unwrap();
-        assert!(member.has_value && member.implementation_member_id.is_some());
-        assert!(!member.unresolved_behavior);
-        versions.push((
-            creator.evidence_hash.clone(),
-            dependency.clone(),
-            implementation.header_hash.clone(),
-            member.clone(),
-        ));
-    }
-    assert_eq!(
-        versions[0].0, versions[1].0,
-        "The generic creator's local behavior excludes unresolved impl candidates"
-    );
-    assert_eq!(
-        versions[0].1, versions[1].1,
-        "The creator retains its exact trait/member dependency"
-    );
-    assert_eq!(
-        versions[0].2, versions[1].2,
-        "Changing an initializer does not change the impl header"
-    );
-    assert_ne!(
-        versions[0].3.evidence_hash, versions[1].3.evidence_hash,
-        "The referenced impl initializer must change the separately recorded member evidence"
-    );
-    assert_eq!(
-        versions[0], versions[2],
-        "Local behavior, exact dependencies and member evidence ignore metadata and line movement"
-    );
-}
-
-#[test]
-fn compiler_metadata_does_not_change_declaration_identity_or_local_purpose() {
+fn compiler_metadata_does_not_change_declaration_identity() {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../../../tmp/rustc-analysis/fixtures/reuse-compiler-metadata");
     fs::create_dir_all(&root).unwrap();
@@ -1149,12 +247,7 @@ fn compiler_metadata_does_not_change_declaration_identity_or_local_purpose() {
                         "bevy_ecs::Marker" | "bevy_ecs::unchanged"
                     )
                 })
-                .map(|declaration| {
-                    (
-                        declaration.full_name,
-                        (declaration.id, declaration.evidence_hash),
-                    )
-                })
+                .map(|declaration| (declaration.full_name, declaration.id))
                 .collect::<std::collections::BTreeMap<_, _>>(),
         );
     }
@@ -1911,9 +1004,6 @@ fn name_alternatives_preserve_each_branch_priority() {
     );
 }
 impl Callbacks for Extractor {
-    fn config(&mut self, config: &mut interface::Config) {
-        config.opts.unstable_opts.metadata_crate_hash = false;
-    }
     fn after_analysis<'tcx>(&mut self, _: &interface::Compiler, tcx: TyCtxt<'tcx>) -> Compilation {
         self.facts = Some(analysis_compiler::ecs::extract(tcx).unwrap());
         Compilation::Stop
@@ -1979,6 +1069,8 @@ fn local_copy() {let mut value=left::Position; let reference=&mut value; *refere
 fn generic_spawn<T:component::Component>(world:&mut world::World, bundle:T) {world.spawn(bundle);}
 fn spawn_operations(world:&mut world::World) {generic_spawn(world, left::Position); world.spawn_at(entity::Entity, right::Position); world.spawn_empty();}
 fn registered() {}
+fn conditional_registration(flag:bool) {if flag {registered();}}
+fn indirect(callback:fn()) {callback();}
 fn wrapper() {let system = system::function_system::FunctionSystem {function:registered};}
 macro_rules! make {()=>{fn generated(commands:&mut system::commands::Commands) {commands.insert(Alias {});}}}
 make!();
@@ -2311,7 +1403,7 @@ fn records_concrete_helper_creates_and_spawn_at_bundle_payload() {
 }
 
 #[test]
-fn bounds_unicode_previews_after_hashing_full_declaration_and_preserves_guards() {
+fn bounds_unicode_previews_and_preserves_complete_source_hashes_and_guards() {
     let facts = facts();
     let declaration = facts
         .declarations
@@ -2324,18 +1416,6 @@ fn bounds_unicode_previews_after_hashing_full_declaration_and_preserves_guards()
         analysis_compiler::ecs::SOURCE_PREVIEW_CHAR_LIMIT
     );
     assert!(source.snippet.contains("编译器源码证据"));
-    let preview_hash = format!(
-        "{:x}",
-        sha2::Sha256::digest(
-            serde_json::to_vec(&(
-                &declaration.source,
-                &declaration.full_name,
-                &declaration.docs
-            ))
-            .unwrap()
-        )
-    );
-    assert_ne!(declaration.evidence_hash, preview_hash);
     let complete_source = fs::read(&source.path).unwrap();
     assert_eq!(
         source.sha256,
@@ -2353,7 +1433,7 @@ fn bounds_unicode_previews_after_hashing_full_declaration_and_preserves_guards()
 }
 
 #[test]
-fn body_only_edit_invalidates_description_with_identical_published_preview() {
+fn body_and_macro_edits_update_source_hashes_with_identical_published_preview() {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../../../tmp/rustc-analysis/fixtures/body-evidence");
     fs::create_dir_all(&root).unwrap();
@@ -2395,7 +1475,6 @@ fn body_only_edit_invalidates_description_with_identical_published_preview() {
     let before = &versions[0];
     let after = &versions[1];
     assert_eq!(before.id, after.id);
-    assert_eq!(before.docs, after.docs);
     let old_source = before.source.as_ref().unwrap();
     let new_source = after.source.as_ref().unwrap();
     assert_eq!(
@@ -2404,10 +1483,8 @@ fn body_only_edit_invalidates_description_with_identical_published_preview() {
     );
     assert_eq!(old_source.snippet, new_source.snippet);
     assert_ne!(old_source.sha256, new_source.sha256);
-    assert_ne!(before.evidence_hash, after.evidence_hash);
     let moved = &versions[2];
     assert_eq!(before.id, moved.id);
-    assert_eq!(before.evidence_hash, moved.evidence_hash);
     assert_ne!(old_source.line, moved.source.as_ref().unwrap().line);
     assert_ne!(old_source.sha256, moved.source.as_ref().unwrap().sha256);
     let mut expansions = vec![];
@@ -2425,10 +1502,44 @@ fn body_only_edit_invalidates_description_with_identical_published_preview() {
                 .unwrap(),
         );
     }
+    assert_ne!(
+        expansions[0].source.as_ref().unwrap().sha256,
+        expansions[1].source.as_ref().unwrap().sha256
+    );
     assert_eq!(expansions[0].id, expansions[1].id);
     assert_eq!(
         expansions[0].source.as_ref().unwrap().snippet,
         expansions[1].source.as_ref().unwrap().snippet
     );
-    assert_ne!(expansions[0].evidence_hash, expansions[1].evidence_hash);
+}
+
+#[test]
+fn conditional_calls_keep_guards_and_function_pointers_keep_explicit_gaps() {
+    let facts = facts();
+    let callable = |name: &str| {
+        facts
+            .callables
+            .iter()
+            .find(|callable| callable.display == name)
+            .unwrap()
+    };
+    let entry = callable("bevy_ecs::conditional_registration");
+    let helper = callable("bevy_ecs::registered");
+    let calls: Vec<_> = facts
+        .calls
+        .iter()
+        .filter(|call| call.caller == entry.id && call.callee.as_ref() == Some(&helper.id))
+        .collect();
+    assert!(!calls.is_empty());
+    assert!(calls.iter().all(|call| !call.conditions.is_empty()));
+    let indirect = callable("bevy_ecs::indirect");
+    assert!(facts.calls.iter().any(|call| call.caller == indirect.id
+        && call.callee.is_none()
+        && call.unresolved_reason.as_deref() == Some("dynamic-call")));
+    assert!(
+        facts
+            .gaps
+            .iter()
+            .any(|gap| gap.owner == indirect.id && gap.kind == "dynamic-call")
+    );
 }
