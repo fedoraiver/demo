@@ -6,9 +6,9 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as pause } from 'node:timers/promises';
 import puppeteer from 'puppeteer';
-import { atomicJson, bindVisual, currentArtifacts, hash, planVisual, recordVisual, renderVisual, resolveIndex, visualReport } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-visual.mjs';
-import { visualRenderJobCount } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-visual-render.mjs';
-import { maintenanceScripts } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-paths.mjs';
+import { atomicJson, bindVisual, currentArtifacts, hash, planVisual, recordVisual, renderVisual, resolveIndex, visualReport } from '../src/maintenance-visual.mjs';
+import { visualRenderJobCount } from '../src/maintenance-visual-render.mjs';
+import { maintenanceScripts } from '../src/maintenance-paths.mjs';
 import { browserRendererProof } from './fixtures/browser-renderer-proof.mjs';
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
@@ -46,7 +46,10 @@ function fixture(t, { count = 5, retain = false } = {}) {
     const id = 'view-' + i;
     views.push({ id, svg: put(`svg/${engine === 'graphviz' ? 'schedule' : 'object'}/${id}.svg`, `<svg xmlns="http://www.w3.org/2000/svg" id="${id}" data-diagram-engine="${engine}" viewBox="0 0 100 50"><text x="1" y="20">fixture ${i}</text></svg>`), data: put(`data/views/${id}.json`, { id, engine, objectId, application: i === 0 ? 'main' : undefined, scheduleLabel: i === 0 ? 'Startup' : undefined }) });
   }
-  const manifest = { schemaVersion: 1, buildId: 'fixture-build', runtime: put('data/runtime.json', runtime), views, guides: { nodes: { component: put('svg/legend/component.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><rect width="10" height="10"/></svg>') } } };
+  const manifest = { schemaVersion: 2, buildId: 'fixture-build', runtime: put('data/runtime.json', runtime), views,
+    pages: { source: put('pages/ecs-source.html', '<!doctype html><title>Frozen sources</title>') },
+    licenses: [put('licenses/runtime.txt', 'Frozen runtime license\n')],
+    guides: { nodes: { component: put('svg/legend/component.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><rect width="10" height="10"/></svg>') } } };
   const save = () => put('data/manifest.json', manifest);
   save();
   const indexPath = path.join(workspace, 'tmp/visual/index-v2.json');
@@ -65,7 +68,7 @@ function renderProof(plan) {
   return records;
 }
 function observation(row, overrides = {}) {
-  return { path: row.path, status: 'passed', reviewer: { id: 'isolated-fixture-child', role: 'child', model: 'fixture-model', reasoningEffort: 'high' }, actualInspection: true, checkedAt: '2026-10-30T09:01:00+08:00', notes: 'Synthetic fixture observation only.', observedWith: 'fixture image', images: row.images, ...overrides };
+  return { path: row.path, status: 'passed', reviewer: { id: 'isolated-fixture-reviewer' }, actualInspection: true, checkedAt: '2026-10-30T09:01:00+08:00', notes: 'Synthetic fixture observation only.', observedWith: 'fixture image', images: row.images, ...overrides };
 }
 function git(workspace, args, options = {}) {
   return execFileSync('git', ['-c', `safe.directory=${workspace.replaceAll('\\', '/')}`, ...args], { cwd: workspace, ...options }).toString().trim();
@@ -105,6 +108,35 @@ test('all current manifest SVGs and independent legends enter a new plan', async
   assert.ok(plan.items.every(item => item.sha256.length === 64 && item.status === 'pending'));
   const report = await visualReport({ workspace: f.workspace, indexPath: f.indexPath, planPath: plan.planPath });
   assert.equal(report.pending, 6); assert.equal(report.complete, false);
+});
+
+test('public manifest v2 freezes pages and licenses without treating them as SVGs', async t => {
+  const f = fixture(t), plan = await f.plan(), rows = renderProof(plan);
+  for (const reference of [f.manifest.pages.source, ...f.manifest.licenses]) {
+    assert.ok(plan.inputs.some(input => input.path === reference.path && input.sha256 === reference.sha256));
+    assert.ok(!plan.items.some(item => item.path === reference.path));
+    const filename = path.join(f.generated, reference.path), original = fs.readFileSync(filename);
+    fs.writeFileSync(filename, 'Changed frozen input');
+    assert.throws(() => currentArtifacts(f.workspace), /hash\/size mismatch/);
+    await assert.rejects(recordVisual({ planPath: plan.planPath, observation: observation(rows[0]) }), /hash\/size mismatch/);
+    fs.writeFileSync(filename, original);
+  }
+  const artifacts = currentArtifacts(f.workspace, { gitObjectFormat: 'sha1' });
+  for (const reference of [f.manifest.pages.source, ...f.manifest.licenses]) assert.ok(artifacts.gitBlobs[reference.path]);
+});
+
+test('retired public manifest schemas and embedded audit resources are rejected', t => {
+  const f = fixture(t);
+  f.manifest.schemaVersion = 1; f.save();
+  assert.throws(() => currentArtifacts(f.workspace), /Unsupported artifact manifest/);
+  f.manifest.schemaVersion = 2;
+  for (const field of ['model', 'callGraph']) {
+    f.manifest[field] = f.manifest.runtime; f.save();
+    assert.throws(() => currentArtifacts(f.workspace), /Unsupported artifact manifest/);
+    delete f.manifest[field];
+  }
+  f.save();
+  assert.equal(currentArtifacts(f.workspace).entries.length, 6);
 });
 test('sample requires explicit count, seed, scope and enough room for all strata/mandatory views', async t => {
   const f = fixture(t);
@@ -159,9 +191,9 @@ test('records remain append-only, idempotent and safe under concurrent writers',
   const report = await visualReport({ workspace: f.workspace, planPath: plan.planPath });
   assert.equal(report.failed, 1); assert.equal(report.newPassed, 1); assert.equal(report.complete, false);
 });
-test('observation files support batches and require actual child metadata/timezone/notes/full image evidence', async t => {
+test('observation files support batches and require reviewer identity/timezone/notes/full image evidence', async t => {
   const f = fixture(t), plan = await f.plan(), rows = renderProof(plan);
-  for (const overrides of [{ actualInspection: false }, { reviewer: { role: 'root', id: 'parent', model: 'test', reasoningEffort: 'high' } }, { checkedAt: '2026-10-30T09:01:00' }, { notes: '' }, { images: [] }, { objectId: 'other' }, { images: [{ ...rows[0].images[0], sha256: 'a'.repeat(64) }] }]) {
+  for (const overrides of [{ actualInspection: false }, { reviewer: { id: '' } }, { checkedAt: '2026-10-30T09:01:00' }, { notes: '' }, { images: [] }, { objectId: 'other' }, { images: [{ ...rows[0].images[0], sha256: 'a'.repeat(64) }] }]) {
     await assert.rejects(recordVisual({ planPath: plan.planPath, observation: observation(rows[0], overrides) }), /observation|evidence|identity/i);
   }
   const observationFile = path.join(f.workspace, 'tmp/observations.json'); atomicJson(observationFile, { observations: rows.map(row => observation(row)) });

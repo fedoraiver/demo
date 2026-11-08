@@ -16,6 +16,7 @@ import { createMermaidCheckPool } from './mermaid-check-pool.mjs';
 import { normalizeMermaidSvg, compileRoutedView as compileRoutedViewCore, measureNativeLabelBounds } from './mermaid-core.mjs';
 import { repositoryRoot as root } from './paths.mjs';
 import { createMermaidCache, mermaidDependencyIdentity, mermaidRenderIdentity, restoreMermaidGeometry } from './mermaid-cache.mjs';
+import { architectureBrowserPath } from './architecture-browser.mjs';
 export { normalizeMermaidSvg, routedMermaid } from './mermaid-core.mjs';
 
 const elements = node => [...node.getElementsByTagName('*')];
@@ -64,19 +65,6 @@ export async function withMermaidContext(browser, compile) {
     try { await context.close(); }
     catch (error) { if (!failure) throw error; }
   }
-}
-
-function chromiumPath() {
-  if (process.env.MERMAID_CHROMIUM_PATH) {
-    if (!fs.existsSync(process.env.MERMAID_CHROMIUM_PATH)) throw new Error('MERMAID_CHROMIUM_PATH does not exist');
-    return process.env.MERMAID_CHROMIUM_PATH;
-  }
-  const candidates = process.platform === 'win32'
-    ? [process.env.ProgramFiles, process.env['ProgramFiles(x86)'], process.env.LOCALAPPDATA].filter(Boolean).flatMap(base => [path.join(base, 'Google/Chrome/Application/chrome.exe'), path.join(base, 'Microsoft/Edge/Application/msedge.exe')])
-    : process.platform === 'darwin' ? ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge'] : ['/usr/bin/chromium', '/usr/bin/chromium-browser', '/usr/bin/google-chrome'];
-  const found = candidates.find(candidate => fs.existsSync(candidate));
-  if (!found) throw new Error('Mermaid needs Chromium; set MERMAID_CHROMIUM_PATH to Chrome/Edge/Chromium');
-  return found;
 }
 
 // 指南样例只内嵌到 HTML，轮廓与箭头仍由同一 Mermaid 编译器生成。
@@ -188,7 +176,7 @@ export async function compileArchitectureArtifacts(views, registry) {
   const cacheSummary = { local: 0, shared: 0, published: 0, compiled: 0, rejected: 0 };
   console.log('Mermaid cache candidates: ' + JSON.stringify(cache.plan(views, identities)));
   const profile = fs.mkdtempSync(path.join(temporary, 'profile-'));
-  const browser = await puppeteer.launch({ executablePath: chromiumPath(), headless: true, userDataDir: profile });
+  const browser = await puppeteer.launch({ executablePath: architectureBrowserPath(), headless: true, userDataDir: profile });
   const checks = createMermaidCheckPool({ jobs });
   let failure;
   try {

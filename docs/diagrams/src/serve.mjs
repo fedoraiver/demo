@@ -5,7 +5,7 @@ import { pipeline } from 'node:stream/promises';
 import { pathsForRepository, repositoryRoot } from './paths.mjs';
 
 const buildMessage = '架构图页面尚未生成，请先运行 npm run build --prefix docs/diagrams。';
-const usage = 'Usage: node docs/diagrams/serve.mjs [--port <0-65535>]';
+const usage = 'Usage: node docs/diagrams/serve.mjs [--port <0-65535>] [--directory <path>]';
 const mimeTypes = { '.html': 'text/html; charset=utf-8', '.svg': 'image/svg+xml', '.json': 'application/json; charset=utf-8',
   '.txt': 'text/plain; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8',
   '.mmd': 'text/plain; charset=utf-8', '.dot': 'text/plain; charset=utf-8' };
@@ -60,11 +60,12 @@ async function openArtifact(repository, generatedDirectory, relative) {
   } catch (error) { await file.close(); throw error; }
 }
 
-/** 只读提供 generated 产物；调用方负责关闭返回的服务。 */
-export async function createArchitectureServer({ repository = repositoryRoot, port = 4173, host = '127.0.0.1' } = {}) {
+/** 只读提供本工作区的构建或发布产物；调用方负责关闭返回的服务。 */
+export async function createArchitectureServer({ repository = repositoryRoot, directory, port = 4173, host = '127.0.0.1' } = {}) {
   if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('Invalid preview port: expected an integer from 0 to 65535');
   const root = await fs.promises.realpath(path.resolve(repository));
-  const { generatedDirectory } = pathsForRepository(root);
+  const generatedDirectory = directory ? path.resolve(root, directory) : pathsForRepository(root).generatedDirectory;
+  if (!within(root, generatedDirectory) || generatedDirectory === root) throw new Error('Preview directory must remain inside the workspace');
   try { const { file } = await openArtifact(root, generatedDirectory, 'pages/ecs-architecture.html'); await file.close(); }
   catch (error) { if (failureStatus(error) === 404) throw new Error(buildMessage); throw error; }
   const server = http.createServer(async (request, response) => {
@@ -106,10 +107,14 @@ export async function createArchitectureServer({ repository = repositoryRoot, po
 }
 
 export async function runServeCli(args = process.argv.slice(2), { repository = repositoryRoot, output = console.log } = {}) {
-  if (args.length && (args.length !== 2 || args[0] !== '--port' || !/^\d+$/.test(args[1]))) throw new Error(usage);
-  const port = args.length ? Number(args[1]) : 4173;
-  if (!Number.isInteger(port) || port > 65535) throw new Error(usage);
-  const preview = await createArchitectureServer({ repository, port });
+  const options = {};
+  for (let index = 0; index < args.length; index += 2) {
+    const key = args[index] === '--port' ? 'port' : args[index] === '--directory' ? 'directory' : null;
+    if (!key || !args[index + 1] || Object.hasOwn(options, key)) throw new Error(usage);
+    options[key] = args[index + 1];
+  }
+  if (options.port !== undefined && (!/^\d+$/.test(options.port) || Number(options.port) > 65535)) throw new Error(usage);
+  const preview = await createArchitectureServer({ repository, ...options, ...(options.port === undefined ? {} : { port: Number(options.port) }) });
   output(preview.url);
   return preview;
 }

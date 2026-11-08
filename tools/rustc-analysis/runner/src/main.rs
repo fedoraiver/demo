@@ -8,7 +8,7 @@ fn run() -> Result<ExitCode> {
     let command = arguments.next().unwrap_or_else(|| "help".into());
     if matches!(command.as_str(), "help" | "--help" | "-h") {
         println!(
-            "rustc-analysis check --rule named-fields|entity-names [--workspace PATH] [--target TARGET] [--features A,B] [--all-features]\nrustc-analysis extract --workspace PATH --out DIRECTORY [--target TARGET] [--features A,B] [--all-features]\nrustc-analysis model --facts PATH --runtime PATH --annotations PATH --out PATH"
+            "rustc-analysis check --rule named-fields|entity-names [--workspace PATH] [--target TARGET] [--features A,B] [--all-features]\nrustc-analysis extract --workspace PATH --out DIRECTORY [--target TARGET] [--features A,B] [--all-features]\nrustc-analysis model --facts PATH --runtime PATH --out PATH"
         );
         return Ok(ExitCode::SUCCESS);
     }
@@ -28,7 +28,6 @@ fn run() -> Result<ExitCode> {
                 | "--out"
                 | "--facts"
                 | "--runtime"
-                | "--annotations"
         ) {
             bail!("Unknown argument: {argument}");
         }
@@ -45,7 +44,7 @@ fn run() -> Result<ExitCode> {
     let allowed: &[&str] = match command.as_str() {
         "check" => &["--rule", "--workspace", "--target", "--features"],
         "extract" => &["--workspace", "--target", "--features", "--out"],
-        "model" => &["--facts", "--runtime", "--annotations", "--out"],
+        "model" => &["--facts", "--runtime", "--out"],
         _ => bail!("Unknown command: {command}"),
     };
     for key in values.keys() {
@@ -110,7 +109,6 @@ fn run() -> Result<ExitCode> {
             model::build(
                 &required("--facts")?,
                 &required("--runtime")?,
-                &required("--annotations")?,
                 &required("--out")?,
             )?;
             Ok(ExitCode::SUCCESS)
@@ -123,11 +121,8 @@ fn main() -> ExitCode {
     match run() {
         Ok(code) => code,
         Err(error) => {
-            let pending = error
-                .to_string()
-                .contains("Chinese descriptions are pending");
             eprintln!("Compiler analysis failed: {error:#}");
-            ExitCode::from(if pending { 3 } else { 2 })
+            ExitCode::from(2)
         }
     }
 }

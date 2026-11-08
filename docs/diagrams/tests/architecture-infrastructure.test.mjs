@@ -43,7 +43,7 @@ test('native selectors reject missing or ambiguous identities and never fall bac
 });
 
 test('captured model produces the same valid runtime targets and HTML options while unlisted plugins remain searchable', t => {
-  const registry = registryFor(), model = { schemaVersion: 1, features: captured.features, objects: Object.values(registry), relations: [] };
+  const registry = registryFor(), model = { schemaVersion: 2, features: captured.features, objects: Object.values(registry), relations: [] };
   const catalog = createCompilerObjectCatalog(model, registry), infrastructureFeatures = projectInfrastructureFeatures(registry, { requireComplete: true });
   const data = { schemaVersion: 5, model, registry, infrastructureFeatures, objects: catalog.objects, objectAliases: {},
     guideSamples: { nodes: {}, edges: {}, schedule: { nodes: {}, edges: {} } },
@@ -72,6 +72,8 @@ test('captured model produces the same valid runtime targets and HTML options wh
   const text = JSON.stringify(distributed); fs.writeFileSync(runtimeFile, text);
   const digest = value => crypto.createHash('sha256').update(value).digest('hex'), manifest = JSON.parse(fs.readFileSync(manifestFile, 'utf8'));
   manifest.runtime.sha256 = digest(text); manifest.runtime.bytes = Buffer.byteLength(text); const manifestText = JSON.stringify(manifest); fs.writeFileSync(manifestFile, manifestText);
+  const auditFile = path.join(paths.dataDirectory, 'audit-manifest.json'), audit = JSON.parse(fs.readFileSync(auditFile, 'utf8'));
+  audit.manifest.sha256 = digest(manifestText); audit.manifest.bytes = Buffer.byteLength(manifestText); fs.writeFileSync(auditFile, JSON.stringify(audit));
   bootstrap.runtimeSha256 = manifest.runtime.sha256; bootstrap.manifestSha256 = digest(manifestText);
   writeArtifact('pages/ecs-architecture.html', '<script id="architecture-data">' + JSON.stringify(bootstrap) + '</script>');
   assert.throws(() => readArchitectureData(paths.repositoryRoot), /infrastructure menu projection mismatch/);

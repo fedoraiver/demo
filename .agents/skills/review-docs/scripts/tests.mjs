@@ -258,7 +258,7 @@ test('生成物和UI音频许可规则准确；未知audition保留；发现/实
     'assets/audio/sources/kenney_interface-sounds-License.txt': 'License' });
   const session = start(root);
   const generated = session.baseline.documents.find(d => d.path === 'docs/diagrams/generated/example.html');
-  assert.equal(generated.kind, 'generated'); assert.equal(generated.owner, '.agents/skills/update-ecs-architecture/SKILL.md');
+  assert.equal(generated.kind, 'generated'); assert.equal(generated.owner, 'docs/diagrams/README.md');
   assert.equal(session.baseline.documents.find(d => d.path === 'assets/audio/audition.html').kind, 'unclassified');
   assert.equal(session.baseline.documents.filter(d => d.requiredReview === false).length, 2);
   const result = await check(root, session.baseline, deps);

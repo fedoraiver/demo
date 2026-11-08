@@ -168,15 +168,11 @@ function definition(view, graph, registry, features, scheduleGroups = [], buildO
   const entityGroups = [];
   const nodes = graph.nodes.flatMap((node, index) => {
     const data = { ...registry[node.id], ...(view.aspect === 'component' && node.id === (view.componentNodeId || graph.componentNodeId) ? view.componentDetails : {}) }, visualType = visualTypeOf(data);
-    if (data.display_summary !== undefined && (typeof data.display_summary !== 'string' || !data.display_summary.trim())) throw new Error(`架构节点用途简介必须是非空文本：${node.id}`);
     const feature = node.role === 'plugin' && features.find(item => item.overviewNode === node.id);
     const shortName = architectureDisplayName(data.name || node.id, { kind: data.kind });
     const name = feature ? `${feature.label} · ${shortName}` : shortName;
-    const description = node.role === 'plugin' ? feature?.description || data.description : data.description;
-    const summary = String(data.display_summary ?? description ?? '').replace(/\s+/g, ' ').trim();
-    if (!summary) throw new Error(`架构节点缺少用途简介：${node.id}`);
     const scope = node.role === 'external' ? `来自${names.get(data.feature)} ↗` : null;
-    const contents = [scope ? `${scope}：${summary}` : summary];
+    const contents = scope ? [scope] : [];
     return [{ ...node, instance: `${view.id}--n${index}`, mermaidId: `n${index}`, visualType, shape: NODE_STYLES[visualType].shape, displayLabel: [name, ...contents].join('\n'), nameLabel: name, contextLabel: contents }];
   });
   const byId = new Map(nodes.map(node => [node.id, node]));

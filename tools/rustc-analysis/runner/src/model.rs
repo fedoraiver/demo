@@ -29,38 +29,16 @@ struct Model {
     root: PathBuf,
     source_cache: SourceCache,
     declarations: BTreeMap<String, Declaration>,
-    annotation_keys: BTreeMap<String, String>,
     types: BTreeMap<String, TypeInstance>,
     callables: BTreeMap<String, Callable>,
     declaration_callables: BTreeMap<String, Vec<String>>,
     runtime_callables: BTreeMap<String, BTreeSet<String>>,
     runtime_types: BTreeMap<String, Vec<String>>,
-    call_edges: BTreeMap<String, BTreeSet<String>>,
-    body_proofs: BTreeMap<String, BTreeSet<PurposeCrateView>>,
-    unproven_calls: BTreeMap<String, Vec<UnprovenCall>>,
-    purpose_work_gaps: BTreeMap<String, BTreeSet<String>>,
-    behavior_hashes: BTreeMap<String, String>,
-    behavior_context: Option<String>,
-    purpose_inventories: Vec<PurposeInventory>,
-    purpose_dependencies: BTreeMap<PurposeDependency, std::result::Result<String, String>>,
-    purpose_certified: usize,
-    purpose_fallback: usize,
-    purpose_fallbacks: BTreeMap<String, Value>,
-    annotation_hits: BTreeSet<String>,
     objects: BTreeMap<String, Value>,
     relations: BTreeMap<String, Value>,
     features: BTreeMap<String, Value>,
-    pending: BTreeMap<String, Value>,
     rejected_types: BTreeMap<String, Value>,
-    annotations: Value,
     fatal: Vec<String>,
-}
-
-#[derive(Clone)]
-struct UnprovenCall {
-    declaration: Option<String>,
-    reason: String,
-    allow_purpose_dependency: bool,
 }
 
 fn parameter_relation_evidence(
@@ -153,325 +131,6 @@ fn finish_feature_overviews(
 struct SourceRoot {
     root: PathBuf,
     dependency: Value,
-}
-
-// 精确 trait 身份和每个实际 crate 的覆盖证据共同决定是否可以缩小用途失效范围。
-fn purpose_dependency_proof(
-    inventories: &[PurposeInventory],
-    root: &PurposeDependency,
-) -> std::result::Result<String, String> {
-    if inventories.is_empty() {
-        return Err("missing-inventory: 没有实际编译单元的用途覆盖证书".into());
-    }
-    if inventories
-        .iter()
-        .any(|unit| unit.crate_identity.is_empty() || unit.metadata_hash.is_empty())
-    {
-        return Err("missing-view: 编译单元缺少精确 crate 身份或实际 metadata 视图".into());
-    }
-    let mut required = BTreeSet::new();
-    for unit in inventories {
-        let own = PurposeCrateView {
-            crate_identity: unit.crate_identity.clone(),
-            metadata_hash: unit.metadata_hash.clone(),
-        };
-        if !unit.required_views.contains(&own)
-            || unit.required_crates.iter().any(|id| {
-                !unit
-                    .required_views
-                    .iter()
-                    .any(|view| &view.crate_identity == id)
-            })
-        {
-            return Err(format!(
-                "missing-view: {} 没有列全自身或依赖的实际 metadata 视图",
-                unit.crate_identity
-            ));
-        }
-        if unit.coverage.iter().any(|coverage| {
-            !unit.required_views.contains(&PurposeCrateView {
-                crate_identity: coverage.crate_identity.clone(),
-                metadata_hash: coverage.metadata_hash.clone(),
-            })
-        }) {
-            return Err(format!(
-                "unbound-certificate: {} 的覆盖证书不属于该报告实际加载的视图",
-                unit.crate_identity
-            ));
-        }
-        for view in &unit.required_views {
-            if view.crate_identity.is_empty() || view.metadata_hash.is_empty() {
-                return Err("missing-view: 依赖视图的 crate 身份或 metadata hash 为空".into());
-            }
-            required.insert(view.clone());
-        }
-    }
-    let mut pending = vec![root.clone()];
-    let mut seen = BTreeSet::new();
-    let mut evidence = BTreeMap::new();
-    while let Some(dependency) = pending.pop() {
-        if dependency.trait_id.is_empty() || dependency.member_id.is_empty() {
-            return Err("unknown-member: 关联引用没有确切 trait 或成员身份".into());
-        }
-        if !seen.insert(dependency.clone()) {
-            continue;
-        }
-        let covers = |coverage: &PurposeCoverage| {
-            coverage
-                .traits
-                .as_ref()
-                .is_none_or(|traits| traits.contains(&dependency.trait_id))
-        };
-        // 一条实际记录不能被另一个报告的空清单掩盖；每条记录都须由本报告对应视图证书覆盖。
-        for inventory in inventories {
-            for (owner, metadata) in inventory
-                .traits
-                .iter()
-                .filter(|row| row.trait_id == dependency.trait_id)
-                .map(|row| (&row.owner_crate, &row.metadata_hash))
-                .chain(
-                    inventory
-                        .implementations
-                        .iter()
-                        .filter(|row| row.trait_id == dependency.trait_id)
-                        .map(|row| (&row.owner_crate, &row.metadata_hash)),
-                )
-            {
-                let view = PurposeCrateView {
-                    crate_identity: owner.clone(),
-                    metadata_hash: metadata.clone(),
-                };
-                if !inventory.required_views.contains(&view)
-                    || !inventory.coverage.iter().any(|c| {
-                        c.crate_identity == *owner
-                            && c.metadata_hash == *metadata
-                            && c.complete
-                            && covers(c)
-                    })
-                {
-                    return Err(format!(
-                        "unbound-member: trait {} 的成员或实现没有本报告对应视图的完整证书",
-                        dependency.trait_id
-                    ));
-                }
-            }
-        }
-        let mut views_by_crate = BTreeMap::new();
-        for view in &required {
-            let mut certified = None;
-            for inventory in inventories {
-                for certificate in inventory.coverage.iter().filter(|c| {
-                    c.crate_identity == view.crate_identity
-                        && c.metadata_hash == view.metadata_hash
-                        && covers(c)
-                }) {
-                    if !certificate.complete {
-                        return Err(format!(
-                            "incomplete-certificate: {} / {}：{}",
-                            view.crate_identity, dependency.trait_id, certificate.reason
-                        ));
-                    }
-                    let mut traits = BTreeMap::new();
-                    let mut implementations = BTreeMap::new();
-                    for row in inventory.traits.iter().filter(|row| {
-                        row.owner_crate == view.crate_identity
-                            && row.metadata_hash == view.metadata_hash
-                            && row.trait_id == dependency.trait_id
-                    }) {
-                        if !row.complete {
-                            return Err(format!(
-                                "unsupported-trait: {}：{}",
-                                row.trait_id, row.reason
-                            ));
-                        }
-                        let mut row = row.clone();
-                        row.metadata_hash.clear();
-                        row.reason.clear();
-                        for member in &mut row.members {
-                            member.dependencies.sort();
-                            member.dependencies.dedup();
-                        }
-                        row.members.sort_by(|a, b| a.member_id.cmp(&b.member_id));
-                        if traits.insert(row.trait_id.clone(), row).is_some() {
-                            return Err(format!(
-                                "conflicting-trait: {} 在同一完整视图内重复声明",
-                                dependency.trait_id
-                            ));
-                        }
-                    }
-                    for row in inventory.implementations.iter().filter(|row| {
-                        row.owner_crate == view.crate_identity
-                            && row.metadata_hash == view.metadata_hash
-                            && row.trait_id == dependency.trait_id
-                    }) {
-                        if !row.complete {
-                            return Err(format!(
-                                "incomplete-implementation: {}：{}",
-                                row.implementation_id, row.reason
-                            ));
-                        }
-                        let mut row = row.clone();
-                        row.metadata_hash.clear();
-                        row.reason.clear();
-                        for member in &mut row.members {
-                            member.dependencies.sort();
-                            member.dependencies.dedup();
-                        }
-                        row.members.sort_by(|a, b| a.member_id.cmp(&b.member_id));
-                        if row.implementation_id.is_empty() || row.header_hash.is_empty() {
-                            return Err(format!(
-                                "incomplete-implementation: trait {} 的实现身份或约束证据缺失",
-                                dependency.trait_id
-                            ));
-                        }
-                        if implementations
-                            .insert(row.implementation_id.clone(), row)
-                            .is_some()
-                        {
-                            return Err(format!(
-                                "conflicting-implementation-set: {} 的同一完整视图出现重复 impl",
-                                dependency.trait_id
-                            ));
-                        }
-                    }
-                    let content = (traits, implementations);
-                    if certified.as_ref().is_some_and(|old| old != &content) {
-                        return Err(format!(
-                            "conflicting-implementation-set: {} / {} 的完整 trait/impl 清单不一致",
-                            view.crate_identity, dependency.trait_id
-                        ));
-                    }
-                    certified = Some(content);
-                }
-            }
-            let content = certified.ok_or_else(|| {
-                format!(
-                    "missing-certificate: {} 的实际视图 {} 没有 trait {} 的完整覆盖证明",
-                    view.crate_identity, view.metadata_hash, dependency.trait_id
-                )
-            })?;
-            if views_by_crate
-                .insert(view.crate_identity.clone(), content.clone())
-                .is_some_and(|old| old != content)
-            {
-                return Err(format!(
-                    "conflicting-implementation-set: {} 的不同实际视图对 trait {} 给出不同完整清单",
-                    view.crate_identity, dependency.trait_id
-                ));
-            }
-        }
-        let mut trait_definition: Option<PurposeTrait> = None;
-        let mut implementations = BTreeMap::<String, PurposeImplementation>::new();
-        for (traits, rows) in views_by_crate.values() {
-            for definition in traits.values() {
-                if trait_definition
-                    .as_ref()
-                    .is_some_and(|old| old != definition)
-                {
-                    return Err(format!(
-                        "conflicting-trait: {} 的定义证据不一致",
-                        dependency.trait_id
-                    ));
-                }
-                trait_definition = Some(definition.clone());
-            }
-            for (id, implementation) in rows {
-                if implementations
-                    .insert(id.clone(), implementation.clone())
-                    .is_some_and(|old| old != *implementation)
-                {
-                    return Err(format!(
-                        "conflicting-implementation-set: impl {id} 在不同来源中的证据不一致"
-                    ));
-                }
-            }
-        }
-        let definition = trait_definition.ok_or_else(|| {
-            format!(
-                "missing-trait: trait {} 的完整声明与默认成员证据缺失",
-                dependency.trait_id
-            )
-        })?;
-        let mut defaults = BTreeMap::new();
-        for member in &definition.members {
-            if member.unresolved_behavior {
-                return Err(format!(
-                    "default-helper: trait 默认成员 {} 的初始化体或 helper 行为证据不完整",
-                    member.member_id
-                ));
-            }
-            if member.trait_id != dependency.trait_id
-                || member.member_id.is_empty()
-                || member.implementation_member_id.is_some()
-                || member.evidence_hash.is_empty()
-                || defaults.insert(member.member_id.clone(), member).is_some()
-            {
-                return Err(format!(
-                    "incomplete-default: trait {} 的默认成员身份、签名或唯一性证据缺失",
-                    dependency.trait_id
-                ));
-            }
-            pending.extend(member.dependencies.iter().cloned());
-        }
-        if !defaults.contains_key(&dependency.member_id) {
-            return Err(format!(
-                "unknown-member: trait {} 不含引用的确切成员 {}",
-                dependency.trait_id, dependency.member_id
-            ));
-        }
-        for implementation in implementations.values() {
-            let mut members = BTreeMap::new();
-            for member in &implementation.members {
-                if member.unresolved_behavior {
-                    return Err(format!(
-                        "implementation-helper: impl {} 的成员 {} 初始化体或 helper 行为证据不完整",
-                        implementation.implementation_id, member.member_id
-                    ));
-                }
-                if member.trait_id != dependency.trait_id
-                    || !defaults.contains_key(&member.member_id)
-                    || member
-                        .implementation_member_id
-                        .as_deref()
-                        .is_none_or(str::is_empty)
-                    || !member.has_value
-                    || member.evidence_hash.is_empty()
-                    || members.insert(member.member_id.clone(), member).is_some()
-                {
-                    return Err(format!(
-                        "incomplete-member: impl {} 的成员映射、值或唯一性证据缺失",
-                        implementation.implementation_id
-                    ));
-                }
-                pending.extend(member.dependencies.iter().cloned());
-            }
-            if let Some((id, _)) = defaults
-                .iter()
-                .find(|(id, default)| !members.contains_key(*id) && !default.has_value)
-            {
-                return Err(format!(
-                    "missing-default: impl {} 缺少必需成员 {id}，trait 也没有默认体",
-                    implementation.implementation_id
-                ));
-            }
-        }
-        evidence.insert(dependency, (definition, implementations));
-    }
-    Ok(digest(
-        serde_json::to_vec(&(
-            "purpose-trait-universe-v1",
-            evidence.into_iter().collect::<Vec<_>>(),
-        ))
-        .map_err(|error| format!("invalid-purpose-evidence: {error}"))?,
-    ))
-}
-
-#[cfg(test)]
-fn purpose_dependency_hash(
-    inventories: &[PurposeInventory],
-    root: &PurposeDependency,
-) -> Option<String> {
-    purpose_dependency_proof(inventories, root).ok()
 }
 
 struct ResolvedSource {
@@ -616,24 +275,6 @@ fn identifier(kind: &str, value: impl serde::Serialize) -> String {
     )
 }
 
-fn entity_purpose_hash(entity: &EntityTemplate, creator_behavior: &str) -> String {
-    let components: BTreeSet<_> = entity.components.iter().collect();
-    let required: BTreeSet<_> = entity.required_components.iter().collect();
-    let gaps: BTreeSet<_> = entity
-        .gaps
-        .iter()
-        .map(|gap| (&gap.kind, &gap.reason))
-        .collect();
-    let alternatives: Vec<_> = entity.alternatives.iter().map(|group| {
-        json!({"id":group.id,"candidates":group.candidates,"selection":group.selection})
-    }).collect();
-    // 完整文件 SHA 继续约束源码快照；用途只依赖装配结构与创建函数/可达 helper 行为。
-    // 行列、宏调用位置和展示片段不能使初始化语义未变的模板用途失效。
-    digest(serde_json::to_vec(&json!({"version":"entity-purpose-v2","creatorBehavior":creator_behavior,
-        "creator":entity.creator,"components":components,"requiredComponents":required,"children":entity.children,
-        "gaps":gaps,"alternatives":alternatives,"alternativeGroup":entity.alternative_group,
-        "alternativeSelection":entity.alternative_selection,"alternativeContext":entity.alternative_context,"possible":entity.possible})).expect("Entity semantic evidence"))
-}
 fn unique(values: Vec<Value>) -> Vec<Value> {
     let mut seen = BTreeSet::new();
     values
@@ -762,12 +403,6 @@ fn creation_target(
 }
 
 impl Model {
-    fn purpose_key(&self, declaration: &Declaration) -> String {
-        self.annotation_keys
-            .get(&declaration.id)
-            .cloned()
-            .unwrap_or_else(|| declaration.full_name.clone())
-    }
     fn guard_sources(&mut self, guards: &[SourceEvidence]) -> Vec<Value> {
         guards
             .iter()
@@ -804,8 +439,6 @@ impl Model {
                 ));
             }
             let mut sources = vec![];
-            let mut descriptions = vec![];
-            let mut summaries = vec![];
             let mut features = BTreeSet::new();
             for candidate in &candidates {
                 let Some(declaration) = self
@@ -817,18 +450,7 @@ impl Model {
                     continue;
                 };
                 let proof = self.source(&declaration.source, "definition");
-                let hash = self.behavior_hash(&declaration);
-                let (description, summary) = self.purpose(
-                    &self.purpose_key(&declaration),
-                    &condition.name,
-                    "System",
-                    &hash,
-                    &declaration.docs,
-                    &proof,
-                );
                 sources.extend(proof);
-                descriptions.push(description);
-                summaries.push(summary);
                 features.insert(self.feature(Some(&declaration)));
             }
             let feature = features
@@ -840,7 +462,7 @@ impl Model {
             } else {
                 "System"
             };
-            self.objects.insert(id.clone(),json!({"id":id,"name":condition.name,"kind":kind,"feature":feature,"description":descriptions.join("\n"),"display_summary":summaries.join("；"),"sourceEntries":unique(sources),"sourceGaps":[],"runtimeTypeId":condition.type_id,"callableIds":candidates,"registrationScope":scope,"registrations":[{"application":schedule.app,"schedule":schedule.label,"scope":scope}]}));
+            self.objects.insert(id.clone(),json!({"id":id,"name":condition.name,"kind":kind,"feature":feature,"sourceEntries":unique(sources),"sourceGaps":[],"runtimeTypeId":condition.type_id,"callableIds":candidates,"registrationScope":scope,"registrations":[{"application":schedule.app,"schedule":schedule.label,"scope":scope}]}));
             for target in targets {
                 self.link(
                     &id,
@@ -854,176 +476,6 @@ impl Model {
             roots.push((id, candidates));
         }
         roots
-    }
-
-    fn behavior_hash(&mut self, declaration: &Declaration) -> String {
-        if let Some(hash) = self.behavior_hashes.get(&declaration.id) {
-            return hash.clone();
-        }
-        let mut pending = self
-            .declaration_callables
-            .get(&declaration.id)
-            .cloned()
-            .unwrap_or_default();
-        let mut seen = BTreeSet::new();
-        let mut definitions =
-            BTreeMap::from([(declaration.id.clone(), declaration.evidence_hash.clone())]);
-        let mut unresolved = declaration.unresolved_behavior;
-        let mut fallback_reasons = BTreeSet::new();
-        if !pending.is_empty()
-            && !pending
-                .iter()
-                .any(|callable| self.body_proofs.contains_key(callable))
-        {
-            unresolved = true;
-            fallback_reasons.insert(format!(
-                "missing-body-proof: {} 没有与实际 owning 视图绑定的 HIR 函数体覆盖证明",
-                declaration.full_name
-            ));
-        }
-        if declaration.unresolved_behavior {
-            fallback_reasons.insert(
-                "compiler-unresolved: 编译器未证明声明中的动态分派、初始化体或 helper 行为完整"
-                    .to_owned(),
-            );
-            fallback_reasons.extend(
-                self.purpose_work_gaps
-                    .get(&declaration.id)
-                    .into_iter()
-                    .flatten()
-                    .cloned(),
-            );
-        }
-        let mut dependencies: BTreeSet<_> =
-            declaration.purpose_dependencies.iter().cloned().collect();
-        while let Some(callable) = pending.pop() {
-            if !seen.insert(callable.clone()) {
-                continue;
-            }
-            let mut direct_dependencies = vec![];
-            if let Some(definition) = self
-                .callables
-                .get(&callable)
-                .and_then(|callable| self.declarations.get(&callable.declaration))
-            {
-                unresolved |= definition.unresolved_behavior;
-                if definition.unresolved_behavior {
-                    fallback_reasons.extend(
-                        self.purpose_work_gaps
-                            .get(&definition.id)
-                            .into_iter()
-                            .flatten()
-                            .cloned(),
-                    );
-                }
-                if definition.unresolved_behavior && definition.id != declaration.id {
-                    fallback_reasons.insert(format!(
-                        "compiler-helper: 可达 helper {} 的动态分派或初始化行为尚未证明完整",
-                        definition.full_name
-                    ));
-                }
-                dependencies.extend(definition.purpose_dependencies.iter().cloned());
-                direct_dependencies = definition.purpose_dependencies.clone();
-                definitions.insert(definition.id.clone(), definition.evidence_hash.clone());
-            }
-            for call in self
-                .unproven_calls
-                .get(&callable)
-                .cloned()
-                .unwrap_or_default()
-            {
-                let mut certified = false;
-                if call.allow_purpose_dependency
-                    && let Some(target) = &call.declaration
-                {
-                    for dependency in direct_dependencies
-                        .iter()
-                        .filter(|dependency| &dependency.member_id == target)
-                    {
-                        if !self.purpose_dependencies.contains_key(dependency) {
-                            self.purpose_dependencies.insert(
-                                dependency.clone(),
-                                purpose_dependency_proof(&self.purpose_inventories, dependency),
-                            );
-                        }
-                        certified |= self
-                            .purpose_dependencies
-                            .get(dependency)
-                            .is_some_and(std::result::Result::is_ok);
-                    }
-                }
-                if !certified {
-                    unresolved = true;
-                    fallback_reasons.insert(call.reason);
-                }
-            }
-            if let Some(callees) = self.call_edges.get(&callable) {
-                pending.extend(callees.iter().cloned());
-            }
-        }
-        let had_dependencies = !dependencies.is_empty();
-        let mut dispatch = Vec::new();
-        for dependency in dependencies {
-            if !self.purpose_dependencies.contains_key(&dependency) {
-                let value = purpose_dependency_proof(&self.purpose_inventories, &dependency);
-                self.purpose_dependencies.insert(dependency.clone(), value);
-            }
-            match self
-                .purpose_dependencies
-                .get(&dependency)
-                .expect("Purpose dependency result was collected")
-            {
-                Ok(hash) => dispatch.push((dependency, hash.clone())),
-                Err(reason) => {
-                    unresolved = true;
-                    fallback_reasons.insert(reason.clone());
-                }
-            }
-        }
-        if unresolved {
-            self.purpose_fallback += 1;
-            if self.behavior_context.is_none() {
-                fallback_reasons.insert(
-                    "missing-global-context: 保守回退所需的完整 owning 编译单元行为摘要缺失"
-                        .to_owned(),
-                );
-            }
-            self.purpose_fallbacks.insert(
-                declaration.id.clone(),
-                json!({
-                    "declaration": declaration.id,
-                    "name": declaration.full_name,
-                    "reasons": fallback_reasons.into_iter().collect::<Vec<_>>()
-                }),
-            );
-        } else if had_dependencies {
-            self.purpose_certified += 1;
-        }
-        let hash = if unresolved {
-            if self.behavior_context.is_none() {
-                self.fatal.push(format!("Portable owning-unit behavior evidence is incomplete for unresolved dispatch in {}", declaration.full_name));
-            }
-            digest(
-                serde_json::to_vec(&(
-                    "unresolved-behavior-v1",
-                    &definitions,
-                    &self.behavior_context,
-                ))
-                .expect("Unresolved behavior evidence"),
-            )
-        } else if !dispatch.is_empty() {
-            digest(
-                serde_json::to_vec(&("resolved-purpose-dispatch-v1", &definitions, dispatch))
-                    .expect("Purpose dispatch evidence"),
-            )
-        } else if definitions.len() == 1 {
-            declaration.evidence_hash.clone()
-        } else {
-            digest(serde_json::to_vec(&definitions).expect("Declaration evidence"))
-        };
-        self.behavior_hashes
-            .insert(declaration.id.clone(), hash.clone());
-        hash
     }
 
     fn source(&mut self, source: &Option<SourceEvidence>, role: &str) -> Vec<Value> {
@@ -1058,46 +510,6 @@ impl Model {
                 .push(format!("Compiler source evidence changed: {}", source.path));
         }
         vec![entry]
-    }
-
-    fn purpose(
-        &mut self,
-        key: &str,
-        name: &str,
-        kind: &str,
-        evidence_hash: &str,
-        docs: &str,
-        sources: &[Value],
-    ) -> (String, String) {
-        let existing = self.annotations["items"].get(key);
-        if let Some(existing) = existing {
-            let valid = existing["evidenceHash"].as_str() == Some(evidence_hash);
-            if valid
-                && let Some(description) = existing["description"]
-                    .as_str()
-                    .filter(|value| !value.trim().is_empty())
-            {
-                self.annotation_hits.insert(key.to_owned());
-                return (
-                    description.to_owned(),
-                    existing["summary"]
-                        .as_str()
-                        .unwrap_or(description)
-                        .to_owned(),
-                );
-            }
-        }
-        // 项目作者已有的中文文档可直接作为用途；其余由维护 Skill 阅读源码后补写。
-        if docs
-            .chars()
-            .any(|character| ('\u{4e00}'..='\u{9fff}').contains(&character))
-            && !docs.trim().is_empty()
-        {
-            let summary = docs.lines().next().unwrap_or(docs).trim().to_owned();
-            return (docs.trim().to_owned(), summary);
-        }
-        self.pending.entry(key.to_owned()).or_insert(json!({"key":key,"name":name,"kind":kind,"evidenceHash":evidence_hash,"sourceEntries":sources,"sourceDocumentation":docs,"previousDescription":existing.and_then(|entry|entry.get("description")),"previousSummary":existing.and_then(|entry|entry.get("summary"))}));
-        (String::new(), String::new())
     }
 
     fn feature(&mut self, declaration: Option<&Declaration>) -> String {
@@ -1180,26 +592,6 @@ impl Model {
             "definition",
         );
         let feature = self.feature(declaration.as_ref());
-        let purpose_key = declaration
-            .as_ref()
-            .map(|declaration| self.purpose_key(declaration))
-            .unwrap_or_else(|| ty.display.clone());
-        let evidence_hash = declaration
-            .as_ref()
-            .map(|declaration| self.behavior_hash(declaration))
-            .unwrap_or_default();
-        let docs = declaration
-            .as_ref()
-            .map(|declaration| declaration.docs.as_str())
-            .unwrap_or("");
-        let (description, summary) = self.purpose(
-            &purpose_key,
-            &ty.display,
-            kind,
-            &evidence_hash,
-            docs,
-            &sources,
-        );
         let type_identity = declaration.as_ref().map(|declaration| {
             let mut identity = json!({"declarationId":declaration.id,"crateName":declaration.crate_name,
                 "defPath":declaration.full_name,"local":declaration.local,"roles":ty.roles});
@@ -1209,7 +601,7 @@ impl Model {
             identity
         });
         let object = json!({"id":id,"name":ty.display,"fullName":ty.display,"rust_type":ty.display,"kind":kind,"feature":feature,
-            "description":description,"display_summary":summary,"sourceEntries":sources,"sourceGaps":[],"declarationId":ty.declaration,"typeInstanceId":type_id,"typeIdentity":type_identity});
+            "sourceEntries":sources,"sourceGaps":[],"declarationId":ty.declaration,"typeInstanceId":type_id,"typeIdentity":type_identity});
         self.objects.insert(id.clone(), object);
         Some(id)
     }
@@ -1399,17 +791,112 @@ impl Model {
     }
 }
 
-/// 仅消费已核实事实；待补用途和无法绑定的注册分别保存，供维护入口恢复。
-pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) -> Result<()> {
-    let summary = output
-        .parent()
-        .context("Model output has no parent")?
-        .join("purpose-summary.json");
-    if let Err(error) = fs::remove_file(&summary)
-        && error.kind() != std::io::ErrorKind::NotFound
-    {
-        return Err(error).context("Cannot clear previous purpose summary");
+// 同一 owning 声明可在不同单元观察到不同泛型实例；只比较重叠的原生身份。
+// 导入元数据不参与冲突判断，实例内保留真实条件、参数顺序和子实体路径。
+fn owning_structures(unit: &UnitFacts) -> BTreeMap<String, Value> {
+    fn normalize(value: &mut Value) {
+        match value {
+            Value::Object(fields) => {
+                // 打印路径是展示候选，不是声明或类型身份。
+                fields.remove("display");
+                for (key, value) in fields {
+                    normalize(value);
+                    if matches!(
+                        key.as_str(),
+                        "roles"
+                            | "systemTypeIds"
+                            | "components"
+                            | "requiredComponents"
+                            | "accesses"
+                            | "operations"
+                            | "calls"
+                            | "entities"
+                            | "registrations"
+                            | "gaps"
+                    ) {
+                        if let Some(values) = value.as_array_mut() {
+                            values.sort_by_cached_key(Value::to_string);
+                            values.dedup();
+                        }
+                    }
+                }
+            }
+            Value::Array(values) => values.iter_mut().for_each(normalize),
+            _ => {}
+        }
     }
+    let local: BTreeSet<_> = unit
+        .declarations
+        .iter()
+        .filter(|declaration| declaration.local)
+        .map(|declaration| declaration.id.as_str())
+        .collect();
+    let mut structures = BTreeMap::new();
+    for declaration in unit
+        .declarations
+        .iter()
+        .filter(|declaration| declaration.local)
+    {
+        structures.insert(
+            format!("declaration:{}", declaration.id),
+            json!({"declaration":declaration,"gaps":[]}),
+        );
+    }
+    for ty in unit.types.iter().filter(|ty| {
+        ty.declaration
+            .as_deref()
+            .is_some_and(|id| local.contains(id))
+    }) {
+        structures.insert(format!("type:{}", ty.id), json!(ty));
+    }
+    for callable in unit
+        .callables
+        .iter()
+        .filter(|callable| local.contains(callable.declaration.as_str()))
+    {
+        structures.insert(format!("callable:{}", callable.id), json!({"callable":callable,"accesses":[],"operations":[],"calls":[],"entities":[],"registrations":[],"gaps":[]}));
+    }
+    let mut append = |owner: &str, field: &str, value: Value| {
+        if let Some(structure) = structures.get_mut(&format!("callable:{owner}")) {
+            structure[field]
+                .as_array_mut()
+                .expect("Callable record array")
+                .push(value);
+        } else if field == "gaps"
+            && let Some(structure) = structures.get_mut(&format!("declaration:{owner}"))
+        {
+            structure[field]
+                .as_array_mut()
+                .expect("Declaration gap array")
+                .push(value);
+        }
+    };
+    for value in &unit.accesses {
+        append(&value.owner, "accesses", json!(value));
+    }
+    for value in &unit.operations {
+        append(&value.owner, "operations", json!(value));
+    }
+    for value in &unit.calls {
+        append(&value.caller, "calls", json!(value));
+    }
+    for value in &unit.entities {
+        append(&value.creator, "entities", json!(value));
+    }
+    for value in &unit.registrations {
+        append(&value.owner, "registrations", json!(value));
+    }
+    for value in &unit.gaps {
+        append(&value.owner, "gaps", json!(value));
+    }
+    for value in structures.values_mut() {
+        normalize(value);
+    }
+    structures
+}
+
+/// 仅消费匹配构建的编译器事实和真实注册快照；绑定不完整时保留错误并失败。
+pub fn build(facts: &Path, runtime: &Path, output: &Path) -> Result<()> {
     let facts_hash = crate::host::file_digest(facts)?;
     let runtime_bytes = fs::read(runtime)?;
     let bundle: Bundle = serde_json::from_reader(BufReader::with_capacity(
@@ -1441,11 +928,6 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         source_fingerprint(&root)? == runtime_data.source_fingerprint,
         "Runtime source fingerprint is stale"
     );
-    let annotations: Value = serde_json::from_slice(&fs::read(annotations)?)?;
-    ensure!(
-        annotations["schemaVersion"] == 1 && annotations["items"].is_object(),
-        "Unsupported annotation schema"
-    );
     for origin in &bundle.source_origins {
         ensure!(
             origin["compilerCommit"] == bundle.compiler,
@@ -1453,53 +935,19 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         );
     }
     let source_cache = SourceCache::new(root.clone(), bundle.packages, bundle.source_origins);
-    let behavior_context = bundle
-        .units
-        .iter()
-        .all(|unit| !unit.behavior_hash.is_empty())
-        .then(|| {
-            let summaries: BTreeSet<_> = bundle
-                .units
-                .iter()
-                .map(|unit| &unit.behavior_hash)
-                .collect();
-            digest(
-                serde_json::to_vec(&(&bundle.compiler, summaries))
-                    .expect("Owning-unit semantic context"),
-            )
-        });
     let mut model = Model {
         root,
         source_cache,
         declarations: BTreeMap::new(),
-        annotation_keys: BTreeMap::new(),
         types: BTreeMap::new(),
         callables: BTreeMap::new(),
         declaration_callables: BTreeMap::new(),
         runtime_callables: BTreeMap::new(),
         runtime_types: BTreeMap::new(),
-        call_edges: BTreeMap::new(),
-        body_proofs: BTreeMap::new(),
-        unproven_calls: BTreeMap::new(),
-        purpose_work_gaps: BTreeMap::new(),
-        behavior_hashes: BTreeMap::new(),
-        behavior_context,
-        purpose_inventories: bundle
-            .units
-            .iter()
-            .map(|unit| unit.purpose_inventory.clone())
-            .collect(),
-        purpose_dependencies: BTreeMap::new(),
-        purpose_certified: 0,
-        purpose_fallback: 0,
-        purpose_fallbacks: BTreeMap::new(),
-        annotation_hits: BTreeSet::new(),
         objects: BTreeMap::new(),
         relations: BTreeMap::new(),
         features: BTreeMap::new(),
-        pending: BTreeMap::new(),
         rejected_types: BTreeMap::new(),
-        annotations,
         fatal: vec![],
     };
     let mut accesses = vec![];
@@ -1507,11 +955,9 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
     let mut entities = vec![];
     let mut registrations = vec![];
     let mut calls = vec![];
-    let mut purpose_calls = vec![];
     let mut gaps = vec![];
     let mut fact_sources = BTreeMap::new();
-    let mut unit_views = Vec::<BTreeSet<PurposeCrateView>>::new();
-    let mut call_contexts = BTreeMap::<(String, String), BTreeSet<usize>>::new();
+    let mut owning = BTreeMap::new();
     for unit in bundle.units {
         ensure!(
             unit.schema_version == FACT_SCHEMA_VERSION,
@@ -1522,6 +968,14 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
             "Compiler unit has no source provenance: {}",
             unit.crate_name
         );
+        for (declaration, structure) in owning_structures(&unit) {
+            if let Some(previous) = owning.insert(declaration.clone(), structure.clone()) {
+                ensure!(
+                    previous == structure,
+                    "Conflicting owning-unit architecture structure for {declaration}"
+                );
+            }
+        }
         for source in unit.source_files {
             if let Some(previous) = fact_sources.get(&source.path) {
                 ensure!(
@@ -1540,122 +994,12 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
             );
             fact_sources.insert(source.path, source.sha256);
         }
-        let inventory = &unit.purpose_inventory;
-        let own_view = PurposeCrateView {
-            crate_identity: inventory.crate_identity.clone(),
-            metadata_hash: inventory.metadata_hash.clone(),
-        };
-        let authenticated_body = !own_view.crate_identity.is_empty()
-            && !own_view.metadata_hash.is_empty()
-            && inventory.required_views.contains(&own_view)
-            && inventory.coverage.iter().any(|coverage| {
-                coverage.crate_identity == own_view.crate_identity
-                    && coverage.metadata_hash == own_view.metadata_hash
-                    && coverage.complete
-                    && coverage.traits.is_none()
-            });
-        if authenticated_body {
-            let owning: BTreeSet<_> = unit
-                .declarations
-                .iter()
-                .filter(|declaration| declaration.local)
-                .map(|declaration| declaration.id.as_str())
-                .collect();
-            for callable in unit.callables.iter().filter(|callable| {
-                callable.body_analyzed && owning.contains(callable.declaration.as_str())
-            }) {
-                model
-                    .body_proofs
-                    .entry(callable.id.clone())
-                    .or_default()
-                    .insert(own_view.clone());
-            }
-        }
-        let view_index = unit_views.len();
-        unit_views.push(inventory.required_views.iter().cloned().collect());
-        for call in unit.calls.iter().chain(&unit.purpose_calls) {
-            if let Some(callee) = &call.callee {
-                call_contexts
-                    .entry((call.caller.clone(), callee.clone()))
-                    .or_default()
-                    .insert(view_index);
-            }
-        }
-        let recorded_reasons: BTreeSet<_> = unit
-            .calls
-            .iter()
-            .chain(&unit.purpose_calls)
-            .filter_map(|call| {
-                call.unresolved_reason
-                    .as_ref()
-                    .map(|reason| (call.caller.clone(), reason.clone()))
-            })
-            .collect();
-        for gap in unit
-            .gaps
-            .iter()
-            .filter(|gap| gap.kind == "purpose-work-budget")
-        {
-            model
-                .purpose_work_gaps
-                .entry(gap.owner.clone())
-                .or_default()
-                .insert(format!("{}: {} [{}]", gap.kind, gap.reason, gap.owner));
-        }
-        for gap in unit.gaps.iter().filter(|gap| {
-            matches!(
-                gap.kind.as_str(),
-                "dynamic-call"
-                    | "unresolved-call"
-                    | "unresolved-dynamic-dispatch"
-                    | "inline-assembly"
-                    | "implicit-drop"
-                    | "missing-body"
-                    | "instance-budget"
-            )
-        }) {
-            if recorded_reasons.contains(&(gap.owner.clone(), gap.kind.clone())) {
-                // 同一原生调用已经携带精确原因；按该 CallFact 的成员身份检查，不按 Span 配对。
-                continue;
-            }
-            let owners = if gap.owner == "unit" {
-                unit.callables
-                    .iter()
-                    .map(|callable| callable.id.clone())
-                    .collect()
-            } else {
-                vec![gap.owner.clone()]
-            };
-            for owner in owners {
-                model
-                    .unproven_calls
-                    .entry(owner)
-                    .or_default()
-                    .push(UnprovenCall {
-                        declaration: None,
-                        reason: format!("{}: {}", gap.kind, gap.reason),
-                        allow_purpose_dependency: false,
-                    });
-            }
-        }
         for declaration in unit.declarations {
             match model.declarations.entry(declaration.id.clone()) {
                 std::collections::btree_map::Entry::Vacant(entry) => {
                     entry.insert(declaration);
                 }
                 std::collections::btree_map::Entry::Occupied(mut entry) => {
-                    ensure!(
-                        !declaration.local
-                            || !entry.get().local
-                            || (declaration.evidence_hash == entry.get().evidence_hash
-                                && declaration.unresolved_behavior
-                                    == entry.get().unresolved_behavior
-                                && declaration.purpose_dependencies
-                                    == entry.get().purpose_dependencies),
-                        "Conflicting owning-unit behavior for {} ({}); compiler units with different cfg behavior cannot share one fixed-configuration model",
-                        declaration.full_name,
-                        declaration.id
-                    );
                     if declaration.local && !entry.get().local {
                         entry.insert(declaration);
                     }
@@ -1685,26 +1029,11 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         entities.extend(unit.entities);
         registrations.extend(unit.registrations);
         calls.extend(unit.calls);
-        purpose_calls.extend(unit.purpose_calls);
         gaps.extend(
             unit.gaps
                 .into_iter()
                 .map(|gap| (unit.crate_identity.clone(), gap)),
         );
-    }
-    let mut canonical_names = BTreeMap::<String, usize>::new();
-    for declaration in model.declarations.values() {
-        *canonical_names
-            .entry(declaration.full_name.clone())
-            .or_default() += 1;
-    }
-    for declaration in model.declarations.values() {
-        let key = if canonical_names[&declaration.full_name] > 1 {
-            format!("{}#{}", declaration.full_name, declaration.id)
-        } else {
-            declaration.full_name.clone()
-        };
-        model.annotation_keys.insert(declaration.id.clone(), key);
     }
     for callable in model.callables.values() {
         model
@@ -1740,59 +1069,6 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
     for indices in calls_by_caller.values_mut() {
         indices.sort_by_cached_key(|index| identifier("call", &calls[*index]));
     }
-    // 用途依赖包含私有 MIR 审计；业务上下文与公开调用图只读取真实条件调用。
-    for call in calls.iter().chain(&purpose_calls) {
-        if let Some(reason) = &call.unresolved_reason
-            && call.callee.is_some()
-        {
-            model.unproven_calls.entry(call.caller.clone()).or_default().push(UnprovenCall {
-                declaration: call.declaration.clone(),
-                reason: format!("{reason}: caller {} 的调用同时携带 callee 和未解决原因，不能认证完整调用证据", call.caller),
-                allow_purpose_dependency: false,
-            });
-        }
-        if let Some(callee) = &call.callee {
-            let complete = model.body_proofs.get(callee).is_some_and(|proofs| {
-                call_contexts
-                    .get(&(call.caller.clone(), callee.clone()))
-                    .is_some_and(|contexts| {
-                        contexts.iter().all(|context| {
-                            proofs
-                                .iter()
-                                .any(|proof| unit_views[*context].contains(proof))
-                        })
-                    })
-            });
-            if !complete {
-                model.unproven_calls.entry(call.caller.clone()).or_default().push(UnprovenCall {
-                    declaration: model.callables.get(callee).map(|callable| callable.declaration.clone()).or_else(|| call.declaration.clone()),
-                    reason: format!("missing-helper-body: caller {} 的 callee {} 没有对应实际 owning 视图的完整函数体与调用覆盖", call.caller, callee),
-                    allow_purpose_dependency: true,
-                });
-            }
-            model
-                .call_edges
-                .entry(call.caller.clone())
-                .or_default()
-                .insert(callee.clone());
-        } else {
-            let reason = call.unresolved_reason.as_deref().unwrap_or("unknown-call");
-            model
-                .unproven_calls
-                .entry(call.caller.clone())
-                .or_default()
-                .push(UnprovenCall {
-                    declaration: call.declaration.clone(),
-                    reason: format!(
-                        "{reason}: caller {} 的调用未绑定确切 callee（声明 {}）",
-                        call.caller,
-                        call.declaration.as_deref().unwrap_or("未知")
-                    ),
-                    allow_purpose_dependency: reason == "unresolved-call"
-                        && call.declaration.is_some(),
-                });
-        }
-    }
     // 原生依赖类型由实际访问、操作及装配边引入，避免把库内全部实现细节当作架构对象。
     eprintln!(
         "Architecture model: merged {} declarations, {} types, {} callables and {} call edges",
@@ -1821,7 +1097,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         "application".into(),
         json!({"id":"application","label":"应用","plugin":"App","overviewNode":"app-main"}),
     );
-    model.objects.insert("app-main".into(),json!({"id":"app-main","name":"main / App","kind":"App","feature":"application","description":"装配当前应用的插件，并在专用导出模式记录真实调度快照。","display_summary":"装配应用并导出真实调度。","sourceEntries":[],"sourceGaps":[]}));
+    model.objects.insert("app-main".into(),json!({"id":"app-main","name":"main / App","kind":"App","feature":"application","sourceEntries":[],"sourceGaps":[]}));
     let mut bindings = vec![];
     let mut callable_objects: BTreeMap<String, Vec<String>> = BTreeMap::new();
     let mut call_contexts: BTreeMap<(String, String, bool), Vec<SourceEvidence>> = BTreeMap::new();
@@ -1917,16 +1193,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         let mut sources = model.source(&declaration.source, "definition");
         sources.extend(model.source(&registration.source, "registration"));
         let feature = model.feature(Some(&declaration));
-        let evidence_hash = model.behavior_hash(&declaration);
-        let (description, summary) = model.purpose(
-            &model.purpose_key(&declaration),
-            &callable.display,
-            "Observer",
-            &evidence_hash,
-            &declaration.docs,
-            &sources,
-        );
-        model.objects.insert(id.clone(),json!({"id":id,"name":callable.display,"kind":"Observer","feature":feature,"description":description,"display_summary":summary,"sourceEntries":sources,"sourceGaps":[],"registrationScope":"static-callsite","callableIds":[target]}));
+        model.objects.insert(id.clone(),json!({"id":id,"name":callable.display,"kind":"Observer","feature":feature,"sourceEntries":sources,"sourceGaps":[],"registrationScope":"static-callsite","callableIds":[target]}));
         callable_objects
             .entry(target.clone())
             .or_default()
@@ -1986,8 +1253,6 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                 ));
             }
             let mut source_entries = vec![];
-            let mut descriptions = vec![];
-            let mut summaries = vec![];
             let mut features = BTreeSet::new();
             let mut system_groups = BTreeSet::new();
             for candidate in &candidates {
@@ -1999,17 +1264,6 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                     continue;
                 };
                 let sources = model.source(&declaration.source, "definition");
-                let evidence_hash = model.behavior_hash(&declaration);
-                let (description, summary) = model.purpose(
-                    &model.purpose_key(&declaration),
-                    &callable.display,
-                    "System",
-                    &evidence_hash,
-                    &declaration.docs,
-                    &sources,
-                );
-                descriptions.push(description);
-                summaries.push(summary);
                 source_entries.extend(sources);
                 let feature = model.feature(Some(&declaration));
                 features.insert(feature.clone());
@@ -2020,7 +1274,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                 };
                 group_catalog
                     .entry(group.clone())
-                    .or_insert(json!({"id":group,"label":feature,"description":"系统定义来源"}));
+                    .or_insert(json!({"id":group,"label":feature}));
                 system_groups.insert(group);
                 callable_objects
                     .entry(candidate.clone())
@@ -2069,7 +1323,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                 } else {
                     vec![]
                 };
-            model.objects.insert(id.clone(),json!({"id":id,"name":system.name,"kind":kind,"feature":feature,"description":descriptions.join("\n"),"display_summary":summaries.join("；"),"sourceEntries":unique(source_entries),"sourceGaps":access_gaps,"worldAccessScope":system.access_scope,"callableIds":candidates,"runtimeTypeId":system.type_id,"runConditions":system.conditions,"registrations":[{"application":schedule.app,"schedule":schedule.label,"scope":"runtime"}]}));
+            model.objects.insert(id.clone(),json!({"id":id,"name":system.name,"kind":kind,"feature":feature,"sourceEntries":unique(source_entries),"sourceGaps":access_gaps,"worldAccessScope":system.access_scope,"callableIds":candidates,"runtimeTypeId":system.type_id,"runConditions":system.conditions,"registrations":[{"application":schedule.app,"schedule":schedule.label,"scope":"runtime"}]}));
             for (condition, candidates) in model.bind_conditions(
                 &system.conditions,
                 schedule,
@@ -2172,7 +1426,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                 instances.dedup();
                 if instances.is_empty() {
                     let id = identifier("set", (&schedule.app, &schedule.id, &set.key));
-                    model.objects.insert(id.clone(),json!({"id":id,"name":set.label,"kind":"SystemSet","feature":"application","description":"引用一个在当前调度中没有注册实例的系统类型；保留该原生依赖端点。","display_summary":"保留未注册系统类型的依赖端点。","sourceEntries":[],"sourceGaps":["当前 Schedule 没有此系统类型的注册实例；不能把占位端点当作可执行系统。"],"runtimeTypeId":set.type_id,"systemTypeId":system_type}));
+                    model.objects.insert(id.clone(),json!({"id":id,"name":set.label,"kind":"SystemSet","feature":"application","sourceEntries":[],"sourceGaps":["当前 Schedule 没有此系统类型的注册实例；不能把占位端点当作可执行系统。"],"runtimeTypeId":set.type_id,"systemTypeId":system_type}));
                     instances.push(id);
                 }
                 for (condition, candidates) in model.bind_conditions(
@@ -2212,29 +1466,13 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                 "definition",
             );
             let feature = model.feature(declaration.as_ref());
-            let (description, summary) = if set.anonymous {
-                (
-                    "保存这组系统的共同配置；成员、条件和依赖来自真实装配快照。".into(),
-                    "保存一组系统的共同配置。".into(),
-                )
-            } else if let Some(declaration) = &declaration {
-                let evidence_hash = model.behavior_hash(declaration);
-                model.purpose(
-                    &model.purpose_key(declaration),
-                    &set.label,
-                    "SystemSet",
-                    &evidence_hash,
-                    &declaration.docs,
-                    &sources,
-                )
-            } else {
+            if !set.anonymous && declaration.is_none() {
                 model.fatal.push(format!(
                     "No compiler type for runtime set {} / {} / {}",
                     schedule.app, schedule.label, set.key
                 ));
-                (String::new(), String::new())
-            };
-            model.objects.insert(id.clone(),json!({"id":id,"name":set.label,"kind":"SystemSet","feature":feature,"description":description,"display_summary":summary,"sourceEntries":sources,"sourceGaps":[],"runtimeTypeId":set.type_id,"runConditions":set.conditions}));
+            }
+            model.objects.insert(id.clone(),json!({"id":id,"name":set.label,"kind":"SystemSet","feature":feature,"sourceEntries":sources,"sourceGaps":[],"runtimeTypeId":set.type_id,"runConditions":set.conditions}));
             for (condition, candidates) in model.bind_conditions(
                 &set.conditions,
                 schedule,
@@ -2395,24 +1633,10 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                 .cloned();
             let sources = model.source(&access.source, "parameter");
             let feature = model.feature(declaration.as_ref());
-            let key = format!(
-                "{}|{}",
-                declaration
-                    .as_ref()
-                    .map(|declaration| model.purpose_key(declaration))
-                    .unwrap_or_else(|| access.owner.clone()),
-                access.parameter
-            );
-            let evidence_hash = declaration
-                .as_ref()
-                .map(|declaration| model.behavior_hash(declaration))
-                .unwrap_or_default();
             let name = format!("Local · {}", access.parameter);
-            let (description, summary) =
-                model.purpose(&key, &name, "Local", &evidence_hash, "", &sources);
             for owner in owners {
                 let id = identifier("local", (&owner, &access.owner, &access.parameter));
-                model.objects.insert(id.clone(),json!({"id":id,"name":name,"kind":"Local","feature":feature,"description":description,"display_summary":summary,"sourceEntries":sources,"sourceGaps":[],"parameter":access.parameter,"callableId":access.owner,"typeInstanceId":access.type_id}));
+                model.objects.insert(id.clone(),json!({"id":id,"name":name,"kind":"Local","feature":feature,"sourceEntries":sources,"sourceGaps":[],"parameter":access.parameter,"callableId":access.owner,"typeInstanceId":access.type_id}));
                 model.link(
                     &owner,
                     &id,
@@ -2673,24 +1897,12 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
             .and_then(|callable| model.declarations.get(&callable.declaration))
             .cloned();
         let feature = model.feature(declaration.as_ref());
-        let key = format!("entity:{}", entity.id);
-        let creator_behavior = if let Some(declaration) = &declaration {
-            model.behavior_hash(declaration)
-        } else {
+        if declaration.is_none() {
             model.fatal.push(format!(
                 "No compiler declaration for entity creator {}",
                 entity.creator
             ));
-            String::new()
-        };
-        let (description, summary) = model.purpose(
-            &key,
-            &name,
-            "Entity",
-            &entity_purpose_hash(&entity, &creator_behavior),
-            "",
-            &sources,
-        );
+        }
         let mut source_gaps: Vec<_> = entity.gaps.iter().map(|gap| gap.reason.clone()).collect();
         source_gaps.extend(name_gaps);
         if entity.possible {
@@ -2713,7 +1925,7 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
                 model.link(&id,&candidate,"alternative","结构候选",group_sources.clone(),json!({"evidence":"assembly","alternativeGroup":group.id,"alternativeContext":context,"selection":group.selection,"possible":true}));
             }
         }
-        model.objects.insert(id.clone(),json!({"id":id,"templateId":entity.id,"name":name,"nameCandidates":name_candidates,"kind":"Entity","feature":feature,"description":description,"display_summary":summary,"sourceEntries":sources,"sourceGaps":source_gaps,"alternativeGroups":alternative_groups,"alternativeGroup":entity.alternative_group,"alternativeSelection":entity.alternative_selection,"alternativeContext":entity.alternative_context,"possible":entity.possible}));
+        model.objects.insert(id.clone(),json!({"id":id,"templateId":entity.id,"name":name,"nameCandidates":name_candidates,"kind":"Entity","feature":feature,"sourceEntries":sources,"sourceGaps":source_gaps,"alternativeGroups":alternative_groups,"alternativeGroup":entity.alternative_group,"alternativeSelection":entity.alternative_selection,"alternativeContext":entity.alternative_context,"possible":entity.possible}));
         for gap in &entity.gaps {
             let gap_sources = model.source(&gap.source, "assembly");
             analysis_gaps.push(json!({"unit":"model","owner":gap.owner,"kind":gap.kind,"reason":gap.reason,"sourceEntries":gap_sources,"entityTemplateId":entity.id,"alternativeGroup":entity.alternative_group,"possible":entity.possible}));
@@ -2844,10 +2056,6 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         model.relations.len(),
         call_graph_calls.len()
     );
-    eprintln!(
-        "Architecture model: purpose dispatch certified {}, conservative fallback {}",
-        model.purpose_certified, model.purpose_fallback
-    );
     for (path, hash) in &fact_sources {
         ensure!(
             digest(fs::read(path)?) == *hash,
@@ -2855,28 +2063,13 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         );
     }
     fs::create_dir_all(output_parent)?;
-    let pending = model.pending.into_values().collect::<Vec<_>>();
     analysis_gaps.extend(model.rejected_types.into_values());
-    // 此精确 kind 仅由用途 MIR 审计产生；完整记录留在私有报告，业务缺口与对象提示保持原样。
-    let (compiler_gaps, analysis_gaps): (Vec<_>, Vec<_>) = aggregate_gaps(analysis_gaps)
-        .into_iter()
-        .partition(|gap| gap["kind"] == "implicit-drop");
-    let mut compiler_gap_kinds = BTreeMap::<String, usize>::new();
-    for gap in &compiler_gaps {
-        *compiler_gap_kinds
-            .entry(gap["kind"].as_str().expect("Compiler gap kind").into())
-            .or_default() += 1;
-    }
-    let result = json!({"schemaVersion":1,"compiler":bundle.compiler,"configuration":bundle.configuration,
+    let result = json!({"schemaVersion":2,"compiler":bundle.compiler,"configuration":bundle.configuration,
         "runtimeDirectory":runtime_directory,"inputs":{"sourceFingerprint":runtime_data.source_fingerprint,"factsSha256":facts_hash,"runtimeSha256":digest(&runtime_bytes)},
         "objects":model.objects.into_values().collect::<Vec<_>>(),"relations":model.relations.into_values().collect::<Vec<_>>(),"features":model.features.into_values().collect::<Vec<_>>(),
         "sourceFiles":model.source_cache.snapshots.into_values().collect::<Vec<_>>(),"callGraph":call_graph,"scheduleInteractions":{"schemaVersion":1,"views":bindings},"schedulePluginCatalog":group_catalog.into_values().collect::<Vec<_>>(),"schedulePluginGroups":schedule_groups,
-        "annotationsRequired":pending,"bindingErrors":model.fatal,"analysisGaps":analysis_gaps});
+        "bindingErrors":model.fatal,"analysisGaps":aggregate_gaps(analysis_gaps)});
     fs::write(output, serde_json::to_vec_pretty(&result)?)?;
-    fs::write(
-        output_parent.join("pending-descriptions.json"),
-        serde_json::to_vec_pretty(&result["annotationsRequired"])?,
-    )?;
     ensure!(
         source_fingerprint(&model.root)? == runtime_data.source_fingerprint,
         "Source changed during model generation"
@@ -2885,32 +2078,8 @@ pub fn build(facts: &Path, runtime: &Path, annotations: &Path, output: &Path) ->
         crate::host::file_digest(facts)? == facts_hash,
         "Compiler fact bundle changed during model generation"
     );
-    fs::write(
-        summary,
-        serde_json::to_vec_pretty(&json!({
-            "schemaVersion": 1,
-            "compiler": result["compiler"],
-            "configuration": result["configuration"],
-            "inputs": result["inputs"],
-            "compilerGapSummary": {"count": compiler_gaps.len(), "byKind": compiler_gap_kinds},
-            "compilerGaps": compiler_gaps,
-            "certified": model.purpose_certified,
-            "fallback": model.purpose_fallback,
-            "fallbacks": model.purpose_fallbacks.into_values().collect::<Vec<_>>(),
-            "annotationHits": model.annotation_hits.len(),
-            "pending": result["annotationsRequired"].as_array().unwrap().len()
-        }))?,
-    )?;
-    eprintln!(
-        "Architecture model: output written ({} descriptions pending, {} binding errors)",
-        result["annotationsRequired"].as_array().unwrap().len(),
-        result["bindingErrors"].as_array().unwrap().len()
-    );
     if !result["bindingErrors"].as_array().unwrap().is_empty() {
         bail!("Compiler/runtime binding is incomplete; see model bindingErrors");
-    }
-    if !result["annotationsRequired"].as_array().unwrap().is_empty() {
-        bail!("Chinese descriptions are pending; see pending-descriptions.json");
     }
     Ok(())
 }
@@ -2960,7 +2129,7 @@ mod source_cache_tests {
     use std::time::{SystemTime, UNIX_EPOCH};
 
     #[test]
-    fn repeated_filename_reuses_snapshot_but_checks_each_evidence_hash() {
+    fn repeated_filename_reuses_snapshot_but_checks_each_file_hash() {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../../tmp/ra/tests/model-source-cache")
             .join(format!(

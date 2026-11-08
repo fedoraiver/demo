@@ -1623,7 +1623,7 @@ fn publish_extraction(
         })
         .collect::<Result<Vec<_>>>()?;
     let bundle = FactBundle {
-        schema_version: 2,
+        schema_version: analysis_contract::facts::FACT_SCHEMA_VERSION,
         compiler: env!("ANALYSIS_COMPILER"),
         configuration: result.configuration,
         workspace: normalized(&host.root)?,

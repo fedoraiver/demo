@@ -1,0 +1,250 @@
+name: ECS architecture
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'tools/rustc-analysis/**'
+      - 'scripts/rustc-analysis.ps1'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'build.rs'
+      - 'rust-toolchain.toml'
+      - '.cargo/**'
+      - 'docs/diagrams/**'
+      - '.github/workflows/ecs-architecture.yml'
+      - '.github/actions/setup-rust-checks/**'
+  push:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'tools/rustc-analysis/**'
+      - 'scripts/rustc-analysis.ps1'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'build.rs'
+      - 'rust-toolchain.toml'
+      - '.cargo/**'
+      - 'docs/diagrams/**'
+      - '.github/workflows/ecs-architecture.yml'
+      - '.github/actions/setup-rust-checks/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ecs-architecture-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Linux architecture and static package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    env:
+      CARGO_TERM_COLOR: always
+      CARGO_BUILD_JOBS: '2'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+      MERMAID_JOBS: '2'
+      PUPPETEER_CACHE_DIR: ${{ github.workspace }}/tmp/ecs-architecture/puppeteer
+      PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: 'true'
+      WGPU_BACKEND: vulkan
+      WGPU_FORCE_FALLBACK_ADAPTER: '1'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Prepare Rust and locked dependencies
+        uses: ./.github/actions/setup-rust-checks
+
+      - name: Prepare virtual display and software Vulkan
+        run: |
+          sudo apt-get install --no-install-recommends -y xvfb xauth mesa-vulkan-drivers libvulkan1 vulkan-tools fonts-noto-cjk
+          mkdir -p tmp/ecs-architecture
+          xvfb-run -a vulkaninfo --summary > tmp/ecs-architecture/vulkan-summary.txt
+          fc-match 'Noto Sans CJK SC'
+          # Chrome for Testing 保留自身隔离机制，允许其建立用户命名空间。
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          {
+            fc-cache --version 2>&1
+            fc-list --format '%{file}\n' | sort -u | while IFS= read -r font; do sha256sum "$font"; done
+          } > tmp/ecs-architecture/render-fonts.txt
+          echo "MERMAID_RENDER_CONTEXT=$(sha256sum tmp/ecs-architecture/render-fonts.txt | cut -d' ' -f1)" >> "$GITHUB_ENV"
+
+      - name: Prepare Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: docs/diagrams/package-lock.json
+
+      - name: Restore locked browser
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: tmp/ecs-architecture/puppeteer
+          key: ecs-browser-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('docs/diagrams/package-lock.json') }}
+
+      - name: Install diagram dependencies and select locked browser
+        working-directory: docs/diagrams
+        run: |
+          npm ci
+          node --input-type=module -e "import puppeteer from 'puppeteer'; import fs from 'node:fs'; const browser=puppeteer.executablePath(); if(!fs.existsSync(browser))throw new Error('Locked browser missing'); fs.appendFileSync(process.env.GITHUB_ENV, 'MERMAID_CHROMIUM_PATH='+browser+'\nMAINTENANCE_VISUAL_CHROMIUM='+browser+'\n');"
+          node --input-type=module -e "import puppeteer from 'puppeteer'; const browser=await puppeteer.launch({executablePath:puppeteer.executablePath(),headless:true}); try {console.log(await browser.version());} finally {await browser.close();}"
+
+      - name: Restore checked geometry candidates
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: tmp/ecs-architecture/mermaid-build/geometry-cache
+          key: ecs-geometry-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('docs/diagrams/package-lock.json', 'docs/diagrams/src/**') }}-${{ github.sha }}
+          restore-keys: |
+            ecs-geometry-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('docs/diagrams/package-lock.json', 'docs/diagrams/src/**') }}-
+
+      - name: Build and validate full architecture
+        run: |
+          mkdir -p tmp/ecs-architecture
+          (
+            while true; do
+              date --iso-8601=seconds
+              df -B1 .
+              sleep 15
+            done
+          ) > tmp/ecs-architecture/resource-disk.log &
+          monitor_pid=$!
+          trap 'kill "$monitor_pid" 2>/dev/null || true; wait "$monitor_pid" 2>/dev/null || true' EXIT
+          /usr/bin/time -v -o tmp/ecs-architecture/resource-time.txt xvfb-run -a npm run maintain --prefix docs/diagrams -- run > tmp/ecs-architecture/maintenance-result.stdout.log
+
+      - name: Package and check static Pages files
+        run: |
+          npm run maintain --prefix docs/diagrams -- pack-pages
+          npm run maintain --prefix docs/diagrams -- check-pages
+
+      - name: Summarize execution and remaining resources
+        if: ${{ always() }}
+        run: |
+          npm run maintain --prefix docs/diagrams -- report --format markdown >> "$GITHUB_STEP_SUMMARY"
+          printf '\n### Remaining resources\n\n```text\n' >> "$GITHUB_STEP_SUMMARY"
+          df -h . >> "$GITHUB_STEP_SUMMARY"
+          free -h >> "$GITHUB_STEP_SUMMARY"
+          printf '```\n' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Preserve execution logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: ecs-logs-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 3
+          if-no-files-found: warn
+          path: |
+            tmp/ecs-architecture/maintenance/
+            tmp/ecs-architecture/compiler/analysis-summary.json
+            tmp/ecs-architecture/vulkan-summary.txt
+            tmp/ecs-architecture/render-fonts.txt
+            tmp/ecs-architecture/resource-time.txt
+            tmp/ecs-architecture/resource-disk.log
+            tmp/ecs-architecture/maintenance-result.stdout.log
+            tmp/ra/r/
+            logs/
+
+      - name: Preserve complete audit outputs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: ecs-audit-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 3
+          if-no-files-found: warn
+          compression-level: 1
+          path: |
+            docs/diagrams/generated/
+            tmp/ecs-architecture/compiler/facts.json
+            tmp/ecs-architecture/compiler/runtime.json
+
+      - name: Upload validated Pages artifact
+        if: ${{ github.ref == 'refs/heads/master' && github.event_name != 'pull_request' }}
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: tmp/ecs-architecture/pages
+          retention-days: 3
+
+      - name: Preserve expected publication proof
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: ecs-publication-proof-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 3
+          if-no-files-found: error
+          path: tmp/ecs-architecture/pages/site-manifest.json
+
+  deploy:
+    name: Publish architecture
+    if: ${{ github.ref == 'refs/heads/master' && github.event_name != 'pull_request' }}
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: ecs-architecture-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Confirm this build still represents master
+        id: current
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          BUILD_COMMIT: ${{ github.sha }}
+        run: |
+          master_commit=$(gh api "repos/$GH_REPO/git/ref/heads/master" --jq .object.sha)
+          if [ "$master_commit" = "$BUILD_COMMIT" ]; then
+            echo 'publish=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'publish=false' >> "$GITHUB_OUTPUT"
+            echo 'A newer master commit exists; this completed build is kept for audit and will not deploy.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Check out the exact build source
+        if: ${{ steps.current.outputs.publish == 'true' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Prepare verification runtime
+        if: ${{ steps.current.outputs.publish == 'true' }}
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - name: Download this run's publication proof
+        if: ${{ steps.current.outputs.publish == 'true' }}
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: ecs-publication-proof-${{ github.run_id }}-${{ github.run_attempt }}
+          path: tmp/ecs-architecture/publication-proof
+      - name: Configure Pages
+        if: ${{ steps.current.outputs.publish == 'true' }}
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - name: Deploy checked static package
+        if: ${{ steps.current.outputs.publish == 'true' }}
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+      - name: Verify deployed Pages over HTTP
+        if: ${{ steps.current.outputs.publish == 'true' }}
+        env:
+          DEPLOYMENT_URL: ${{ steps.deployment.outputs.page_url }}
+          BUILD_COMMIT: ${{ github.sha }}
+        run: |
+          node docs/diagrams/maintain.mjs verify-pages --url "$DEPLOYMENT_URL" --expected tmp/ecs-architecture/publication-proof/site-manifest.json --commit "$BUILD_COMMIT" --evidence tmp/ecs-architecture/deployment
+      - name: Preserve deployed HTTP verification evidence
+        if: ${{ always() && steps.current.outputs.publish == 'true' }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: ecs-deployment-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 3
+          if-no-files-found: warn
+          path: tmp/ecs-architecture/deployment/

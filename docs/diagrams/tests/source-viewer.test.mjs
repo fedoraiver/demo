@@ -258,7 +258,7 @@ function architectureDetails(registry, workspace = 'D:/demo', clipboard) {
   // 从交付 HTML 提取真实函数，只替代无关的图形渲染；断言调用产生的详细面板。
   const definitions = script.split(/\r?\n/).filter(line =>
     /^\s*const (safe|canonical)=/.test(line)).join('\n')
-    + '\n' + script.slice(script.indexOf('function sourcesList('), script.indexOf('function guide('))
+    + '\n' + script.slice(script.indexOf('function list('), script.indexOf('function guide('))
     + '\n' + script.slice(script.indexOf('function showDetail('), script.indexOf('function releaseDiagramFocus('));
   const document = testDocument(html), details = document.getElementById('details');
   const location = new URL('https://example.test/docs/diagrams/ecs-architecture.html');
@@ -277,7 +277,7 @@ function architectureDetails(registry, workspace = 'D:/demo', clipboard) {
   return { document, details, context, location, show: id => vm.runInContext('showDetail(' + JSON.stringify(id) + ');', context) };
 }
 
-test('generated architecture details keep only name, description, object entry and functional source locations', () => {
+test('generated architecture details keep factual identity, gaps and functional source locations', () => {
   const page = architectureDetails({ source: { name: 'update', description: '完整节点说明保留注册顺序与生命周期约束。', feature: 'item', owner: '隐藏归属', reads: ['data'], fields: ['隐藏字段'], sourceGaps: ['隐藏缺口'], sourceEntries: [{ role: 'definition', label: '函数定义', path: 'src/中文 #%.rs', line: 8, column: 3 }], source: { path: 'src/legacy.rs', line: 1 } }, data: { name: 'Resource' } });
   const { details, context } = page;
   page.show('source');
@@ -288,11 +288,12 @@ test('generated architecture details keep only name, description, object entry a
   assert.equal(links[0].dataset.vscodeColumn, '3');
   assert.equal(links[0].href, 'vscode://file/D:/demo/src/%E4%B8%AD%E6%96%87%20%23%25.rs:8:3');
   assert.equal(details.querySelector('[data-source-location] input').value, 'D:/demo/src/中文 #%.rs:8:3');
-  assert.ok(details.textContent.includes('完整节点说明保留注册顺序与生命周期约束。'));
-  assert.deepEqual(details.children.map(child => child.tagName), ['h2', 'p', 'button', 'section']);
+  assert.ok(!details.textContent.includes('完整节点说明保留注册顺序与生命周期约束。'));
+  assert.ok(details.textContent.includes('隐藏缺口'));
+  assert.deepEqual(details.children.map(child => child.tagName), ['h2', 'p', 'button', 'h3', 'ul', 'section']);
   assert.equal(details.querySelector('[data-object]').dataset.object, 'source');
   assert.equal(details.querySelector('#clear-selection'), null);
-  assert.doesNotMatch(details.textContent, /隐藏归属|隐藏字段|隐藏缺口|src\/legacy\.rs/);
+  assert.doesNotMatch(details.textContent, /隐藏归属|隐藏字段|src\/legacy\.rs/);
   assert.doesNotMatch(details.textContent, /离线源码快照/);
   page.show('data');
   assert.equal(details.querySelectorAll('a').length, 0);

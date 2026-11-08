@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathsForRepository, repositoryRoot, artifactRelativePath } from '../src/paths.mjs';
-import { writeExternalArchitecture, readArchitectureData, obsoleteExternalReferences } from '../src/architecture-artifacts.mjs';
+import { writeExternalArchitecture, readArchitectureData, obsoleteExternalReferences, stampArchitecturePage } from '../src/architecture-artifacts.mjs';
 import { startExternalArchitecture } from '../src/architecture-viewer.mjs';
 import { testDocument } from './test-dom.mjs';
 import { hashFile } from '../src/stream-files.mjs';
@@ -12,11 +12,9 @@ function fixture({ sidecar = false, objectRelationRuntime } = {}) {
   const temporary = path.join(repositoryRoot, 'tmp/ecs-architecture/artifact-tests');
   fs.mkdirSync(temporary, { recursive: true });
   const paths = pathsForRepository(fs.mkdtempSync(path.join(temporary, 'case-')));
-  fs.mkdirSync(paths.catalogDirectory, { recursive: true });
   fs.mkdirSync(paths.pagesDirectory, { recursive: true });
-  fs.writeFileSync(path.join(paths.catalogDirectory, 'ecs-data.json'), '{}');
-  const data = { schemaVersion: 5, model: { features: [], entities: [], systems: [{ id: 'system-a', description: '中文说明' }] },
-    registry: { a: { name: 'A', description: '完整说明 <&>' } }, objects: [{ id: 'a' }], objectAliases: {}, infrastructureFeatures: [],
+  const data = { schemaVersion: 5, model: { schemaVersion: 2, features: [], entities: [], systems: [{ id: 'system-a' }] },
+    registry: { a: { name: 'A' } }, objects: [{ id: 'a' }], objectAliases: {}, infrastructureFeatures: [],
     guideSamples: { nodes: { system: '<svg xmlns="http://www.w3.org/2000/svg"/>' }, edges: {}, schedule: { nodes: {}, edges: {} } },
     views: [{ id: 'object-a', aspect: 'object', engine: 'mermaid', objectId: 'a', centerNodeId: 'a', filename: 'ecs-object-a.svg',
       mermaidFilename: 'ecs-object-a.mmd', label: 'A', nodes: [{ id: 'a' }], links: [], width: 10, height: 10,
@@ -37,8 +35,9 @@ function fixture({ sidecar = false, objectRelationRuntime } = {}) {
     assert.equal(hashFile(destination).sha256, expectedSha256);
   };
   for (const view of data.views) if (view.svg) { writeArtifact(artifactRelativePath(view), view.svg); writeArtifact(artifactRelativePath(view, 'mermaid'), view.mermaid); }
-  const bootstrap = writeExternalArchitecture({ paths, data, writeArtifact, copyArtifact, compilerModelDirectory, objectRelationRuntime });
-  fs.writeFileSync(path.join(paths.pagesDirectory, 'ecs-architecture.html'), '<script id="architecture-data" type="application/json">' + JSON.stringify(bootstrap) + '</script>');
+  const bootstrap = writeExternalArchitecture({ paths, data, writeArtifact, copyArtifact, compilerModelDirectory, objectRelationRuntime,
+    sourceCommit: 'a'.repeat(40), target: 'x86_64-pc-windows-msvc', sourcePage: '<!doctype html><html><head></head><body>完整源码快照</body></html>' });
+  fs.writeFileSync(path.join(paths.pagesDirectory, 'ecs-architecture.html'), stampArchitecturePage('<script id="architecture-data" type="application/json">' + JSON.stringify(bootstrap) + '</script>', bootstrap));
   return { paths, data, bootstrap, compilerModelDirectory };
 }
 
@@ -51,6 +50,7 @@ test('external architecture round trip preserves full facts, graph bytes and emp
   assert.equal(runtime.views[0].resources.svg.url, '../svg/object/ecs-object-a.svg');
   assert.equal(runtime.views[0].relationCount, data.views[0].links.length);
   const metadata = JSON.parse(fs.readFileSync(path.join(paths.viewDataDirectory, 'object-a.json'), 'utf8'));
+  for (const key of ['sourceCommit', 'target', 'buildId']) assert.equal(metadata[key], runtime[key]);
   assert.equal(metadata.svg, undefined); assert.equal(metadata.mermaid, undefined);
   assert.equal(fs.readFileSync(path.join(paths.objectSvgDirectory, 'ecs-object-a.svg'), 'utf8'), data.views[0].svg);
 });
@@ -75,8 +75,42 @@ test('descriptor relation counts are checked against actual metadata links after
   manifest.runtime = { path: manifest.runtime.path, ...hashFile(runtimePath) };
   fs.writeFileSync(manifestPath, JSON.stringify(manifest));
   bootstrap.runtimeSha256 = manifest.runtime.sha256; bootstrap.manifestSha256 = hashFile(manifestPath).sha256;
+  const auditPath = path.join(paths.dataDirectory, 'audit-manifest.json'), audit = JSON.parse(fs.readFileSync(auditPath, 'utf8'));
+  audit.manifest = { path: 'data/manifest.json', ...hashFile(manifestPath) }; fs.writeFileSync(auditPath, JSON.stringify(audit));
   fs.writeFileSync(path.join(paths.pagesDirectory, 'ecs-architecture.html'), '<script id="architecture-data">' + JSON.stringify(bootstrap) + '</script>');
   assert.throws(() => readArchitectureData(paths.repositoryRoot), /descriptor mismatch/);
+});
+
+test('full audit reads reject graph exports removed from both manifest and runtime descriptors', () => {
+  for (const kind of ['svg', 'mermaid']) {
+    const { paths, bootstrap } = fixture(), runtimePath = path.join(paths.dataDirectory, 'runtime.json'), manifestPath = path.join(paths.dataDirectory, 'manifest.json');
+    const runtime = JSON.parse(fs.readFileSync(runtimePath, 'utf8')), manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    delete manifest.views[0][kind]; delete runtime.views[0].resources[kind];
+    fs.writeFileSync(runtimePath, JSON.stringify(runtime)); manifest.runtime = { path: 'data/runtime.json', ...hashFile(runtimePath) };
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest));
+    bootstrap.runtimeSha256 = manifest.runtime.sha256; bootstrap.manifestSha256 = hashFile(manifestPath).sha256;
+    const auditPath = path.join(paths.dataDirectory, 'audit-manifest.json'), audit = JSON.parse(fs.readFileSync(auditPath, 'utf8'));
+    audit.manifest = { path: 'data/manifest.json', ...hashFile(manifestPath) }; fs.writeFileSync(auditPath, JSON.stringify(audit));
+    fs.writeFileSync(path.join(paths.pagesDirectory, 'ecs-architecture.html'), '<script id="architecture-data">' + JSON.stringify(bootstrap) + '</script>');
+    assert.throws(() => readArchitectureData(paths.repositoryRoot), new RegExp('Missing architecture ' + kind + ' artifact'));
+  }
+});
+
+test('null graph text in metadata does not suppress declared exports or genuine empty views', () => {
+  const { paths, data, bootstrap } = fixture(), metadataPath = path.join(paths.viewDataDirectory, 'object-a.json');
+  const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8')); metadata.svg = null; metadata.mermaid = null;
+  fs.writeFileSync(metadataPath, JSON.stringify(metadata));
+  const runtimePath = path.join(paths.dataDirectory, 'runtime.json'), manifestPath = path.join(paths.dataDirectory, 'manifest.json');
+  const runtime = JSON.parse(fs.readFileSync(runtimePath, 'utf8')), manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  manifest.views[0].data = { path: 'data/views/object-a.json', ...hashFile(metadataPath) };
+  runtime.views[0].resources.data = { url: '../data/views/object-a.json', sha256: manifest.views[0].data.sha256, bytes: manifest.views[0].data.bytes };
+  fs.writeFileSync(runtimePath, JSON.stringify(runtime)); manifest.runtime = { path: 'data/runtime.json', ...hashFile(runtimePath) };
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest));
+  bootstrap.runtimeSha256 = manifest.runtime.sha256; bootstrap.manifestSha256 = hashFile(manifestPath).sha256;
+  const auditPath = path.join(paths.dataDirectory, 'audit-manifest.json'), audit = JSON.parse(fs.readFileSync(auditPath, 'utf8'));
+  audit.manifest = { path: 'data/manifest.json', ...hashFile(manifestPath) }; fs.writeFileSync(auditPath, JSON.stringify(audit));
+  fs.writeFileSync(path.join(paths.pagesDirectory, 'ecs-architecture.html'), '<script id="architecture-data">' + JSON.stringify(bootstrap) + '</script>');
+  assert.deepEqual(readArchitectureData(paths.repositoryRoot), data);
 });
 
 test('external architecture fails on changed or missing resources and malformed bootstrap paths', () => {
@@ -115,12 +149,15 @@ test('the generated manifest and runtime bootstrap start together without loadin
   assert.equal(typeof received.loadView, 'function');
 });
 
-test('full compiler call graph bytes are distributed, manifest-bound and checked without browser downloads', () => {
+test('full compiler call graph bytes remain audit-bound and absent from the browser manifest', () => {
   const { paths, data, compilerModelDirectory } = fixture({ sidecar: true });
   const filename = path.join(paths.dataDirectory, 'model.calls.ndjson');
   assert.deepEqual(fs.readFileSync(filename), fs.readFileSync(path.join(compilerModelDirectory, 'model.calls.ndjson')));
   const manifest = JSON.parse(fs.readFileSync(path.join(paths.dataDirectory, 'manifest.json'), 'utf8'));
-  assert.deepEqual(manifest.callGraph, { path: 'data/model.calls.ndjson', ...hashFile(filename) });
+  assert.equal(manifest.schemaVersion, 2); assert.equal(manifest.callGraph, undefined); assert.equal(manifest.model, undefined);
+  const audit = JSON.parse(fs.readFileSync(path.join(paths.dataDirectory, 'audit-manifest.json'), 'utf8'));
+  assert.deepEqual(audit.callGraph, { path: 'data/model.calls.ndjson', ...hashFile(filename) });
+  assert.equal(audit.buildId, manifest.buildId);
   assert.deepEqual(readArchitectureData(paths.repositoryRoot), data);
   fs.appendFileSync(filename, ' ');
   assert.throws(() => readArchitectureData(paths.repositoryRoot), /call graph hash mismatch/);
