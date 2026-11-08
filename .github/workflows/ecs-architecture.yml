@@ -53,6 +53,7 @@ jobs:
       PUPPETEER_SKIP_DOWNLOAD: 'false'
       PUPPETEER_CHROME_SKIP_DOWNLOAD: 'false'
       PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: 'true'
+      PUPPETEER_FIREFOX_SKIP_DOWNLOAD: 'true'
       WGPU_BACKEND: vulkan
       WGPU_FORCE_FALLBACK_ADAPTER: '1'
     steps:
@@ -94,7 +95,8 @@ jobs:
       - name: Install diagram dependencies and select locked browser
         working-directory: docs/diagrams
         run: |
-          npm ci
+          npm ci --foreground-scripts
+          npm exec --yes=false -- puppeteer browsers install chrome
           node --input-type=module -e "import puppeteer from 'puppeteer'; import fs from 'node:fs'; const browser=puppeteer.executablePath(); if(!fs.existsSync(browser))throw new Error('Locked browser missing'); fs.appendFileSync(process.env.GITHUB_ENV, 'MERMAID_CHROMIUM_PATH='+browser+'\nMAINTENANCE_VISUAL_CHROMIUM='+browser+'\n');"
           node --input-type=module -e "import puppeteer from 'puppeteer'; const browser=await puppeteer.launch({executablePath:puppeteer.executablePath(),headless:true}); try {console.log(await browser.version());} finally {await browser.close();}"
 
