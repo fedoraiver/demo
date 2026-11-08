@@ -154,8 +154,8 @@ function nodeText(name, context) {
     ...context.filter(Boolean).flatMap(value => wrap(value)).map(escape)].join('<br/>');
 }
 function nodeLabel(name, context) {
-  // YAML 先还原引号，避免 Mermaid 的原生 SVG 文字保留 &quot;；零宽字符阻止 Markdown 吞掉原文反斜杠。
-  return nodeText(name, context).replaceAll('\\', '\\u005c\u200B').replaceAll('#quot;', '\\u0022');
+  // YAML 先还原引号和 #，避免原生 SVG 保留 &quot; 或 &#35;；零宽字符阻止 Markdown 吞掉原文反斜杠。
+  return nodeText(name, context).replaceAll('\\', '\\u005c\u200B').replaceAll('#quot;', '\\u0022').replaceAll('#35;', '\\u0023');
 }
 
 export function mermaidConfiguration(aspect) {

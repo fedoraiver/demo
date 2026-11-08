@@ -317,6 +317,27 @@ test('captured entity Name expressions preserve quotes and literal escapes in na
   } finally { await browser.close(); }
 });
 
+test('captured Observer closure indices and literal entity spellings stay visible in native SVG', { skip: !chromium, timeout: 180000 }, async () => {
+  const registry = {
+    'observer-047dad1ad3396d088fb4a662': { kind: 'Observer', feature: 'avian', name: 'avian3d::collider_tree::update::{impl#1}::build::{closure#2}' },
+    'observer-05b2d8cd6050f7f647a66083': { kind: 'Observer', feature: 'avian', name: 'avian3d::dynamics::rigid_body::mass_properties::{impl#3}::build::{closure#1}' },
+    'literal-punctuation': { kind: 'Entity', feature: 'avian', name: String.raw`Name #1 "quote" \ *pointer_ [item] {field} & <Type>` },
+    'literal-entities': { kind: 'Entity', feature: 'avian', name: 'literal #quot; #35; #amp; #96; &amp;' },
+  };
+  const graph = { centerNodeId: Object.keys(registry)[0], nodes: Object.keys(registry).map(id => ({ id, role: 'internal' })), links: [] };
+  const view = renderGraphView({ id: 'native-compiler-closure-indices', aspect: 'object', objectId: graph.centerNodeId,
+    label: 'Compiler closure indices', summary: '编译器闭包身份与字面名称。' }, graph, registry, [{ id: 'avian', label: 'Avian' }]);
+  const browser = await puppeteer.launch({ executablePath: chromium, headless: true });
+  try {
+    const native = await compileNativeView(browser, view, registry);
+    assert.deepEqual(nativeLabelMismatches(native), [], 'Closure # indices and source entity-like text must remain literal');
+    const compiled = await compileRoutedView(view, registry, (candidate, records) => compileNativeView(browser, candidate, records));
+    assert.deepEqual(compiled.nodes.slice(0, 2).map(node => node.nameLabel), ['build::{closure#2}', 'build::{closure#1}']);
+    assert.deepEqual(nativeLabelMismatches(compiled), []);
+    checkMermaidGeometry(compiled.svg, compiled); checkMermaidStyles(compiled, registry);
+  } finally { await browser.close(); }
+});
+
 test('complete nested generic names fit native cards without truncating compiler identities', { skip: !chromium, timeout: 180000 }, async () => {
   const names = ['Messages<Request<Options<(AssetId<Image>, Entity), Result<Handle<Scene>, Error>>>>',
     'Query<(&mut Transform, Option<&InheritedVisibility>), (With<Root>, Without<Camera>)>',
