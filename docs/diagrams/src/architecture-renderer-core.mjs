@@ -153,6 +153,10 @@ function nodeText(name, context) {
   return [...wrap(name).map(line => `**${escape(line)}**`),
     ...context.filter(Boolean).flatMap(value => wrap(value)).map(escape)].join('<br/>');
 }
+function nodeLabel(name, context) {
+  // YAML 先还原引号，避免 Mermaid 的原生 SVG 文字保留 &quot;；零宽字符阻止 Markdown 吞掉原文反斜杠。
+  return nodeText(name, context).replaceAll('\\', '\\u005c\u200B').replaceAll('#quot;', '\\u0022');
+}
 
 export function mermaidConfiguration(aspect) {
   return { theme: 'base', look: 'classic', layout: 'dagre', maxTextSize: 200000, htmlLabels: false, fontFamily: ARCHITECTURE_TEXT_STYLE.fontFamily,
@@ -212,7 +216,7 @@ function definition(view, graph, registry, features, scheduleGroups = [], buildO
     layoutLinks.push({ mermaidId, from, to }); lines.push(`  ${from} ${mermaidId}@~~~ ${to}`);
   }
   function declare(node) {
-    lines.push(`  ${node.mermaidId}@{ shape: ${node.shape}, label: "${nodeText(node.nameLabel, node.contextLabel)}" }`, `  class ${node.mermaidId} node_${node.visualType}`);
+    lines.push(`  ${node.mermaidId}@{ shape: ${node.shape}, label: "${nodeLabel(node.nameLabel, node.contextLabel)}" }`, `  class ${node.mermaidId} node_${node.visualType}`);
     if (node.role === 'external') lines.push(`  class ${node.mermaidId} external_node`);
   }
   function edge(link, from, to) {

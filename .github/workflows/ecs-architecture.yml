@@ -127,6 +127,11 @@ jobs:
           npm run maintain --prefix docs/diagrams -- pack-pages
           npm run maintain --prefix docs/diagrams -- check-pages
 
+      - name: Verify generation leaves tracked files unchanged
+        run: |
+          git diff --exit-code
+          git diff --cached --exit-code
+
       - name: Summarize execution and remaining resources
         if: ${{ always() }}
         run: |
@@ -151,6 +156,8 @@ jobs:
             tmp/ecs-architecture/resource-time.txt
             tmp/ecs-architecture/resource-disk.log
             tmp/ecs-architecture/maintenance-result.stdout.log
+            tmp/ecs-architecture/routing/*-failed.json
+            tmp/ecs-architecture/routing/*-failed.svg
             tmp/ra/r/
             logs/
 
@@ -166,6 +173,8 @@ jobs:
             docs/diagrams/generated/
             tmp/ecs-architecture/compiler/facts.json
             tmp/ecs-architecture/compiler/runtime.json
+            tmp/ecs-architecture/compiler/model.json
+            tmp/ecs-architecture/compiler/model.calls.ndjson
 
       - name: Upload validated Pages artifact
         if: ${{ github.ref == 'refs/heads/master' && github.event_name != 'pull_request' }}

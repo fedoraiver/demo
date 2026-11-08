@@ -141,6 +141,7 @@ test('changing input invalidates producer and every downstream stage; HEAD metad
   const status = await maintenanceStatus({ workspace: f.workspace });
   assert.equal(status.status, 'stale');
   assert.deepEqual(status.invalidated, ['produce', 'verify']);
+  assert.match(await maintenanceReport({ workspace: f.workspace, format: 'markdown' }), /已失效阶段：produce、verify/);
   const resumed = await runMaintenance({ workspace: f.workspace, resume: first.runId, pipeline: stages });
   assert.equal(resumed.status, 'passed');
   assert.deepEqual(resumed.stages.map(stage => stage.attempt), [1, 1, 2, 2]);
@@ -210,6 +211,10 @@ test('nonzero exit stops downstream, preserves exact exit code, and supports ret
   assert.equal(failed.stages.length, 1);
   assert.equal(failed.stages[0].exitCode, 17);
   assert.match(fs.readFileSync(failed.stages[0].stderr, 'utf8'), /deliberate failure/);
+  const report = await maintenanceReport({ workspace: f.workspace, runId: failed.runId, format: 'markdown' });
+  assert.match(report, /失败：Stage produce failed \(exit 17, signal none\)/);
+  assert.match(report, /produce-1\.stdout\.log/);
+  assert.match(report, /produce-1\.stderr\.log/);
   const resumed = await runMaintenance({ workspace: f.workspace, resume: true, pipeline: pipeline() });
   assert.equal(resumed.status, 'passed');
   assert.deepEqual(resumed.stages.map(stage => stage.id), ['produce', 'produce', 'verify']);
@@ -407,8 +412,46 @@ test('actual child emitting CLI style pretty JSON records the entire preflight d
   assert.equal(state.preflightModel.objects.id.name, 'test');
   assert.match(fs.readFileSync(state.stages[0].stdout, 'utf8'), /\n  "counts"/);
   const report = await maintenanceReport({ workspace: f.workspace, runId: state.runId, format: 'markdown' });
-  assert.match(report, /分析边界：1 项/); assert.match(report, /mir-budget 1/); assert.match(report, /MIR analysis budget reached/);
+  assert.match(report, /分析边界：1 项/); assert.match(report, /mir-budget 1/);
+  assert.doesNotMatch(report, /MIR analysis budget reached/);
   assert.equal(state.preflightModel.analysisGaps[0].owner, 'unit');
+});
+
+test('markdown report summarizes multi-megabyte evidence without losing the complete JSON or raw logs', async t => {
+  const f = fixture(t), runId = 'large-report-fixture';
+  const directory = `tmp/ecs-architecture/maintenance/${runId}`;
+  const names = Array.from({ length: 250 }, (_, index) => `object-${index}`);
+  const detail = 'analysis-only-detail '.repeat(400);
+  const comparison = { added: names, retired: [], preserved: names,
+    changed: names.map(id => ({ id, before: { field: detail }, after: { field: 'changed-field-detail' } })) };
+  const state = { schemaVersion: 1, runId, workspace: f.workspace, status: 'failed', error: `Stage build failed (exit 17, signal none)\n${detail}`,
+    stages: [{ id: 'build', status: 'failed', attempt: 2, durationMs: 123, exitCode: 17, signal: null,
+      stdout: path.join(f.workspace, directory, 'build-2.stdout.log'), stderr: path.join(f.workspace, directory, 'build-2.stderr.log'),
+      inputs: { files: names.map(name => ({ name, evidence: detail })) } }],
+    preflightModel: { analysisGaps: names.map(owner => ({ owner, unit: 'fixture', kind: 'mir-budget', reason: detail, sourceEntries: [] })) },
+    modelChanges: { available: true, objects: comparison, relationships: comparison, registrations: names, generics: [], projections: [], sources: names } };
+  f.put(`${directory}/state.json`, JSON.stringify(state));
+  f.put(`${directory}/build-2.stdout.log`, 'complete stdout');
+  f.put(`${directory}/build-2.stderr.log`, 'specific build failure');
+  const before = fs.readFileSync(path.join(f.workspace, directory, 'state.json'));
+  assert.ok(before.length > 1024 * 1024);
+  const report = await maintenanceReport({ workspace: f.workspace, runId, format: 'markdown' });
+  assert.ok(Buffer.byteLength(report) < 16 * 1024);
+  assert.match(report, /失败：Stage build failed \(exit 17, signal none\)…（完整错误见 JSON）/);
+  assert.match(report, /\| build \| failed \| 2 \| 123 \| 17 \/ — \|/);
+  assert.ok(report.includes(`${directory}/state.json`));
+  assert.ok(report.includes(`${directory}/build-2.stderr.log`));
+  assert.match(report, /分析边界：250 项/);
+  assert.match(report, /mir-budget 250/);
+  assert.match(report, /对象：新增 250，退役 0，保留 250，变化 250/);
+  assert.doesNotMatch(report, /analysis-only-detail|changed-field-detail|```/);
+  const full = await maintenanceReport({ workspace: f.workspace, runId, format: 'json' });
+  assert.equal(full.error, state.error);
+  assert.deepEqual(full.stages[0].inputs, state.stages[0].inputs);
+  assert.deepEqual(full.preflightModel, state.preflightModel);
+  assert.deepEqual(full.modelChanges, state.modelChanges);
+  assert.deepEqual(fs.readFileSync(path.join(f.workspace, directory, 'state.json')), before);
+  assert.equal(fs.readFileSync(path.join(f.workspace, directory, 'build-2.stderr.log'), 'utf8'), 'specific build failure');
 });
 
 test('export context binds selectors, config contents, actual toolchain bytes and DOT provenance', async t => {

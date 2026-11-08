@@ -102,10 +102,12 @@ test('Entity Name titles retain source text and changing a name invalidates rend
   const definition = { id: 'entity-names', aspect: 'object', label: 'Entity', summary: '实体模板' };
   const view = renderGraphView(definition, graph, registry, []);
   assert.deepEqual(view.nodes.map(node => [node.id, node.nameLabel]), [...names.map((name, index) => ['entity-' + index, name]), ['entity-copy', names[0]]]);
-  assert.match(view.mermaid.replace(/[\u200B\uFEFF]/g, ''), /HUD::状态 #quot;active#quot;_label/);
-  assert.match(view.mermaid, /format!\(#quot;Block \{\}#quot;, index\)/);
+  assert.match(view.mermaid.replace(/[\u200B\uFEFF]/g, ''), /HUD::状态 \\u0022active\\u0022_label/);
+  assert.match(view.mermaid, /format!\(\\u0022Block \{\}\\u0022, index\)/);
   assert.deepEqual(view.links.map(({ id, from, to }) => ({ id, from, to })), graph.links.map(({ id, from, to }) => ({ id, from, to })));
   const before = mermaidRenderIdentity(view, registry, '{}');
+  const oldEncoding = { ...view, mermaid: view.mermaid.replaceAll('\\u0022', '#quot;') };
+  assert.notEqual(mermaidRenderIdentity(oldEncoding, registry, '{}').fingerprint, before.fingerprint, 'Native text encoding remains part of the render cache input');
   const renamed = { ...registry, 'entity-0': { ...registry['entity-0'], name: 'HUD::新名称' } };
   const updated = renderGraphView(definition, graph, renamed, []);
   assert.notEqual(mermaidRenderIdentity(updated, renamed, '{}').fingerprint, before.fingerprint);

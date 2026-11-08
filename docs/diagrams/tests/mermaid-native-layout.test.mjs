@@ -283,6 +283,40 @@ test('Rust lifetime, underscore and pointer symbols remain literal through nativ
   assert.equal(compiled.nodes[0].displayLabel, view.nodes[0].displayLabel);
 });
 
+test('captured entity Name expressions preserve quotes and literal escapes in native SVG labels', { skip: !chromium, timeout: 180000 }, async () => {
+  const records = [
+    ['entity-688c484938d1bc3da575b848', 'format!("Menu button: {title}")'],
+    ['entity-0097372e0c50008e9e475029', 'format!("Volume row: {title}")'],
+    ['entity-02cc770652a42b7fa22de70a', 'Menu button icon container'],
+    ['quoted-underscore', 'HUD::状态 "active"_label'],
+    ['quoted-generic', `format!("&mut Vec<T> for 'a")`],
+    ['quoted-braces', '"quote" and {outer}'],
+    ['quoted-escape', String.raw`Name("first \" second")`],
+    ['literal-escape', String.raw`literal \n \u0022`],
+  ];
+  const registry = Object.fromEntries(records.map(([id, name]) => [id, { id, kind: 'Entity', name, feature: 'ui' }]));
+  const graph = { centerNodeId: records[2][0], nodes: records.map(([id]) => ({ id, role: 'internal' })), links: [
+    { id: 'relation-2f94ad76abbcc3cfd0e5674d', from: records[0][0], to: records[2][0], kind: 'relationship' },
+  ] };
+  const view = renderGraphView({ id: 'native-entity-name-expressions', aspect: 'object', objectId: graph.centerNodeId,
+    feature: 'ui', label: 'Entity Name expressions', summary: '实体创建名称与直接关系。' }, graph, registry, [{ id: 'ui', label: 'ui' }]);
+  const before = structuredClone({ registry, graph, view });
+  fs.mkdirSync(temporary, { recursive: true });
+  const browser = await puppeteer.launch({ executablePath: chromium, headless: true });
+  try {
+    const captured = renderGraphView({ ...view, id: 'native-captured-name-expressions' }, { ...graph, nodes: graph.nodes.slice(0, 3) }, registry, [{ id: 'ui', label: 'ui' }]);
+    const native = await compileNativeView(browser, captured, registry);
+    assert.deepEqual(nativeLabelMismatches(native), [], 'Native SVG must contain the original quotes, braces and backslashes');
+    const compiled = await compileRoutedView(view, registry, (candidate, entries) => compileNativeView(browser, candidate, entries));
+    assert.deepEqual(compiled.nodes.map(node => node.displayLabel), records.map(([, name]) => name));
+    assert.deepEqual(compiled.links, view.links);
+    checkMermaidGeometry(compiled.svg, compiled); checkMermaidStyles(compiled, registry);
+    assert.deepEqual(nativeLabelMismatches(compiled), []);
+    assert.deepEqual({ registry, graph, view }, before);
+    fs.writeFileSync(path.join(temporary, 'entity-name-expressions.svg'), compiled.svg);
+  } finally { await browser.close(); }
+});
+
 test('complete nested generic names fit native cards without truncating compiler identities', { skip: !chromium, timeout: 180000 }, async () => {
   const names = ['Messages<Request<Options<(AssetId<Image>, Entity), Result<Handle<Scene>, Error>>>>',
     'Query<(&mut Transform, Option<&InheritedVisibility>), (With<Root>, Without<Camera>)>',

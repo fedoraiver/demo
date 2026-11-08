@@ -308,10 +308,16 @@ export async function maintenanceReport({ workspace, runId, format = 'json' } = 
   if (format === 'json') return state;
   if (!['markdown', 'md'].includes(format)) throw new Error(`Unknown report format: ${format}`);
   const stages = new Map((state.stages || []).map(stage => [stage.id, stage]));
+  const logPath = filename => path.relative(state.workspace, filename).split(path.sep).join('/');
   const lines = [`# ECS 架构图维护`, '', `自动检查：${state.status}`, `工作区：${state.workspace}`, `运行：${state.runId || '未开始'}`, '',
-    '| 阶段 | 结果 | PID | 开始 | 结束 | 退出码 | 原始日志 |', '| --- | --- | --- | --- | --- | --- | --- |',
-    ...[...stages.values()].map(stage => `| ${stage.id} | ${stage.status} | ${stage.pid ?? '—'} | ${stage.startedAt || '—'} | ${stage.endedAt || '—'} | ${stage.exitCode ?? '—'} | ${[stage.stdout, stage.stderr].filter(Boolean).join(', ') || '—'} |`)];
-  if (state.error) lines.push('', `失败：${state.error}`);
+    '| 阶段 | 结果 | attempt | 耗时 ms | 退出码 / 信号 | 原始日志 |', '| --- | --- | --- | --- | --- | --- |',
+    ...[...stages.values()].map(stage => `| ${stage.id} | ${stage.status} | ${stage.attempt} | ${stage.durationMs ?? '—'} | ${stage.exitCode ?? '—'} / ${stage.signal || '—'} | ${[stage.stdout, stage.stderr].filter(Boolean).map(logPath).join(', ') || '—'} |`)];
+  if (state.error) {
+    const error = state.error.split(/\r?\n/, 1)[0].slice(0, 2000);
+    lines.push('', `失败：${error}${error !== state.error ? '…（完整错误见 JSON）' : ''}`);
+  }
+  if (state.invalidated?.length) lines.push('', `已失效阶段：${state.invalidated.join('、')}。`);
+  if (state.runId) lines.push('', `完整 JSON、输入、分析边界和对象差异：${logPath(path.join(maintenanceRoot(state.workspace), state.runId, 'state.json'))}（随执行日志 artifact 保存）。`);
   const cache = stages.get('extract')?.validation?.cache;
   if (cache) lines.push('', `编译报告：新编译 ${cache.compiled}，复用 ${cache.reused}，局部恢复包 ${cache.recovered}；Cargo ${cache.cargoMs} ms，证据绑定 ${cache.bindingMs} ms，总计 ${cache.totalMs} ms。`);
   const modelSummary = state.finalModel?.summary || state.preflightModel;
@@ -320,16 +326,14 @@ export async function maintenanceReport({ workspace, runId, format = 'json' } = 
     lines.push('', `分析边界：${gaps.length} 项。`);
     if (gaps.length) {
       const counts = modelSummary.analysisGapSummary?.byKind || Object.fromEntries([...Map.groupBy(gaps, gap => gap.kind)].map(([kind, entries]) => [kind, entries.length]));
-      lines.push(`分类：${Object.entries(counts).map(([kind, count]) => `${kind} ${count}`).join('；')}。`, '',
-        ...gaps.map(gap => `- ${gap.unit} · ${gap.kind} · ${gap.owner}：${gap.reason}${gap.sourceEntries.length ? '（' + gap.sourceEntries.map(source => `${source.path}:${source.line}`).join('，') + '）' : ''}`));
+      lines.push(`分类：${Object.entries(counts).sort(([a], [b]) => a.localeCompare(b)).map(([kind, count]) => `${kind} ${count}`).join('；')}。`);
     }
   }
   if (state.modelChanges?.available) {
     const changes = state.modelChanges;
-    lines.push('', `对象：新增 ${changes.objects.added.length}，退役 ${changes.objects.retired.length}，保留 ${changes.objects.preserved.length}。`,
-      `关系：新增 ${changes.relationships.added.length}，退役 ${changes.relationships.retired.length}，保留 ${changes.relationships.preserved.length}。`,
-      `注册变化 ${changes.registrations.length}；泛型变化 ${changes.generics.length}；投影变化 ${changes.projections.length}；源码变化 ${changes.sources.length}。`, '',
-      '详细身份及字段差异：', '', '```json', JSON.stringify(changes, null, 2), '```');
+    lines.push('', `对象：新增 ${changes.objects.added.length}，退役 ${changes.objects.retired.length}，保留 ${changes.objects.preserved.length}，变化 ${changes.objects.changed.length}。`,
+      `关系：新增 ${changes.relationships.added.length}，退役 ${changes.relationships.retired.length}，保留 ${changes.relationships.preserved.length}，变化 ${changes.relationships.changed.length}。`,
+      `注册变化 ${changes.registrations.length}；泛型变化 ${changes.generics.length}；投影变化 ${changes.projections.length}；源码变化 ${changes.sources.length}。`);
   }
   return lines.join('\n') + '\n';
 }
