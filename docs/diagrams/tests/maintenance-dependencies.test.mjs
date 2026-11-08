@@ -66,6 +66,53 @@ test('CI preserves the compiler model, call graph and failed routing diagnostics
   ]);
 });
 
+test('CI saves the compact Markdown report before appending the same bytes to the job summary', () => {
+  const workflow = fs.readFileSync(new URL('../../../.github/workflows/ecs-architecture.yml', import.meta.url), 'utf8');
+  const start = workflow.indexOf('      - name: Summarize execution and remaining resources');
+  assert.ok(start >= 0);
+  const step = workflow.slice(start, workflow.indexOf('      - name:', start + 1));
+  assert.match(step, /^\s{8}if: \$\{\{ always\(\) \}\}\s*$/m);
+  const save = step.indexOf('report --format markdown > tmp/ecs-architecture/maintenance-summary.md');
+  const append = step.indexOf('cat tmp/ecs-architecture/maintenance-summary.md >> "$GITHUB_STEP_SUMMARY"');
+  assert.ok(save >= 0 && append > save);
+  const logStart = workflow.indexOf('      - name: Preserve execution logs');
+  assert.ok(logStart >= 0);
+  const logs = workflow.slice(logStart, workflow.indexOf('      - name:', logStart + 1));
+  assert.ok(logs.split(/\r?\n/).some(line => line.trim() === 'tmp/ecs-architecture/maintenance-summary.md'));
+});
+
+test('CI saves only geometry candidates after failures with a unique key and compatible restore prefixes', () => {
+  const workflow = fs.readFileSync(new URL('../../../.github/workflows/ecs-architecture.yml', import.meta.url), 'utf8');
+  const restoreStart = workflow.indexOf('      - name: Restore checked geometry candidates');
+  const saveStart = workflow.indexOf('      - name: Preserve checked geometry candidates');
+  const verified = workflow.indexOf('      - name: Verify generation leaves tracked files unchanged');
+  const upload = workflow.indexOf('      - name: Preserve execution logs');
+  assert.ok(restoreStart >= 0 && verified > restoreStart && saveStart > verified && upload > saveStart);
+  const restore = workflow.slice(restoreStart, workflow.indexOf('      - name:', restoreStart + 1));
+  const save = workflow.slice(saveStart, workflow.indexOf('      - name:', saveStart + 1));
+  const sha = '55cc8345863c7cc4c66a329aec7e433d2d1c52a9';
+  assert.ok(restore.includes(`uses: actions/cache/restore@${sha}`));
+  assert.ok(save.includes(`uses: actions/cache/save@${sha}`));
+  assert.match(restore, /^\s{8}id: geometry\s*$/m);
+  assert.ok(save.includes("if: ${{ always() && steps.geometry.outcome == 'success' }}"));
+  assert.ok(save.includes('key: ${{ steps.geometry.outputs.cache-primary-key }}'));
+  for (const step of [restore, save]) {
+    assert.deepEqual(step.split(/\r?\n/).map(line => line.trim()).filter(line => line.startsWith('path:')), [
+      'path: tmp/ecs-architecture/mermaid-build/geometry-cache',
+    ]);
+    assert.doesNotMatch(step, /facts|runtime|compiler|save-always/);
+  }
+  const family = "ecs-geometry-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('docs/diagrams/package-lock.json') }}-";
+  const exact = family + "${{ hashFiles('docs/diagrams/src/**') }}-";
+  assert.ok(restore.includes(`key: ${exact}` + '${{ github.run_id }}-${{ github.run_attempt }}'));
+  assert.deepEqual(restore.split('restore-keys: |')[1].trim().split(/\r?\n/).map(line => line.trim()), [exact, family]);
+  const browserStart = workflow.indexOf('      - name: Restore locked browser');
+  assert.ok(browserStart >= 0);
+  const browser = workflow.slice(browserStart, workflow.indexOf('      - name:', browserStart + 1));
+  assert.ok(browser.includes(`uses: actions/cache@${sha}`));
+  assert.ok(browser.includes('path: tmp/ecs-architecture/puppeteer'));
+});
+
 test('the installed pinned Puppeteer CLI propagates an HTTP download failure without installing another package', async t => {
   const temporary = fileURLToPath(new URL('../../../tmp/ecs-architecture/browser-install-tests/', import.meta.url));
   fs.mkdirSync(temporary, { recursive: true });

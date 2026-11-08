@@ -12,7 +12,7 @@
 
 Puppeteer 浏览器来自图包锁定依赖，工作流显式设置 `MERMAID_CHROMIUM_PATH` 并启动检查。`package.json` 的 `allowScripts` 只批准锁定版本的 esbuild 与 Puppeteer 安装脚本，版本升级时同步复核；CI 显式启用 Chrome 下载，并跳过 headless-shell 和 Firefox，覆盖本地默认不下载浏览器的配置。`npm ci --foreground-scripts` 保留安装日志，随后 `npm exec --yes=false -- puppeteer browsers install chrome` 使用已安装的锁定 CLI 明确完成下载；下载失败直接停止，不以 postinstall 的退出结果推定浏览器存在。中文字体安装后，实际字体文件 SHA-256 和 fontconfig 版本生成 `MERMAID_RENDER_CONTEXT`；该值和浏览器字节身份共同参与图形缓存指纹。原生 Node 回归必须使用该浏览器，不能把缺少浏览器导致的跳过当作通过。
 
-Rust 编译和对象绘图的初始并发均为 `2`，关闭开发／测试调试信息，构建限时 `240` 分钟。缓存仅保留 Cargo/npm 下载、锁定浏览器和仍须逐图核验的几何候选，不保存 Cargo 编译物或绕过事实校验。内存、磁盘或时间不足时运行失败，保留可获得的日志与资源摘要，不自动改用付费或自托管 runner，也不缩减事实或放宽校验。
+Rust 编译和对象绘图的初始并发均为 `2`，关闭开发／测试调试信息，构建限时 `240` 分钟。缓存仅保留 Cargo/npm 下载、锁定浏览器和仍须逐图核验的几何候选，不保存 Cargo 编译物或绕过事实校验。几何缓存恢复步骤成功后，即使本轮后续失败也保存已生成候选，恢复时仍逐图按当前输入和检查规则验证。内存、磁盘或时间不足时运行失败，保留可获得的日志与资源摘要，不自动改用付费或自托管 runner，也不缩减事实或放宽校验。
 
 同一 PR／分支的新运行取消旧构建；Pages 部署单独串行，开始前再次核对 `master` 当前提交，旧构建只留审计、不覆盖新提交。构建记录进程峰值内存和每 `15` 秒磁盘样本。完整审计输出、编译事实及执行日志作为 Actions artifact 保存 `3` 天，静态 Pages artifact 同样保存 `3` 天。历史失败、中断或未知退出不能作为本轮成功依据。
 

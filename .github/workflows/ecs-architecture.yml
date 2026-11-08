@@ -101,12 +101,14 @@ jobs:
           node --input-type=module -e "import puppeteer from 'puppeteer'; const browser=await puppeteer.launch({executablePath:await puppeteer.executablePath(),headless:true}); try {console.log(await browser.version());} finally {await browser.close();}"
 
       - name: Restore checked geometry candidates
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        id: geometry
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: tmp/ecs-architecture/mermaid-build/geometry-cache
-          key: ecs-geometry-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('docs/diagrams/package-lock.json', 'docs/diagrams/src/**') }}-${{ github.sha }}
+          key: ecs-geometry-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('docs/diagrams/package-lock.json') }}-${{ hashFiles('docs/diagrams/src/**') }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            ecs-geometry-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('docs/diagrams/package-lock.json', 'docs/diagrams/src/**') }}-
+            ecs-geometry-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('docs/diagrams/package-lock.json') }}-${{ hashFiles('docs/diagrams/src/**') }}-
+            ecs-geometry-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('docs/diagrams/package-lock.json') }}-
 
       - name: Build and validate full architecture
         run: |
@@ -132,10 +134,19 @@ jobs:
           git diff --exit-code
           git diff --cached --exit-code
 
+      - name: Preserve checked geometry candidates
+        if: ${{ always() && steps.geometry.outcome == 'success' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: tmp/ecs-architecture/mermaid-build/geometry-cache
+          key: ${{ steps.geometry.outputs.cache-primary-key }}
+
       - name: Summarize execution and remaining resources
         if: ${{ always() }}
         run: |
-          npm run maintain --prefix docs/diagrams -- report --format markdown >> "$GITHUB_STEP_SUMMARY"
+          mkdir -p tmp/ecs-architecture
+          npm run maintain --prefix docs/diagrams -- report --format markdown > tmp/ecs-architecture/maintenance-summary.md
+          cat tmp/ecs-architecture/maintenance-summary.md >> "$GITHUB_STEP_SUMMARY"
           printf '\n### Remaining resources\n\n```text\n' >> "$GITHUB_STEP_SUMMARY"
           df -h . >> "$GITHUB_STEP_SUMMARY"
           free -h >> "$GITHUB_STEP_SUMMARY"
@@ -150,6 +161,7 @@ jobs:
           if-no-files-found: warn
           path: |
             tmp/ecs-architecture/maintenance/
+            tmp/ecs-architecture/maintenance-summary.md
             tmp/ecs-architecture/compiler/analysis-summary.json
             tmp/ecs-architecture/vulkan-summary.txt
             tmp/ecs-architecture/render-fonts.txt

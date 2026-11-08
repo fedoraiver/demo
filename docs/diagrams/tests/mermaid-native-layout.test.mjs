@@ -81,6 +81,7 @@ async function compileFixture(view, graph, name, registry = {}, options = {}) {
     assert.equal(result.routing.rule, 'axis-or-curve');
     checkMermaidGeometry(result.svg, result);
     checkMermaidStyles(result, registry);
+    checkMermaidSource(result, registry, new Map());
     const inspection = inspectViewRoutes(result);
     assert.deepEqual(inspection.collisions, []);
     assert(inspection.edges.every(edge => !edge.arrowIssues.length && (edge.axis ? !edge.curved : edge.curved)),
@@ -310,7 +311,7 @@ test('captured entity Name expressions preserve quotes and literal escapes in na
     const compiled = await compileRoutedView(view, registry, (candidate, entries) => compileNativeView(browser, candidate, entries));
     assert.deepEqual(compiled.nodes.map(node => node.displayLabel), records.map(([, name]) => name));
     assert.deepEqual(compiled.links, view.links);
-    checkMermaidGeometry(compiled.svg, compiled); checkMermaidStyles(compiled, registry);
+    checkMermaidGeometry(compiled.svg, compiled); checkMermaidStyles(compiled, registry); checkMermaidSource(compiled, registry, new Map());
     assert.deepEqual(nativeLabelMismatches(compiled), []);
     assert.deepEqual({ registry, graph, view }, before);
     fs.writeFileSync(path.join(temporary, 'entity-name-expressions.svg'), compiled.svg);
@@ -334,7 +335,7 @@ test('captured Observer closure indices and literal entity spellings stay visibl
     const compiled = await compileRoutedView(view, registry, (candidate, records) => compileNativeView(browser, candidate, records));
     assert.deepEqual(compiled.nodes.slice(0, 2).map(node => node.nameLabel), ['build::{closure#2}', 'build::{closure#1}']);
     assert.deepEqual(nativeLabelMismatches(compiled), []);
-    checkMermaidGeometry(compiled.svg, compiled); checkMermaidStyles(compiled, registry);
+    checkMermaidGeometry(compiled.svg, compiled); checkMermaidStyles(compiled, registry); checkMermaidSource(compiled, registry, new Map());
   } finally { await browser.close(); }
 });
 

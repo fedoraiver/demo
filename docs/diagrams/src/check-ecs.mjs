@@ -51,6 +51,17 @@ function decodeMermaidText(value) {
   return value.replace(/\*\*(.+?)\*\*/g, '$1').replace(/<br\s*\/?\s*>/gi, '\n').replace(/#(amp|lt|gt|quot|apos|\d+);/g, (_, entity) => ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[entity] ?? String.fromCodePoint(Number(entity)));
 }
 
+function decodeMermaidNodeLabel(value) {
+  const escapes = { '0': '\0', a: '\x07', b: '\b', t: '\t', n: '\n', v: '\v', f: '\f', r: '\r', e: '\x1b',
+    ' ': ' ', '"': '"', '/': '/', '\\': '\\', N: '\x85', _: '\u00a0', L: '\u2028', P: '\u2029' };
+  // 实体先于节点 YAML 转义还原；Unicode 产生的 # 属于原文，不能再被当作实体解码。
+  return decodeMermaidText(value).replace(/\\(x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8}|.)/g, (_, escape) => {
+    if (/^[xuU]/.test(escape) && escape.length > 1) return String.fromCodePoint(Number.parseInt(escape.slice(1), 16));
+    requireCondition(Object.hasOwn(escapes, escape), 'Invalid Mermaid node YAML escape: \\' + escape);
+    return escapes[escape];
+  });
+}
+
 const normalizedText = value => String(value).replace(/[\s\u200B]+/g, ' ').trim();
 const compactText = value => String(value).replace(/[\s\u200B]+/g, '');
 const renderedNodeLabel = node => node.displayLabel;
@@ -321,7 +332,7 @@ export function checkMermaidSource(view, registry, scheduleDefinitions) {
     const node = extended || /^([A-Za-z]\w*)\["((?:[^"\\]|\\.)*)"\](?:::[A-Za-z]\w*)?\s*;?$/.exec(line);
     if (node) {
       requireCondition(!nodes.has(node[1]), `Duplicate Mermaid node declaration: ${node[1]}`);
-      nodes.set(node[1], { shape: extended ? node[2] : 'rect', label: decodeMermaidText(extended ? node[3] : node[2]) });
+      nodes.set(node[1], { shape: extended ? node[2] : 'rect', label: extended ? decodeMermaidNodeLabel(node[3]) : decodeMermaidText(node[2]) });
       stack.at(-1)?.nodes.push(node[1]);
       for (const group of stack) group.descendants.push(node[1]);
       continue;
