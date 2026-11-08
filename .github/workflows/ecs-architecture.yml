@@ -50,6 +50,8 @@ jobs:
       CARGO_PROFILE_TEST_DEBUG: '0'
       MERMAID_JOBS: '2'
       PUPPETEER_CACHE_DIR: ${{ github.workspace }}/tmp/ecs-architecture/puppeteer
+      PUPPETEER_SKIP_DOWNLOAD: 'false'
+      PUPPETEER_CHROME_SKIP_DOWNLOAD: 'false'
       PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: 'true'
       WGPU_BACKEND: vulkan
       WGPU_FORCE_FALLBACK_ADAPTER: '1'

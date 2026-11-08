@@ -10,7 +10,7 @@
 
 构建采用免费标准 `ubuntu-24.04` runner、Node 24、仓库固定 nightly 和锁定依赖。Xvfb 提供虚拟显示，Mesa Lavapipe 提供软件 Vulkan；专用导出仍完整装配插件，但不执行 Startup、游戏循环或渲染线程。无音频设备时的实际初始化结果记录在会话日志中，不通过删插件或测试夹具替代真实导出。
 
-Puppeteer 浏览器来自图包锁定依赖，工作流显式设置 `MERMAID_CHROMIUM_PATH` 并启动检查。中文字体安装后，实际字体文件 SHA-256 和 fontconfig 版本生成 `MERMAID_RENDER_CONTEXT`；该值和浏览器字节身份共同参与图形缓存指纹。原生 Node 回归必须使用该浏览器，不能把缺少浏览器导致的跳过当作通过。
+Puppeteer 浏览器来自图包锁定依赖，工作流显式设置 `MERMAID_CHROMIUM_PATH` 并启动检查。`package.json` 的 `allowScripts` 只批准锁定版本的 esbuild 与 Puppeteer 安装脚本，版本升级时同步复核；CI 显式启用 Chrome 下载，并继续跳过 headless-shell，覆盖本地默认不下载浏览器的配置。中文字体安装后，实际字体文件 SHA-256 和 fontconfig 版本生成 `MERMAID_RENDER_CONTEXT`；该值和浏览器字节身份共同参与图形缓存指纹。原生 Node 回归必须使用该浏览器，不能把缺少浏览器导致的跳过当作通过。
 
 Rust 编译和对象绘图的初始并发均为 `2`，关闭开发／测试调试信息，构建限时 `240` 分钟。缓存仅保留 Cargo/npm 下载、锁定浏览器和仍须逐图核验的几何候选，不保存 Cargo 编译物或绕过事实校验。内存、磁盘或时间不足时运行失败，保留可获得的日志与资源摘要，不自动改用付费或自托管 runner，也不缩减事实或放宽校验。
 
