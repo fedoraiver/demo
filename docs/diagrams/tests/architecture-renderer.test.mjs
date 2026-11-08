@@ -33,7 +33,7 @@ test('Component views rank every native relation System to Component to Entity w
   assert.ok(config.themeCSS.includes(`.edgeLabel rect { opacity:1!important; fill:${VIEWER_BACKGROUND}!important; }`));
   const enriched = renderGraphView({ id: 'component-details', aspect: 'component', componentNodeId: 'component', componentDetails: { name: 'Component<f32>', description: 'all owners', display_summary: '完整类型用途' }, label: 'Component', summary: 'relations' }, graph, registry, []);
   assert.equal(enriched.nodes.find(node => node.id === 'component').nameLabel, 'Component<f32>');
-  assert.equal(enriched.nodes.find(node => node.id === 'component').contextLabel[0], '完整类型用途');
+  assert.deepEqual(enriched.nodes.find(node => node.id === 'component').contextLabel, []);
   assert.equal(enriched.nodes.find(node => node.id === 'system').nameLabel, 'System');
   assert.equal(registry.component.name, 'Component');
 });
@@ -54,21 +54,19 @@ test('source-local Observer fanout layout never chains unrelated emitters or clo
   assert.deepEqual({ nodes, links, groups }, before);
 });
 
-test('cards show a complete short title and one purpose while all technical detail stays unchanged in the registry', () => {
+test('cards show complete short titles without inferred purposes or hidden implementation detail', () => {
   const shortName = 'very_long_system_' + 'character_facing_'.repeat(12);
   const record = {
     id: 'long-system', kind: 'system', feature: 'first_person',
     name: `demo::first_person::${shortName}<dep::State>`,
-    display_summary: '同步角色朝向与观察方向。',
-    description: '完整说明保留内部实现、所有数据访问和生命周期约束，不用卡片摘要覆盖。',
     reads: ['hidden-read'], writes: ['hidden-write'], schedule: 'Update',
     registrations: [{ schedule: 'Update', run_if: ['hidden_condition'] }, { schedule: 'Startup' }],
     fields: ['hidden-field'], notes: ['hidden-note'], source: { path: 'src/first_person/facing.rs', line: 1 },
   };
   const original = structuredClone(record), view = isolatedView(record, { aspect: 'systems' }), node = view.nodes[0];
   assert.equal(node.nameLabel, shortName);
-  assert.deepEqual(node.contextLabel, [record.display_summary]);
-  assert.equal(node.displayLabel, `${shortName}\n${record.display_summary}`);
+  assert.deepEqual(node.contextLabel, []);
+  assert.equal(node.displayLabel, shortName);
   const declaration = view.mermaid.split('\n').find(line => line.startsWith('  n0@{'));
   assert.ok(declaration.replace(/\*\*|<br\/>|[\u200B\uFEFF]/g, '').includes(shortName));
   assert.doesNotMatch(declaration, /demo::|dep::/);
@@ -104,34 +102,34 @@ test('Entity Name titles retain source text and changing a name invalidates rend
   const definition = { id: 'entity-names', aspect: 'object', label: 'Entity', summary: '实体模板' };
   const view = renderGraphView(definition, graph, registry, []);
   assert.deepEqual(view.nodes.map(node => [node.id, node.nameLabel]), [...names.map((name, index) => ['entity-' + index, name]), ['entity-copy', names[0]]]);
-  assert.match(view.mermaid.replace(/[\u200B\uFEFF]/g, ''), /HUD::状态 #quot;active#quot;_label/);
-  assert.match(view.mermaid, /format!\(#quot;Block \{\}#quot;, index\)/);
+  assert.match(view.mermaid.replace(/[\u200B\uFEFF]/g, ''), /HUD::状态 \\u0022active\\u0022_label/);
+  assert.match(view.mermaid, /format!\(\\u0022Block \{\}\\u0022, index\)/);
   assert.deepEqual(view.links.map(({ id, from, to }) => ({ id, from, to })), graph.links.map(({ id, from, to }) => ({ id, from, to })));
   const before = mermaidRenderIdentity(view, registry, '{}');
+  const oldEncoding = { ...view, mermaid: view.mermaid.replaceAll('\\u0022', '#quot;') };
+  assert.notEqual(mermaidRenderIdentity(oldEncoding, registry, '{}').fingerprint, before.fingerprint, 'Native text encoding remains part of the render cache input');
   const renamed = { ...registry, 'entity-0': { ...registry['entity-0'], name: 'HUD::新名称' } };
   const updated = renderGraphView(definition, graph, renamed, []);
   assert.notEqual(mermaidRenderIdentity(updated, renamed, '{}').fingerprint, before.fingerprint);
   assert.deepEqual(updated.nodes.map(node => node.id), view.nodes.map(node => node.id));
 });
 
-test('purpose fallback stays complete and external components retain only their provider context', () => {
-  const description = '保存角色在画面中呈现的姿态，供相机跟随、动画和显示同步共同使用，并保持角色业务身份与物理状态的边界。';
-  const record = { id: 'character.Transform', kind: 'Component', feature: 'infrastructure', name: 'Transform', owner: '角色业务根实体', description };
+test('external components retain their provider context without requiring purpose text', () => {
+  const record = { id: 'character.Transform', kind: 'Component', feature: 'infrastructure', name: 'Transform', owner: '角色业务根实体' };
   const view = isolatedView(record, { role: 'external' }), node = view.nodes[0];
-  assert.deepEqual(node.contextLabel, [`来自Bevy 引擎 ↗：${description}`]);
+  assert.deepEqual(node.contextLabel, ['来自Bevy 引擎 ↗']);
   assert.equal(node.displayLabel, `Transform\n${node.contextLabel[0]}`);
   assert.doesNotMatch(node.displayLabel, /…|所属实体 ·/);
   assert.ok(view.mermaid.includes('class n0 external_node'));
-  assert.throws(() => isolatedView({ id: 'missing-purpose', kind: 'system', feature: 'first_person', name: 'empty' }), /缺少用途简介/);
+  assert.equal(isolatedView({ id: 'fact-only', kind: 'system', feature: 'first_person', name: 'empty' }).nodes[0].displayLabel, 'empty');
 });
 
-test('defined display summaries must be nonempty strings rather than silently coercing invalid values', () => {
-  const record = { id: 'summary-contract', kind: 'system', feature: 'first_person', name: 'sample', description: '提供完整的用途说明。' };
+test('obsolete purpose fields never affect generated labels', () => {
+  const record = { id: 'name-contract', kind: 'system', feature: 'first_person', name: 'sample' };
   for (const display_summary of [null, 0, 42, false, {}, [], '', ' \t\n ']) {
-    assert.throws(() => isolatedView({ ...record, display_summary }), /用途简介必须是非空文本/);
+    assert.equal(isolatedView({ ...record, display_summary, description: '旧用途。' }).nodes[0].displayLabel, 'sample');
   }
-  assert.deepEqual(isolatedView(record).nodes[0].contextLabel, [record.description]);
-  assert.deepEqual(isolatedView({ ...record, display_summary: '简洁用途。' }).nodes[0].contextLabel, ['简洁用途。']);
+  assert.deepEqual(isolatedView(record).nodes[0].contextLabel, []);
 });
 
 test('dense component columns are balanced, ordered and bounded to four columns', () => {

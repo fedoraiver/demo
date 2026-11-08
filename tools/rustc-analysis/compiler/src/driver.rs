@@ -121,11 +121,6 @@ impl Checker {
 
 impl Callbacks for Checker {
     fn config(&mut self, config: &mut interface::Config) {
-        if self.analyze && self.request.rule == Rule::Architecture {
-            // 此 nightly 默认在 metadata 编码后才提供本地 crate hash；分析回调早于编码。
-            // 专用分析采用 rustc 原生 HIR 回退，使证书与最终 metadata 使用同一 hash。
-            config.opts.unstable_opts.metadata_crate_hash = false;
-        }
         self.reads.install(config);
         track_configuration(config, self.request.configuration.clone());
     }

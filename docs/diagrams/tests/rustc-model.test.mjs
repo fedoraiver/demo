@@ -4,8 +4,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { validateCompilerModel, validateCompilerCallGraph, readCompilerModel, createCompilerObjectCatalog, compilerSourceResolver, bindCompilerSchedules, sourceKey, viewerModel, summarizeAnalysisGaps } from '../src/rustc-model.mjs';
-import { summarizeModel } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-summary.mjs';
+import { validateCompilerModel as validateCompilerModelData, validateCompilerCallGraph, readCompilerModel, createCompilerObjectCatalog, compilerSourceResolver, bindCompilerSchedules, sourceKey, viewerModel, summarizeAnalysisGaps } from '../src/rustc-model.mjs';
+import { summarizeModel } from '../src/maintenance-summary.mjs';
 import { sourceFingerprint } from '../src/debugdump-input.mjs';
 import { renderGraphView } from '../src/architecture-renderer.mjs';
 import { checkObjectViews } from '../src/check-ecs.mjs';
@@ -13,6 +13,9 @@ import { projectObjectRelation } from '../src/architecture-object-relations.mjs'
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
+const modelDirectories = new Map();
+// 深拷贝模型继续指向同一真实 sidecar；仅补充调用位置，不替代生产验证。
+const validateCompilerModel = (model, options = {}) => validateCompilerModelData(model, { modelDirectory: modelDirectories.get(model.callGraph?.file), ...options });
 function fixture(t) {
   const parent = path.join(root, 'tmp/ecs-architecture/compiler-model-tests'); fs.mkdirSync(parent, { recursive: true });
   const workspace = fs.mkdtempSync(path.join(parent, 'model-'));
@@ -22,8 +25,8 @@ function fixture(t) {
   fs.writeFileSync(path.join(workspace, 'Cargo.lock'), '');
   const content = 'fn system() {}\n'; fs.writeFileSync(path.join(workspace, 'src/main.rs'), content);
   const source = { path: 'src/main.rs', line: 1, column: 1, role: 'definition' };
-  const object = (id, kind) => ({ id, kind, name: id, description: '具体职责。', display_summary: '具体职责。', feature: 'project', sourceEntries: [source], sourceGaps: [] });
-  const model = { schemaVersion: 1, compiler: 'pinned-compiler', configuration: { target: 'host', features: ['debugdump'] },
+  const object = (id, kind) => ({ id, kind, name: id, feature: 'project', sourceEntries: [source], sourceGaps: [] });
+  const model = { schemaVersion: 2, compiler: 'pinned-compiler', configuration: { target: 'host', features: ['debugdump'] },
     inputs: { sourceFingerprint: sourceFingerprint(workspace) }, features: [{ id: 'project', label: '项目' }],
     objects: [object('decl-plugin', 'Plugin'), object('registration-1', 'System'), object('registration-2', 'System'), object('template-root', 'Entity'), object('type-component', 'Component'), object('isolated', 'Resource')],
     relations: [
@@ -32,8 +35,13 @@ function fixture(t) {
       { id: 'read', from: 'type-component', to: 'registration-1', kind: 'read', sourceEntries: [source] },
       { id: 'mutable', from: 'registration-2', to: 'type-component', kind: 'mutable_access', sourceEntries: [source] },
       { id: 'entity-reference', from: 'registration-1', to: 'template-root', kind: 'reference', sourceEntries: [source] },
-    ], sourceFiles: [{ path: 'src/main.rs', content, sha256: sha(content) }], annotationsRequired: [], scheduleInteractions: { schemaVersion: 1, views: [] } };
-  return { workspace, model, object };
+    ], sourceFiles: [{ path: 'src/main.rs', content, sha256: sha(content) }], scheduleInteractions: { schemaVersion: 1, views: [] } };
+  const modelDirectory = path.join(workspace, 'compiler'); fs.mkdirSync(modelDirectory);
+  const callFile = path.basename(workspace) + '.calls.ndjson', filename = path.join(modelDirectory, callFile);
+  fs.writeFileSync(filename, '');
+  model.callGraph = { schemaVersion: 2, format: 'ndjson', file: callFile, sha256: sha(''), edgeCount: 0 };
+  modelDirectories.set(callFile, modelDirectory); t.after(() => modelDirectories.delete(callFile));
+  return { workspace, model, object, modelDirectory, filename };
 }
 
 test('native type declaration identity preserves roles, package evidence and unit-local provenance', t => {
@@ -392,14 +400,15 @@ test('structural candidate group and edge evidence require identical spans and c
   assert.throws(() => validateCompilerModel(forged), /Invalid or duplicate compiler source snapshot/);
 });
 
-test('pending Chinese purposes stop publication without changing compiler facts', t => {
-  const { model } = fixture(t); model.annotationsRequired = [{ key: 'decl::new', evidenceHash: 'current' }];
+test('fact-only models publish without annotations while obsolete schemas and incomplete bindings fail', t => {
+  const { model } = fixture(t);
   const before = JSON.stringify(model.relations);
-  assert.throws(() => validateCompilerModel(model), error => error.code === 'ANNOTATIONS_REQUIRED' && error.requests.length === 1);
-  assert.doesNotThrow(() => validateCompilerModel(model, { allowPending: true }));
+  assert.doesNotThrow(() => validateCompilerModel(model));
+  assert.ok(model.objects.every(object => !Object.hasOwn(object, 'description') && !Object.hasOwn(object, 'display_summary')));
   assert.equal(JSON.stringify(model.relations), before);
+  assert.throws(() => validateCompilerModel({ ...model, schemaVersion: 1 }), /Unsupported compiler architecture model/);
   model.bindingErrors = ['missing rustc declaration'];
-  assert.throws(() => validateCompilerModel(model, { allowPending: true }), /binding is incomplete/);
+  assert.throws(() => validateCompilerModel(model), /binding is incomplete/);
 });
 
 test('Schedule binding accepts only actual graph names and exact DOT bytes', t => {
@@ -427,54 +436,72 @@ test('source snapshots retain complete text and allow only newline differences',
 });
 
 function callGraphFixture(t) {
-  const { model } = fixture(t), content = 'if enabled { helper(); }\nelse { commands.queue(helper); }\n';
+  const f = fixture(t), { model, filename } = f, content = 'if enabled { helper(); }\nelse { commands.queue(helper); }\n';
   model.sourceFiles.push({ path: 'src/guards.rs', content, sha256: sha(content) });
   const entry = line => ({ path: 'src/guards.rs', line, column: 1, role: 'call' });
   const edge = (id, line, deferred, expression, guardKind = 'condition') => ({ id, caller: 'callable::registered_root', callee: 'callable::shared_helper', declaration: 'declaration::shared_helper',
     registeredOwners: ['registration-1', 'registration-2'], deferred, sourceEntries: [entry(line)], conditions: [{ ...entry(line), role: 'operation', expression, guardKind }] });
-  model.callGraph = { schemaVersion: 1, edges: [edge('branch-direct', 1, false, 'enabled'), edge('branch-deferred', 2, true, 'enabled', 'unless'),
-    { ...edge('helper-recursion', 1, false, 'retry'), caller: 'callable::shared_helper' }] };
-  return model;
+  const edges = [edge('branch-direct', 1, false, 'enabled'), edge('branch-deferred', 2, true, 'enabled', 'unless'),
+    { ...edge('helper-recursion', 1, false, 'retry'), caller: 'callable::shared_helper' }];
+  const file = model.callGraph.file;
+  const write = records => {
+    const text = records.map(record => JSON.stringify(record)).join('\n') + (records.length ? '\n' : '');
+    fs.writeFileSync(filename, text);
+    model.callGraph = { schemaVersion: 2, format: 'ndjson', file, sha256: sha(text), edgeCount: records.length };
+  };
+  write(edges);
+  return { ...f, edges, write };
 }
 
 test('typed call graph preserves alternative guards, deferred calls and recursion without object IDs for callables', t => {
-  const model = callGraphFixture(t), before = JSON.stringify(model.callGraph);
+  const f = callGraphFixture(t), { model, edges } = f, before = JSON.stringify(model.callGraph);
   assert.doesNotThrow(() => validateCompilerModel(model));
   assert.equal(JSON.stringify(model.callGraph), before);
-  assert.deepEqual(model.callGraph.edges.slice(0, 2).map(({ callee, deferred, conditions }) => [callee, deferred, conditions[0].expression, conditions[0].guardKind, conditions[0].role]),
+  assert.deepEqual(edges.slice(0, 2).map(({ callee, deferred, conditions }) => [callee, deferred, conditions[0].expression, conditions[0].guardKind, conditions[0].role]),
     [['callable::shared_helper', false, 'enabled', 'condition', 'operation'], ['callable::shared_helper', true, 'enabled', 'unless', 'operation']]);
-  const unresolved = structuredClone(model); unresolved.callGraph.edges[0].callee = unresolved.callGraph.edges[0].declaration = null;
-  assert.doesNotThrow(() => validateCompilerModel(unresolved));
+  const unresolved = structuredClone(edges); unresolved[0].callee = unresolved[0].declaration = null;
+  f.write(unresolved); assert.doesNotThrow(() => validateCompilerModel(model));
   for (const guardKind of ['match-value', 'match-arm']) {
-    const match = structuredClone(model); match.callGraph.edges[0].conditions[0].guardKind = guardKind;
-    assert.doesNotThrow(() => validateCompilerModel(match));
-    assert.equal(match.callGraph.edges[0].conditions[0].guardKind, guardKind);
-    assert.equal(match.callGraph.edges[0].conditions[0].role, 'operation');
+    const match = structuredClone(edges); match[0].conditions[0].guardKind = guardKind;
+    f.write(match); assert.doesNotThrow(() => validateCompilerModel(model));
+    assert.equal(match[0].conditions[0].guardKind, guardKind);
+    assert.equal(match[0].conditions[0].role, 'operation');
   }
 });
 
+test('schema 2 models require the full schema 2 NDJSON call graph even when it has no edges', t => {
+  const { model, filename } = fixture(t);
+  assert.doesNotThrow(() => validateCompilerModel(model));
+  const missing = structuredClone(model); delete missing.callGraph;
+  assert.throws(() => validateCompilerModel(missing), /Unsupported compiler call graph sidecar/);
+  for (const graph of [{ schemaVersion: 1, edges: [] }, { ...model.callGraph, schemaVersion: 1 }, { ...model.callGraph, format: 'json' }]) {
+    assert.throws(() => validateCompilerModel({ ...model, callGraph: graph }), /Unsupported compiler call graph sidecar/);
+  }
+  fs.unlinkSync(filename);
+  assert.throws(() => validateCompilerModel(model), /ENOENT/);
+});
+
 test('call graph rejects duplicate edge identities, unknown registrations and malformed evidence', t => {
-  const model = callGraphFixture(t), duplicate = structuredClone(model);
-  duplicate.callGraph.edges.push(duplicate.callGraph.edges[0]);
-  assert.throws(() => validateCompilerModel(duplicate), /duplicate compiler call edge identity/);
-  const owner = structuredClone(model); owner.callGraph.edges[0].registeredOwners = ['callable::registered_root'];
-  assert.throws(() => validateCompilerModel(owner), /Unknown compiler call registration owner/);
-  const malformed = structuredClone(model); malformed.callGraph.edges[0].sourceEntries[0].line = '1';
-  assert.throws(() => validateCompilerModel(malformed), /Invalid compiler call evidence/);
-  const schema = structuredClone(model); schema.callGraph.schemaVersion = 2;
-  assert.throws(() => validateCompilerModel(schema), /Unsupported compiler call graph/);
-  const guard = structuredClone(model); guard.callGraph.edges[0].conditions[0].guardKind = 'invented';
-  assert.throws(() => validateCompilerModel(guard), /Invalid compiler guard kind/);
+  const f = callGraphFixture(t), { model, edges } = f, check = () => validateCompilerModel(model);
+  f.write([...edges, edges[0]]); assert.throws(check, /duplicate compiler call edge identity/);
+  const owner = structuredClone(edges); owner[0].registeredOwners = ['callable::registered_root'];
+  f.write(owner); assert.throws(check, /Unknown compiler call registration owner/);
+  const malformed = structuredClone(edges); malformed[0].sourceEntries[0].line = '1';
+  f.write(malformed); assert.throws(check, /Invalid compiler call evidence/);
+  f.write(edges); model.callGraph.schemaVersion = 1;
+  assert.throws(check, /Unsupported compiler call graph/);
+  const guard = structuredClone(edges); guard[0].conditions[0].guardKind = 'invented';
+  f.write(guard); assert.throws(check, /Invalid compiler guard kind/);
 });
 
 test('call graph and guard spans require matching complete source snapshots and valid hashes', t => {
-  const model = callGraphFixture(t), call = structuredClone(model);
-  call.callGraph.edges[0].sourceEntries[0].path = 'src/missing.rs';
-  assert.throws(() => validateCompilerModel(call), /no matching snapshot: src\/missing.rs/);
-  const guard = structuredClone(model); guard.callGraph.edges[0].conditions[0].line = 99;
-  assert.throws(() => validateCompilerModel(guard), /no matching snapshot: src\/guards.rs/);
-  const hash = structuredClone(model); hash.sourceFiles.find(source => source.path === 'src/guards.rs').sha256 = '0'.repeat(64);
-  assert.throws(() => validateCompilerModel(hash), /Invalid or duplicate compiler source snapshot: src\/guards.rs/);
+  const f = callGraphFixture(t), { model, edges } = f, call = structuredClone(edges);
+  call[0].sourceEntries[0].path = 'src/missing.rs';
+  f.write(call); assert.throws(() => validateCompilerModel(model), /no matching snapshot: src\/missing.rs/);
+  const guard = structuredClone(edges); guard[0].conditions[0].line = 99;
+  f.write(guard); assert.throws(() => validateCompilerModel(model), /no matching snapshot: src\/guards.rs/);
+  f.write(edges); model.sourceFiles.find(source => source.path === 'src/guards.rs').sha256 = '0'.repeat(64);
+  assert.throws(() => validateCompilerModel(model), /Invalid or duplicate compiler source snapshot: src\/guards.rs/);
 });
 
 test('global analysis boundaries preserve compiler owners, complete evidence and visible summaries', t => {
@@ -510,20 +537,8 @@ test('unresolved operation targets retain raw call contexts without inventing en
   assert.throws(() => validateCompilerModel(model), /no matching snapshot: src\/main.rs/);
 });
 
-function sidecarFixture(t) {
-  const { workspace } = fixture(t), model = callGraphFixture(t), edges = model.callGraph.edges;
-  const modelDirectory = path.join(workspace, 'compiler'); fs.mkdirSync(modelDirectory);
-  const filename = path.join(modelDirectory, 'model.calls.ndjson');
-  const write = records => {
-    const text = records.map(record => JSON.stringify(record)).join('\n') + '\n'; fs.writeFileSync(filename, text);
-    model.callGraph = { schemaVersion: 2, format: 'ndjson', file: 'model.calls.ndjson', sha256: sha(text), edgeCount: records.length };
-  };
-  write(edges);
-  return { workspace, model, modelDirectory, filename, edges, write };
-}
-
 test('call graph sidecar is streamed without materializing a whole-file string or edge array', t => {
-  const f = sidecarFixture(t), read = fs.readFileSync;
+  const f = callGraphFixture(t), read = fs.readFileSync;
   t.mock.method(fs, 'readFileSync', (filename, ...args) => {
     assert.notEqual(path.resolve(String(filename)), f.filename, 'NDJSON must use chunked reads');
     return read(filename, ...args);
@@ -539,7 +554,7 @@ test('call graph sidecar is streamed without materializing a whole-file string o
 });
 
 test('sidecar validation checks every proof, identity, SHA, edge count and safe relative path', t => {
-  const f = sidecarFixture(t), check = () => validateCompilerModel(f.model, { modelDirectory: f.modelDirectory });
+  const f = callGraphFixture(t), check = () => validateCompilerModel(f.model, { modelDirectory: f.modelDirectory });
   f.model.callGraph.edgeCount++; assert.throws(check, /edge count mismatch/); f.write(f.edges);
   f.model.callGraph.sha256 = '0'.repeat(64); assert.throws(check, /hash mismatch/); f.write(f.edges);
   f.write([...f.edges, f.edges[0]]); assert.throws(check, /duplicate compiler call edge identity/);

@@ -1,6 +1,7 @@
 // 导入真实调度图并生成对象图与离线源码；不加载或执行游戏。
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { compileArchitectureArtifacts } from './mermaid-compiler.mjs';
 import { renderArchitectureViewer } from './architecture-viewer.mjs';
 import { SOURCE_ROLE_LABELS, sourceKey, summarizeAnalysisGaps } from './rustc-model.mjs';
@@ -11,7 +12,7 @@ import { objectRelationRuntimeAssets } from './object-relation-runtime-assets.mj
 import { prepareArchitecture } from './architecture-preparation.mjs';
 import { writeSourceViewer } from './source-viewer.mjs';
 import { pathsForRepository, repositoryRoot, artifactRelativePath } from './paths.mjs';
-import { writeExternalArchitecture, obsoleteExternalReferences } from './architecture-artifacts.mjs';
+import { writeExternalArchitecture, obsoleteExternalReferences, stampArchitecturePage } from './architecture-artifacts.mjs';
 import { projectInfrastructureFeatures } from './architecture-infrastructure.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE } from './architecture-style.mjs';
 import { SCHEDULE_LEGEND_LABELS } from './schedule-legend.mjs';
@@ -23,6 +24,8 @@ const previousManifest = fs.existsSync(previousManifestPath) ? JSON.parse(fs.rea
 const args = process.argv.slice(2);
 if (args.length && (args.length !== 2 || args[0] !== '--debugdump' || !args[1])) throw new Error('Usage: node docs/diagrams/build-ecs.mjs [--debugdump <export-directory>]');
 const { dump, schedules: parsedSchedules, model, analysisFilename, registry, features, objects, pluginGroups, scheduleInteractions, views: objectViews } = await prepareArchitecture({ workspace: root, debugdumpDirectory: args[1] });
+const sourceCommit = execFileSync('git', ['-C', root, 'rev-parse', 'HEAD'], { encoding: 'utf8', windowsHide: true }).trim();
+const target = dump.manifest.target;
 const infrastructureFeatures = projectInfrastructureFeatures(registry, { requireComplete: true });
 const schedules = await renderDebugdump(parsedSchedules);
 let views = objectViews;
@@ -49,15 +52,17 @@ writeArtifact('dot/' + DEBUGDUMP_MANIFEST, JSON.stringify(schedules.manifest, nu
 
 const sources = model.sourceFiles.map(source => ({ path: sourceKey(source), text: source.content,
   ...(source.dependency ? { source: { path: source.path, line: 1, dependency: source.dependency } } : {}) }));
-writeSourceViewer({ outputDirectory: paths.pagesDirectory, sources });
+const sourcePage = fs.readFileSync(writeSourceViewer({ outputDirectory: paths.pagesDirectory, sources }), 'utf8');
 const runtimeAssets = await scheduleRuntimeAssets();
 const objectRuntimeAssets = await objectRelationRuntimeAssets();
 const data = { schemaVersion: 5, model, registry, views, guideSamples: compiled.guideSamples, scheduleLegendLabels: SCHEDULE_LEGEND_LABELS,
   objects: objects.objects, objectAliases: model.object_aliases || {}, sourceRoleLabels: SOURCE_ROLE_LABELS,
   schedulePluginCatalog: pluginGroups.catalog, scheduleInteractions, infrastructureFeatures,
   styles: { nodes: NODE_STYLES, edges: EDGE_STYLES, selection: SELECTION_STYLE, externalReference: EXTERNAL_REFERENCE_STYLE } };
-const externalBootstrap = writeExternalArchitecture({ paths, data, writeArtifact, copyArtifact, compilerModelDirectory: path.dirname(analysisFilename), objectRelationRuntime: objectRuntimeAssets.module });
-writeArtifact('pages/ecs-architecture.html', renderArchitectureViewer({ ...data, features, runtimeAssets, externalBootstrap }));
+const externalBootstrap = writeExternalArchitecture({ paths, data, writeArtifact, copyArtifact, compilerModelDirectory: path.dirname(analysisFilename),
+  objectRelationRuntime: objectRuntimeAssets.module, sourceCommit, target, sourcePage,
+  licenses: [{ path: 'licenses/SCHEDULE-RUNTIME-LICENSES.txt', content: fs.readFileSync(path.join(paths.licensesDirectory, 'SCHEDULE-RUNTIME-LICENSES.txt'), 'utf8') }] });
+writeArtifact('pages/ecs-architecture.html', stampArchitecturePage(renderArchitectureViewer({ ...data, features, runtimeAssets, externalBootstrap }), externalBootstrap));
 for (const filename of obsoleteArchitectureArtifacts(paths, artifactViews)) fs.unlinkSync(path.join(directory, filename));
 const currentManifest = JSON.parse(fs.readFileSync(previousManifestPath, 'utf8'));
 for (const filename of obsoleteExternalReferences(previousManifest, currentManifest)) {

@@ -61,7 +61,7 @@ if (process.env.MERMAID_PUBLISH_FIXTURE === '1') {
   const entry = { id: result.id, renderFingerprint: result.renderFingerprint,
     data: put('data/views/' + result.id + '.json', JSON.stringify(metadata)),
     svg: put('svg/object/' + result.filename, svg), mermaid: put('mermaid/' + result.mermaidFilename, mermaid) };
-  put('data/manifest.json', JSON.stringify({ schemaVersion: 1, views: [entry] }));
+  put('data/manifest.json', JSON.stringify({ schemaVersion: 2, views: [entry] }));
 }
 console.log('WORKTREE_CACHE_RESULT ' + JSON.stringify({ contextsCreated, renderFingerprint: result.renderFingerprint,
   svg: sha(result.svg), mermaid: sha(result.mermaid) }));
@@ -179,13 +179,13 @@ test('independent checkouts reuse published native artifacts only with matching 
     assert.equal(compiled.renderFingerprint, first.renderFingerprint);
   });
 
-  await t.test('changed canonical descriptions invalidate the published render fingerprint', () => {
-    const workspace = f.clone('published-changed-description'), fixturePath = path.join(workspace, 'docs/diagrams/native-fanout.json');
+  await t.test('changed canonical names invalidate the published render fingerprint', () => {
+    const workspace = f.clone('published-changed-name'), fixturePath = path.join(workspace, 'docs/diagrams/native-fanout.json');
     const input = JSON.parse(fs.readFileSync(fixturePath, 'utf8'));
-    input.registry[input.view.centerNodeId].description += ' 当前编译具有更新的用途说明。';
+    input.registry[input.view.centerNodeId].name += '_updated';
     fs.writeFileSync(fixturePath, JSON.stringify(input));
     const compiled = compile(workspace);
-    assert.equal(compiled.contextsCreated, 1, 'A changed description is part of the complete render input');
+    assert.equal(compiled.contextsCreated, 1, 'A changed canonical name is part of the complete render input');
     assert.notEqual(compiled.renderFingerprint, first.renderFingerprint);
     assert.notEqual(compiled.svg, first.svg);
   });

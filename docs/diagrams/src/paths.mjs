@@ -8,7 +8,7 @@ export function pathsForRepository(root = repositoryRoot) {
   const generatedDirectory = path.join(packageRoot, 'generated');
   return {
     repositoryRoot: path.resolve(root), packageRoot, generatedDirectory,
-    sourceDirectory: path.join(packageRoot, 'src'), catalogDirectory: path.join(packageRoot, 'catalog'),
+    sourceDirectory: path.join(packageRoot, 'src'),
     testsDirectory: path.join(packageRoot, 'tests'), licensesDirectory: path.join(packageRoot, 'licenses'),
     pagesDirectory: path.join(generatedDirectory, 'pages'), dataDirectory: path.join(generatedDirectory, 'data'),
     viewDataDirectory: path.join(generatedDirectory, 'data/views'),

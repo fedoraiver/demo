@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use std::{collections::BTreeSet, path::Path};
 
 /// 请求与报告的版本；旧版缺少通用输入证据，不能参与跨运行复用。
-pub const ANALYSIS_SCHEMA_VERSION: u32 = 2;
+pub const ANALYSIS_SCHEMA_VERSION: u32 = 3;
 
 /// 编译器每次回调只执行请求中的一种分析。
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]

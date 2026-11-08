@@ -24,7 +24,7 @@ test('type center accessible name and full title use component details without c
   view.componentNodeId = 'a'; view.componentDetails = { name: 'A<f32>', description: '完整类型说明' };
   const output = native(view, true), elements = svgElements(output.svg), center = elements.find(element => element.attrs['data-id'] === 'a');
   assert.equal(center.attrs['aria-label'], 'A<f32> · 组件');
-  assert.equal(center.children.find(element => element.tag === 'title').text, 'A<f32> · 完整类型说明');
+  assert.equal(center.children.find(element => element.tag === 'title').text, 'A<f32>');
   assert.equal(elements.find(element => element.attrs['data-id'] === 'b').attrs['aria-label'], 'B · 组件');
   assert.equal(registry.a.name, 'A');
 });

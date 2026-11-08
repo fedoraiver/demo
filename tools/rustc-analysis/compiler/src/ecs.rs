@@ -2,7 +2,7 @@
 use crate::identity::Identities;
 use analysis_contract::facts::*;
 use anyhow::Result;
-use rustc_ast::{BinOpKind, attr::AttributeExt};
+use rustc_ast::BinOpKind;
 use rustc_hir::{
     Expr, ExprKind, UnOp,
     def::DefKind,
@@ -127,8 +127,6 @@ pub fn extract_with_origins(
             .into_iter()
             .map(|(path, sha256)| SourceFile { path, sha256 })
             .collect();
-        collector.facts.behavior_hash = format!("{:?}", collector.identities.owning_behavior());
-        collector.facts.purpose_inventory = crate::purpose::collect(&collector.identities);
         collector.facts.gaps.extend(collector.identities.gaps());
         return Ok(collector.facts);
     }
@@ -147,7 +145,6 @@ pub fn extract_with_origins(
             collector.type_id(ty, env, 0);
         }
     }
-    let mut purpose_bodies = vec![];
     for owner in tcx.hir_body_owners() {
         let id = owner.to_def_id();
         collector.generic_owner = id;
@@ -183,7 +180,6 @@ pub fn extract_with_origins(
             conditions: vec![],
         }
         .visit_body(body);
-        purpose_bodies.push((id, callable));
         if !args.has_non_region_param() {
             collector
                 .pending
@@ -191,9 +187,6 @@ pub fn extract_with_origins(
         }
     }
     collector.index_hir_templates();
-    for (definition, callable) in purpose_bodies {
-        collector.audit_purpose_body(definition, &callable);
-    }
     collector.seed_native_system_instances();
     collector.collect_mir_instances();
     collector.collect_entity_templates()?;
@@ -210,15 +203,13 @@ pub fn extract_with_origins(
     collector.facts.declarations = collector.declarations.into_values().collect();
     collector.facts.types = collector.types.into_values().collect();
     collector.facts.callables = collector.callables.into_values().collect();
-    collector.facts.behavior_hash = format!("{:?}", collector.identities.owning_behavior());
-    collector.facts.purpose_inventory = crate::purpose::collect(&collector.identities);
     collector.facts.gaps.extend(collector.identities.gaps());
     sort_facts(&mut collector.facts);
     compact_source_previews(&mut collector.facts);
     Ok(collector.facts)
 }
 
-// snippet 只作为展示预览：完整证据由文件 SHA 与跨度定位，声明哈希在截断前计算。
+// snippet 只作为展示预览：完整证据由文件 SHA 与跨度定位。
 // 所有条件字段与守卫原文完整保留；其余片段最多 512 个 Unicode 标量值。
 fn compact_source_previews(facts: &mut UnitFacts) {
     fn source(source: &mut SourceEvidence) {
@@ -259,7 +250,7 @@ fn compact_source_previews(facts: &mut UnitFacts) {
             source(evidence);
         }
     }
-    for call in facts.calls.iter_mut().chain(facts.purpose_calls.iter_mut()) {
+    for call in &mut facts.calls {
         optional(&mut call.source);
     }
     for entity in &mut facts.entities {
@@ -301,28 +292,26 @@ fn sort_facts(facts: &mut UnitFacts) {
     });
     facts.operations.sort_by(|a, b| a.id.cmp(&b.id));
     facts.operations.dedup_by(|a, b| a.id == b.id);
-    for calls in [&mut facts.calls, &mut facts.purpose_calls] {
-        calls.sort_by_key(|fact| {
-            (
-                fact.caller.clone(),
-                fact.callee.clone(),
-                fact.declaration.clone(),
-                fact.unresolved_reason.clone(),
-                fact.source
-                    .as_ref()
-                    .map(|s| (s.path.clone(), s.line, s.column)),
-            )
-        });
-        calls.dedup_by(|a, b| {
-            a.caller == b.caller
-                && a.callee == b.callee
-                && a.declaration == b.declaration
-                && a.unresolved_reason == b.unresolved_reason
-                && a.source == b.source
-                && a.deferred == b.deferred
-                && a.conditions == b.conditions
-        });
-    }
+    facts.calls.sort_by_key(|fact| {
+        (
+            fact.caller.clone(),
+            fact.callee.clone(),
+            fact.declaration.clone(),
+            fact.unresolved_reason.clone(),
+            fact.source
+                .as_ref()
+                .map(|s| (s.path.clone(), s.line, s.column)),
+        )
+    });
+    facts.calls.dedup_by(|a, b| {
+        a.caller == b.caller
+            && a.callee == b.callee
+            && a.declaration == b.declaration
+            && a.unresolved_reason == b.unresolved_reason
+            && a.source == b.source
+            && a.deferred == b.deferred
+            && a.conditions == b.conditions
+    });
     facts.entities.sort_by(|a, b| a.id.cmp(&b.id));
     facts.entities.dedup_by(|a, b| a.id == b.id);
     facts
@@ -622,67 +611,6 @@ impl<'tcx> Collector<'tcx> {
         };
         let source = self.source(span, "definition");
         let full_name = full_path(self.tcx, id);
-        #[allow(deprecated, reason = "导出声明的全部文档片段，而非查询单个语义属性。")]
-        let docs = if matches!(
-            self.tcx.def_kind(id),
-            DefKind::OpaqueTy
-                | DefKind::TyParam
-                | DefKind::LifetimeParam
-                | DefKind::AnonConst
-                | DefKind::ForeignMod
-                | DefKind::GlobalAsm
-                | DefKind::ExternCrate
-                | DefKind::SyntheticCoroutineBody
-                | DefKind::Static { nested: true, .. }
-                | DefKind::TestBinderConstraints
-        ) {
-            String::new()
-        } else {
-            self.tcx
-                .get_all_attrs(id)
-                .iter()
-                .filter_map(|attribute| attribute.doc_str())
-                .map(|text| text.to_string())
-                .collect::<Vec<_>>()
-                .join("\n")
-        };
-        let behavior_hash = id
-            .as_local()
-            .filter(|_| self.tcx.def_kind(id) != DefKind::SyntheticCoroutineBody)
-            .and_then(|local| self.identities.local_behavior(local));
-        // 本地按展开后的 HIR（包括 body、不含物理跨度）校验描述；移动行号不改变行为证据。
-        // 外部优先用完整文件 SHA，源码不可读时用 rustc 的整 crate 内容哈希，均不只依赖名称跨度。
-        let unresolved_behavior = behavior_hash
-            .as_ref()
-            .is_some_and(|(_, unresolved, _)| *unresolved);
-        let purpose_dependencies = behavior_hash
-            .as_ref()
-            .map(|(_, _, dependencies)| dependencies.clone())
-            .unwrap_or_default();
-        let evidence_hash = if let Some((behavior_hash, _, _)) = behavior_hash {
-            digest(serde_json::to_vec(&(format!("{behavior_hash:?}"), &full_name, &docs)).unwrap())
-        } else if source
-            .as_ref()
-            .is_some_and(|source| !source.sha256.is_empty())
-        {
-            digest(
-                serde_json::to_vec(&(
-                    source.as_ref().map(|source| &source.sha256),
-                    &full_name,
-                    &docs,
-                ))
-                .unwrap(),
-            )
-        } else {
-            digest(
-                serde_json::to_vec(&(
-                    format!("{:?}", self.tcx.crate_hash(id.krate)),
-                    &full_name,
-                    &docs,
-                ))
-                .unwrap(),
-            )
-        };
         self.declarations.insert(
             key.clone(),
             Declaration {
@@ -697,10 +625,6 @@ impl<'tcx> Collector<'tcx> {
                 crate_name: self.tcx.crate_name(id.krate).to_string(),
                 kind: format!("{:?}", self.tcx.def_kind(id)),
                 source,
-                docs,
-                evidence_hash,
-                unresolved_behavior,
-                purpose_dependencies,
             },
         );
         key
@@ -1506,93 +1430,6 @@ impl<'tcx> Collector<'tcx> {
         });
     }
 
-    fn opaque_call(&mut self, caller: &str, kind: &str, reason: &str, span: Span) {
-        let source = self.source(span, "call");
-        self.gap(caller, kind, reason, source.clone());
-        self.facts.purpose_calls.push(CallFact {
-            caller: caller.into(),
-            callee: None,
-            declaration: None,
-            unresolved_reason: Some(kind.into()),
-            source,
-            deferred: false,
-            conditions: vec![],
-        });
-    }
-
-    /// HIR 遍历本身不覆盖析构与运算符降级；泛型 body 也须审计原生 MIR 才能认证闭包。
-    fn audit_purpose_body(&mut self, definition: DefId, caller: &str) {
-        if !self.tcx.is_mir_available(definition) {
-            let source = self.source(self.tcx.def_span(definition), "definition");
-            self.gap(
-                caller,
-                "missing-body",
-                "本地 HIR 函数没有可供用途闭包审计的 MIR，不能认证完整行为。",
-                source,
-            );
-            return;
-        }
-        self.generic_owner = definition;
-        let body = self.tcx.optimized_mir(definition);
-        let env = TypingEnv::post_analysis(self.tcx, definition);
-        for block in body.basic_blocks.iter() {
-            let terminator = block.terminator();
-            match &terminator.kind {
-                TerminatorKind::Drop { .. } => self.opaque_call(
-                    caller,
-                    "implicit-drop",
-                    "MIR 包含隐式析构；未精确解析 drop glue 及其实现，局部用途证据不完整。",
-                    terminator.source_info.span,
-                ),
-                TerminatorKind::InlineAsm { .. } => self.opaque_call(
-                    caller,
-                    "inline-assembly",
-                    "内联汇编的调用与符号行为未建模，不能认证局部用途闭包。",
-                    terminator.source_info.span,
-                ),
-                TerminatorKind::Call { func, .. } | TerminatorKind::TailCall { func, .. } => {
-                    let ty = func.ty(&body.local_decls, self.tcx);
-                    if let ty::FnDef(id, args) = ty.kind() {
-                        let args = self.tcx.instantiate_bound_regions_with_erased(*args);
-                        let resolution = self.resolve_instance(*id, args, env);
-                        let resolved = resolution.ok();
-                        let callee = resolved
-                            .map(|instance| self.callable(instance.def_id(), instance.args, env));
-                        let declaration =
-                            self.declaration(resolved.map_or(*id, |instance| instance.def_id()));
-                        let source = self.source(terminator.source_info.span, "call");
-                        if let Err(failure) = resolution {
-                            self.gap(caller, failure.kind(), failure.reason(), source.clone());
-                        }
-                        self.facts.purpose_calls.push(CallFact {
-                            caller: caller.into(),
-                            callee,
-                            declaration: Some(declaration),
-                            unresolved_reason: resolution
-                                .err()
-                                .map(|failure| failure.kind().into()),
-                            source,
-                            deferred: false,
-                            conditions: vec![],
-                        });
-                    } else {
-                        self.opaque_call(
-                            caller,
-                            "dynamic-call",
-                            "MIR 调用目标为函数指针或其他擦除类型，不能证明其实际实现。",
-                            terminator.source_info.span,
-                        );
-                    }
-                }
-                _ => {}
-            }
-        }
-        self.callables
-            .get_mut(caller)
-            .expect("Audited HIR callable must exist")
-            .body_analyzed = true;
-    }
-
     fn collect_mir_instances(&mut self) {
         while let Some((instance, depth)) = self.pending.pop_front() {
             if matches!(instance.def, ty::InstanceKind::Virtual(..)) {
@@ -1643,14 +1480,6 @@ impl<'tcx> Collector<'tcx> {
                 }
             }
             for block in body.basic_blocks.iter() {
-                if matches!(block.terminator().kind, TerminatorKind::Drop { .. }) {
-                    self.opaque_call(
-                        &caller,
-                        "implicit-drop",
-                        "MIR 包含隐式析构；未精确解析 drop glue 及其实现，局部用途证据不完整。",
-                        block.terminator().source_info.span,
-                    );
-                }
                 for statement in &block.statements {
                     let place = match &statement.kind {
                         StatementKind::Assign(assignment) => assignment.0,
@@ -1745,15 +1574,6 @@ impl<'tcx> Collector<'tcx> {
                             "MIR 调用目标为函数指针或其他擦除类型，不能证明其实际实现。",
                             source.clone(),
                         );
-                        self.facts.purpose_calls.push(CallFact {
-                            caller: caller.clone(),
-                            callee: None,
-                            declaration: None,
-                            unresolved_reason: Some("dynamic-call".into()),
-                            source,
-                            deferred: false,
-                            conditions: vec![],
-                        });
                     }
                 }
             }
@@ -2711,7 +2531,7 @@ impl<'tcx> Visitor<'tcx> for BodyVisitor<'_, 'tcx> {
                 self.collector.gap(
                     &self.owner,
                     "inline-assembly",
-                    "内联汇编的调用与符号行为未建模，不能认证局部用途闭包。",
+                    "内联汇编的调用与符号行为未建模，保留显式分析缺口。",
                     source.clone(),
                 );
                 self.collector.facts.calls.push(CallFact {

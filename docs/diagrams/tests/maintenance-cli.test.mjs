@@ -4,22 +4,22 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { parseMaintenanceArgs } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-cli.mjs';
-import { npmCommand } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-inputs.mjs';
-import { maintenanceScripts, repositoryRoot } from '../../../.agents/skills/update-ecs-architecture/scripts/maintenance-paths.mjs';
+import { parseMaintenanceArgs } from '../src/maintenance-cli.mjs';
+import { npmCommand } from '../src/maintenance-inputs.mjs';
+import { maintenanceScripts, repositoryRoot } from '../src/maintenance-paths.mjs';
 
-const cli = fileURLToPath(new URL('../../../.agents/skills/update-ecs-architecture/scripts/maintenance-cli.mjs', import.meta.url));
+const cli = fileURLToPath(new URL('../src/maintenance-cli.mjs', import.meta.url));
 test('CLI can show help from another working directory without importing installed toolchain', () => {
   const output = execFileSync(process.execPath, [cli, '--help'], { cwd: path.parse(cli).root, encoding: 'utf8', windowsHide: true });
   assert.match(output, /preflight/);
   assert.doesNotMatch(output, /fix-source-lines/);
 });
-test('Skill CLI help works in an isolated workspace with spaces and no installed dependencies', t => {
+test('Maintenance CLI help works in an isolated workspace with spaces and no installed dependencies', t => {
   const parent = path.join(repositoryRoot, 'tmp/ecs-architecture/maintenance-cli-tests');
   fs.mkdirSync(parent, { recursive: true });
   const workspace = fs.mkdtempSync(path.join(parent, 'workspace with spaces '));
   t.after(() => fs.rmSync(workspace, { recursive: true, force: true }));
-  for (const name of [`${maintenanceScripts}/maintenance-cli.mjs`, `${maintenanceScripts}/maintenance-paths.mjs`, 'docs/diagrams/src/paths.mjs', 'docs/diagrams/package.json']) {
+  for (const name of [`${maintenanceScripts}/maintenance-cli.mjs`, `${maintenanceScripts}/maintenance-paths.mjs`, 'docs/diagrams/src/paths.mjs', 'docs/diagrams/maintain.mjs', 'docs/diagrams/package.json']) {
     const target = path.join(workspace, name);
     fs.mkdirSync(path.dirname(target), { recursive: true });
     fs.copyFileSync(path.join(repositoryRoot, name), target);
@@ -32,7 +32,7 @@ test('Skill CLI help works in an isolated workspace with spaces and no installed
   const npmOutput = execFileSync(command, [...args, 'run', 'maintain', '--prefix', path.join(workspace, 'docs/diagrams'), '--', '--help'], { cwd: path.dirname(workspace), encoding: 'utf8', windowsHide: true });
   assert.match(npmOutput, /ECS architecture maintenance/);
 });
-test('default workspace comes from the Skill repository instead of the caller directory', () => {
+test('default workspace comes from the maintenance repository instead of the caller directory', () => {
   assert.equal(parseMaintenanceArgs(['plan']).options.workspace, repositoryRoot);
 });
 test('retired source-repair command is rejected', () => {
@@ -67,4 +67,15 @@ test('unknown commands, duplicate options and invalid ranges fail before any wor
   const result = spawnSync(process.execPath, [cli, 'run', '--apply'], { encoding: 'utf8', windowsHide: true });
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Unsupported/);
+});
+
+test('Pages packaging options resolve against the selected workspace', () => {
+  const workspace = path.resolve('tmp/selected pages workspace');
+  assert.equal(parseMaintenanceArgs(['pack-pages', '--workspace', workspace, '--out', 'tmp/site']).options.outdir, path.join(workspace, 'tmp/site'));
+  assert.equal(parseMaintenanceArgs(['check-pages', '--workspace', workspace, '--directory', 'tmp/site']).options.directory, path.join(workspace, 'tmp/site'));
+  const verification = parseMaintenanceArgs(['verify-pages', '--workspace', workspace, '--url', 'https://example.test/demo/', '--expected', 'proof.json', '--commit', 'a'.repeat(40), '--evidence', 'tmp/evidence']).options;
+  assert.equal(verification.expectedFile, path.join(workspace, 'proof.json'));
+  assert.equal(verification.expectedCommit, 'a'.repeat(40));
+  assert.equal(verification.evidenceDirectory, path.join(workspace, 'tmp/evidence'));
+  assert.throws(() => parseMaintenanceArgs(['verify-pages', '--url', 'https://example.test/demo/']), /--expected/);
 });

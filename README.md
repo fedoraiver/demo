@@ -20,6 +20,7 @@ cargo run --locked
 - [游戏设计](docs/game-design.md)：项目目的与玩法探索状态。
 - [开发规范](docs/development.md)：工程约定、构建与调试方法。
 - [当前架构](docs/architecture.md)：模块职责、ECS 数据与系统流程。
+- [在线 ECS 架构图](https://fedoraiver.github.io/demo/)：[模型与查看器说明](docs/diagrams/README.md)及[自动更新流程](docs/diagrams/maintenance.md)。
 - [验证参考](docs/testing/README.md)：开发检查、无窗口验证和架构图检查。
 - [游戏手动验收](docs/testing/game-acceptance.md)：由用户执行的游戏、窗口、声音和会话日志检查。
 - [音频管线](docs/audio.md)：声音素材、事件接口与试听方式。

@@ -52,7 +52,7 @@ test('complete captured PostUpdate and Render graphs preserve every identity and
   }
 });
 
-test('actual Chromium glyph bounds fit native cluster-title backgrounds on both complete captured graphs', { skip: !chromium, timeout: 120000 }, async () => {
+test('actual Chromium glyph bounds fit native cluster-title backgrounds with preferred and fallback fonts on both complete captured graphs', { skip: !chromium, timeout: 120000 }, async () => {
   fs.mkdirSync(temporary, { recursive: true });
   const browser = await puppeteer.launch({ executablePath: chromium, headless: true, userDataDir: fs.mkdtempSync(path.join(temporary, 'chrome-')) });
   try {
@@ -61,17 +61,23 @@ test('actual Chromium glyph bounds fit native cluster-title backgrounds on both 
       const page = await browser.newPage();
       try {
         await page.setViewport({ width: 1600, height: 1000 }); await page.goto(pathToFileURL(filename).href); await page.evaluate(() => document.fonts.ready);
-        const proof = await page.evaluate(() => [...document.querySelectorAll('.schedule-cluster-title')].map(layer => {
-          const polygon = layer.querySelector('polygon'), background = polygon.getBBox();
-          return { id: layer.dataset.clusterName, background: { x: background.x, y: background.y, width: background.width, height: background.height },
-            texts: [...layer.querySelectorAll('text')].map(text => { const box = text.getBBox(); return { text: text.textContent, x: box.x, y: box.y, width: box.width, height: box.height }; }) };
-        }));
-        fs.writeFileSync(path.join(temporary, fixture.name + '-glyphs.json'), JSON.stringify(proof, null, 2) + '\n');
-        assert.ok(proof.length);
-        for (const layer of proof) for (const text of layer.texts) {
-          const box = layer.background;
-          assert.ok(text.x >= box.x && text.y >= box.y && text.x + text.width <= box.x + box.width && text.y + text.height <= box.y + box.height,
-            'Native title background must cover actual glyph bounds: ' + fixture.name + '/' + layer.id + '/' + JSON.stringify({ text, box }));
+        for (const font of ['preferred', 'fallback']) {
+          // 在安装了 Windows 首选字体的机器上也覆盖 Linux 的通用无衬线回退；原生布局和背景不变。
+          if (font === 'fallback') await page.evaluate(() => {
+            for (const text of document.querySelectorAll('.schedule-cluster-title text')) text.style.fontFamily = 'sans-serif';
+          });
+          const proof = await page.evaluate(() => [...document.querySelectorAll('.schedule-cluster-title')].map(layer => {
+            const polygon = layer.querySelector('polygon'), background = polygon.getBBox();
+            return { id: layer.dataset.clusterName, background: { x: background.x, y: background.y, width: background.width, height: background.height },
+              texts: [...layer.querySelectorAll('text')].map(text => { const box = text.getBBox(); return { text: text.textContent, x: box.x, y: box.y, width: box.width, height: box.height }; }) };
+          }));
+          fs.writeFileSync(path.join(temporary, fixture.name + '-' + font + '-glyphs.json'), JSON.stringify(proof, null, 2) + '\n');
+          assert.ok(proof.length);
+          for (const layer of proof) for (const text of layer.texts) {
+            const box = layer.background;
+            assert.ok(text.x >= box.x && text.y >= box.y && text.x + text.width <= box.x + box.width && text.y + text.height <= box.y + box.height,
+              'Native title background must cover actual glyph bounds: ' + fixture.name + '/' + font + '/' + layer.id + '/' + JSON.stringify({ text, box }));
+          }
         }
       } finally { await page.close(); }
     }

@@ -24,7 +24,7 @@ import { checkDebugdumpViews, normalizeScheduleSvg } from './debugdump.mjs';
 import { SCHEDULE_THEME } from './schedule-theme.mjs';
 import { SCHEDULE_LEGEND_LABELS } from './schedule-legend.mjs';
 import { artifactFile, pathsForRepository, repositoryRoot } from './paths.mjs';
-import { readArchitectureData } from './architecture-artifacts.mjs';
+import { readArchitectureData, embeddedArchitectureBootstrap } from './architecture-artifacts.mjs';
 import { validateArchitectureSvg } from './architecture-asset-loader.mjs';
 
 const legacyAspects = ['systems', 'data', 'events'];
@@ -49,6 +49,17 @@ function attributeValues(svg, name) {
 
 function decodeMermaidText(value) {
   return value.replace(/\*\*(.+?)\*\*/g, '$1').replace(/<br\s*\/?\s*>/gi, '\n').replace(/#(amp|lt|gt|quot|apos|\d+);/g, (_, entity) => ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[entity] ?? String.fromCodePoint(Number(entity)));
+}
+
+function decodeMermaidNodeLabel(value) {
+  const escapes = { '0': '\0', a: '\x07', b: '\b', t: '\t', n: '\n', v: '\v', f: '\f', r: '\r', e: '\x1b',
+    ' ': ' ', '"': '"', '/': '/', '\\': '\\', N: '\x85', _: '\u00a0', L: '\u2028', P: '\u2029' };
+  // 实体先于节点 YAML 转义还原；Unicode 产生的 # 属于原文，不能再被当作实体解码。
+  return decodeMermaidText(value).replace(/\\(x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8}|.)/g, (_, escape) => {
+    if (/^[xuU]/.test(escape) && escape.length > 1) return String.fromCodePoint(Number.parseInt(escape.slice(1), 16));
+    requireCondition(Object.hasOwn(escapes, escape), 'Invalid Mermaid node YAML escape: \\' + escape);
+    return escapes[escape];
+  });
 }
 
 const normalizedText = value => String(value).replace(/[\s\u200B]+/g, ' ').trim();
@@ -321,7 +332,7 @@ export function checkMermaidSource(view, registry, scheduleDefinitions) {
     const node = extended || /^([A-Za-z]\w*)\["((?:[^"\\]|\\.)*)"\](?:::[A-Za-z]\w*)?\s*;?$/.exec(line);
     if (node) {
       requireCondition(!nodes.has(node[1]), `Duplicate Mermaid node declaration: ${node[1]}`);
-      nodes.set(node[1], { shape: extended ? node[2] : 'rect', label: decodeMermaidText(extended ? node[3] : node[2]) });
+      nodes.set(node[1], { shape: extended ? node[2] : 'rect', label: extended ? decodeMermaidNodeLabel(node[3]) : decodeMermaidText(node[2]) });
       stack.at(-1)?.nodes.push(node[1]);
       for (const group of stack) group.descendants.push(node[1]);
       continue;
@@ -560,6 +571,8 @@ export function checkArchitecture(root) {
   requireCondition(typeof root === 'string' && path.isAbsolute(root), 'Repository root must be an absolute path');
   const repository = fs.realpathSync(root), paths = pathsForRepository(repository);
   const artifact = readArchitectureData(repository), model = artifact.model;
+  const build = embeddedArchitectureBootstrap(fs.readFileSync(path.join(paths.pagesDirectory, 'ecs-architecture.html'), 'utf8'));
+  requireCondition(/^[a-f0-9]{40,64}$/.test(build.sourceCommit) && typeof build.target === 'string' && build.target !== 'unknown', 'Missing architecture build provenance');
   validateCompilerModel(model, { workspace: repository, modelDirectory: paths.dataDirectory });
   checkCompilerRegistry(artifact.registry, model);
   requireCondition(isDeepStrictEqual(artifact.infrastructureFeatures, projectInfrastructureFeatures(artifact.registry, { requireComplete: true })), 'Distributed infrastructure menu differs from compiler identity projection');
@@ -569,6 +582,7 @@ export function checkArchitecture(root) {
   requireCondition(isDeepStrictEqual(artifact.sourceRoleLabels, SOURCE_ROLE_LABELS), 'Source role labels differ from distribution contract');
   checkObjectViews(artifact.views, catalog);
   const scheduleViews = artifact.views.filter(view => view.aspect === 'schedule');
+  requireCondition(scheduleViews.every(view => view.exportInfo.target === build.target), 'Architecture target differs from the runtime Schedule export');
   bindCompilerSchedules(model, scheduleViews);
   checkDebugdumpViews(paths.dotDirectory, repository, scheduleViews);
   const filenames = new Set(), mermaidFilenames = new Set(), instances = new Set();
@@ -627,7 +641,8 @@ export function checkArchitecture(root) {
     ...(source.dependency ? { source: { path: source.path, line: 1, dependency: source.dependency } } : {}) }));
   const normalizedSources = list => list.map(source => ({ ...source, text: source.text.replace(/\r\n/g, '\n') })).sort((a, b) => a.path.localeCompare(b.path));
   requireCondition(isDeepStrictEqual(normalizedSources(snapshots), normalizedSources(expectedSources)), 'Distributed source snapshots differ from compiler evidence');
-  return { systems: model.objects.filter(object => ['System', 'Observer'].includes(object.kind)).length,
+  return { buildId: build.buildId, sourceCommit: build.sourceCommit, target: build.target,
+    systems: model.objects.filter(object => ['System', 'Observer'].includes(object.kind)).length,
     objects: catalog.objects.length, views: artifact.views.length, sources: snapshots.length };
 }
 const filename = fileURLToPath(import.meta.url);

@@ -204,7 +204,7 @@ function validateEntityAlternatives(model, registry) {
 
 // 单独检查完整调用图；架构模型仍须通过全部绑定与来源校验。
 export function validateCompilerCallGraph(model, { modelDirectory, registry, snapshots } = {}) {
-  if (model.callGraph === undefined) return null;
+  const filename = compilerCallGraphFile(model, modelDirectory);
   registry ||= new Map(model.objects.map(object => [object.id, object]));
   const references = sourceReferenceValidator(snapshots || sourceSnapshots(model));
   const edgeIds = new Set(), identity = value => typeof value === 'string' && value.trim();
@@ -220,28 +220,19 @@ export function validateCompilerCallGraph(model, { modelDirectory, registry, sna
     'Invalid compiler call evidence: ' + edge.id);
     references(edge);
   };
-  if (model.callGraph?.schemaVersion === 1 && Array.isArray(model.callGraph.edges)) {
-    model.callGraph.edges.forEach(visit);
-    return { edgeCount: edgeIds.size };
-  }
-  const result = visitNdjson(compilerCallGraphFile(model, modelDirectory), visit);
+  const result = visitNdjson(filename, visit);
   requireCondition(result.sha256 === model.callGraph.sha256, 'Compiler call graph hash mismatch');
   requireCondition(result.records === model.callGraph.edgeCount, 'Compiler call graph edge count mismatch');
   return { edgeCount: result.records, sha256: result.sha256, bytes: result.bytes };
 }
 
-export function validateCompilerModel(model, { workspace, checkSources = true, allowPending = false, modelDirectory } = {}) {
+export function validateCompilerModel(model, { workspace, checkSources = true, modelDirectory } = {}) {
   requireCondition(!model?.bindingErrors?.length, 'Compiler/runtime binding is incomplete: ' + JSON.stringify(model?.bindingErrors));
-  requireCondition(model?.schemaVersion === 1 && Array.isArray(model.objects) && Array.isArray(model.relations)
+  requireCondition(model?.schemaVersion === 2 && Array.isArray(model.objects) && Array.isArray(model.relations)
     && Array.isArray(model.features) && Array.isArray(model.sourceFiles), 'Unsupported compiler architecture model');
   requireCondition(typeof model.compiler === 'string' && model.compiler && model.configuration != null, 'Missing compiler model provenance');
   requireCondition(model.inputs && /^[a-f0-9]{64}$/.test(model.inputs.sourceFingerprint), 'Missing compiler source fingerprint');
   if (workspace) requireCondition(model.inputs.sourceFingerprint === sourceFingerprint(workspace), 'Compiler architecture source fingerprint is stale');
-  requireCondition(Array.isArray(model.annotationsRequired || []), 'Invalid compiler annotation request list');
-  if (!allowPending && model.annotationsRequired?.length) {
-    const error = new Error(`Missing Chinese architecture descriptions: ${model.annotationsRequired.length}; complete annotations and rerun model`);
-    error.code = 'ANNOTATIONS_REQUIRED'; error.requests = model.annotationsRequired; throw error;
-  }
   const features = new Set(), registry = new Map(), relations = new Set();
   for (const feature of model.features) {
     requireCondition(typeof feature.id === 'string' && feature.id && !features.has(feature.id)
@@ -270,8 +261,6 @@ export function validateCompilerModel(model, { workspace, checkSources = true, a
       }
       requireCondition(identity.roles.includes(object.kind) || object.kind === 'NonSend', 'Compiler type role differs from object kind: ' + object.id);
     }
-    if (!allowPending) requireCondition(typeof object.description === 'string' && object.description.trim()
-      && (object.display_summary === undefined || typeof object.display_summary === 'string' && object.display_summary.trim()), 'Missing Chinese object purpose: ' + object.id);
     registry.set(object.id, object);
   }
   for (const relation of model.relations) {
@@ -304,11 +293,11 @@ export function validateCompilerModel(model, { workspace, checkSources = true, a
   return { registry, snapshots };
 }
 
-export function readCompilerModel(workspace, { filename = ANALYSIS_MODEL, allowPending = false } = {}) {
+export function readCompilerModel(workspace, { filename = ANALYSIS_MODEL } = {}) {
   const absolute = path.resolve(workspace, filename);
   requireCondition(fs.existsSync(absolute), `Missing compiler architecture model: ${absolute}. Run the maintenance extract/model stages first`);
   const model = JSON.parse(fs.readFileSync(absolute, 'utf8'));
-  return { model, filename: absolute, ...validateCompilerModel(model, { workspace, allowPending, modelDirectory: path.dirname(absolute) }) };
+  return { model, filename: absolute, ...validateCompilerModel(model, { workspace, modelDirectory: path.dirname(absolute) }) };
 }
 
 export function createCompilerObjectCatalog(model, inputRegistry) {

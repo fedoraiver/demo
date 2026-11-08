@@ -225,4 +225,4 @@ Remove-Item Env:RUST_LOG -ErrorAction SilentlyContinue
 
 面向人类文档的分层、内容归属、写作和验证规则见 [文档规范](AGENTS.md)。理解当前机制所需的局部约束与实现解释仍放在架构说明中；长期决策动机、替代方案和取舍由 [Agent Notes](../.agents/notes/README.md) 维护，事故复盘遵循 [postmortem 约定](postmortem/README.md)。这两类记录使用各自的独立规则。
 
-架构图维护流程见 [项目 Skill 维护](diagrams/README.md#项目-skill-维护)；图有变更时须完成 [架构图视觉检查](testing/README.md#架构图视觉检查)。普通代码修改和 Git 提交不触发架构图更新。
+架构图维护流程见 [架构图维护](diagrams/maintenance.md)；图有变更时须完成 [架构图视觉检查](testing/README.md#架构图视觉检查)。相关源码或工具变更由架构图 Actions 自动构建；本地不要求每次提交前重新生成。

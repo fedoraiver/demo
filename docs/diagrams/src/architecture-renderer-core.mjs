@@ -153,6 +153,10 @@ function nodeText(name, context) {
   return [...wrap(name).map(line => `**${escape(line)}**`),
     ...context.filter(Boolean).flatMap(value => wrap(value)).map(escape)].join('<br/>');
 }
+function nodeLabel(name, context) {
+  // YAML 先还原引号和 #，避免原生 SVG 保留 &quot; 或 &#35;；零宽字符阻止 Markdown 吞掉原文反斜杠。
+  return nodeText(name, context).replaceAll('\\', '\\u005c\u200B').replaceAll('#quot;', '\\u0022').replaceAll('#35;', '\\u0023');
+}
 
 export function mermaidConfiguration(aspect) {
   return { theme: 'base', look: 'classic', layout: 'dagre', maxTextSize: 200000, htmlLabels: false, fontFamily: ARCHITECTURE_TEXT_STYLE.fontFamily,
@@ -168,15 +172,11 @@ function definition(view, graph, registry, features, scheduleGroups = [], buildO
   const entityGroups = [];
   const nodes = graph.nodes.flatMap((node, index) => {
     const data = { ...registry[node.id], ...(view.aspect === 'component' && node.id === (view.componentNodeId || graph.componentNodeId) ? view.componentDetails : {}) }, visualType = visualTypeOf(data);
-    if (data.display_summary !== undefined && (typeof data.display_summary !== 'string' || !data.display_summary.trim())) throw new Error(`架构节点用途简介必须是非空文本：${node.id}`);
     const feature = node.role === 'plugin' && features.find(item => item.overviewNode === node.id);
     const shortName = architectureDisplayName(data.name || node.id, { kind: data.kind });
     const name = feature ? `${feature.label} · ${shortName}` : shortName;
-    const description = node.role === 'plugin' ? feature?.description || data.description : data.description;
-    const summary = String(data.display_summary ?? description ?? '').replace(/\s+/g, ' ').trim();
-    if (!summary) throw new Error(`架构节点缺少用途简介：${node.id}`);
     const scope = node.role === 'external' ? `来自${names.get(data.feature)} ↗` : null;
-    const contents = [scope ? `${scope}：${summary}` : summary];
+    const contents = scope ? [scope] : [];
     return [{ ...node, instance: `${view.id}--n${index}`, mermaidId: `n${index}`, visualType, shape: NODE_STYLES[visualType].shape, displayLabel: [name, ...contents].join('\n'), nameLabel: name, contextLabel: contents }];
   });
   const byId = new Map(nodes.map(node => [node.id, node]));
@@ -216,7 +216,7 @@ function definition(view, graph, registry, features, scheduleGroups = [], buildO
     layoutLinks.push({ mermaidId, from, to }); lines.push(`  ${from} ${mermaidId}@~~~ ${to}`);
   }
   function declare(node) {
-    lines.push(`  ${node.mermaidId}@{ shape: ${node.shape}, label: "${nodeText(node.nameLabel, node.contextLabel)}" }`, `  class ${node.mermaidId} node_${node.visualType}`);
+    lines.push(`  ${node.mermaidId}@{ shape: ${node.shape}, label: "${nodeLabel(node.nameLabel, node.contextLabel)}" }`, `  class ${node.mermaidId} node_${node.visualType}`);
     if (node.role === 'external') lines.push(`  class ${node.mermaidId} external_node`);
   }
   function edge(link, from, to) {

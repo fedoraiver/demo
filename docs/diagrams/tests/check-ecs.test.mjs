@@ -4,11 +4,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import { checkArchitecture as checkArchitectureWithDependencies, checkDataSections, checkEntityGroups, checkEntityViewProjections, checkViewRouting, checkGuideSamples, checkObjectViews, checkObserverTriggerProjections, checkMermaidLayout } from '../src/check-ecs.mjs';
+import { checkArchitecture as checkArchitectureWithDependencies, checkDataSections, checkEntityGroups, checkEntityViewProjections, checkViewRouting, checkGuideSamples, checkObjectViews, checkObserverTriggerProjections, checkMermaidLayout, checkMermaidSource } from '../src/check-ecs.mjs';
 import { checkMermaidGeometry, checkSvgGeometry } from '../src/diagram-geometry.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf } from '../src/architecture-style.mjs';
 import { isMainPluginRegistration, scheduleGroupLabel, isUnscheduledTriggerNode } from '../src/architecture-model.mjs';
-import { DATA_GROUP_LABELS } from '../src/architecture-renderer.mjs';
+import { DATA_GROUP_LABELS, renderGraphView } from '../src/architecture-renderer.mjs';
 import { normalizeMermaidSvg } from '../src/mermaid-compiler.mjs';
 import { INFRASTRUCTURE_FEATURES as infrastructureDefinitions, architectureViewId } from '../src/architecture-infrastructure.mjs';
 import { artifactFile, pathsForRepository } from '../src/paths.mjs';
@@ -21,6 +21,22 @@ const sharedStyles = () => ({ nodes: NODE_STYLES, edges: EDGE_STYLES, selection:
 const fixtureViewCount = 1 + 3 * (1 + INFRASTRUCTURE_FEATURES.length);
 const fixtureOverviewNodeCount = 2 + INFRASTRUCTURE_FEATURES.length;
 const extensionFeature = INFRASTRUCTURE_FEATURES.find(feature => feature.section === 'third_party');
+
+test('Mermaid source checks decode node YAML escapes without decoding literal entity names twice', () => {
+  const registry = {
+    'entity-982861bbae8d50e84ce84440': { kind: 'Entity', feature: 'ui', name: 'format!("Menu small button: {title}")' },
+    'observer-047dad1ad3396d088fb4a662': { kind: 'Observer', feature: 'ui', name: 'avian3d::collider_tree::update::{impl#1}::build::{closure#2}' },
+    'literal-entities': { kind: 'Entity', feature: 'ui', name: 'literal #35; #quot; #amp; &amp;' },
+    'literal-escapes': { kind: 'Entity', feature: 'ui', name: String.raw`literal \u0022 \u0023 \n \\` },
+  };
+  const graph = { centerNodeId: Object.keys(registry)[0], nodes: Object.keys(registry).map(id => ({ id, role: 'internal' })), links: [] };
+  const view = renderGraphView({ id: 'source-native-yaml-labels', aspect: 'object', objectId: graph.centerNodeId,
+    label: 'Source label contract', summary: '节点原文与YAML标签。' }, graph, registry, [{ id: 'ui', label: 'ui' }]);
+  assert.doesNotThrow(() => checkMermaidSource(view, registry, new Map()));
+  assert.throws(() => checkMermaidSource({ ...view, mermaid: view.mermaid.replace('Menu', 'Other') }, registry, new Map()), /node style or label mismatch/);
+  assert.throws(() => checkMermaidSource({ ...view, mermaid: view.mermaid.replace('\\u0022Menu', '\\u0023Menu') }, registry, new Map()), /node style or label mismatch/);
+  assert.throws(() => checkMermaidSource({ ...view, mermaid: view.mermaid.replace('\\u0022Menu', '\\qMenu') }, registry, new Map()), /Invalid Mermaid node YAML escape/);
+});
 
 const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('"', '&quot;');
 const port = (box, side, slot = 1, count = 1) => ({ box, side, slot, count });

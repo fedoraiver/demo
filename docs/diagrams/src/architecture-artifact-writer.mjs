@@ -22,8 +22,6 @@ export function writeTextArtifactSync(directory, stagingDirectory, filename, con
   const outputRoot = path.resolve(directory), stagingRoot = path.resolve(stagingDirectory);
   const target = path.resolve(outputRoot, filename), staged = path.resolve(stagingRoot, filename);
   if (!target.startsWith(outputRoot + path.sep) || !staged.startsWith(stagingRoot + path.sep)) throw new Error('Unsafe architecture output path');
-  // 超限检查先于暂存和替换，拒绝大文件时保留已发布版本。
-  if (Buffer.byteLength(content) >= 100 * 1024 * 1024) throw new Error('Architecture artifact exceeds 100 MiB: ' + filename);
   if (fs.existsSync(target) && fs.readFileSync(target, 'utf8') === content) return;
   fs.mkdirSync(path.dirname(staged), { recursive: true });
   fs.mkdirSync(path.dirname(target), { recursive: true });

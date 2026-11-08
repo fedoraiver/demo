@@ -89,8 +89,10 @@ const advance=async()=>{for(let step=0;step<8;step++)await Promise.resolve()};
 function assertCardDetails(page,id){
   const details=page.get('details'),record=page.data.registry[id],opensObject=page.app.view.objectId!==id;
   const sources=(record.sourceEntries||[]).filter(source=>source.path&&Number.isSafeInteger(source.line)&&source.line>0);
-  assert.deepEqual(details.children.map(child=>child.tagName),['h2','p',...(opensObject?['button']:[]),...(sources.length?['section']:[])]);
-  assert.equal(details.children[0].textContent,record.name);assert.equal(details.children[1].textContent,record.description||'');
+  assert.equal(details.children[0].textContent,record.name);assert.ok(details.children[1].textContent.includes(record.kind));
+  if(record.description)assert.ok(!details.textContent.includes(record.description));
+  for(const registration of record.registrations||[])assert.ok(details.textContent.includes(registration.schedule));
+  for(const gap of record.sourceGaps||[])assert.ok(details.textContent.includes(gap));
   assert.deepEqual(details.querySelectorAll('[data-object]').map(button=>button.dataset.object),opensObject?[id]:[]);
   assert.deepEqual(details.querySelectorAll('[data-vscode-line]').map(anchor=>anchor.dataset.vscodeLine),sources.map(source=>String(source.line)));
   assert.equal(details.querySelector('[data-owner]'),null);assert.equal(details.querySelector('[data-open]'),null);assert.equal(details.querySelector('#clear-selection'),null);
@@ -301,8 +303,8 @@ test('Schedule left-click binds exact cards, nested sets, title layers and conte
   assert.equal(page.get('view-select').value,'schedule-update');assert.equal(fixed.classList.contains('selected'),true);
   leftClick(page,'update-card');assertCardDetails(page,'system-update');assert.equal(page.location.searchParams.get('scheduleNode'),'update-card');
   for(const className of ['cluster','schedule-cluster-title']){leftClick(page,'inner-set',className);assert.equal(page.get('details').querySelector('h2').textContent,'SharedSet');assert.equal(page.location.searchParams.get('scheduleNode'),'inner-set')}
-  leftClick(page,'sync-card');assert.ok(page.get('details').textContent.includes('同步依赖端点'));
-  leftClick(page,'missing-card');assert.ok(page.get('details').textContent.includes('不是本调度中的已注册系统'));
+  leftClick(page,'sync-card');assert.ok(page.get('details').textContent.includes('ApplyDeferred'));
+  leftClick(page,'missing-card');assert.ok(page.get('details').textContent.includes('本调度未注册目标系统'));
   for(const element of [page.get('diagram').querySelector('g.edge'),page.get('hidden-marker'),page.get('diagram')])assert.equal(element.dispatch('contextmenu').defaultPrevented,false);
   assert.equal(page.app.view.svg,original);assert.equal(page.data.views.find(view=>view.id==='schedule-update').svg,original);
   assert.equal(page.location.searchParams.get('workspace'),'E:/work');assert.equal(page.location.searchParams.get('keep'),'1');assert.equal(page.location.hash,'#anchor');
@@ -674,12 +676,12 @@ test('old aggregate aliases offer every original projection or registration with
   const standalone=viewer('?feature=item&node=old-function');assert.equal(standalone.get('object-results').querySelector('h2').textContent,'选择原对象');
 });
 
-test('each projection and registration keeps its own description and source locations in minimal card details',()=>{
+test('each projection and registration shows factual identity and its own source locations',()=>{
   const page=viewer('?feature=item&object=item.Shared');
-  assertCardDetails(page,'item.Shared');assert.ok(page.get('details').textContent.includes('物品组件的完整说明'));
+  assertCardDetails(page,'item.Shared');assert.ok(!page.get('details').textContent.includes('物品组件的完整说明'));
   assert.ok(!page.get('details').textContent.includes('另一投影说明'));
   page.app.openObject('character.Shared');page.flush();
-  assert.equal(page.app.view.id,'object:character.Shared');assertCardDetails(page,'character.Shared');assert.ok(page.get('details').textContent.includes('另一投影说明'));
+  assert.equal(page.app.view.id,'object:character.Shared');assertCardDetails(page,'character.Shared');assert.ok(!page.get('details').textContent.includes('另一投影说明'));
   assert.ok(!page.get('details').textContent.includes('value: f32'));
   page.app.openObject('system-fixed');page.flush();
   assertCardDetails(page,'system-fixed');assert.equal(page.data.registry['system-fixed'].registrations[0].schedule,'FixedUpdate');
@@ -904,12 +906,12 @@ test('unavailable local history and stale object routes retain working navigatio
   const unrelated=viewer('?object=item.Shared&node=resource.Config');assert.equal(unrelated.app.selection.node,'item.Shared');
 });
 
-test('card details omit access, query, ownership and source gaps while keeping authoritative source entries',()=>{
+test('card details preserve analysis gaps and authoritative sources without inventing access or definitions',()=>{
   const page=viewer('?feature=item&object=system-fixed');const details=page.get('details');
   assertCardDetails(page,'system-fixed');assert.ok(!details.textContent.includes('Query<&mut Shared>'));
   assert.deepEqual(page.data.registry['system-fixed'].reads,['item.Shared','item.Other','character.Shared','resource.Config','local.State','non_send.Native']);
   assert.deepEqual(page.data.registry['system-fixed'].filters,['Query<&mut Shared>','With<Pickable>']);
-  page.app.openObject('item.Other');page.flush();assertCardDetails(page,'item.Other');assert.equal(details.querySelector('[data-vscode-path]'),null);assert.ok(!details.textContent.includes('待核实'));assert.ok(!details.textContent.includes('not-a-definition.rs'));
+  page.app.openObject('item.Other');page.flush();assertCardDetails(page,'item.Other');assert.equal(details.querySelector('[data-vscode-path]'),null);assert.ok(details.textContent.includes('待核实'));assert.ok(!details.textContent.includes('not-a-definition.rs'));
   assert.deepEqual(page.data.registry['item.Other'].sourceGaps,['待核实：没有类型定义证据']);
 });
 
@@ -1141,11 +1143,11 @@ test('nested Schedule picker entries navigate by view ID and restore selection h
 test('Plugin and PluginGroup show details only while selected and return to their native object legends',()=>{
   for(const id of ['plugin-ItemPlugin','plugin-physics-0']){
     const page=viewer('?object='+id);assert.equal(page.get('details').hidden,false);
-    const description=page.data.registry[id].description;
-    assert.ok(page.get('details').querySelector('.guide'));assert.equal(page.location.searchParams.has('node'),false);page.activate(id);assert.ok(page.get('details').textContent.includes(description));
+    const name=page.data.registry[id].name;
+    assert.ok(page.get('details').querySelector('.guide'));assert.equal(page.location.searchParams.has('node'),false);page.activate(id);assert.equal(page.get('details').querySelector('h2').textContent,name);
     assert.ok(!page.get('details').textContent.includes('公开契约'));assert.deepEqual(page.data.model.features[0].contracts,['Shared public contract']);
     assertCardDetails(page,id);mouseClick(page,page.canvas);
-    assert.ok(page.get('details').querySelector('.guide'));assert.ok(!page.get('details').textContent.includes(description));
+    assert.ok(page.get('details').querySelector('.guide'));assert.ok(!page.get('details').textContent.includes(name));
     assert.equal(page.get('view-select').value,'object:'+id);assert.equal(page.get('schedule-filter').hidden,true);
     page.choose('schedule-update');page.emit('resize');assert.equal(page.get('details').hidden,false);assert.equal(page.get('details-resizer').hidden,false);
     page.choose('object:'+id);assert.equal(page.get('details').hidden,false);assert.equal(page.get('details-resizer').hidden,false);
