@@ -548,12 +548,14 @@ fn link_outputs_follow_native_crate_types_and_explicit_filenames() {
     );
     assert!(report.failure.is_none(), "{:?}", report.failure);
     assert!(report.inputs.complete, "{:?}", report.inputs.gaps);
-    let actual = if env::consts::EXE_SUFFIX.is_empty() {
-        requested
-    } else {
-        requested.with_extension(env::consts::EXE_SUFFIX.trim_start_matches('.'))
-    };
-    assert!(actual.is_file());
+    // 多产物编译按文件主名重建后缀；Linux 可执行文件的空后缀也会移除 .custom。
+    let actual = requested.with_extension(env::consts::EXE_SUFFIX.trim_start_matches('.'));
+    assert!(
+        actual.is_file(),
+        "Expected native linked output {}: {:?}",
+        actual.display(),
+        report.inputs.outputs
+    );
     assert_eq!(actual.file_stem().unwrap(), "requested-artifact");
     assert!(
         report
