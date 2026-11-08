@@ -97,8 +97,8 @@ jobs:
         run: |
           npm ci --foreground-scripts
           npm exec --yes=false -- puppeteer browsers install chrome
-          node --input-type=module -e "import puppeteer from 'puppeteer'; import fs from 'node:fs'; const browser=puppeteer.executablePath(); if(!fs.existsSync(browser))throw new Error('Locked browser missing'); fs.appendFileSync(process.env.GITHUB_ENV, 'MERMAID_CHROMIUM_PATH='+browser+'\nMAINTENANCE_VISUAL_CHROMIUM='+browser+'\n');"
-          node --input-type=module -e "import puppeteer from 'puppeteer'; const browser=await puppeteer.launch({executablePath:puppeteer.executablePath(),headless:true}); try {console.log(await browser.version());} finally {await browser.close();}"
+          node --input-type=module -e "import puppeteer from 'puppeteer'; import fs from 'node:fs'; const browser=await puppeteer.executablePath(); if(!fs.existsSync(browser))throw new Error('Locked browser missing: '+browser); fs.appendFileSync(process.env.GITHUB_ENV, 'MERMAID_CHROMIUM_PATH='+browser+'\nMAINTENANCE_VISUAL_CHROMIUM='+browser+'\n');"
+          node --input-type=module -e "import puppeteer from 'puppeteer'; const browser=await puppeteer.launch({executablePath:await puppeteer.executablePath(),headless:true}); try {console.log(await browser.version());} finally {await browser.close();}"
 
       - name: Restore checked geometry candidates
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
