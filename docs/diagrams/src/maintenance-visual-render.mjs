@@ -48,7 +48,7 @@ export async function renderVisual({ planPath, from = 1, to, browser }) {
     }
     const jobs = visualRenderJobCount();
     const [{ default: puppeteer }, { DOMParser }] = await Promise.all([importDiagramDependency('puppeteer'), importDiagramDependency('@xmldom/xmldom')]);
-    const candidates = browser ? [browser] : [process.env.MERMAID_CHROMIUM_PATH, puppeteer.executablePath()].filter(Boolean);
+    const candidates = browser ? [browser] : [process.env.MERMAID_CHROMIUM_PATH, await puppeteer.executablePath()].filter(Boolean);
     const executablePath = candidates.find(filename => fs.existsSync(filename));
     if (!executablePath) throw new Error('A local compile Chromium executable is required; set MERMAID_CHROMIUM_PATH or browser');
     const pngDirectory = path.join(output, 'png');

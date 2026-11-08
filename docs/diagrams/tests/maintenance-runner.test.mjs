@@ -476,6 +476,24 @@ test('installed dependencies omit incompatible optional platforms without reques
   assert.equal(dependencyState(f.workspace).valid, false);
 });
 
+for (const libc of ['glibc', 'musl']) test(`optional dependency validation selects ${libc} and still rejects its missing compatible package`, t => {
+  const f = fixture(t), base = { version: '1.0.0', integrity: 'fixture', resolved: 'https://fixture.invalid/native' };
+  const records = {
+    'node_modules/native-a': { ...base, optional: true, os: ['linux'], cpu: ['x64'], libc: ['glibc'] },
+    'node_modules/native-b': { ...base, optional: true, os: ['linux'], cpu: ['x64'], libc: ['musl'] },
+    'node_modules/another-cpu': { ...base, optional: true, os: ['linux'], cpu: ['arm64'], libc: [libc] },
+  };
+  const selected = libc === 'glibc' ? 'node_modules/native-a' : 'node_modules/native-b';
+  f.put('docs/diagrams/package-lock.json', JSON.stringify({ packages: { '': {}, ...records } }));
+  f.put('docs/diagrams/node_modules/.package-lock.json', JSON.stringify({ packages: { [selected]: records[selected] } }));
+  f.put('docs/diagrams/' + selected + '/package.json', '{"version":"1.0.0"}');
+  const environment = { platform: 'linux', arch: 'x64', libc };
+  assert.equal(dependencyState(f.workspace, environment).valid, true);
+  f.put('docs/diagrams/node_modules/.package-lock.json', '{"packages":{}}');
+  const missing = dependencyState(f.workspace, environment);
+  assert.equal(missing.valid, false); assert.ok(missing.reason.includes(selected));
+});
+
 test('compiler selectors use direct env before CARGO_BUILD env before hierarchical config', t => {
   const f = fixture(t), home = path.join(f.workspace, 'cargo-home');
   const configs = [

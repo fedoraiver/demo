@@ -38,15 +38,17 @@ export function relevantInputNames(workspace) {
   return names;
 }
 
-export function dependencyState(workspace) {
+export function dependencyState(workspace, { platform = process.platform, arch = process.arch, libc } = {}) {
   const root = path.join(workspace, 'docs/diagrams');
   try {
+    // npm 按原生 libc 选择 Linux 可选包；不从依赖名称猜测兼容性。
+    const selectedLibc = libc ?? (platform === 'linux' ? (process.report.getReport().header.glibcVersionRuntime ? 'glibc' : 'musl') : undefined);
     const locked = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json'), 'utf8'));
     const installed = JSON.parse(fs.readFileSync(path.join(root, 'node_modules/.package-lock.json'), 'utf8'));
     for (const [name, record] of Object.entries(locked.packages || {})) {
       if (!name) continue;
       const supports = (selectors, value) => !selectors || !selectors.includes(`!${value}`) && (!selectors.some(item => !item.startsWith('!')) || selectors.includes(value));
-      if (record.optional && (!supports(record.os, process.platform) || !supports(record.cpu, process.arch))) continue;
+      if (record.optional && (!supports(record.os, platform) || !supports(record.cpu, arch) || !supports(record.libc, selectedLibc))) continue;
       const actual = installed.packages?.[name];
       if (!actual || ['version', 'integrity', 'resolved'].some(key => record[key] !== actual[key])) throw new Error(`Installed lock mismatch: ${name}`);
       const manifest = JSON.parse(fs.readFileSync(path.join(root, name, 'package.json'), 'utf8'));
