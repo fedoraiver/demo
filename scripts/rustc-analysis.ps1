@@ -4,7 +4,7 @@ $PSNativeCommandUseErrorActionPreference = $false
 $arguments = @($args)
 $projectRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 $toolManifest = Join-Path $projectRoot 'tools/rustc-analysis/Cargo.toml'
-$variables = @('CARGO_TARGET_DIR', 'CARGO_BUILD_BUILD_DIR', 'PATH')
+$variables = @('CARGO_TARGET_DIR', 'CARGO_BUILD_BUILD_DIR', 'PATH', 'LD_LIBRARY_PATH')
 $previous = @{}
 foreach ($variable in $variables) {
     $previous[$variable] = [Environment]::GetEnvironmentVariable($variable, 'Process')
@@ -16,6 +16,14 @@ try {
     $compilerRoot = (& rustc --print sysroot).Trim()
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     $env:PATH = (Join-Path $compilerRoot 'bin') + [IO.Path]::PathSeparator + (Join-Path $compilerRoot 'lib') + [IO.Path]::PathSeparator + $env:PATH
+    if ($IsLinux) {
+        # 直接运行 driver 及回归子进程时，也能加载固定工具链的编译器与标准库。
+        $targetLibraries = (& rustc --print target-libdir).Trim()
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        $libraryPaths = @((Join-Path $compilerRoot 'lib'), $targetLibraries)
+        if ($env:LD_LIBRARY_PATH) { $libraryPaths += $env:LD_LIBRARY_PATH }
+        $env:LD_LIBRARY_PATH = $libraryPaths -join [IO.Path]::PathSeparator
+    }
     & cargo build --locked --manifest-path $toolManifest --workspace --bins
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     if ($arguments.Count -gt 0 -and $arguments[0] -eq '--build-only') { exit 0 }
