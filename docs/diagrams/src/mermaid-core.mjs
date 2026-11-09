@@ -502,7 +502,10 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
         const failedOutput = visualEdgesOf(view).some(link => !link.nativeReverse && (link.displayFrom ?? link.from) === center && invalid.some(edge => edge.id === link.id));
         if (!outputContext && failedOutput) {
           outputContext = objectNeighborContext(view, 'output');
-          if (outputContext !== view) profiles.splice(attempt + 1, 0, { spacing: 0, span: 0, outgoingContext: true });
+          // 输出链解除近共线后仍可能留下原生箭头间隙；容器与间距候选保留同一条链并完整复核。
+          if (outputContext !== view) profiles.splice(attempt + 1, 0,
+            { spacing: 0, span: 0, outgoingContext: true },
+            ...[16, 32, 64].map(spacing => ({ spacing, span: 0, cardContainers: true, outgoingContext: true })));
         }
         const failedLoneInput = inputContext === view && visualEdgesOf(view).some(link => (link.displayTo ?? link.to) === center
           && (link.displayFrom ?? link.from) !== center && invalid.some(edge => edge.id === link.id));

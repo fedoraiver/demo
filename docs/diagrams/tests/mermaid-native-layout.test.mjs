@@ -166,6 +166,20 @@ test('captured InputFocus output fanout retains every read under strict native r
   assert.deepEqual(fixture, before);
 });
 
+test('captured InputFocus output fanout keeps strict routing with Liberation and Noto font metrics', { skip: !chromium, timeout: 180000 }, async () => {
+  const fixture = JSON.parse(fs.readFileSync(new URL('./fixtures/native-input-focus.json', import.meta.url), 'utf8'));
+  const { graph, registry, features } = fixture;
+  const view = renderGraphView(fixture.view, graph, registry, features);
+  view.mermaid = view.mermaid.replace(/^---\r?\n([\s\S]*?)\r?\n---/, (_, json) => {
+    const configuration = JSON.parse(json);
+    configuration.config.fontFamily = 'Liberation Sans, Noto Sans SC, sans-serif';
+    return `---\n${JSON.stringify(configuration, null, 2)}\n---`;
+  });
+  const result = await compileFixture(view, graph, 'input-focus-liberation', registry);
+  assert.equal(result.nodes.length, 38); assert.equal(result.links.length, 65);
+  assert.deepEqual(nativeLabelMismatches(result), []);
+});
+
 test('captured SSAO parallel input operations retain exact removal evidence with fact-only cards', { skip: !chromium, timeout: 300000 }, async () => {
   const fixture = JSON.parse(fs.readFileSync(new URL('./fixtures/native-ssao-input.json', import.meta.url), 'utf8'));
   const { graph, registry, features, targetEdgeId } = fixture, before = structuredClone(fixture);
