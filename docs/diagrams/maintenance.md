@@ -6,7 +6,7 @@
 
 相关源码、分析工具、图包或工作流变更触发面向 `master` 的 PR 构建。PR 只检查；推送到 `master` 且成功后发布 [GitHub Pages](https://fedoraiver.github.io/demo/)。也可从 Actions 的 `ECS architecture` 手动运行；非 `master` 分支只构建，`master` 可发布。仓库 Pages 的构建来源须选择 GitHub Actions，部署环境使用 `github-pages`。
 
-发布图表示原生 Linux 目标在导出时的注册结构。页面显示源码提交、目标及构建 ID；它不代表 Windows、macOS、其他设备能力或随后动态注册的 Schedule。部署 job 只在同轮完整检查及静态包校验成功后运行，使用 Pages 写权限和 OIDC；构建 job 只有仓库读取权限。
+发布图表示原生 Linux 目标在导出时的注册结构，不代表 Windows、macOS、其他设备能力或随后动态注册的 Schedule。源码提交、目标及构建 ID 保存在启动数据和清单中，用于校验同轮资源。部署 job 只在同轮完整检查及静态包校验成功后运行，使用 Pages 写权限和 OIDC；构建 job 只有仓库读取权限。
 
 构建采用免费标准 `ubuntu-24.04` runner、Node 24、仓库固定 nightly 和锁定依赖。Xvfb 提供虚拟显示，Mesa Lavapipe 提供软件 Vulkan；专用导出仍完整装配插件，但不执行 Startup、游戏循环或渲染线程。无音频设备时的实际初始化结果记录在会话日志中，不通过删插件或测试夹具替代真实导出。
 

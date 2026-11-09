@@ -6,6 +6,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { writeSourceViewer } from '../src/source-viewer.mjs';
+import { dependencyKind, normalizeSourceEntry, normalizeWorkspaceRoot } from '../src/source-editor.mjs';
 import { renderArchitectureViewer } from '../src/architecture-viewer.mjs';
 import { Element, parseMarkup, scriptsIn, testDocument } from './test-dom.mjs';
 
@@ -56,6 +57,32 @@ function viewer(sources, url = 'https://example.test/docs/diagrams/ecs-source.ht
 
 const selected = page => page.get('code').children.filter(row => row.classList.contains('selected')).map(row => row.id);
 
+test('source snapshot generation rejects ambiguous logical file keys', () => {
+  fs.mkdirSync(temporaryRoot, { recursive: true });
+  const directory = fs.mkdtempSync(path.join(temporaryRoot, 'ambiguous-'));
+  const logicalPath = 'cargo/example-1.0.0/src/lib.rs';
+  assert.throws(() => writeSourceViewer({ outputDirectory: directory, sources: [
+    { path: logicalPath, text: 'first source' }, { path: logicalPath, text: 'different source' },
+  ] }), /Ambiguous source snapshot/);
+});
+
+test('snapshot generation rejects same-name package origins even when their files differ', () => {
+  fs.mkdirSync(temporaryRoot, { recursive: true });
+  const directory = fs.mkdtempSync(path.join(temporaryRoot, 'ambiguous-package-'));
+  const entry = (filename, root) => ({ path: 'cargo/example-1.0.0/' + filename, text: 'source',
+    source: { path: filename, line: 1, dependency: { name: 'example', version: '1.0.0', root } } });
+  assert.throws(() => writeSourceViewer({ outputDirectory: directory, sources: [
+    entry('src/lib.rs', '/home/runner/.cargo/registry/src/ci-hash/example-1.0.0'),
+    entry('src/git_impl.rs', '/home/runner/.cargo/git/checkouts/example-abcd/123456'),
+  ] }), /Ambiguous dependency source roots: example@1\.0\.0/);
+  assert.throws(() => writeSourceViewer({ outputDirectory: directory, sources: [
+    entry('src/lib.rs', 'relative-one'), entry('src/other.rs', 'relative-two'),
+  ] }), /Ambiguous dependency source roots/);
+  assert.doesNotThrow(() => writeSourceViewer({ outputDirectory: directory, sources: [
+    entry('src/lib.rs', 'E:\\cargo\\example'), entry('src/other.rs', '//?/E:/cargo/example/'),
+  ] }));
+});
+
 test('generated viewer numbers CRLF, lone CR, empty and trailing lines as safe text', () => {
   const page = viewer([{ path: 'src/example.rs', text: 'first\r\n\r\nlast\rend\r\n' }]);
   assert.deepEqual(page.get('code').children.map(row => row.children[1].textContent), ['first', '', 'last', 'end', '']);
@@ -89,7 +116,7 @@ test('the generated source page omits the shared bottom directory status while p
   const page = viewer([{ path: 'src/example.rs', text: 'one\ntwo' }]);
   assert.equal(page.document.querySelector('[data-workspace-status]'), null);
   const dialog = page.document.querySelector('[data-workspace-dialog]');
-  assert.equal(dialog.querySelectorAll('p').length, 1);
+  assert.equal(dialog.querySelectorAll('p').length, 2);
   assert.ok(dialog.querySelector('[data-workspace-error]'));
   assert.equal(dialog.querySelectorAll('button').length, 3);
   page.hash('#L2');
@@ -122,13 +149,16 @@ test('Cargo snapshots keep their logical file key while line actions use the dep
     const page = viewer(sources, 'https://example.test/docs/diagrams/ecs-source.html' + query + workspace + '#L3');
     const link = page.get('editor-open'), controls = page.document.querySelector('[data-source-location]');
     assert.equal(page.get('file').value, path);
+    assert.ok(page.get('file').children.every(option => !/runner|Cargo &/.test(option.textContent)));
     assert.equal(page.get('summary').textContent, path + ' · 3 行');
     assert.equal(link.dataset.vscodePath, snapshot.source.path);
     assert.equal(link.dataset.vscodeDependencyName, dependency.name);
     assert.equal(link.dataset.vscodeDependencyVersion, dependency.version);
-    assert.equal(link.dataset.vscodeDependencyRoot, dependency.root);
-    assert.equal(controls.querySelector('input').value, dependency.root + '/src/中文 #%.rs:3:1');
-    assert.equal(link.href, 'vscode://file/C:/Cargo%20%26%20%E4%B8%AD%E6%96%87%20%23%25/avian3d-0.7.0/src/%E4%B8%AD%E6%96%87%20%23%25.rs:3:1');
+    assert.equal(link.dataset.vscodeDependencyRoot, undefined);
+    assert.equal(link.dataset.vscodeDependencyKind, 'package');
+    vm.runInContext('sourceEditor.configureCargoPackage({name:"avian3d",version:"0.7.0"}, "C:/local/avian3d")', page.context);
+    assert.equal(controls.querySelector('input').value, 'avian3d-0.7.0/src/中文 #%.rs:3:1');
+    assert.equal(link.href, 'vscode://file/C:/local/avian3d/src/%E4%B8%AD%E6%96%87%20%23%25.rs:3:1');
     assert.deepEqual(selected(page), ['L3']);
     page.clickLine(2);
     assert.ok(link.href.endsWith(':2:1'));
@@ -172,13 +202,13 @@ test('dependency snapshots with unavailable roots retain safe relative locations
     const dependency = { name: 'bevy_asset', version: '0.20.0', ...(root === undefined ? {} : { root }) };
     const page = viewer([{ path: 'cargo/bevy_asset-0.20.0/src/lib.rs', text: 'one\ntwo', source: { path: 'src/lib.rs', line: 1, dependency } }]);
     const link = page.get('editor-open'), controls = page.document.querySelector('[data-source-location]');
-    assert.equal(link.getAttribute('href'), null);
-    assert.equal(link.getAttribute('aria-disabled'), 'true');
-    assert.equal(controls.querySelector('input').value, 'src/lib.rs:1:1');
-    assert.match(controls.querySelector('[data-source-unavailable]').textContent, /依赖源码根目录(?:缺失|无效)/);
+    assert.equal(link.getAttribute('href'), '#workspace-config');
+    assert.equal(link.getAttribute('aria-disabled'), null);
+    assert.equal(controls.querySelector('input').value, 'bevy_asset-0.20.0/src/lib.rs:1:1');
+    assert.match(controls.querySelector('[data-source-unavailable]').textContent, /配置此依赖包/);
     page.hash('#L2');
-    assert.equal(controls.querySelector('input').value, 'src/lib.rs:2:1');
-    assert.equal(link.getAttribute('href'), null);
+    assert.equal(controls.querySelector('input').value, 'bevy_asset-0.20.0/src/lib.rs:2:1');
+    assert.equal(link.getAttribute('href'), '#workspace-config');
   }
 });
 
@@ -264,7 +294,7 @@ function architectureDetails(registry, workspace = 'D:/demo', clipboard) {
   const location = new URL('https://example.test/docs/diagrams/ecs-architecture.html');
   if (workspace !== null) location.searchParams.set('workspace', workspace);
   const context = vm.createContext({
-    document, details, location, URL, navigator: { clipboard },
+    document, details, location, URL, dependencyKind, normalizeSourceEntry, normalizeWorkspaceRoot, navigator: { clipboard },
     localStorage: { getItem: () => null },
     history: { replaceState: (_, __, url) => { location.href = url; } },
     setTimeout: () => 1, clearTimeout() {},
@@ -277,7 +307,7 @@ function architectureDetails(registry, workspace = 'D:/demo', clipboard) {
   return { document, details, context, location, show: id => vm.runInContext('showDetail(' + JSON.stringify(id) + ');', context) };
 }
 
-test('generated architecture details keep factual identity, gaps and functional source locations', () => {
+test('generated architecture details keep source locations while leaving analysis gaps in data', () => {
   const page = architectureDetails({ source: { name: 'update', description: '完整节点说明保留注册顺序与生命周期约束。', feature: 'item', owner: '隐藏归属', reads: ['data'], fields: ['隐藏字段'], sourceGaps: ['隐藏缺口'], sourceEntries: [{ role: 'definition', label: '函数定义', path: 'src/中文 #%.rs', line: 8, column: 3 }], source: { path: 'src/legacy.rs', line: 1 } }, data: { name: 'Resource' } });
   const { details, context } = page;
   page.show('source');
@@ -289,8 +319,8 @@ test('generated architecture details keep factual identity, gaps and functional 
   assert.equal(links[0].href, 'vscode://file/D:/demo/src/%E4%B8%AD%E6%96%87%20%23%25.rs:8:3');
   assert.equal(details.querySelector('[data-source-location] input').value, 'D:/demo/src/中文 #%.rs:8:3');
   assert.ok(!details.textContent.includes('完整节点说明保留注册顺序与生命周期约束。'));
-  assert.ok(details.textContent.includes('隐藏缺口'));
-  assert.deepEqual(details.children.map(child => child.tagName), ['h2', 'p', 'button', 'h3', 'ul', 'section']);
+  assert.equal(details.textContent.includes('隐藏缺口'), false);
+  assert.deepEqual(details.children.map(child => child.tagName), ['h2', 'p', 'button', 'section']);
   assert.equal(details.querySelector('[data-object]').dataset.object, 'source');
   assert.equal(details.querySelector('#clear-selection'), null);
   assert.doesNotMatch(details.textContent, /隐藏归属|隐藏字段|src\/legacy\.rs/);
@@ -312,54 +342,48 @@ const nativeSourceEntry = {
   sha256: 'f7f691fee61cccb5a16912afcf576ee2bf758a754fd5389120beeb71986844f4',
 };
 
-test('native Cargo sourceEntries produce usable architecture links with the actual shared editor', () => {
-  for (const [root, expectedRoot] of [
-    [nativeSourceEntry.dependency.root, 'C:/Cargo Registry/中文 #%/bevy_asset-0.20.0'],
-    ['\\\\?\\C:\\Cargo Registry\\中文 #%\\bevy_asset-0.20.0', 'C:/Cargo Registry/中文 #%/bevy_asset-0.20.0'],
-    ['\\\\?\\UNC\\server\\share\\Cargo Registry\\中文 #%\\bevy_asset-0.20.0', '//server/share/Cargo Registry/中文 #%/bevy_asset-0.20.0'],
-  ]) for (const workspace of [null, 'relative', 'D:/project']) {
+test('native Cargo sourceEntries use portable labels and local registry mappings across producer platforms', () => {
+  for (const root of ['/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_asset-0.20.0',
+    '\\\\?\\C:\\Users\\builder\\.cargo\\registry\\src\\another-hash\\bevy_asset-0.20.0']) {
     const source = { ...nativeSourceEntry, dependency: { ...nativeSourceEntry.dependency, root } };
-    const page = architectureDetails({ source: { name: 'assetEventsCondition', description: '资源事件条件。', sourceEntries: [source] } }, workspace);
+    const original = structuredClone(source);
+    const page = architectureDetails({ source: { name: 'assetEventsCondition', sourceEntries: [source] } });
     page.show('source');
     const link = page.details.querySelector('a[data-vscode-path]');
-    const encodedRoot = expectedRoot.split('/').map((part, index) => index === 0 && /^[A-Z]:$/.test(part) ? part : encodeURIComponent(part)).join('/');
-    assert.equal(link.href, 'vscode://file' + (encodedRoot.startsWith('/') ? '' : '/') + encodedRoot + '/src/assets.rs:617:5');
-    assert.equal(page.details.querySelector('[data-source-location] input').value, expectedRoot + '/src/assets.rs:617:5');
+    assert.equal(link.href, '#workspace-config');
+    assert.equal(link.dataset.vscodeDependencyRoot, undefined);
+    assert.equal(link.dataset.vscodeDependencyKind, 'registry');
+    assert.equal(page.details.querySelector('[data-source-location] input').value, 'bevy_asset-0.20.0/src/assets.rs:617:5');
+    assert.doesNotMatch(page.details.textContent, /runner|builder|1949cf8c/);
+    vm.runInContext('sourceEditor.configureCargoRegistry("C:/Users/local/.cargo/registry/src/local-hash")', page.context);
+    assert.equal(link.href, 'vscode://file/C:/Users/local/.cargo/registry/src/local-hash/bevy_asset-0.20.0/src/assets.rs:617:5');
     assert.equal(link.dataset.workspaceState, 'ready');
-    assert.equal(link.getAttribute('aria-disabled'), null);
     assert.equal(page.details.querySelector('[data-source-unavailable]').textContent, '');
-    assert.equal(link.dispatch('click').defaultPrevented, false);
-    const before = page.location.href;
-    vm.runInContext('sourceEditor.refreshLinks(); sourceEditor.configure("E:/other-project");', page.context);
-    assert.equal(new URL(page.location.href).protocol, 'https:');
-    assert.equal(new URL(before).pathname, page.location.pathname);
-    assert.equal(page.details.querySelector('[data-source-location] input').value, expectedRoot + '/src/assets.rs:617:5');
+    vm.runInContext('sourceEditor.configure("E:/other-project");', page.context);
+    assert.ok(link.href.includes('/local-hash/'));
+    assert.deepEqual(source, original);
   }
 });
 
-test('native Cargo sourceEntries with unavailable roots keep a visible reason and copy the relative definition', async () => {
-  for (const root of [undefined, '', 'relative', '//?/GLOBALROOT/Device/HarddiskVolume1', '//?/C:/../outside']) {
+test('unknown Cargo source entries require a package mapping while retaining portable copy locations', async () => {
+  for (const root of [undefined, '', '/home/runner/.cargo/git/checkouts/bevy-aabb/12345', 'E:/path-dependency']) {
     const dependency = { ...nativeSourceEntry.dependency };
-    if (root === undefined) delete dependency.root;
-    else dependency.root = root;
+    if (root === undefined) delete dependency.root; else dependency.root = root;
     const copied = [], source = { ...nativeSourceEntry, dependency };
     const page = architectureDetails({ source: { name: 'assetEventsCondition', sourceEntries: [source] } }, 'D:/project', { writeText: async value => copied.push(value) });
     page.show('source');
     const link = page.details.querySelector('a[data-vscode-path]'), controls = page.details.querySelector('[data-source-location]');
-    assert.equal(link.getAttribute('href'), null);
-    assert.equal(link.getAttribute('aria-disabled'), 'true');
-    assert.equal(link.dataset.workspaceState, 'unavailable');
-    assert.equal(controls.querySelector('input').value, 'src/assets.rs:617:5');
-    assert.match(controls.querySelector('[data-source-unavailable]').textContent, /依赖源码根目录(?:缺失|无效)/);
-    assert.equal(link.dispatch('click').defaultPrevented, true);
-    assert.equal(page.document.querySelector('[data-workspace-dialog]').getAttribute('open'), null);
+    assert.equal(link.getAttribute('href'), '#workspace-config');
+    assert.equal(link.dataset.workspaceState, 'unconfigured');
+    assert.equal(controls.querySelector('input').value, 'bevy_asset-0.20.0/src/assets.rs:617:5');
+    assert.match(controls.querySelector('[data-source-unavailable]').textContent, /配置此依赖包/);
     controls.querySelector('button').dispatch('click');
     await new Promise(resolve => setImmediate(resolve));
-    assert.deepEqual(copied, ['src/assets.rs:617:5']);
-    assert.equal(controls.querySelector('button').textContent, '已复制');
-    vm.runInContext('sourceEditor.configure("E:/other-project");', page.context);
-    assert.equal(link.getAttribute('href'), null);
-    assert.equal(controls.querySelector('input').value, 'src/assets.rs:617:5');
+    assert.deepEqual(copied, ['bevy_asset-0.20.0/src/assets.rs:617:5']);
+    vm.runInContext('sourceEditor.configureCargoRegistry("C:/registry/local-hash")', page.context);
+    assert.equal(link.href, '#workspace-config');
+    vm.runInContext('sourceEditor.configureCargoPackage({name:"bevy_asset",version:"0.20.0"},"E:/my-checkout")', page.context);
+    assert.equal(link.href, 'vscode://file/E:/my-checkout/src/assets.rs:617:5');
   }
 });
 
@@ -381,5 +405,6 @@ test('generated architecture links reject unsafe paths and coordinates instead o
   delete source.column;
   const page = architectureDetails({ source: { name: 'assetEventsCondition', sourceEntries: [source] } });
   page.show('source');
+  vm.runInContext('sourceEditor.configureCargoPackage({name:"bevy_asset",version:"0.20.0"},"E:/my-checkout")', page.context);
   assert.ok(page.details.querySelector('a[data-vscode-path]').href.endsWith(':617:1'));
 });

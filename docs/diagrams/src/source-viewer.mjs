@@ -1,10 +1,22 @@
 // 将源码快照内嵌到离线查看页；源码只作为文本展示，不执行其中的标记或脚本。
 import fs from 'node:fs';
 import path from 'node:path';
-import { sourceEditorAssets } from './source-editor.mjs';
+import { normalizeWorkspaceRoot, sourceEditorAssets } from './source-editor.mjs';
 
 /** 写入 ecs-source.html；快照使用逻辑路径，依赖文件可另带真实源码 source 定位。 */
 export function writeSourceViewer({ outputDirectory, sources }) {
+  if (new Set(sources.map(source => source.path)).size !== sources.length) throw new Error('Ambiguous source snapshot paths');
+  // 本机包目录按包名与版本配置；同一身份存在多个来源时不能任选其一或互相覆盖。
+  const packageOrigins = new Map();
+  for (const snapshot of sources) {
+    const dependency = snapshot.source?.dependency;
+    if (!dependency) continue;
+    const identity = dependency.name + '@' + dependency.version;
+    let origin = dependency.root;
+    try { origin = normalizeWorkspaceRoot(origin); } catch { /* 不可规范化的原始来源仍参与冲突检测。 */ }
+    if (packageOrigins.has(identity) && packageOrigins.get(identity) !== origin) throw new Error('Ambiguous dependency source roots: ' + identity);
+    packageOrigins.set(identity, origin);
+  }
   const editorAssets = sourceEditorAssets();
   // 转义脚本容器的边界字符，避免源码中的 </script> 提前结束 JSON 数据块。
   const snapshot = JSON.stringify(sources).replace(/[<>&\u2028\u2029]/g, character =>
@@ -101,11 +113,11 @@ function showFile() {
   const source = snapshot?.source || (snapshot ? { path: file, line: 1 } : null);
   editorLink.dataset.vscodePath = source?.path || '';
   editorLink.dataset.vscodeColumn = String(source?.column || 1);
-  for (const key of ['Name', 'Version', 'Root']) delete editorLink.dataset['vscodeDependency' + key];
+  for (const key of ['Name', 'Version', 'Root', 'Kind']) delete editorLink.dataset['vscodeDependency' + key];
   if (source?.dependency) {
     editorLink.dataset.vscodeDependencyName = source.dependency.name;
     editorLink.dataset.vscodeDependencyVersion = source.dependency.version;
-    editorLink.dataset.vscodeDependencyRoot = source.dependency.root;
+    editorLink.dataset.vscodeDependencyKind = sourceEditor.dependencyKind(source.dependency);
   }
   empty.hidden = true;
   summary.textContent = '';
