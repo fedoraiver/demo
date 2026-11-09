@@ -55,7 +55,7 @@ const sources = model.sourceFiles.map(source => ({ path: sourceKey(source), text
 const sourcePage = fs.readFileSync(writeSourceViewer({ outputDirectory: paths.pagesDirectory, sources }), 'utf8');
 const runtimeAssets = await scheduleRuntimeAssets();
 const objectRuntimeAssets = await objectRelationRuntimeAssets();
-const data = { schemaVersion: 5, model, registry, views, guideSamples: compiled.guideSamples, scheduleLegendLabels: SCHEDULE_LEGEND_LABELS,
+const data = { schemaVersion: 6, model, registry, views, guideSamples: compiled.guideSamples, scheduleLegendLabels: SCHEDULE_LEGEND_LABELS,
   objects: objects.objects, objectAliases: model.object_aliases || {}, sourceRoleLabels: SOURCE_ROLE_LABELS,
   schedulePluginCatalog: pluginGroups.catalog, scheduleInteractions, infrastructureFeatures,
   styles: { nodes: NODE_STYLES, edges: EDGE_STYLES, selection: SELECTION_STYLE, externalReference: EXTERNAL_REFERENCE_STYLE } };

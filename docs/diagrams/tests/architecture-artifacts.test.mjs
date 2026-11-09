@@ -13,13 +13,13 @@ function fixture({ sidecar = false, objectRelationRuntime } = {}) {
   fs.mkdirSync(temporary, { recursive: true });
   const paths = pathsForRepository(fs.mkdtempSync(path.join(temporary, 'case-')));
   fs.mkdirSync(paths.pagesDirectory, { recursive: true });
-  const data = { schemaVersion: 5, model: { schemaVersion: 2, features: [], entities: [], systems: [{ id: 'system-a' }] },
+  const data = { schemaVersion: 6, model: { schemaVersion: 2, features: [], entities: [], systems: [{ id: 'system-a' }] },
     registry: { a: { name: 'A' } }, objects: [{ id: 'a' }], objectAliases: {}, infrastructureFeatures: [],
     guideSamples: { nodes: { system: '<svg xmlns="http://www.w3.org/2000/svg"/>' }, edges: {}, schedule: { nodes: {}, edges: {} } },
     views: [{ id: 'object-a', aspect: 'object', engine: 'mermaid', objectId: 'a', centerNodeId: 'a', filename: 'ecs-object-a.svg',
-      mermaidFilename: 'ecs-object-a.mmd', label: 'A', nodes: [{ id: 'a' }], links: [], width: 10, height: 10,
+      mermaidFilename: 'ecs-object-a.mmd', label: 'A', nodes: [{ id: 'a' }], links: [], visualEdgeGroups: [], width: 10, height: 10,
       svg: '<svg xmlns="http://www.w3.org/2000/svg" id="object-a"/>', mermaid: 'flowchart TB\nA["中文"]\n' },
-    { id: 'empty', aspect: 'object', svg: null, mermaid: null, filename: null, mermaidFilename: null, nodes: [], links: [] }],
+    { id: 'empty', aspect: 'object', svg: null, mermaid: null, filename: null, mermaidFilename: null, nodes: [], links: [], visualEdgeGroups: [] }],
   };
   const writeArtifact = (filename, text) => { const destination = path.join(paths.generatedDirectory, filename); fs.mkdirSync(path.dirname(destination), { recursive: true }); fs.writeFileSync(destination, text); };
   const compilerModelDirectory = path.join(paths.repositoryRoot, 'tmp/compiler');

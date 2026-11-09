@@ -48,7 +48,7 @@ export function createArchitectureAssetLoader({ baseUrl = globalThis.location?.h
   const cache = new Map(), pending = new Map(), modules = new Map(), modulePending = new Map();
   let pinned = null, recent = null, disposed = false;
   const abortError = () => new DOMException('Architecture loading cancelled', 'AbortError');
-  const keyFor = (ref, includeSvg) => JSON.stringify([ref.id, ref.resources?.data, includeSvg ? ref.resources?.svg : null, ref.relationCount]);
+  const keyFor = (ref, includeSvg) => JSON.stringify([ref.id, ref.resources?.data, includeSvg ? ref.resources?.svg : null, ref.relationCount, ref.visualEdgeCount]);
   const trim = () => { while (cache.size > limit) { const item = [...cache].find(([, value]) => value.id !== pinned); if (!item) break; cache.delete(item[0]); } };
   const keep = (key, value) => { cache.delete(key); cache.set(key, value); trim(); };
   function subscribe(entry, signal, pendingStore = pending) {
@@ -78,6 +78,8 @@ export function createArchitectureAssetLoader({ baseUrl = globalThis.location?.h
           for (const field of ['id','aspect','engine','objectId','application','scheduleLabel','filename','width','height']) if (ref[field] !== undefined && metadata[field] !== ref[field]) throw new Error('Architecture view metadata mismatch: ' + field);
           if (!Array.isArray(metadata.nodes) || !Array.isArray(metadata.links) || !Array.isArray(metadata.sections)) throw new Error('Invalid architecture view metadata');
           if (ref.relationCount !== undefined && (!Number.isSafeInteger(ref.relationCount) || ref.relationCount < 0 || metadata.links.length !== ref.relationCount)) throw new Error('Architecture view relation count mismatch');
+          if (ref.visualEdgeCount !== undefined && (!Number.isSafeInteger(ref.visualEdgeCount) || ref.visualEdgeCount < 0
+            || !Array.isArray(metadata.visualEdgeGroups) || metadata.visualEdgeGroups.length !== ref.visualEdgeCount)) throw new Error('Architecture visual edge count mismatch');
           if (svg !== null) { validateArchitectureSvg(svg, { DOMParser }); const root = new DOMParser().parseFromString(svg, 'image/svg+xml').documentElement; if (root.getAttribute('id') !== ref.id || root.getAttribute('data-diagram-engine') !== ref.engine) throw new Error('Architecture SVG identity mismatch'); }
           const value = Object.freeze({ ...metadata, svg }); recent = { key, value }; keep(key, value); return value;
         }).catch(error => { throw entry.controller.signal.aborted ? entry.controller.signal.reason || error : error; }).finally(() => { clearTimeout(timer); if (pending.get(key) === entry) pending.delete(key); });

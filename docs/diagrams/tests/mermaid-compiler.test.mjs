@@ -83,6 +83,7 @@ test('Mermaid secure edge limits count current semantic, Schedule and fallback l
   assert.equal(mermaidInitializeConfig(view).maxEdges, 510);
   const fallback = { ...view, layoutLinks: [...view.layoutLinks, ...new Array(120).fill({})] };
   assert.equal(mermaidInitializeConfig(fallback).maxEdges, 630);
+  assert.equal(mermaidInitializeConfig({ ...view, links: new Array(3000).fill({}), visualEdgeGroups: new Array(600).fill({}) }).maxEdges, 760);
   assert.deepEqual(view, before);
 });
 

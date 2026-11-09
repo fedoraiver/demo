@@ -200,6 +200,33 @@ test('a near-collinear output branch retries one native output context and leave
   assert.deepEqual({ view, registry }, before);
 });
 
+test('output context retains its native chain while clearance resolves a new marker gap', async () => {
+  const { view, registry } = outputBranchFixture(), before = structuredClone({ view, registry }), attempts = [];
+  const result = await compileRoutedView(view, registry, async candidate => candidate, {
+    onAttempt: attempt => attempts.push(attempt),
+    checks: {
+      labels: () => [], geometry: () => {},
+      routes: candidate => {
+        const outputContext = candidate.mermaid.includes('layout_output_');
+        const configuration = JSON.parse(/^---\n([\s\S]*?)\n---/.exec(candidate.mermaid)[1]).config;
+        const clearance = outputContext && candidate.mermaid.includes('subgraph layout_card_') && configuration.flowchart.nodeSpacing >= 48;
+        return { edges: [
+          { id: 'read-b', mermaidId: 'e0', axis: null, curved: outputContext, collisions: [], arrowIssues: [] },
+          { id: 'read-c', mermaidId: 'e1', axis: 'horizontal', curved: false, collisions: [], arrowIssues: outputContext && !clearance ? ['marker-target-gap'] : [] },
+        ] };
+      },
+    },
+  });
+  assert.equal(attempts.length, 2);
+  assert.equal(attempts[0].invalid[0].id, 'read-b');
+  assert.deepEqual(attempts[1].invalid[0].arrowIssues, ['marker-target-gap']);
+  assert.match(result.mermaid, /n1 layout_output_0@~~~ n2/);
+  assert.match(result.mermaid, /subgraph layout_card_n0/);
+  assert.equal(JSON.parse(/^---\n([\s\S]*?)\n---/.exec(result.mermaid)[1]).config.flowchart.nodeSpacing, 48);
+  assert.deepEqual(result.links, view.links);
+  assert.deepEqual({ view, registry }, before);
+});
+
 test('output context is bounded and never substitutes for failed labels, geometry, collisions or arrows', async () => {
   for (const failure of ['straight', 'label', 'geometry', 'collision', 'arrow']) {
     const { view, registry } = outputBranchFixture();
@@ -213,7 +240,7 @@ test('output context is bounded and never substitutes for failed labels, geometr
           collisions: failure === 'collision' ? [{ id: 'unrelated', kind: 'node' }] : [], arrowIssues: failure === 'arrow' ? ['path-target'] : [] }] }),
       },
     }), /Mermaid routing failed/);
-    assert.equal(outputAttempts, failure === 'straight' ? 1 : 0, failure);
+    assert.equal(outputAttempts, failure === 'straight' ? 4 : 0, failure);
   }
 });
 

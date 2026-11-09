@@ -1,3 +1,4 @@
+import { isVisibleRelation, visualEdgesOf } from './architecture-visual-edges.mjs';
 // 直接核对交付 SVG 的矩形和折线；端点声明只描述意图，不能替代真实几何。
 import { measureMermaidNodes, shapeBounds, svgElements } from './svg-shape-geometry.mjs';
 import { nativeMarkerProperty } from './architecture-routing.mjs';
@@ -238,6 +239,25 @@ function validMermaidPath(value, id) {
 
 /** 核对 Mermaid 的真实轮廓、列布局和路径；曲线不适用手工正交图的端口槽位规则。 */
 export function checkMermaidGeometry(svg, view) {
+  if (view.visualEdgeGroups) {
+    const canonical = new Map(view.links.map(link => [link.id, link]));
+    const covered = new Set(), groupIds = new Set();
+    requireCondition(canonical.size === view.links.length, 'Duplicate canonical Mermaid relation');
+    for (const group of view.visualEdgeGroups) {
+      requireCondition(group.id && !groupIds.has(group.id) && Array.isArray(group.forwardIds) && group.forwardIds.length > 0
+        && Array.isArray(group.backwardIds), `Invalid Mermaid visual edge group: ${group.id}`);
+      groupIds.add(group.id);
+      for (const [ids, from, to] of [[group.forwardIds, group.from, group.to], [group.backwardIds, group.to, group.from]]) {
+        for (const id of ids) {
+          const link = canonical.get(id);
+          requireCondition(link && isVisibleRelation(link) && !covered.has(id)
+            && (link.displayFrom ?? link.from) === from && (link.displayTo ?? link.to) === to, `Mermaid visual relation membership mismatch: ${id}`);
+          covered.add(id);
+        }
+      }
+    }
+    requireCondition(covered.size === canonical.size, 'Mermaid canonical relation coverage mismatch');
+  }
   const nativeViewId = view.nativeRenderId ?? view.id;
   const elements = svgElements(svg), root = elements.find(element => element.tag === 'svg');
   const viewport = root?.attrs.viewBox?.trim().split(/[\s,]+/).map(Number);
@@ -278,11 +298,21 @@ export function checkMermaidGeometry(svg, view) {
     const ids = [attrs['data-link-id'], attrs['data-layout-link'], attrs['data-schedule-link-id']].filter(value => value !== undefined), id = ids[0];
     requireCondition(ids.length === 1 && id, 'Unidentified Mermaid edge path');
     validMermaidPath(attrs.d, id);
-    const link = attrs['data-link-id'] !== undefined ? view.links.find(link => link.id === id) : null;
+    const link = attrs['data-link-id'] !== undefined ? visualEdgesOf(view).find(link => link.id === id) : null;
     const reverse = link?.nativeReverse === true, startMarker = nativeMarkerProperty(element, 'marker-start'), endMarker = nativeMarkerProperty(element, 'marker-end');
+    const bidirectional = link?.forwardIds?.length > 0 && link.backwardIds?.length > 0;
     const present = value => value && value !== 'none';
-    requireCondition(!present(nativeMarkerProperty(element, 'marker-mid')) && (!present(startMarker) || reverse), `Mermaid arrow is only allowed at the target: ${id}`);
+    requireCondition(!present(nativeMarkerProperty(element, 'marker-mid')) && (!present(startMarker) || reverse || bidirectional), `Mermaid arrow is only allowed at the target: ${id}`);
     requireCondition((attrs['data-native-reverse'] === 'true') === reverse, `Mermaid native direction metadata mismatch: ${id}`);
+    if (view.visualEdgeGroups && link) {
+      requireCondition(attrs['data-visual-edge-id'] === link.id && attrs['data-canonical-relations'] === JSON.stringify([...link.forwardIds, ...link.backwardIds]), `Mermaid visual relation membership mismatch: ${id}`);
+      requireCondition(present(reverse ? startMarker : endMarker), `Missing Mermaid arrow: ${id}`);
+    }
+    if (bidirectional) {
+      const from = view.nodes.find(node => node.id === link.from), to = view.nodes.find(node => node.id === link.to);
+      const declaration = new RegExp(`^\\s*${from?.mermaidId} ${link.mermaidId}@<-->(?:\\|[^\\n]*\\|)? ${to?.mermaidId}\\s*$`, 'm');
+      requireCondition(!reverse && declaration.test(view.mermaid || '') && present(startMarker) && present(endMarker), `Mermaid bidirectional arrow has no native source evidence: ${id}`);
+    }
     if (reverse) {
       const from = view.nodes.find(node => node.id === (link.displayFrom ?? link.from)), to = view.nodes.find(node => node.id === (link.displayTo ?? link.to));
       const declaration = new RegExp(`^\\s*${to?.mermaidId} ${link.mermaidId}@-{3,}(?:\\|[^\\n]*\\|)? ${from?.mermaidId}\\s*$`, 'm');
@@ -291,8 +321,7 @@ export function checkMermaidGeometry(svg, view) {
       requireCondition(['component', 'object'].includes(view.aspect) && declaration.test(view.mermaid || '') && themeCSS?.includes(`#${nativeViewId}-${link.mermaidId}{marker-start:url(#${nativeViewId}_flowchart-v2-pointStart)!important}`)
         && startMarker === `url(#${nativeViewId}_flowchart-v2-pointStart)` && !present(endMarker), `Mermaid reverse arrow has no native source evidence: ${id}`);
     }
-    const arrow = reverse ? startMarker : endMarker;
-    if (present(arrow)) {
+    for (const arrow of bidirectional ? [startMarker, endMarker] : [reverse ? startMarker : endMarker]) if (present(arrow)) {
       const markerId = arrow.match(/^url\([^#]*#([^)]*)\)$/)?.[1];
       requireCondition(markers.has(markerId), `Unknown Mermaid arrow marker: ${id}`);
     }
@@ -300,8 +329,8 @@ export function checkMermaidGeometry(svg, view) {
     requireCondition(!target.has(id), `Duplicate Mermaid edge path: ${id}`);
     target.set(id, element);
   }
-  requireCondition(semantic.size === view.links.length && layout.size === (view.layoutLinks || []).length && schedule.size === (view.scheduleLinks || []).length, 'Mermaid edge count mismatch');
-  for (const link of view.links) requireCondition(semantic.get(link.id)?.attrs['data-mermaid-id'] === link.mermaidId, `Mermaid edge identity mismatch: ${link.id}`);
+  requireCondition(semantic.size === visualEdgesOf(view).length && layout.size === (view.layoutLinks || []).length && schedule.size === (view.scheduleLinks || []).length, 'Mermaid edge count mismatch');
+  for (const link of visualEdgesOf(view)) requireCondition(semantic.get(link.id)?.attrs['data-mermaid-id'] === link.mermaidId, `Mermaid edge identity mismatch: ${link.id}`);
   for (const link of view.layoutLinks || []) {
     const element = layout.get(link.mermaidId);
     requireCondition(element, `Missing Mermaid layout edge: ${link.mermaidId}`);

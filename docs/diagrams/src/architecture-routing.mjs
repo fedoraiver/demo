@@ -1,3 +1,4 @@
+import { visualEdgesOf } from './architecture-visual-edges.mjs';
 import { flattenShape, pathAxis, pathCurveDeviation, pathTerminals, pointSegmentDistance, shapeBounds, svgElements } from './svg-shape-geometry.mjs';
 
 export const ROUTING_STYLE = Object.freeze({ axisTolerance: .5, geometryTolerance: .25, curve: 'basis', curveFallbacks: ['bumpX', 'bumpY'] });
@@ -288,14 +289,18 @@ function labelObstacle(obstacle, endpoints) {
 export function inspectViewRoutes(view, options = {}) {
   const tolerance = options.tolerance ?? ROUTING_GEOMETRY.tolerance;
   const elements = svgElements(view.svg), obstacles = routingObstacles(view, { tolerance }), edges = [];
-  for (const [kind, links, attribute] of [['business', view.links || [], 'data-link-id'], ['schedule', view.scheduleLinks || [], 'data-schedule-link-id']]) for (const link of links) {
+  for (const [kind, links, attribute] of [['business', visualEdgesOf(view) || [], 'data-link-id'], ['schedule', view.scheduleLinks || [], 'data-schedule-link-id']]) for (const link of links) {
     const element = elements.find(element => element.tag === 'path' && element.attrs[attribute] === link.id);
     if (!element) throw new Error(`Missing native routing path: ${view.id}/${link.id}`);
-    const path = flattenShape(element, { tolerance }), endpoints = displayEndpoints(link), arrow = arrowGeometry(element, elements, { tolerance, nativeReverse: link.nativeReverse === true });
+    const path = flattenShape(element, { tolerance }), endpoints = displayEndpoints(link);
+    const bidirectional = link.forwardIds?.length > 0 && link.backwardIds?.length > 0;
+    const arrow = arrowGeometry(element, elements, { tolerance, nativeReverse: link.nativeReverse === true });
+    const startArrow = bidirectional ? arrowGeometry(element, elements, { tolerance, nativeReverse: true }) : null;
     const collisions = obstacles.filter(obstacle => {
       if (permitted(obstacle, endpoints)) return false;
       return pathIntersectsOutline(path, obstacle, { ...options, tolerance, clearance: (options.clearance || 0) + strokeWidth(element) / 2 })
-        || (arrow && outlinesIntersect(arrow, obstacle, { ...options, tolerance }));
+        || (arrow && outlinesIntersect(arrow, obstacle, { ...options, tolerance }))
+        || (startArrow && outlinesIntersect(startArrow, obstacle, { ...options, tolerance }));
     }).map(({ id, kind }) => ({ id, kind }));
     const labels = edgeLabelObstacles(elements, link.mermaidId, tolerance);
     for (const obstacle of obstacles) if (labels.some(label => outlinesIntersect(label, labelObstacle(obstacle, endpoints), { ...options, tolerance }))) {
@@ -304,7 +309,9 @@ export function inspectViewRoutes(view, options = {}) {
     const first = path[0]?.points, last = path.at(-1)?.points;
     const axis = pathAxis(element, options.axisTolerance ?? ROUTING_GEOMETRY.axisTolerance), curveCommands = /[CQAST]/i.test(element.attrs.d);
     edges.push({ id: link.id, mermaidId: link.mermaidId, kind, axis, curved: !axis && pathCurveDeviation(element) > tolerance, curveCommands,
-      collisions, arrowIssues: [...pathSourceIssues(element, obstacles.find(obstacle => obstacle.id === endpoints[0] && !obstacle.kind.endsWith('-header')), tolerance, link.nativeReverse === true),
+      collisions, arrowIssues: [...(bidirectional
+        ? arrowTargetIssues(startArrow, obstacles.find(obstacle => obstacle.id === endpoints[0] && !obstacle.kind.endsWith('-header')), tolerance)
+        : pathSourceIssues(element, obstacles.find(obstacle => obstacle.id === endpoints[0] && !obstacle.kind.endsWith('-header')), tolerance, link.nativeReverse === true)),
         ...arrowTargetIssues(arrow, obstacles.find(obstacle => obstacle.id === endpoints[1] && !obstacle.kind.endsWith('-header')), tolerance)], start: link.nativeReverse ? last?.at(-1) : first?.[0], end: link.nativeReverse ? first?.[0] : last?.at(-1) });
   }
   return { edges, collisions: edges.flatMap(edge => edge.collisions.map(obstacle => ({ edge: edge.id, ...obstacle }))) };

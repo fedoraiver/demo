@@ -7,6 +7,7 @@ import { NODE_KINDS, nodeKindOf } from './architecture-kinds.mjs';
 import { sourceFingerprint } from './debugdump-input.mjs';
 import { scheduleNodeKind } from './schedule-graph.mjs';
 import { visitNdjson } from './stream-files.mjs';
+import { createVisualEdgeGroups, isVisibleRelation } from './architecture-visual-edges.mjs';
 
 export const ANALYSIS_MODEL = 'tmp/ecs-architecture/compiler/model.json';
 export const SOURCE_ROLE_LABELS = Object.freeze({
@@ -306,23 +307,21 @@ export function createCompilerObjectCatalog(model, inputRegistry) {
     id: record.id, sourceNodeId: record.id, viewId: 'object-' + hash(record.id).slice(0, 16), feature: record.feature, kind: record.kind,
   }));
   const objectById = Object.fromEntries(objects.map(object => [object.id, object]));
-  const links = model.relations.filter(link => NODE_KINDS[registry[link.from]?.kind]?.visualType && NODE_KINDS[registry[link.to]?.kind]?.visualType).map(presentRelation);
+  const links = model.relations.filter(link => isVisibleRelation(link)
+    && NODE_KINDS[registry[link.from]?.kind]?.visualType && NODE_KINDS[registry[link.to]?.kind]?.visualType).map(presentRelation);
   const neighbors = new Map(objects.map(object => [object.id, []]));
   for (const link of links) for (const id of unique([link.from, link.to])) neighbors.get(id)?.push(link);
   const systemFamilies = new Map(model.objects.flatMap(record => {
-    const registrations = record.registrations || [], applications = unique(registrations.map(entry => entry.application));
-    if (record.kind !== 'System' || record.callableIds?.length !== 1 || typeof record.callableIds[0] !== 'string' || !record.callableIds[0]
-      || (record.registrationScope && record.registrationScope !== 'runtime') || !registrations.length
-      || registrations.some(entry => entry.scope !== 'runtime') || applications.length !== 1
-      || typeof applications[0] !== 'string' || !applications[0].trim()) return [];
-    return [[record.id, JSON.stringify([applications[0], record.callableIds[0]])]];
+    if (!['System', 'Observer'].includes(record.kind) || record.callableIds?.length !== 1
+      || typeof record.callableIds[0] !== 'string' || !record.callableIds[0]) return [];
+    return [[record.id, JSON.stringify([record.kind, record.callableIds[0]])]];
   }));
   function graphFor(id) {
     const object = objectById[id]; requireCondition(object, 'Unknown compiler architecture object: ' + id);
     const incident = neighbors.get(id), selected = ['Plugin', 'PluginGroup'].includes(object.kind) ? [] : object.kind === 'Entity'
       ? incident.filter(link => [link.from, link.to].every(endpoint => registry[endpoint].kind !== 'Component')) : incident;
     const ids = unique([id, ...selected.flatMap(link => [link.from, link.to])]);
-    // 仅折叠当前一跳中同一应用的具体函数卡片；注册对象、关系端点及证据仍独立。
+    // 当前一跳按具体函数折叠卡片，静态 Observer 来源继续作为成员证据保留。
     const families = Map.groupBy(ids, endpoint => systemFamilies.has(endpoint) ? 'system:' + systemFamilies.get(endpoint) : 'object:' + endpoint);
     const displayIds = new Map(), members = new Map();
     for (const family of families.values()) {
@@ -330,13 +329,14 @@ export function createCompilerObjectCatalog(model, inputRegistry) {
       members.set(display, [...family].sort());
       for (const endpoint of family) displayIds.set(endpoint, display);
     }
+    const visibleLinks = selected.map(link => ({ ...link,
+      ...(displayIds.get(link.from) !== link.from ? { displayFrom: displayIds.get(link.from) } : {}),
+      ...(displayIds.get(link.to) !== link.to ? { displayTo: displayIds.get(link.to) } : {}),
+    }));
     return { centerNodeId: id, empty: false, nodes: unique(ids.map(endpoint => displayIds.get(endpoint))).map(endpoint => ({ id: endpoint,
       ...(members.get(endpoint).length > 1 ? { sourceNodeIds: members.get(endpoint) } : {}),
       role: registry[endpoint].feature === object.feature ? 'internal' : 'external', group: endpoint === id ? '当前对象' : '直接关联对象' })),
-    links: selected.map(link => ({ ...link,
-      ...(displayIds.get(link.from) !== link.from ? { displayFrom: displayIds.get(link.from) } : {}),
-      ...(displayIds.get(link.to) !== link.to ? { displayTo: displayIds.get(link.to) } : {}),
-    })) };
+    links: visibleLinks, visualEdgeGroups: createVisualEdgeGroups(visibleLinks, registry) };
   }
   return { objects, objectById, links, graphFor, unresolvedAccesses: [] };
 }

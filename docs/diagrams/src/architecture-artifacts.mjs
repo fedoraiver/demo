@@ -13,6 +13,7 @@ const urlFor = reference => '../' + reference.path;
 export const descriptorFields = ['id', 'aspect', 'engine', 'label', 'feature', 'objectId', 'centerNodeId', 'application', 'scheduleLabel', 'systemCount', 'width', 'height', 'filename', 'legendKinds', 'buildId', 'sourceCommit', 'target'];
 
 export function validateViewArtifactReferences(metadata, entry) {
+  if (metadata.aspect === 'object' && !Array.isArray(metadata.visualEdgeGroups)) throw new Error('Missing architecture visual edge groups: ' + metadata.id);
   const filenames = { svg: 'filename', mermaid: 'mermaidFilename', dot: 'dotFilename' };
   const kinds = Object.keys(filenames);
   if (kinds.some(kind => Object.hasOwn(metadata, kind) && metadata[kind] !== null)) throw new Error('Embedded graph text remains in view data: ' + metadata.id);
@@ -98,19 +99,22 @@ export function writeExternalArchitecture({ paths, data, writeArtifact, copyArti
     entries.push(entry);
     const record = { ...view, ...provenance };
     const descriptor = Object.fromEntries(descriptorFields.filter(key => record[key] !== undefined).map(key => [key, record[key]]));
-    if (view.aspect === 'object') descriptor.relationCount = view.links.length;
+    if (view.aspect === 'object') {
+      descriptor.relationCount = view.links.length;
+      descriptor.visualEdgeCount = view.visualEdgeGroups.length;
+    }
     if (view.schedulePluginGroups) descriptor.schedulePluginGroups = view.schedulePluginGroups.map(({ id, systemCount }) => ({ id, systemCount }));
     descriptor.resources = Object.fromEntries(['data', 'svg', 'mermaid'].filter(kind => entry[kind]).map(kind => [kind, { url: urlFor(entry[kind]), sha256: entry[kind].sha256, bytes: entry[kind].bytes }]));
     descriptors.push(descriptor);
   }
-  const runtime = put('data/runtime.json', encoded({ ...data, schemaVersion: 6, ...provenance,
+  const runtime = put('data/runtime.json', encoded({ ...data, schemaVersion: 7, ...provenance,
     ...(relationRuntime ? { objectRelationRuntime: { url: urlFor(relationRuntime), sha256: relationRuntime.sha256, bytes: relationRuntime.bytes } } : {}),
     model: { features: data.model.features, entities: data.model.objects ? viewerModel(data.model).entities : data.model.entities }, views: descriptors, guideSamples: guideUrls(guides) }));
   const pages = sourcePage === undefined ? {} : { source: put('pages/ecs-source.html', stampArchitecturePage(sourcePage, provenance)) };
   const manifest = put('data/manifest.json', encoded({ schemaVersion: 2, ...provenance,
     ...(relationRuntime ? { objectRelationRuntime: relationRuntime } : {}), runtime, views: entries, guides, pages, licenses: licenseEntries }));
   put('data/audit-manifest.json', encoded({ schemaVersion: 1, ...provenance, manifest, model, ...(callGraph ? { callGraph } : {}) }));
-  return { schemaVersion: 6, ...provenance, runtimeUrl: urlFor(runtime), runtimeSha256: runtime.sha256,
+  return { schemaVersion: 7, ...provenance, runtimeUrl: urlFor(runtime), runtimeSha256: runtime.sha256,
     manifestUrl: urlFor(manifest), manifestSha256: manifest.sha256 };
 }
 
@@ -126,7 +130,8 @@ export function readArchitectureData(repository) {
   const modern = fs.existsSync(path.join(paths.pagesDirectory, 'ecs-architecture.html'));
   const page = modern ? path.join(paths.pagesDirectory, 'ecs-architecture.html') : path.join(paths.packageRoot, 'ecs-architecture.html');
   const bootstrap = embeddedArchitectureBootstrap(fs.readFileSync(page, 'utf8'));
-  if (bootstrap.schemaVersion !== 6) return bootstrap;
+  if (bootstrap.schemaVersion === 6 && bootstrap.model && bootstrap.registry && Array.isArray(bootstrap.views)) return bootstrap;
+  if (bootstrap.schemaVersion !== 7) throw new Error('Unsupported architecture data version');
   function resourceFile(reference) {
     if (!reference || typeof reference.path !== 'string' || reference.path.includes('\\') || reference.path.split('/').some(part => !part || part === '.' || part === '..')
       || path.isAbsolute(reference.path) || !/^[a-f0-9]{64}$/.test(reference.sha256)) throw new Error('Unsafe architecture resource reference');
@@ -170,7 +175,7 @@ export function readArchitectureData(repository) {
     const integrity = hashFile(filename);
     if (integrity.sha256 !== audit.callGraph.sha256 || integrity.bytes !== audit.callGraph.bytes) throw new Error('Architecture call graph hash mismatch');
   } else if (audit.callGraph) throw new Error('Unexpected architecture call graph resource');
-  if (runtime.schemaVersion !== 6 || runtime.buildId !== manifest.buildId) throw new Error('Architecture runtime version mismatch');
+  if (runtime.schemaVersion !== 7 || runtime.buildId !== manifest.buildId) throw new Error('Architecture runtime version mismatch');
   assert.deepEqual(runtime.model, { features: model.features, entities: model.objects ? viewerModel(model).entities : model.entities }, 'Architecture runtime model projection mismatch');
   const descriptors = new Map(runtime.views.map(view => [view.id, view]));
   if (descriptors.size !== runtime.views.length || descriptors.size !== manifest.views.length) throw new Error('Architecture view index mismatch');
@@ -181,7 +186,10 @@ export function readArchitectureData(repository) {
     if (metadata.id !== entry.id || !descriptor) throw new Error('Architecture view identity mismatch');
     validateViewArtifactReferences(metadata, entry);
     const expected = Object.fromEntries(descriptorFields.filter(key => metadata[key] !== undefined).map(key => [key, metadata[key]]));
-    if (metadata.aspect === 'object') expected.relationCount = metadata.links.length;
+    if (metadata.aspect === 'object') {
+      expected.relationCount = metadata.links.length;
+      expected.visualEdgeCount = metadata.visualEdgeGroups.length;
+    }
     if (metadata.schedulePluginGroups) expected.schedulePluginGroups = metadata.schedulePluginGroups.map(({ id, systemCount }) => ({ id, systemCount }));
     expected.resources = Object.fromEntries(['data', 'svg', 'mermaid'].filter(kind => entry[kind]).map(kind => [kind, { url: urlFor(entry[kind]), sha256: entry[kind].sha256, bytes: entry[kind].bytes }]));
     assert.deepEqual(descriptor, expected, 'Architecture descriptor mismatch: ' + entry.id);
@@ -197,7 +205,7 @@ export function readArchitectureData(repository) {
       return [key, read(value)];
     }));
   }
-  const result = { ...runtime, schemaVersion: 5, model, views, guideSamples: guides(manifest.guides, runtime.guideSamples) };
+  const result = { ...runtime, schemaVersion: 6, model, views, guideSamples: guides(manifest.guides, runtime.guideSamples) };
   for (const reference of [...Object.values(manifest.pages), ...manifest.licenses]) read(reference);
   delete result.buildId;
   delete result.sourceCommit;

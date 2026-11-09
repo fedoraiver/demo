@@ -14,38 +14,97 @@ import { svgElements } from '../src/svg-shape-geometry.mjs';
 import { checkGuideSamples, checkMermaidSource, checkMermaidStyles } from '../src/check-ecs.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE } from '../src/architecture-style.mjs';
 import { VIEWER_BACKGROUND } from '../src/viewer-theme.mjs';
+import { isVisibleRelation, visualEdgesOf } from '../src/architecture-visual-edges.mjs';
+import { createCompilerObjectCatalog } from '../src/rustc-model.mjs';
+import { createMenuFocusAccessFixture } from './fixtures/menu-focus-access.mjs';
 
 const chromium = process.env.MERMAID_CHROMIUM_PATH || [process.env.ProgramFiles, process.env['ProgramFiles(x86)'], process.env.LOCALAPPDATA]
   .filter(Boolean).flatMap(base => [path.join(base, 'Google/Chrome/Application/chrome.exe'), path.join(base, 'Microsoft/Edge/Application/msedge.exe')])
   .find(candidate => fs.existsSync(candidate));
 const repository = fileURLToPath(new URL('../../../', import.meta.url));
 const temporary = path.join(repository, 'tmp/native-mermaid-tests');
+const groupFor = (view, id) => visualEdgesOf(view).find(group => group.id === id || group.forwardIds?.includes(id) || group.backwardIds?.includes(id));
+
+test('MenuFocus renders fourteen unique cards and thirteen native paths from twenty-three canonical accesses', { skip: !chromium, timeout: 120000 }, async () => {
+  const { model, center, callbacks } = createMenuFocusAccessFixture();
+  const registry = Object.fromEntries(model.objects.map(object => [object.id, object]));
+  const catalog = createCompilerObjectCatalog(model, registry), object = catalog.objectById[center], graph = catalog.graphFor(center);
+  const view = renderGraphView({ id: object.viewId, aspect: 'object', objectId: center, centerNodeId: center, label: 'MenuFocus', summary: '焦点参数访问。' }, graph, registry, model.features);
+  const result = await compileFixture(view, graph, 'menu-focus-access', registry);
+  assert.equal(result.nodes.length, 14); assert.equal(result.links.length, 23); assert.equal(result.visualEdgeGroups.length, 13);
+  assert.equal(result.visualEdgeGroups.filter(group => group.edgeSemantic === 'read').length, 6);
+  assert.equal(result.visualEdgeGroups.filter(group => group.edgeSemantic === 'mutable_access').length, 7);
+  assert.equal(result.visualEdgeGroups.filter(group => group.displayLabel === '读访问').length, 6);
+  assert.equal(result.visualEdgeGroups.filter(group => group.displayLabel === '写访问').length, 7);
+  assert.ok(result.visualEdgeGroups.every(group => group.backwardIds.length === 0));
+  for (const name of callbacks) assert.equal(result.nodes.filter(node => node.nameLabel === name).length, 1);
+  assert.equal(svgElements(result.svg).filter(element => element.tag === 'path' && element.attrs['data-link-id']).length, 13);
+});
+
+test('one native bidirectional path retains both canonical accesses and validates both target arrows', { skip: !chromium, timeout: 120000 }, async () => {
+  const registry = {
+    system: { id: 'system', name: 'update_data', kind: 'System', feature: 'fixture', callableIds: ['callable'], registrations: [{ application: 'main', schedule: 'Update', scope: 'runtime' }] },
+    data: { id: 'data', name: 'SharedData', kind: 'Resource', feature: 'fixture', typeInstanceId: 'type:data' },
+  };
+  const access = parameter => [{ callableId: 'callable', registeredOwner: 'system', typeInstanceId: 'type:data', parameter, scope: 'current', storage: 'Resource' }];
+  const graph = { centerNodeId: 'system', nodes: Object.keys(registry).map(id => ({ id, role: 'internal' })), links: [
+    { id: 'read-data', from: 'data', to: 'system', kind: 'read', evidence: 'parameter', parameterAccesses: access('0') },
+    { id: 'mutate-data', from: 'system', to: 'data', kind: 'mutable_access', evidence: 'parameter', parameterAccesses: access('1') },
+  ] };
+  const view = renderGraphView({ id: 'native-bidirectional', aspect: 'object', objectId: 'system', centerNodeId: 'system', label: 'Bidirectional access', summary: '读取与可变访问。' }, graph, registry, []);
+  assert.deepEqual(view.links, graph.links);
+  assert.equal(view.nodes.length, 2); assert.equal(view.visualEdgeGroups.length, 1);
+  assert.equal(view.visualEdgeGroups[0].edgeSemantic, 'read_write');
+  assert.equal(view.visualEdgeGroups[0].displayLabel, '读写访问');
+  assert.match(view.mermaid, /e0@<-->/);
+  const result = await compileFixture(view, graph, 'native-bidirectional', registry);
+  const paths = svgElements(result.svg).filter(element => element.tag === 'path' && element.attrs['data-link-id']);
+  assert.equal(paths.length, 1);
+  assert.ok(nativeMarkerProperty(paths[0], 'marker-start')); assert.ok(nativeMarkerProperty(paths[0], 'marker-end'));
+  assert.match(paths[0].attrs['aria-label'], /↔/);
+  assert.match(paths[0].attrs['aria-label'], /读写访问/);
+  const missingLabel = { ...result, svg: result.svg.replace('读写访问</tspan>', '错误标签</tspan>') };
+  assert.deepEqual(nativeLabelMismatches(missingLabel), [result.visualEdgeGroups[0].id]);
+  assert.throws(() => checkMermaidStyles(missingLabel, registry), /rendered edge label mismatch/);
+  assert.deepEqual(JSON.parse(paths[0].attrs['data-canonical-relations']).sort(), graph.links.map(link => link.id).sort());
+  assert.throws(() => checkMermaidSource({ ...result, mermaid: result.mermaid.replace('e0@<-->', 'e0@-->') }, registry, new Map()), /arrow declaration/);
+  for (const marker of ['start', 'end']) {
+    const svg = result.svg.replace(new RegExp(` marker-${marker}="[^"]*"`), '');
+    assert.throws(() => checkMermaidGeometry(svg, { ...result, svg }), /arrow/);
+  }
+  const forged = structuredClone(result); forged.visualEdgeGroups[0].backwardIds = [];
+  assert.throws(() => checkMermaidSource(forged, registry, new Map()), /canonical relations/);
+  assert.throws(() => checkMermaidGeometry(forged.svg, forged), /coverage/);
+  const detail = 'enabled<T> & "ready" #1 / field_name / #35; &quot; &num; #quot;';
+  const constrainedGraph = structuredClone(graph);
+  constrainedGraph.links[0].label = '读访问 · ' + detail;
+  constrainedGraph.links[1].label = '写访问 · ' + detail;
+  const constrained = renderGraphView({ ...view, id: 'native-bidirectional-constraint' }, constrainedGraph, registry, []);
+  assert.equal(constrained.visualEdgeGroups[0].displayLabel, '读写访问 · ' + detail);
+  const withDetail = await compileFixture(constrained, constrainedGraph, 'native-bidirectional-constraint', registry);
+  assert.deepEqual(nativeLabelMismatches(withDetail), []);
+});
 
 for (const id of ['object-7dbecb473f3bff18', 'object-1c0bc2f73463f19b']) {
   test(`native edge labels have opaque viewer-colored backgrounds: ${id}`, { skip: !chromium, timeout: 180000 }, async () => {
     const { view, registry, features } = JSON.parse(fs.readFileSync(new URL(`./fixtures/${id}-native.json`, import.meta.url), 'utf8'));
     const graph = { centerNodeId: view.centerNodeId, nodes: view.nodes.map(({ id: nodeId, role }) => ({ id: nodeId, role })), links: view.links };
     const generated = renderGraphView(view, graph, registry, features);
-    const themeCSS = JSON.parse(/^---\r?\n([\s\S]*?)\r?\n---/.exec(generated.mermaid)[1]).config.themeCSS;
-    const mermaid = view.mermaid.replace(/^---\r?\n([\s\S]*?)\r?\n---/, (_, json) => {
-      const front = JSON.parse(json); front.config.themeCSS = themeCSS;
-      return `---\n${JSON.stringify(front, null, 2)}\n---`;
-    });
     const browser = await puppeteer.launch({ executablePath: chromium, headless: true });
     try {
-      const result = await compileNativeView(browser, { ...view, mermaid }, registry);
+      const result = await compileRoutedView(generated, registry, (candidate, records) => compileNativeView(browser, candidate, records));
       assert.deepEqual(result.nodes.map(node => node.id), view.nodes.map(node => node.id));
-      assert.deepEqual(result.links, view.links);
+      assert.deepEqual(result.links, view.links.filter(isVisibleRelation));
       assert.deepEqual(nativeLabelMismatches(result), []);
       const elements = svgElements(result.svg), compact = text => text.replace(/[\s\u200B\uFEFF]/g, '');
-      for (const link of result.links.filter(link => link.displayLabel)) {
+      for (const link of visualEdgesOf(result).filter(link => link.displayLabel)) {
         const label = elements.find(element => element.attrs['data-mermaid-native-id'] === link.mermaidId && (element.attrs.class || '').split(/\s+/).includes('label'));
         assert.ok(label, `Missing edge label ${link.mermaidId}`);
         assert.equal(compact(label.text), compact(link.displayLabel));
       }
       checkMermaidGeometry(result.svg, result);
       const routes = inspectViewRoutes(result);
-      assert.equal(routes.edges.length, view.links.length);
+      assert.equal(routes.edges.length, result.visualEdgeGroups.length);
       assert.deepEqual(routes.collisions, []);
       assert.ok(routes.edges.every(edge => !edge.arrowIssues.length && (edge.axis ? !edge.curved : edge.curved)));
       const page = await browser.newPage();
@@ -56,7 +115,7 @@ for (const id of ['object-7dbecb473f3bff18', 'object-1c0bc2f73463f19b']) {
         const style = getComputedStyle(rect);
         return { opacity: opacity * Number(style.fillOpacity), fill: style.fill };
       }));
-      assert.equal(backgrounds.length, result.links.filter(link => link.displayLabel).length);
+      assert.equal(backgrounds.length, visualEdgesOf(result).filter(link => link.displayLabel).length);
       const color = VIEWER_BACKGROUND.match(/\w\w/g).map(value => parseInt(value, 16));
       for (const background of backgrounds) assert.deepEqual(background, { opacity: 1, fill: `rgb(${color.join(', ')})` });
       await page.close();
@@ -74,7 +133,7 @@ async function compileFixture(view, graph, name, registry = {}, options = {}) {
     assert.equal(JSON.stringify(registry), registryInput, 'Native compilation does not mutate the canonical registry');
     assert.deepEqual(result.nodes.map(node => node.id), view.nodes.map(node => node.id));
     assert.deepEqual(result.links, view.links, 'All semantic relations and source evidence survive compilation');
-    assert.deepEqual(result.links.map((link, index) => Object.fromEntries(Object.keys(graph.links[index]).map(key => [key, link[key]]))), graph.links,
+    assert.deepEqual(result.links, graph.links.filter(isVisibleRelation),
       'Original relation IDs, endpoints, operations and metadata remain canonical');
     assert.equal(result.entityViews, undefined, 'No Entity expansion variants are generated');
     assert.deepEqual(result.entityGroups || [], [], 'Entities remain standalone cards');
@@ -100,11 +159,25 @@ test('captured InputFocus output fanout retains every read under strict native r
   const result = await compileFixture(view, graph, 'input-focus', registry);
   assert.equal(result.nodes.length, 38); assert.equal(result.links.length, 65);
   assert.deepEqual(view.layoutLinks, []);
-  const edge = inspectViewRoutes(result).edges.find(item => item.id === targetEdgeId);
+  const edge = inspectViewRoutes(result).edges.find(item => item.id === groupFor(result, targetEdgeId).id);
   assert.deepEqual(edge.arrowIssues, []);
   assert.deepEqual(nativeLabelMismatches(result), []);
   assert.equal(result.nodes.find(node => node.id === graph.links.find(link => link.id === targetEdgeId).to).nameLabel, 'update_accessibility_nodes');
   assert.deepEqual(fixture, before);
+});
+
+test('captured InputFocus output fanout keeps strict routing with Liberation and Noto font metrics', { skip: !chromium, timeout: 180000 }, async () => {
+  const fixture = JSON.parse(fs.readFileSync(new URL('./fixtures/native-input-focus.json', import.meta.url), 'utf8'));
+  const { graph, registry, features } = fixture;
+  const view = renderGraphView(fixture.view, graph, registry, features);
+  view.mermaid = view.mermaid.replace(/^---\r?\n([\s\S]*?)\r?\n---/, (_, json) => {
+    const configuration = JSON.parse(json);
+    configuration.config.fontFamily = 'Liberation Sans, Noto Sans SC, sans-serif';
+    return `---\n${JSON.stringify(configuration, null, 2)}\n---`;
+  });
+  const result = await compileFixture(view, graph, 'input-focus-liberation', registry);
+  assert.equal(result.nodes.length, 38); assert.equal(result.links.length, 65);
+  assert.deepEqual(nativeLabelMismatches(result), []);
 });
 
 test('captured SSAO parallel input operations retain exact removal evidence with fact-only cards', { skip: !chromium, timeout: 300000 }, async () => {
@@ -115,9 +188,9 @@ test('captured SSAO parallel input operations retain exact removal evidence with
   assert.equal(result.nodes.length, 5); assert.equal(result.links.length, 6);
   assert.deepEqual(view.layoutLinks, []);
   const removal = result.links.find(link => link.id === targetEdgeId);
-  assert.equal(removal.operation, 'remove'); assert.equal(removal.displayLabel, '移除');
-  assert.equal(result.links[0].nativeReverse, true);
-  assert.equal(inspectViewRoutes(result).edges.find(edge => edge.id === targetEdgeId).arrowIssues.length, 0);
+  assert.equal(removal.operation, 'remove'); assert.equal(removal.label, '移除'); assert.equal(groupFor(result, targetEdgeId).edgeSemantic, 'remove');
+  assert.equal(groupFor(result, result.links[0].id).nativeReverse, true);
+  assert.equal(inspectViewRoutes(result).edges.find(edge => edge.id === groupFor(result, targetEdgeId).id).arrowIssues.length, 0);
   assert.deepEqual(nativeLabelMismatches(result), []);
   assert.deepEqual(fixture, before);
 });
@@ -238,7 +311,7 @@ test('the captured complete GPU batching object passes native artifact compilati
   assert.equal(result.routing.rule, 'axis-or-curve');
   assert.deepEqual(nativeLabelMismatches(result), []);
   checkMermaidGeometry(result.svg, result); checkMermaidStyles(result, registry);
-  const inspection = inspectViewRoutes(result), edge = inspection.edges.find(edge => edge.id === 'relation-c21fb7aaa58930b597d6f0e2');
+  const inspection = inspectViewRoutes(result), edge = inspection.edges.find(edge => edge.id === groupFor(result, 'relation-c21fb7aaa58930b597d6f0e2').id);
   assert.deepEqual(inspection.collisions, []);
   assert.ok(inspection.edges.every(edge => !edge.arrowIssues.length && (edge.axis ? !edge.curved : edge.curved)));
   assert.ok(edge.axis ? !edge.curved : edge.curved);

@@ -96,7 +96,7 @@ function readPublicSite(directory) {
   }
   const htmlPath = regularFile(directory, 'pages/ecs-architecture.html'), html = fs.readFileSync(htmlPath, 'utf8');
   const bootstrap = embeddedArchitectureBootstrap(html), provenance = provenanceOf(bootstrap);
-  if (bootstrap.schemaVersion !== 6 || bootstrap.manifestUrl !== '../data/manifest.json' || bootstrap.runtimeUrl !== '../data/runtime.json') throw new Error('Invalid Pages bootstrap');
+  if (bootstrap.schemaVersion !== 7 || bootstrap.manifestUrl !== '../data/manifest.json' || bootstrap.runtimeUrl !== '../data/runtime.json') throw new Error('Invalid Pages bootstrap');
   checkPageStamp(html, provenance);
   files.set('pages/ecs-architecture.html', { path: 'pages/ecs-architecture.html', ...hashFile(htmlPath) });
   const manifestReference = { path: 'data/manifest.json', sha256: bootstrap.manifestSha256, bytes: fs.statSync(regularFile(directory, 'data/manifest.json')).size };
@@ -106,7 +106,7 @@ function readPublicSite(directory) {
   matchingProvenance(manifest, provenance, 'manifest');
   if (manifest.runtime.path !== 'data/runtime.json' || manifest.runtime.sha256 !== bootstrap.runtimeSha256) throw new Error('Pages runtime bootstrap mismatch');
   const runtime = json(read(manifest.runtime));
-  if (runtime.schemaVersion !== 6) throw new Error('Invalid Pages runtime');
+  if (runtime.schemaVersion !== 7) throw new Error('Invalid Pages runtime');
   matchingProvenance(runtime, provenance, 'runtime');
   assert.deepEqual(Object.keys(runtime.model).sort(), ['entities', 'features'], 'Pages runtime must not contain the audit model');
   const descriptors = new Map(runtime.views.map(view => [view.id, view]));
@@ -120,7 +120,10 @@ function readPublicSite(directory) {
     validateViewArtifactReferences(metadata, entry);
     matchingProvenance(metadata, provenance, entry.id);
     const expected = Object.fromEntries(descriptorFields.filter(key => metadata[key] !== undefined).map(key => [key, metadata[key]]));
-    if (metadata.aspect === 'object') expected.relationCount = metadata.links.length;
+    if (metadata.aspect === 'object') {
+      expected.relationCount = metadata.links.length;
+      expected.visualEdgeCount = metadata.visualEdgeGroups.length;
+    }
     if (metadata.schedulePluginGroups) expected.schedulePluginGroups = metadata.schedulePluginGroups.map(({ id, systemCount }) => ({ id, systemCount }));
     expected.resources = Object.fromEntries(['data', 'svg', 'mermaid'].filter(kind => entry[kind]).map(kind => [kind, referenceUrl(entry[kind])]));
     assert.deepEqual(descriptor, expected, 'Pages view descriptor mismatch: ' + entry.id);

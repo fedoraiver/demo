@@ -46,12 +46,12 @@ function verifyMetadata(filename, text, expected, files) {
     if (!match) throw new Error('Missing deployed architecture bootstrap');
     const bootstrap = JSON.parse(match[1]);
     verifyProvenance(bootstrap, expected, 'bootstrap');
-    if (bootstrap.schemaVersion !== 6 || bootstrap.manifestUrl !== '../data/manifest.json' || bootstrap.runtimeUrl !== '../data/runtime.json'
+    if (bootstrap.schemaVersion !== 7 || bootstrap.manifestUrl !== '../data/manifest.json' || bootstrap.runtimeUrl !== '../data/runtime.json'
       || bootstrap.manifestSha256 !== files.get('data/manifest.json').sha256 || bootstrap.runtimeSha256 !== files.get('data/runtime.json').sha256) throw new Error('Deployed bootstrap resource mismatch');
   } else if (filename === 'data/manifest.json' || filename === 'data/runtime.json' || filename.startsWith('data/views/')) {
     const data = JSON.parse(text);
     verifyProvenance(data, expected, filename);
-    if (filename === 'data/manifest.json' && data.schemaVersion !== 2 || filename === 'data/runtime.json' && data.schemaVersion !== 6) throw new Error('Deployed architecture schema mismatch: ' + filename);
+    if (filename === 'data/manifest.json' && data.schemaVersion !== 2 || filename === 'data/runtime.json' && data.schemaVersion !== 7) throw new Error('Deployed architecture schema mismatch: ' + filename);
   }
 }
 

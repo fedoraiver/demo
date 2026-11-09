@@ -113,7 +113,7 @@ test('the shipped object relation bundle compiles real labelled, reverse and lon
     assert.equal(inspection.edges.length, 1);
     assert.deepEqual(inspection.collisions, []);
     assert.ok(inspection.edges.every(edge => !edge.arrowIssues.length && (edge.axis ? !edge.curved : edge.curved)));
-    assert.equal(result.backgrounds.length, view.links.filter(link => link.displayLabel).length);
+    assert.equal(result.backgrounds.length, (view.visualEdgeGroups ?? view.links).filter(link => link.displayLabel).length);
     for (const background of result.backgrounds) assert.deepEqual(background, { opacity: 1, fill: backgroundColor });
     fs.writeFileSync(path.join(runDirectory, result.key + '.svg'), view.svg);
   });

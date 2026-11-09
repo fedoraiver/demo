@@ -1,4 +1,4 @@
-import { DENSE_OBJECT_RELATION_THRESHOLD, isDenseObjectView, relationRows } from './architecture-object-relations.mjs';
+import { DENSE_OBJECT_RELATION_THRESHOLD, displayEdgesOf, findVisualEdge, isDenseObjectView, relationRows } from './architecture-object-relations.mjs';
 
 export function createArchitectureRelations({ document, registry, edgeStyles, onChoose, onList, onFull, onRemember }) {
   const panel = document.getElementById('object-relations');
@@ -11,9 +11,9 @@ export function createArchitectureRelations({ document, registry, edgeStyles, on
   function paint() {
     if (!view) return;
     const rows = relationRows(view, registry, query, edgeStyles);
-    count.textContent = rows.length + ' / ' + view.links.length + ' 条关系';
+    count.textContent = rows.length + ' / ' + displayEdgesOf(view).length + ' 条关系';
     list.innerHTML = rows.length
-      ? rows.map(row => '<button type="button" class="relation-result" data-relation="' + safe(row.id) + '" aria-pressed="' + (row.id === selected) + '"><span class="relation-endpoints">' + safe(row.fromName) + '<span aria-label="指向"> → </span>' + safe(row.toName) + '</span><small>' + safe(row.label) + '</small></button>').join('')
+      ? rows.map(row => '<button type="button" class="relation-result" data-relation="' + safe(row.id) + '" aria-pressed="' + (row.id === selected) + '"><span class="relation-endpoints">' + safe(row.fromName) + '<span aria-label="' + (row.bidirectional ? '双向访问' : '指向') + '">' + (row.bidirectional ? ' ↔ ' : ' → ') + '</span>' + safe(row.toName) + '</span><small>' + safe(row.label) + '</small></button>').join('')
       : '<p class="relation-empty">没有匹配关系，请调整搜索词。</p>';
   }
 
@@ -59,13 +59,13 @@ export function createArchitectureRelations({ document, registry, edgeStyles, on
       const changed = view?.id !== target.id;
       const activeId = document.activeElement?.closest('[data-relation]')?.dataset.relation;
       view = target;
-      selected = selection.objectRelation || null;
+      selected = findVisualEdge(target, selection.objectRelation)?.id || null;
       if (saved?.viewId === target.id) query = saved.query || '';
       else if (changed) query = '';
       search.value = query;
       panel.hidden = false;
       panel.parentElement.classList.add('dense-relations');
-      panel.parentElement.classList.toggle('relation-list-only', selection.objectMode !== 'all' && !target.links.some(link => link.id === selected));
+      panel.parentElement.classList.toggle('relation-list-only', selection.objectMode !== 'all' && !selected);
       document.getElementById('relation-full').setAttribute('aria-pressed', String(selection.objectMode === 'all'));
       document.getElementById('relation-overview').setAttribute('aria-pressed', String(!selected && selection.objectMode !== 'all'));
       const scrollTop = saved?.viewId === target.id ? saved.scrollTop : changed ? 0 : list.scrollTop;
@@ -126,7 +126,7 @@ export function createLazyObjectRelationRenderer({ loadRuntime, registry, featur
 
 export function architectureRelationsAssets() {
   return {
-    script: 'const DENSE_OBJECT_RELATION_THRESHOLD='+DENSE_OBJECT_RELATION_THRESHOLD+';\n'+[isDenseObjectView, relationRows, createArchitectureRelations, createLazyObjectRelationRenderer].map(fn => fn.toString()).join('\n'),
+    script: 'const DENSE_OBJECT_RELATION_THRESHOLD='+DENSE_OBJECT_RELATION_THRESHOLD+';\n'+[displayEdgesOf, findVisualEdge, isDenseObjectView, relationRows, createArchitectureRelations, createLazyObjectRelationRenderer].map(fn => fn.toString()).join('\n'),
     markup: '<section id="object-relations" class="object-relations" aria-label="完整关系列表" hidden><div class="relation-actions"><button type="button" id="relation-overview">关系列表</button><button type="button" id="relation-full">完整图</button></div><input id="relation-search" type="search" placeholder="搜索端点、关系或条件" aria-label="搜索完整关系列表" aria-controls="relation-list"><p id="relation-count" role="status" aria-live="polite"></p><div id="relation-list" class="relation-list" tabindex="0"></div><div class="relation-downloads"><a id="relation-svg" hidden>下载完整 SVG</a><a id="relation-mermaid" hidden>下载完整 Mermaid</a></div></section>',
     style: '.object-relations{min-width:0;min-height:0;display:flex;flex-direction:column;padding:12px;border-right:1px solid var(--ui-border,#D8E0EB);background:var(--ui-surface,#fff);gap:8px}.object-relations[hidden]{display:none}.canvas-wrap.dense-relations{display:flex;flex-direction:column}.dense-relations .object-relations{flex:0 1 240px;max-height:35%;min-height:150px;border-right:0;border-bottom:1px solid var(--ui-border,#D8E0EB)}.dense-relations .canvas{min-width:0;min-height:180px}.relation-list-only .object-relations{max-height:none;flex:1}.relation-list-only .canvas{display:none}.relation-actions,.relation-downloads{display:flex;flex-wrap:wrap;gap:6px}.object-relations input{width:100%;min-width:0;padding:8px}.object-relations p{margin:0;color:var(--ui-muted,#5B6778);font-size:12px}.relation-list{overflow:auto;min-height:0;flex:1}.relation-result{display:block;text-align:left;width:100%;padding:10px;margin-bottom:6px;border:1px solid var(--ui-border,#D8E0EB);border-radius:6px;background:var(--ui-surface,#fff);color:var(--ui-text,#172033);overflow-wrap:anywhere;white-space:normal}.relation-result[aria-pressed="true"]{background:var(--ui-active,#EFF6FF);border-color:var(--ui-accent,#2563EB)}.relation-result small{display:block;margin-top:5px;color:var(--ui-muted,#5B6778);line-height:1.5}.relation-endpoints{font-size:13px;line-height:1.6}.relation-downloads a{font-size:12px}.relation-empty{padding:10px}@media(max-width:900px){.canvas-wrap.dense-relations{display:flex;height:auto;min-height:460px}.dense-relations .object-relations{max-height:300px;min-height:180px;border-right:0;border-bottom:1px solid #D8E0EB}.dense-relations .canvas{min-height:280px;flex:1}.canvas-wrap.relation-list-only{height:55svh;min-height:280px}.canvas-wrap.relation-list-only .object-relations{max-height:none;flex:1}}',
   };
