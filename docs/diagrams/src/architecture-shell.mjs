@@ -3,7 +3,6 @@ export const architectureShellStyle = `
 body{margin:0;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:var(--ui-bg);color:var(--ui-text);font:14px/1.6 'Segoe UI','Microsoft YaHei',sans-serif}
 header{flex:none;padding:8px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--ui-surface);border-bottom:1px solid var(--ui-border);z-index:2}
 .brand{font-size:11px;font-weight:600;letter-spacing:1.5px;color:var(--ui-muted)}
-.build-context{font-size:10px;color:var(--ui-muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .main{display:flex;flex:1;flex-direction:column;min-width:0;min-height:0}
 .view-picker{min-width:160px;max-width:360px;flex:1;padding:5px 8px;background:var(--ui-bg)}
 .tools{display:flex;gap:4px;align-items:center;margin-left:auto;flex-wrap:wrap}
