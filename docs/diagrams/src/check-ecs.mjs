@@ -539,7 +539,7 @@ const placementNodeIds = nodes => nodes.map(node => typeof node === 'string' ? n
 const observerBranchKey = ({ id, nodes, anchorSourceIds }) => ({ id, nodes: placementNodeIds(nodes), anchorSourceIds });
 const visualPlacementKey = groups => groups.map(({ id, nodes, visualAttachments = [] }) => ({ id, nodes: placementNodeIds(nodes), visualAttachments: placementNodeIds(visualAttachments) }));
 
-/** 对象图只展开中心的一跳；投影和注册身份不因同名、同函数而合并。 */
+/** 对象图只展开中心的一跳，按函数身份汇集展示卡片，并保留原始节点成员与关系证据。 */
 export function checkObjectViews(views, catalog) {
   requireCondition(Array.isArray(views), 'Invalid architecture view list');
   requireCondition(Array.isArray(catalog.objects), 'Missing object catalog');

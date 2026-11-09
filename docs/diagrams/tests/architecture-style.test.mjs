@@ -142,6 +142,28 @@ test('compiler operation meanings stay distinct and message parameters express a
   assert.throws(() => edgeSemanticOf({ id: 'assignment', from: 'movement', to: 'gravity', kind: 'write', factKind: 'modify' }, records), /Unknown architecture edge kind/);
 });
 
+test('normalized triggers recognize compiler event roles on a Message presentation type', () => {
+  const records = {
+    picking: { kind: 'System', name: 'bevy_picking::events::pointer_events' },
+    cancel: { kind: 'Message', name: 'bevy_picking::events::PointerCancel',
+      typeIdentity: { roles: ['Event', 'EventPattern', 'EntityEvent', 'Message'] } },
+    observer: { kind: 'Observer' },
+    observerGroup: { kind: 'Observer group' },
+  };
+  const trigger = { id: 'relation-10d22a076c7c9f1396a731f0', from: 'picking', to: 'cancel',
+    kind: 'emit', factKind: 'trigger', operation: 'trigger' };
+  assert.equal(edgeSemanticOf(trigger, records), 'emit');
+  assert.equal(edgeSemanticOf({ ...trigger, kind: 'trigger', factKind: undefined }, records), 'emit');
+  assert.equal(edgeSemanticOf({ ...trigger, kind: 'observe', from: 'cancel', to: 'observer' }, records), 'observe');
+  assert.equal(edgeSemanticOf({ ...trigger, kind: 'observe', from: 'cancel', to: 'observerGroup' }, records), 'observe');
+  assert.equal(edgeSemanticOf({ ...trigger, kind: 'observe', to: 'observer', eventId: 'cancel', projection: 'observer-trigger' }, records), 'observe');
+  for (const roles of [['Message'], ['EventPattern']]) {
+    const unsupported = { ...records, cancel: { ...records.cancel, typeIdentity: { roles } } };
+    assert.throws(() => edgeSemanticOf(trigger, unsupported), /no event\/Observer contract/);
+  }
+  assert.throws(() => edgeSemanticOf({ ...trigger, label: '触发事件' }, { ...records, cancel: { kind: 'Resource', name: 'Event' } }), /no event\/Observer contract/);
+});
+
 test('only source-backed Schedule contexts classify Engine flow registration edges', () => {
   const records = { schedule: { kind: 'Engine flow', scheduleEvidence: { kind: 'schedule' } }, system: { kind: 'System' } };
   const link = { id: 'schedule-registration', from: 'schedule', to: 'system', kind: 'registration', scheduleEvidence: { relations: [{ relation: 'registration' }] } };

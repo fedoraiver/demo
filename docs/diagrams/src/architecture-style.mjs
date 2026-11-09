@@ -101,6 +101,12 @@ export function visualTypeOf(node) {
 const directSemantics = new Set(['order', 'transition', 'reference', 'relationship', 'dependency', 'observe', 'emit']);
 const factSemantics = new Set(['read', 'mutable_access', 'filter', 'contains', 'create', 'insert', 'remove', 'initialize', 'despawn', 'publish', 'consume', 'condition', 'alternative']);
 
+function isEventIdentity(record) {
+  if (!record) return false;
+  return ['Event', 'EntityEvent'].includes(nodeKindOf(record))
+    || record.typeIdentity?.roles?.some(role => role === 'Event' || role === 'EntityEvent');
+}
+
 export function edgeSemanticOf(link, registry) {
   const kind = link.factKind ?? link.operation ?? link.kind;
   if (directSemantics.has(kind)) return kind;
@@ -110,9 +116,10 @@ export function edgeSemanticOf(link, registry) {
   if (kind === 'write') return link.evidence === 'parameter' ? 'mutable_access' : 'write';
   if (kind === 'event') return 'observe';
   if (kind === 'trigger') {
-    if (link.projection === 'observer-trigger' && registry[link.eventId]?.kind === 'EntityEvent' && visualTypeOf(to) === 'observer') return 'observe';
-    if (visualTypeOf(from) === 'event' && ['observer', 'observer_group'].includes(visualTypeOf(to))) return 'observe';
-    if (visualTypeOf(to) === 'event') return 'emit';
+    const observer = ['Observer', 'Observer group'].includes(nodeKindOf(to));
+    if (link.projection === 'observer-trigger' && isEventIdentity(registry[link.eventId]) && observer) return 'observe';
+    if (isEventIdentity(from) && observer) return 'observe';
+    if (isEventIdentity(to)) return 'emit';
     throw new Error(`Architecture trigger has no event/Observer contract: ${link.id}`);
   }
   if (kind === 'registration' || kind === 'membership') {
