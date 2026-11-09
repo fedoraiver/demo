@@ -168,7 +168,7 @@ function guideSamplesFixture() {
     return [type, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 90" aria-label="${label(style)}" data-diagram-engine="mermaid" data-guide-kind="node" data-visual-type="${type}" data-shape="${style.shape}"><path data-guide-shape-part="true" d="M10,10 L130,10 L130,80 L10,80 Z" style="fill:${style.fill};stroke:${style.stroke};stroke-width:${style.width}px"/></svg>`];
   }));
   const edges = Object.fromEntries(Object.entries(EDGE_STYLES).map(([type, style]) => [type,
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 50" aria-label="${label(style)}" data-diagram-engine="mermaid" data-guide-kind="edge" data-edge-semantic="${type}"><defs><marker id="guide-${type}-arrow" orient="auto"><path d="M0,0L8,4L0,8" fill="${style.stroke}"/></marker></defs><path data-guide-edge="true" d="M10,25H130" marker-end="url(#guide-${type}-arrow)" style="fill:none;stroke:${style.stroke};stroke-width:${style.width}px${style.dash ? `;stroke-dasharray:${style.dash}` : ''}"/></svg>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 50" aria-label="${label(style)}" data-diagram-engine="mermaid" data-guide-kind="edge" data-edge-semantic="${type}"><defs><marker id="guide-${type}-arrow" orient="auto"><path d="M0,0L8,4L0,8" fill="${style.stroke}"/></marker></defs><path data-guide-edge="true" d="M10,25H130" marker-end="url(#guide-${type}-arrow)"${type === 'read_write' ? ` marker-start="url(#guide-${type}-arrow)"` : ''} style="fill:none;stroke:${style.stroke};stroke-width:${style.width}px${style.dash ? `;stroke-dasharray:${style.dash}` : ''}"/></svg>`,
   ]));
   return { nodes, edges };
 }

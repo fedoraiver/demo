@@ -45,9 +45,9 @@ test('native selectors reject missing or ambiguous identities and never fall bac
 test('captured model produces the same valid runtime targets and HTML options while unlisted plugins remain searchable', t => {
   const registry = registryFor(), model = { schemaVersion: 2, features: captured.features, objects: Object.values(registry), relations: [] };
   const catalog = createCompilerObjectCatalog(model, registry), infrastructureFeatures = projectInfrastructureFeatures(registry, { requireComplete: true });
-  const data = { schemaVersion: 5, model, registry, infrastructureFeatures, objects: catalog.objects, objectAliases: {},
+  const data = { schemaVersion: 6, model, registry, infrastructureFeatures, objects: catalog.objects, objectAliases: {},
     guideSamples: { nodes: {}, edges: {}, schedule: { nodes: {}, edges: {} } },
-    views: catalog.objects.map(object => ({ id: object.viewId, aspect: 'object', objectId: object.id, centerNodeId: object.id, nodes: [], links: [], svg: null })),
+    views: catalog.objects.map(object => ({ id: object.viewId, aspect: 'object', objectId: object.id, centerNodeId: object.id, nodes: [], links: [], visualEdgeGroups: [], svg: null })),
   };
   const parent = path.join(repositoryRoot, 'tmp/ecs-architecture/plugin-menu-tests'); fs.mkdirSync(parent, { recursive: true });
   const paths = pathsForRepository(fs.mkdtempSync(path.join(parent, 'case-'))); t.after(() => fs.rmSync(paths.repositoryRoot, { recursive: true, force: true }));

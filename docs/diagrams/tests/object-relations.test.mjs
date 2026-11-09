@@ -21,6 +21,24 @@ test('density comes from exact count and threshold, including descriptor metadat
   assert.equal(isDenseObjectView({aspect:'object',relationCount:64}),true);
   assert.equal(isDenseObjectView({aspect:'schedule',relationCount:1000}),false);
   assert.equal(isDenseObjectView({aspect:'object'}),false);
+  assert.equal(isDenseObjectView({aspect:'object',relationCount:100,visualEdgeCount:1}),false);
+});
+
+test('display groups project both directions and resolve existing canonical relation links', () => {
+  const read = { id: 'read-original', from: 'data', to: 'system', sourceEntries: [{ path: 'src/read.rs', line: 8 }] };
+  const write = { id: 'write-original', from: 'system', to: 'data', sourceEntries: [{ path: 'src/write.rs', line: 9 }] };
+  const group = { id: 'visual-access', from: 'data', to: 'system', forwardIds: [read.id], backwardIds: [write.id], displayLabel: '读写访问' };
+  const view = { aspect: 'object', objectId: 'data', nodes: [{ id: 'data' }, { id: 'system' }], links: [read, write], visualEdgeGroups: [group] };
+  for (const id of [group.id, read.id, write.id]) {
+    const projection = projectObjectRelation(view, id);
+    assert.deepEqual(projection.links, [read, write]);
+    assert.deepEqual(projection.visualEdgeGroups, [group]);
+    assert.equal(projection.nodes.length, 2);
+  }
+  const rows = relationRows(view, { data: { name: '数据' }, system: { name: '处理函数' } }, 'write.rs');
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].id, group.id);
+  assert.equal(rows[0].bidirectional, true);
 });
 
 test('every real visible relation retains exact link, canonical endpoints, evidence and display nodes',()=>{

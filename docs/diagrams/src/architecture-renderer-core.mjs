@@ -1,9 +1,10 @@
 // Mermaid 定义、业务身份和图例共用视觉语义；不手工重画编译后的图形。
-import { NODE_STYLES, EDGE_STYLES, EXTERNAL_REFERENCE_STYLE, ARCHITECTURE_TEXT_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf, scheduleLinksFor, mermaidStyleDefinitions } from './architecture-style.mjs';
+import { NODE_STYLES, EDGE_STYLES, EXTERNAL_REFERENCE_STYLE, ARCHITECTURE_TEXT_STYLE, visualTypeOf, scheduleLinksFor, mermaidStyleDefinitions } from './architecture-style.mjs';
 import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
 import { architectureDisplayName } from './architecture-labels.mjs';
 
 import { VIEWER_BACKGROUND } from './viewer-theme.mjs';
+import { createVisualEdgeGroups, isVisibleRelation } from './architecture-visual-edges.mjs';
 
 export const DATA_GROUP_LABELS = { catalog: '数据与实体', relations: '数据流与关系' };
 const displayEndpoint = (link, side) => link[side === 'from' ? 'displayFrom' : 'displayTo'] ?? link[side];
@@ -149,6 +150,8 @@ function wrap(value, limit = 36) {
   return lines;
 }
 const text = values => values.filter(Boolean).flatMap(value => wrap(value)).map(escape).join('<br/>');
+// 原生边标签先经 HTML 清洗器还原引号与 #，再交给 Mermaid 测量和排版。
+const edgeText = value => text([value]).replaceAll('#quot;', '&quot;').replaceAll('#35;', '&num;');
 function nodeText(name, context) {
   return [...wrap(name).map(line => `**${escape(line)}**`),
     ...context.filter(Boolean).flatMap(value => wrap(value)).map(escape)].join('<br/>');
@@ -156,6 +159,34 @@ function nodeText(name, context) {
 function nodeLabel(name, context) {
   // YAML 先还原引号和 #，避免原生 SVG 保留 &quot; 或 &#35;；零宽字符阻止 Markdown 吞掉原文反斜杠。
   return nodeText(name, context).replaceAll('\\', '\\u005c\u200B').replaceAll('#quot;', '\\u0022').replaceAll('#35;', '\\u0023');
+}
+
+function distinguishNodeLabels(nodes, registry) {
+  const fullName = record => record.name;
+  const packageName = record => {
+    const dependency = record.typeIdentity?.package;
+    return dependency && [dependency.name, dependency.version].filter(Boolean).join(' ');
+  };
+  const definition = record => {
+    const source = record.sourceEntries?.find(entry => entry.role === 'definition');
+    return source && `${source.path}:${source.line}`;
+  };
+  const identity = (record, node) => record.declarationId || record.typeIdentity?.declarationId || node.id;
+  const objectIdentity = (_record, node) => node.id;
+  for (const contextOf of [fullName, packageName, definition, identity, objectIdentity]) {
+    const collisions = Map.groupBy(nodes, node => node.displayLabel);
+    for (const peers of collisions.values()) {
+      if (peers.length < 2) continue;
+      const contexts = peers.map(node => contextOf(registry[node.id] || {}, node));
+      if (!contexts.every(Boolean) || new Set(contexts).size < 2) continue;
+      for (const [index, node] of peers.entries()) {
+        const context = contexts[index];
+        if (context === node.nameLabel || node.contextLabel.includes(context)) continue;
+        node.contextLabel = [...node.contextLabel, context];
+        node.displayLabel = [node.nameLabel, ...node.contextLabel].join('\n');
+      }
+    }
+  }
 }
 
 export function mermaidConfiguration(aspect) {
@@ -166,7 +197,7 @@ export function mermaidConfiguration(aspect) {
 }
 
 function definition(view, graph, registry, features, scheduleGroups = [], buildObserverPlacement) {
-  const base = { ...view, engine: 'mermaid', diagramType: 'flowchart', width: 0, height: 0, svg: null, filename: null, mermaid: null, mermaidFilename: null, nodes: [], links: [], scheduleLinks: [], layoutLinks: [], scheduleGroups: [], observerBranches: [], entityGroups: [], sections: [] };
+  const base = { ...view, engine: 'mermaid', diagramType: 'flowchart', width: 0, height: 0, svg: null, filename: null, mermaid: null, mermaidFilename: null, nodes: [], links: [], visualEdgeGroups: [], scheduleLinks: [], layoutLinks: [], scheduleGroups: [], observerBranches: [], entityGroups: [], sections: [] };
   if (graph.empty || !graph.nodes.length) return base;
   const names = new Map([...features, ...INFRASTRUCTURE_FEATURES].map(feature => [feature.id, feature.label]));
   const entityGroups = [];
@@ -181,15 +212,22 @@ function definition(view, graph, registry, features, scheduleGroups = [], buildO
   });
   const byId = new Map(nodes.map(node => [node.id, node]));
   if (byId.size !== nodes.length) throw new Error(`同一视图重复声明节点：${view.id}`);
+  distinguishNodeLabels(nodes, registry);
   const objectCenter = view.centerNodeId || graph.centerNodeId;
+  const canonicalLinks = graph.links.filter(isVisibleRelation);
+  const visualGroups = graph.visualEdgeGroups ?? createVisualEdgeGroups(canonicalLinks, registry);
   // 双向访问放在同一侧，使用原生起点箭头保留真实方向，避免把一跳图排成有向环。
-  const objectIncoming = new Set(view.aspect === 'object' ? graph.links.filter(link => displayEndpoint(link, 'to') === objectCenter && displayEndpoint(link, 'from') !== objectCenter).map(link => displayEndpoint(link, 'from')) : []);
-  const links = graph.links.map((link, index) => {
-    const edgeSemantic = edgeSemanticOf(link, registry);
-    const nativeReverse = (view.aspect === 'component' && displayEndpoint(link, 'from') === (view.componentNodeId || graph.componentNodeId)
+  const objectIncoming = new Set(view.aspect === 'object' ? visualGroups.filter(link => displayEndpoint(link, 'to') === objectCenter && displayEndpoint(link, 'from') !== objectCenter).map(link => displayEndpoint(link, 'from')) : []);
+  const links = visualGroups.map((link, index) => {
+    const edgeSemantic = link.edgeSemantic;
+    const bidirectional = link.forwardIds.length > 0 && link.backwardIds.length > 0;
+    const nativeReverse = !bidirectional && ((view.aspect === 'component' && displayEndpoint(link, 'from') === (view.componentNodeId || graph.componentNodeId)
       && byId.get(displayEndpoint(link, 'to'))?.visualType !== 'entity')
-      || (view.aspect === 'object' && displayEndpoint(link, 'from') === objectCenter && objectIncoming.has(displayEndpoint(link, 'to')));
-    return { ...link, ...(nativeReverse ? { nativeReverse: true } : {}), mermaidId: `e${index}`, edgeSemantic, displayLabel: displayLabelOf(link, edgeSemantic, registry) };
+      || (view.aspect === 'object' && displayEndpoint(link, 'from') === objectCenter && objectIncoming.has(displayEndpoint(link, 'to'))));
+    const rendered = { ...link, mermaidId: `e${index}`, edgeSemantic, displayLabel: link.displayLabel };
+    delete rendered.nativeReverse;
+    if (nativeReverse) rendered.nativeReverse = true;
+    return rendered;
   });
   const placement = view.aspect === 'systems' || view.layout === 'app-schedule' ? buildObserverPlacement(graph, registry, scheduleGroups) : { groups: scheduleGroups, branches: [] };
   const groups = placement.groups.map((group, index) => ({ ...group, mermaidId: `sg${index}`, nodes: group.nodes.map(node => typeof node === 'string' ? node : node.id) }));
@@ -220,7 +258,8 @@ function definition(view, graph, registry, features, scheduleGroups = [], buildO
     if (node.role === 'external') lines.push(`  class ${node.mermaidId} external_node`);
   }
   function edge(link, from, to) {
-    lines.push(`  ${link.nativeReverse ? to : from} ${link.mermaidId}@${link.nativeReverse ? '---' : '-->'}${link.displayLabel ? `|"${text([link.displayLabel])}"|` : ''} ${link.nativeReverse ? from : to}`, `  class ${link.mermaidId} edge_${link.edgeSemantic}`);
+    const bidirectional = link.forwardIds?.length > 0 && link.backwardIds?.length > 0;
+    lines.push(`  ${link.nativeReverse ? to : from} ${link.mermaidId}@${bidirectional ? '<-->' : link.nativeReverse ? '---' : '-->'}${link.displayLabel ? `|"${edgeText(link.displayLabel)}"|` : ''} ${link.nativeReverse ? from : to}`, `  class ${link.mermaidId} edge_${link.edgeSemantic}`);
   }
   function declareLinks(selected = links) {
     for (const link of selected) {
@@ -304,7 +343,7 @@ function definition(view, graph, registry, features, scheduleGroups = [], buildO
     } else { nodes.forEach(declare); declareLinks(); }
   }
   if (!['data', 'component', 'object'].includes(view.aspect)) lines.push('  end');
-  return { ...base, nodes, links, scheduleLinks, layoutLinks, scheduleGroups: groups, observerBranches, entityGroups, mermaid: lines.join('\n') + '\n', mermaidFilename: `ecs-${view.id}.mmd`, filename: `ecs-${view.id}.svg` };
+  return { ...base, nodes, links: canonicalLinks, visualEdgeGroups: links, scheduleLinks, layoutLinks, scheduleGroups: groups, observerBranches, entityGroups, mermaid: lines.join('\n') + '\n', mermaidFilename: `ecs-${view.id}.mmd`, filename: `ecs-${view.id}.svg` };
 }
 
 export function renderGraphView(view, graph, registry, features, scheduleGroups, { buildObserverPlacement } = {}) {

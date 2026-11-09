@@ -25,8 +25,12 @@ test('Component views rank every native relation System to Component to Entity w
   ] };
   const before = JSON.stringify(graph), view = renderGraphView({ id: 'component-test', aspect: 'component', label: 'Component', summary: 'relations' }, graph, registry, []);
   assert.equal(JSON.stringify(graph), before);
-  assert.deepEqual(view.links.map(({ from, to, nativeReverse }) => [from, to, nativeReverse]), [['component', 'entity', undefined], ['component', 'system', true], ['system', 'component', undefined]]);
-  assert.match(view.mermaid, /n2 e1@--- n1/); assert.match(view.mermaid, /n2 e2@--> n1/); assert.match(view.mermaid, /n1 e0@-->\|"所属实体"\| n0/);
+  assert.deepEqual(view.links, graph.links);
+  assert.deepEqual(view.visualEdgeGroups.map(({ from, to, nativeReverse }) => [from, to, nativeReverse]), [['component', 'entity', undefined], ['component', 'system', true], ['system', 'component', undefined]]);
+  assert.deepEqual(view.visualEdgeGroups.map(group => group.displayLabel), ['引用 · 所属实体', '读访问', '写访问']);
+  assert.match(view.mermaid, /n2 e1@---\|"读访问"\| n1/);
+  assert.match(view.mermaid, /n2 e2@-->\|"写访问"\| n1/);
+  assert.match(view.mermaid, /n1 e0@-->\|"引用 · 所属实体"\| n0/);
   const config = JSON.parse(/^---\n([\s\S]*?)\n---/.exec(view.mermaid)[1]).config;
   assert.match(config.themeCSS, /#component-test-e1\{marker-start:url\(#component-test_flowchart-v2-pointStart\)!important\}/);
   assert.match(config.themeCSS, /fill:context-stroke!important;stroke:context-stroke!important/);
@@ -89,6 +93,22 @@ test('short titles preserve distinct generic identities, links and escaped type 
   assert.match(view.mermaid, /Assets#lt;Wrapper#lt;T#gt;#gt;/);
   assert.deepEqual(view.links.map(({ id, from, to }) => ({ id, from, to })), graph.links.map(({ id, from, to }) => ({ id, from, to })));
   assert.deepEqual({ registry, graph }, before);
+});
+
+test('colliding short titles use actual full declarations or package versions as visible context', () => {
+  const registry = {
+    left: { id: 'left', kind: 'System', name: 'demo::left::run', declarationId: 'decl-left' },
+    right: { id: 'right', kind: 'System', name: 'demo::right::run', declarationId: 'decl-right' },
+    old: { id: 'old', kind: 'Resource', name: 'shared::State', typeIdentity: { package: { name: 'shared', version: '1.0.0' } } },
+    current: { id: 'current', kind: 'Resource', name: 'shared::State', typeIdentity: { package: { name: 'shared', version: '2.0.0' } } },
+  };
+  const graph = { centerNodeId: 'left', nodes: Object.keys(registry).map(id => ({ id, role: 'internal' })), links: [] };
+  const before = structuredClone(registry);
+  const view = renderGraphView({ id: 'colliding-titles', aspect: 'object', centerNodeId: 'left', label: 'Declarations' }, graph, registry, []);
+  assert.deepEqual(view.nodes.map(node => node.nameLabel), ['run', 'run', 'State', 'State']);
+  assert.deepEqual(view.nodes.map(node => node.contextLabel), [['demo::left::run'], ['demo::right::run'], ['shared 1.0.0'], ['shared 2.0.0']]);
+  assert.equal(new Set(view.nodes.map(node => node.displayLabel)).size, 4);
+  assert.deepEqual(registry, before);
 });
 
 test('Entity Name titles retain source text and changing a name invalidates rendered geometry', () => {

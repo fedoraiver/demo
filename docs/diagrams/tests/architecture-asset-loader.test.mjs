@@ -11,7 +11,7 @@ const svg=(id,extra='')=>'<svg xmlns="http://www.w3.org/2000/svg" id="'+id+'" da
 function resourceFixture(count=1){
   const files=new Map(),refs=[];
   for(let index=1;index<=count;index++){
-    const id='view-'+index,metadata={id,aspect:'object',engine:'mermaid',filename:id+'.svg',width:100,height:60,nodes:[],links:[],sections:[]},data=JSON.stringify(metadata),image=svg(id);
+    const id='view-'+index,metadata={id,aspect:'object',engine:'mermaid',filename:id+'.svg',width:100,height:60,nodes:[],links:[],visualEdgeGroups:[],sections:[]},data=JSON.stringify(metadata),image=svg(id);
     const dataUrl='../data/views/'+id+'.json',svgUrl='../svg/object/'+id+'.svg';files.set(new URL(dataUrl,baseUrl).href,data);files.set(new URL(svgUrl,baseUrl).href,image);
     refs.push({...metadata,resources:{data:{url:dataUrl,sha256:hash(data)},svg:{url:svgUrl,sha256:hash(image)}}});
   }
@@ -26,13 +26,14 @@ test('external views validate both hashes, retain exact SVG bytes and never muta
 });
 
 test('metadata-only loading preserves all relations without requesting the full SVG and checks descriptor counts', async () => {
-  const fixture = resourceFixture(), ref = fixture.refs[0]; ref.relationCount = 0;
+  const fixture = resourceFixture(), ref = fixture.refs[0]; ref.relationCount = 0; ref.visualEdgeCount = 0;
   const loader = createArchitectureAssetLoader({ ...fixture, baseUrl, crypto: webcrypto, DOMParser });
   const metadata = await loader.loadView(ref, { includeSvg: false });
   assert.equal(metadata.svg, null); assert.deepEqual(metadata.links, []); assert.equal(fixture.calls.length, 1);
   assert.equal(await loader.loadView(ref, { includeSvg: false }), metadata);
   assert.equal((await loader.loadView(ref)).svg, svg(ref.id)); assert.equal(fixture.calls.length, 3);
   await assert.rejects(loader.loadView({ ...ref, relationCount: 1, resources: { ...ref.resources, svg: undefined } }, { includeSvg: false }), /relation count mismatch/);
+  await assert.rejects(loader.loadView({ ...ref, visualEdgeCount: 1, resources: { ...ref.resources, svg: undefined } }, { includeSvg: false }), /visual edge count mismatch/);
   loader.dispose();
 });
 

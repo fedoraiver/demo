@@ -16,14 +16,14 @@ async function deploymentFixture(t, respond) {
   const meta = Object.entries(provenance).map(([key, value]) => `<meta name="architecture-${key}" content="${value}">`).join('');
   const files = new Map([
     ['data/manifest.json', JSON.stringify({ schemaVersion: 2, ...provenance })],
-    ['data/runtime.json', JSON.stringify({ schemaVersion: 6, ...provenance })],
+    ['data/runtime.json', JSON.stringify({ schemaVersion: 7, ...provenance })],
     ['data/views/first.json', JSON.stringify({ id: 'first', ...provenance })],
     ['svg/schedule/first.svg', '<svg>Schedule</svg>'], ['svg/object/first.svg', '<svg>Object</svg>'], ['svg/legend/first.svg', '<svg>Legend</svg>'],
     ['runtime/relations.mjs', 'export const fixture=true;'], ['dot/first.dot', 'digraph {}'], ['mermaid/first.mmd', 'flowchart LR'],
     ['pages/ecs-source.html', '<!doctype html><head>' + meta + '</head><body>Frozen source</body>'],
     ['index.html', '<!doctype html><head>' + meta + '</head><a href="pages/ecs-architecture.html">Open</a>'],
   ]);
-  const bootstrap = { schemaVersion: 6, ...provenance, manifestUrl: '../data/manifest.json', runtimeUrl: '../data/runtime.json',
+  const bootstrap = { schemaVersion: 7, ...provenance, manifestUrl: '../data/manifest.json', runtimeUrl: '../data/runtime.json',
     manifestSha256: sha256(files.get('data/manifest.json')), runtimeSha256: sha256(files.get('data/runtime.json')) };
   files.set('pages/ecs-architecture.html', '<!doctype html><head>' + meta + '</head><script id="architecture-data" type="application/json">' + JSON.stringify(bootstrap) + '</script>');
   const proof = { schemaVersion: 1, ...provenance, files: [...files].map(([path, text]) => ({ path, bytes: Buffer.byteLength(text), sha256: sha256(text) })) };

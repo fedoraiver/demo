@@ -4,7 +4,7 @@ import { renderGraphView } from './architecture-renderer-core.mjs';
 import { normalizeMermaidSvg, nativeLabelMismatches, compileRoutedView } from './mermaid-core.mjs';
 import { checkMermaidGeometry } from './diagram-geometry.mjs';
 import { validateArchitectureSvg } from './architecture-asset-loader.mjs';
-import { projectObjectRelation, objectRelationRenderKey } from './architecture-object-relations.mjs';
+import { displayEdgesOf, findVisualEdge, projectObjectRelation, objectRelationRenderKey } from './architecture-object-relations.mjs';
 
 let nativeSequence = 0;
 const nativeNamespace = globalThis.crypto?.randomUUID?.().replaceAll('-', '') || Math.random().toString(36).slice(2);
@@ -22,7 +22,7 @@ async function compileNativeInDocument(view, { document = globalThis.document, e
   document.body.appendChild(container);
   try {
     engine.initialize({ startOnLoad: false, securityLevel: 'strict', htmlLabels: false, suppressErrorRendering: true,
-      maxTextSize: Math.max(200000, view.mermaid.length), maxEdges: Math.max(500, view.links.length) });
+      maxTextSize: Math.max(200000, view.mermaid.length), maxEdges: Math.max(500, displayEdgesOf(view).length) });
     const { svg } = await engine.render(view.id, view.mermaid, container);
     if (signal?.aborted || !isCurrent()) throw abortError();
     return svg;
@@ -119,6 +119,9 @@ export function createObjectRelationRenderer({ registry, features = [], buildId 
       if (disposed) return Promise.reject(new Error('Object relation renderer has been disposed'));
       cancel();
       if (signal?.aborted) return Promise.reject(abortError());
+      const group = findVisualEdge(fullView, relationId);
+      if (!group) return Promise.reject(new Error('Unknown object relation: ' + relationId));
+      relationId = group.id;
       const key = objectRelationRenderKey(buildId, fullView.id, relationId);
       if (cache.has(key)) {
         const value = cache.get(key), expected = generation;
