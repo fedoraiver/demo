@@ -1,5 +1,5 @@
-// 两个离线页面共用源码入口；项目目录由浏览器配置，本机 Cargo 依赖根由生成数据提供。
-// 维护代码不硬编码个人目录；包身份、相对路径和依赖根来自编译器记录。
+// 两个离线页面共用源码入口；项目与 Cargo 源码目录均由浏览器配置。
+// 编译机器的依赖根只用于构建校验，不作为用户机器的编辑器目标。
 import { viewerThemeStyle } from './viewer-theme.mjs';
 
 /** 将 Windows、UNC 或 POSIX 绝对目录规范化为正斜杠路径。 */
@@ -90,23 +90,53 @@ export function normalizeSourceEntry(source) {
       throw new Error('Invalid dependency identity');
     }
     // 包身份和相对位置不依赖本机目录；目录不可用时仍须允许显示、复制定位。
-    dependency = { name: value.name, version: value.version, root: value.root };
+    dependency = { name: value.name, version: value.version, ...(value.root !== undefined ? { root: value.root } : {}),
+      ...(value.kind !== undefined ? { kind: value.kind } : {}) };
   }
   return { path: relative, line, column, ...(dependency ? { dependency } : {}) };
 }
 
-function sourceLocation(root, source) {
+function dependencyKey(dependency) { return dependency.name + '@' + dependency.version; }
+
+export function dependencyKind(dependency) {
+  if (dependency?.root === undefined) return dependency?.kind === 'registry' ? 'registry' : 'package';
+  if (typeof dependency.root !== 'string') return 'package';
+  let root;
+  try { root = normalizeWorkspaceRoot(dependency.root).replace(/\/$/, ''); }
+  catch { return 'package'; }
+  const packageName = dependency.name + '-' + dependency.version;
+  return root.endsWith('/' + packageName) && /\/registry\/src\/[^/]+$/.test(root.slice(0, -packageName.length - 1)) ? 'registry' : 'package';
+}
+
+function normalizePackageRoots(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid dependency directory mappings');
+  return Object.fromEntries(Object.entries(value).map(([key, root]) => {
+    const match = /^([^@]+)@(.+)$/.exec(key);
+    if (!match) throw new Error('Invalid dependency mapping identity');
+    normalizeSourceEntry({ path: 'src/lib.rs', line: 1, dependency: { name: match[1], version: match[2] } });
+    return [key, normalizeWorkspaceRoot(root)];
+  }));
+}
+
+function localDependencyRoot(dependency, cargoRegistry, cargoPackages) {
+  const override = cargoPackages?.[dependencyKey(dependency)];
+  if (override) return normalizeWorkspaceRoot(override);
+  if (cargoRegistry && dependencyKind(dependency) === 'registry') return normalizeWorkspaceRoot(cargoRegistry).replace(/\/$/, '') + '/' + dependency.name + '-' + dependency.version;
+  throw new Error('Local dependency directory is not configured');
+}
+
+function sourceLocation(root, source, cargoRegistry, cargoPackages) {
   const relative = normalizeSourceEntry(source);
-  const base = relative.dependency ? normalizeWorkspaceRoot(relative.dependency.root) : root;
+  const base = relative.dependency ? localDependencyRoot(relative.dependency, cargoRegistry, cargoPackages) : root;
   const path = base ? normalizeWorkspaceRoot(base).replace(/\/$/, '') + '/' + relative.path : relative.path;
   return { path, line: relative.line, column: relative.column };
 }
 
 /** 创建 VS Code 文件协议；路径各段编码，行列始终显式保留。 */
-export function vscodeUri(root, source) {
+export function vscodeUri(root, source, cargoRegistry = null, cargoPackages = {}) {
   const relative = normalizeSourceEntry(source);
-  const normalized = normalizeWorkspaceRoot(relative.dependency ? relative.dependency.root : root);
-  const location = sourceLocation(normalized, source);
+  if (!relative.dependency) normalizeWorkspaceRoot(root);
+  const location = sourceLocation(root, source, cargoRegistry, cargoPackages);
   const encoded = location.path.split('/').map((part, index) =>
     index === 0 && /^[A-Z]:$/.test(part) ? part : encodeURIComponent(part)).join('/');
   return 'vscode://file' + (encoded.startsWith('/') ? '' : '/') + encoded + ':' + location.line + ':' + location.column;
@@ -117,24 +147,33 @@ function createSourceEditor({ document, pageUrl, getPageUrl, getStorage, navigat
   let page = new URL(pageUrl);
   const directory = new URL('.', page).href;
   const storageKey = 'ecs-source-editor:v1:' + directory;
+  const cargoStorageKey = 'ecs-source-editor:cargo-registry:v1:' + directory;
+  const packagesStorageKey = 'ecs-source-editor:cargo-packages:v1:' + directory;
   const inferredRoot = inferWorkspaceRoot(page.href);
   const dialog = document.querySelector('[data-workspace-dialog]');
   const input = document.querySelector('[data-workspace-root]');
+  const cargoInput = document.querySelector('[data-cargo-registry-root]');
+  const packageLabel = document.querySelector('[data-cargo-package-config]');
+  const packageName = document.querySelector('[data-cargo-package-name]');
+  const packageInput = document.querySelector('[data-cargo-package-root]');
   const error = document.querySelector('[data-workspace-error]');
   const locations = new WeakMap();
   let root = null;
+  let cargoRegistry = null;
+  let cargoPackages = {};
+  let configuringDependency = null;
   let state = 'unconfigured';
 
-  function readStoredRoot() {
-    try { return getStorage()?.getItem(storageKey) || null; }
+  function readStoredRoot(key = storageKey) {
+    try { return getStorage()?.getItem(key) || null; }
     catch { return null; }
   }
-  function writeStoredRoot(value) {
+  function writeStoredRoot(value, key = storageKey) {
     try {
       const storage = getStorage();
       if (!storage) return;
-      if (value) storage.setItem(storageKey, value);
-      else storage.removeItem(storageKey);
+      if (value) storage.setItem(key, value);
+      else storage.removeItem(key);
     } catch { /* 本页配置与链接传播不依赖浏览器存储。 */ }
   }
   const requested = page.searchParams.get('workspace');
@@ -144,11 +183,25 @@ function createSourceEditor({ document, pageUrl, getPageUrl, getStorage, navigat
     else if (saved) { root = normalizeWorkspaceRoot(saved); state = 'configured'; }
     else if (inferredRoot) { root = inferredRoot; state = 'inferred'; }
   } catch { state = 'invalid_workspace'; }
+  try {
+    const requestedCargo = page.searchParams.get('cargoRegistry');
+    const configuredCargo = requestedCargo === null ? readStoredRoot(cargoStorageKey) : requestedCargo;
+    if (configuredCargo) cargoRegistry = normalizeWorkspaceRoot(configuredCargo);
+  } catch { /* 无效的本机 Cargo 目录仍显示便携定位并要求重新配置。 */ }
+  try {
+    const requestedPackages = page.searchParams.get('cargoPackages');
+    const savedPackages = requestedPackages === null ? readStoredRoot(packagesStorageKey) : requestedPackages;
+    if (savedPackages) cargoPackages = normalizePackageRoots(JSON.parse(savedPackages));
+  } catch { /* 无效映射不能回退到生成机器的目录。 */ }
 
   function withWorkspace(value) {
     const url = new URL(value, page);
     if (root) url.searchParams.set('workspace', root);
     else url.searchParams.delete('workspace');
+    if (cargoRegistry) url.searchParams.set('cargoRegistry', cargoRegistry);
+    else url.searchParams.delete('cargoRegistry');
+    if (Object.keys(cargoPackages).length) url.searchParams.set('cargoPackages', JSON.stringify(cargoPackages));
+    else url.searchParams.delete('cargoPackages');
     return url.href;
   }
   function updatePageParameter() {
@@ -156,41 +209,70 @@ function createSourceEditor({ document, pageUrl, getPageUrl, getStorage, navigat
     if (getPageUrl) page = new URL(getPageUrl());
     if (root && state === 'configured') page.searchParams.set('workspace', root);
     else page.searchParams.delete('workspace');
+    if (cargoRegistry) page.searchParams.set('cargoRegistry', cargoRegistry);
+    else page.searchParams.delete('cargoRegistry');
+    if (Object.keys(cargoPackages).length) page.searchParams.set('cargoPackages', JSON.stringify(cargoPackages));
+    else page.searchParams.delete('cargoPackages');
     // file:// 的 History API 在部分浏览器被禁用；链接传播和内存配置不依赖它。
     try { history?.replaceState(history.state ?? null, '', page.href); } catch { /* 保留本页配置。 */ }
   }
-  function openConfiguration() {
+  function openConfiguration(source) {
     if (!dialog) return;
+    // 工具栏配置也能修正当前详情/文件的包映射，已可打开的依赖不必先清空全部配置。
+    if (!source) {
+      const anchor = Array.from(document.querySelectorAll('a[data-vscode-path]'))
+        .find(item => !item.hidden && !item.closest('[hidden]') && item.dataset.vscodeDependencyName !== undefined);
+      try { if (anchor) source = sourceFor(anchor); } catch { /* 无效证据不能成为配置目标。 */ }
+    }
     input.value = root || '';
+    cargoInput.value = cargoRegistry || '';
+    configuringDependency = source?.dependency || null;
+    packageLabel.hidden = !configuringDependency;
+    if (configuringDependency) {
+      packageName.textContent = dependencyKey(configuringDependency) + ' 本机包目录（可覆盖 registry 配置）';
+      packageInput.value = cargoPackages[dependencyKey(configuringDependency)] || '';
+    }
     error.textContent = '';
     if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
     else dialog.setAttribute('open', '');
-    input.focus();
-    input.select();
+    const focus = source?.dependency ? dependencyKind(source.dependency) === 'registry' ? cargoInput : packageInput : input;
+    focus.focus();
+    focus.select();
   }
   function closeConfiguration() {
     if (typeof dialog?.close === 'function') dialog.close();
     else dialog?.removeAttribute('open');
   }
-  function configure(value) {
+  function configure(value, cargoValue = cargoRegistry, packageValues = cargoPackages) {
     // 配置仅更新 href，不启动协议；用户仍须点击具体的源码入口。
-    root = normalizeWorkspaceRoot(value);
-    state = 'configured';
+    const nextRoot = value?.trim() ? normalizeWorkspaceRoot(value) : null;
+    const nextCargo = cargoValue?.trim() ? normalizeWorkspaceRoot(cargoValue) : null;
+    const nextPackages = normalizePackageRoots(packageValues);
+    root = nextRoot;
+    cargoRegistry = nextCargo;
+    cargoPackages = nextPackages;
+    state = root ? 'configured' : 'unconfigured';
     writeStoredRoot(root);
+    writeStoredRoot(cargoRegistry, cargoStorageKey);
+    writeStoredRoot(Object.keys(cargoPackages).length ? JSON.stringify(cargoPackages) : null, packagesStorageKey);
     updatePageParameter();
     refreshLinks();
     return root;
   }
   function reset() {
     writeStoredRoot(null);
+    writeStoredRoot(null, cargoStorageKey);
+    writeStoredRoot(null, packagesStorageKey);
     root = inferredRoot;
+    cargoRegistry = null;
+    cargoPackages = {};
     state = root ? 'inferred' : 'unconfigured';
     updatePageParameter();
     refreshLinks();
   }
   function sourceFor(anchor) {
-    const { vscodeDependencyName: name, vscodeDependencyVersion: version, vscodeDependencyRoot: root } = anchor.dataset;
-    const dependency = [name, version, root].some(value => value !== undefined) ? { name, version, root } : undefined;
+    const { vscodeDependencyName: name, vscodeDependencyVersion: version, vscodeDependencyKind: kind } = anchor.dataset;
+    const dependency = [name, version, kind].some(value => value !== undefined) ? { name, version, kind } : undefined;
     return normalizeSourceEntry({ path: anchor.dataset.vscodePath, line: Number(anchor.dataset.vscodeLine),
       column: anchor.dataset.vscodeColumn === undefined ? undefined : Number(anchor.dataset.vscodeColumn), dependency });
   }
@@ -266,31 +348,29 @@ function createSourceEditor({ document, pageUrl, getPageUrl, getStorage, navigat
       }
       const current = locationControls(anchor);
       current.container.hidden = false;
-      let position = source, unavailable = '';
-      try { position = sourceLocation(root, source); }
-      catch {
-        unavailable = source.dependency.root === undefined || source.dependency.root === null || source.dependency.root === ''
-          ? '依赖源码根目录缺失，无法在 VS Code 中打开；仍可复制相对定位。'
-          : '依赖源码根目录无效，无法在 VS Code 中打开；仍可复制相对定位。';
+      let ready = root, unavailable = '';
+      if (source.dependency) {
+        try { localDependencyRoot(source.dependency, cargoRegistry, cargoPackages); ready = true; }
+        catch {
+          ready = false;
+          unavailable = dependencyKind(source.dependency) === 'registry'
+            ? '请配置本机 Cargo registry 源码目录或此包目录；不会使用生成机器的目录。'
+            : '请配置此依赖包的本机目录；Git、路径依赖或未知来源不能使用 registry 目录。';
+        }
       }
+      const position = source.dependency
+        ? { ...source, path: source.dependency.name + '-' + source.dependency.version + '/' + source.path }
+        : sourceLocation(root, source, cargoRegistry, cargoPackages);
       const value = position.path + ':' + position.line + ':' + position.column;
       if (current.field.value !== value || current.unavailable.textContent !== unavailable) clearCopyFeedback(current);
       current.field.value = value;
       current.unavailable.textContent = unavailable;
-      if (unavailable) {
-        anchor.removeAttribute('href');
-        anchor.dataset.workspaceState = 'unavailable';
-        anchor.setAttribute('aria-disabled', 'true');
-        anchor.title = unavailable;
-        continue;
-      }
       anchor.removeAttribute('aria-disabled');
-      const ready = source.dependency || root;
-      anchor.href = ready ? vscodeUri(root, source) : '#workspace-config';
+      anchor.href = ready ? vscodeUri(root, source, cargoRegistry, cargoPackages) : '#workspace-config';
       anchor.dataset.workspaceState = ready ? 'ready' : 'unconfigured';
       anchor.title = ready
         ? '请求 VS Code 打开当前本机文件；浏览器可能要求允许协议，行号可能与快照不同。'
-        : '先配置本机仓库根目录。';
+        : unavailable || '先配置本机仓库根目录。';
     }
     // 仅向同目录的两个正式离线页面传播配置，保留 file 查询与行号 fragment。
     for (const anchor of scope.querySelectorAll('a[href]')) {
@@ -313,36 +393,54 @@ function createSourceEditor({ document, pageUrl, getPageUrl, getStorage, navigat
     if (!anchor) return;
     let source;
     try { source = sourceFor(anchor); } catch { event.preventDefault(); return; }
-    if (!source.dependency && !root) { event.preventDefault(); openConfiguration(); return; }
-    try { anchor.href = vscodeUri(root, source); }
-    catch { event.preventDefault(); refreshLinks(); }
+    try { anchor.href = vscodeUri(root, source, cargoRegistry, cargoPackages); }
+    catch { event.preventDefault(); openConfiguration(source); refreshLinks(); }
   });
   document.querySelector('[data-workspace-form]')?.addEventListener('submit', event => {
     event.preventDefault();
-    try { configure(input.value); closeConfiguration(); }
+    try {
+      const mappings = { ...cargoPackages };
+      if (configuringDependency) {
+        const key = dependencyKey(configuringDependency);
+        if (packageInput.value.trim()) mappings[key] = packageInput.value;
+        else delete mappings[key];
+      }
+      configure(input.value, cargoInput.value, mappings); closeConfiguration();
+    }
     catch { error.textContent = '请输入有效的本机绝对目录，例如 D:\\demo 或 /home/user/demo。'; }
   });
   document.querySelector('[data-workspace-cancel]')?.addEventListener('click', closeConfiguration);
   document.querySelector('[data-workspace-reset]')?.addEventListener('click', () => { reset(); closeConfiguration(); });
   refreshLinks();
-  return { refreshLinks, configure, reset, withWorkspace, get root() { return root; }, get state() { return state; } };
+  return { refreshLinks, configure, dependencyKind, configureCargoRegistry(value) { configure(root, value); },
+    configureCargoPackage(dependency, value) {
+      const entry = normalizeSourceEntry({ path: 'src/lib.rs', line: 1, dependency });
+      const mappings = { ...cargoPackages }, key = dependencyKey(entry.dependency);
+      if (value?.trim()) mappings[key] = value; else delete mappings[key];
+      configure(root, cargoRegistry, mappings);
+    }, reset, withWorkspace,
+    get root() { return root; }, get cargoRegistry() { return cargoRegistry; }, get state() { return state; } };
 }
 
-/** 返回共享样式、配置框与脚本；依赖绝对根由生成数据提供，代码中不硬编码个人路径。 */
+/** 返回共享样式、配置框与脚本；本机目录不从生成数据推导。 */
 export function sourceEditorAssets() {
   const style = `${viewerThemeStyle}
 .source-editor-location{display:flex;flex-wrap:wrap;gap:6px;align-items:center;max-width:100%;margin:8px 0 12px}.source-editor-location[hidden]{display:none}.source-editor-location input{flex:1 1 120px;min-width:0;width:auto;padding:7px 8px;color:var(--ui-text);font:12px/1.4 Consolas,monospace}.source-editor-location button{flex-shrink:0;font-size:12px;color:var(--ui-accent);background:var(--ui-active)}.source-editor-location button:hover{background:#DBEAFE}[data-source-copy-feedback],[data-source-unavailable]{flex:0 0 100%;font-size:12px;color:#9A462A}[data-source-copy-feedback]:empty,[data-source-unavailable]:empty{display:none}[data-vscode-path][aria-disabled="true"]{color:var(--ui-muted);cursor:default}[data-vscode-path][aria-disabled="true"]:hover{background:var(--ui-bg)}
-[data-workspace-dialog]{width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;border:1px solid var(--ui-border);border-radius:12px;padding:24px;color:var(--ui-text);background:var(--ui-surface);box-shadow:0 18px 60px #0F172A1F;font:14px/1.6 'Segoe UI','Microsoft YaHei',sans-serif}[data-workspace-dialog]::backdrop{background:#0F172A38}[data-workspace-dialog] h2{margin:0 0 20px;font-size:20px;line-height:1.4}[data-workspace-dialog] p{margin:12px 0;color:var(--ui-muted)}[data-workspace-dialog] label{display:block;font-size:13px;font-weight:600}[data-workspace-root]{display:block;width:100%;margin-top:8px;padding:10px 12px;font:14px/1.5 Consolas,monospace}[data-workspace-error]{min-height:1.6em;color:#B42318!important}.source-editor-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}[data-workspace-dialog] button{padding:7px 12px}[data-workspace-dialog] button[type="submit"]{background:var(--ui-accent);color:#fff}[data-workspace-dialog] button[type="submit"]:hover{background:#1D4ED8}[data-workspace-config]{color:var(--ui-muted)}
+[data-workspace-dialog]{width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;border:1px solid var(--ui-border);border-radius:12px;padding:24px;color:var(--ui-text);background:var(--ui-surface);box-shadow:0 18px 60px #0F172A1F;font:14px/1.6 'Segoe UI','Microsoft YaHei',sans-serif}[data-workspace-dialog]::backdrop{background:#0F172A38}[data-workspace-dialog] h2{margin:0 0 20px;font-size:20px;line-height:1.4}[data-workspace-dialog] p{margin:12px 0;color:var(--ui-muted)}[data-workspace-dialog] label[hidden]{display:none}[data-workspace-dialog] label{display:block;font-size:13px;font-weight:600}[data-workspace-root],[data-cargo-registry-root],[data-cargo-package-root]{display:block;width:100%;margin-top:8px;padding:10px 12px;font:14px/1.5 Consolas,monospace}[data-workspace-error]{min-height:1.6em;color:#B42318!important}.source-editor-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}[data-workspace-dialog] button{padding:7px 12px}[data-workspace-dialog] button[type="submit"]{background:var(--ui-accent);color:#fff}[data-workspace-dialog] button[type="submit"]:hover{background:#1D4ED8}[data-workspace-config]{color:var(--ui-muted)}
 `;
   const markup = `<dialog id="workspace-config" data-workspace-dialog aria-labelledby="workspace-config-title">
 <form data-workspace-form>
 <h2 id="workspace-config-title">配置本机源码目录</h2>
 <label>仓库根目录<input data-workspace-root type="text" autocomplete="off" spellcheck="false" placeholder="D:\\demo 或 /home/user/demo"></label>
+<label>Cargo registry 源码目录<input data-cargo-registry-root type="text" autocomplete="off" spellcheck="false" placeholder="本机 .cargo/registry/src/下的注册表目录"></label>
+<p>填写直接包含 bevy_picking-0.20.0 等包目录的本机目录；registry 的目录名以本机为准，不能只填写 .cargo。两项可独立配置。</p>
+<label data-cargo-package-config hidden><span data-cargo-package-name>当前依赖包目录</span><input data-cargo-package-root type="text" autocomplete="off" spellcheck="false" placeholder="此包在本机的目录，内含 Cargo.toml"></label>
 <p data-workspace-error role="alert"></p>
 <div class="source-editor-buttons"><button type="submit">保存目录</button><button type="button" data-workspace-reset>恢复默认</button><button type="button" data-workspace-cancel>取消</button></div>
 </form>
 </dialog>`;
-  const helpers = [normalizeWorkspaceRoot, inferWorkspaceRoot, normalizeSourceEntry, sourceLocation, vscodeUri, createSourceEditor]
+  const helpers = [normalizeWorkspaceRoot, inferWorkspaceRoot, normalizeSourceEntry, dependencyKey, dependencyKind,
+    normalizePackageRoots, localDependencyRoot, sourceLocation, vscodeUri, createSourceEditor]
     .map(fn => fn.toString()).join('\n');
   const script = `const sourceEditor = (() => {\n${helpers}\nreturn createSourceEditor({ document, pageUrl: location.href, getPageUrl: () => location.href, getStorage: () => globalThis.localStorage, navigator: globalThis.navigator, history: globalThis.history });\n})();`;
   return { style, markup, script };

@@ -91,8 +91,8 @@ function assertCardDetails(page,id){
   const sources=(record.sourceEntries||[]).filter(source=>source.path&&Number.isSafeInteger(source.line)&&source.line>0);
   assert.equal(details.children[0].textContent,record.name);assert.ok(details.children[1].textContent.includes(record.kind));
   if(record.description)assert.ok(!details.textContent.includes(record.description));
-  for(const registration of record.registrations||[])assert.ok(details.textContent.includes(registration.schedule));
-  for(const gap of record.sourceGaps||[])assert.ok(details.textContent.includes(gap));
+  assert.ok(!details.querySelectorAll('h3').some(heading=>heading.textContent==='注册位置'));
+  for(const gap of record.sourceGaps||[])assert.ok(!details.textContent.includes(gap));
   assert.deepEqual(details.querySelectorAll('[data-object]').map(button=>button.dataset.object),opensObject?[id]:[]);
   assert.deepEqual(details.querySelectorAll('[data-vscode-line]').map(anchor=>anchor.dataset.vscodeLine),sources.map(source=>String(source.line)));
   assert.equal(details.querySelector('[data-owner]'),null);assert.equal(details.querySelector('[data-open]'),null);assert.equal(details.querySelector('#clear-selection'),null);
@@ -174,14 +174,13 @@ test('relation details distinguish source columns, packages and roots and retain
   page.get('diagram').querySelector('[data-link-id="write"]').dispatch('keydown',{key:'Enter'});
   const details=page.get('details'),links=details.querySelectorAll('[data-vscode-path]');
   assert.deepEqual(details.querySelectorAll('.source-group-label').map(item=>item.textContent),['操作位置','创建位置']);
-  assert.equal(links.length,15);
-  assert.deepEqual(links.filter(link=>link.dataset.vscodeDependencyRoot==='relative').length,2);
-  assert.equal(links.filter(link=>link.dataset.vscodeDependencyRoot==='').length,2);
+  assert.equal(links.length,14);
+  assert.ok(links.every(link=>link.dataset.vscodeDependencyRoot===undefined));
   assert.equal(links.filter(link=>link.dataset.vscodePath==='../outside.rs').length,2);
   assert.equal(links.filter(link=>link.dataset.vscodeColumn==='0').length,2);
-  assert.deepEqual(links.filter(link=>link.dataset.vscodeDependencyRoot&&link.dataset.vscodeDependencyRoot!=='relative').map(link=>[link.dataset.vscodeDependencyName,link.dataset.vscodeDependencyVersion,link.dataset.vscodeDependencyRoot]),[
-    ['example','1.0.0','E:\\cargo\\example'],['other','1.0.0','E:\\cargo\\example'],['example','2.0.0','E:\\cargo\\example'],['example','1.0.0','F:/cargo/example'],
-  ]);
+  assert.equal(links.filter(link=>link.dataset.vscodeDependencyName==='example'&&link.dataset.vscodeDependencyVersion==='1.0.0').length,5);
+  assert.ok(links.filter(link=>link.dataset.vscodeDependencyName).every(link=>link.dataset.vscodeDependencyKind==='package'));
+  assert.doesNotMatch(details.textContent,/E:\\cargo|F:\/cargo|runner/);
   assert.deepEqual(sources,original);
 });
 
@@ -230,10 +229,12 @@ test('external legend resources use image references while legacy samples remain
 });
 
 test('external bootstrap embeds only its index and file URLs explain the local server without making requests',async()=>{
-  const data=fixture(),bootstrap={schemaVersion:6,runtimeUrl:'../data/runtime.json',runtimeSha256:'a'.repeat(64),manifestUrl:'../data/manifest.json',manifestSha256:'b'.repeat(64),buildId:'build-test'},html=renderArchitectureViewer({...data,externalBootstrap:bootstrap});
+  const data=fixture(),bootstrap={schemaVersion:6,runtimeUrl:'../data/runtime.json',runtimeSha256:'a'.repeat(64),manifestUrl:'../data/manifest.json',manifestSha256:'b'.repeat(64),buildId:'build-test',sourceCommit:'c'.repeat(40),target:'x86_64-unknown-linux-gnu'},html=renderArchitectureViewer({...data,externalBootstrap:bootstrap});
   assert.deepEqual(JSON.parse(html.match(/id="architecture-data"[^>]*>([\s\S]*?)<\/script>/)[1]),bootstrap);
   assert.ok(!html.includes('完整插件说明'));assert.ok(!html.includes('data-schedule-sample='));for(const{attributes,script}of scriptsIn(html))if(!attributes.includes('application/json'))new vm.Script(script);
   const document=testDocument(html);let requests=0;
+  assert.equal(Boolean(document.querySelector('.build-context')),false);
+  for(const value of [bootstrap.target,bootstrap.sourceCommit.slice(0,12),bootstrap.buildId])assert.ok(!document.querySelector('header').textContent.includes(value));
   const app=await startExternalArchitecture({bootstrap,document,window:{},location:new URL('file:///D:/demo/docs/diagrams/generated/pages/ecs-architecture.html'),fetch:()=>{requests++;throw new Error('must not fetch')}});
   assert.equal(app,null);assert.equal(requests,0);assert.ok(document.getElementById('schedule-status').textContent.includes('node docs/diagrams/serve.mjs'));
 });
@@ -304,7 +305,7 @@ test('Schedule left-click binds exact cards, nested sets, title layers and conte
   leftClick(page,'update-card');assertCardDetails(page,'system-update');assert.equal(page.location.searchParams.get('scheduleNode'),'update-card');
   for(const className of ['cluster','schedule-cluster-title']){leftClick(page,'inner-set',className);assert.equal(page.get('details').querySelector('h2').textContent,'SharedSet');assert.equal(page.location.searchParams.get('scheduleNode'),'inner-set')}
   leftClick(page,'sync-card');assert.ok(page.get('details').textContent.includes('ApplyDeferred'));
-  leftClick(page,'missing-card');assert.ok(page.get('details').textContent.includes('本调度未注册目标系统'));
+  leftClick(page,'missing-card');assert.ok(!page.get('details').textContent.includes('本调度未注册目标系统'));assertCardDetails(page,'constraint-missing');
   for(const element of [page.get('diagram').querySelector('g.edge'),page.get('hidden-marker'),page.get('diagram')])assert.equal(element.dispatch('contextmenu').defaultPrevented,false);
   assert.equal(page.app.view.svg,original);assert.equal(page.data.views.find(view=>view.id==='schedule-update').svg,original);
   assert.equal(page.location.searchParams.get('workspace'),'E:/work');assert.equal(page.location.searchParams.get('keep'),'1');assert.equal(page.location.hash,'#anchor');
@@ -698,11 +699,12 @@ test('project function registration locations survive Schedule selection, object
   ];
   const page=viewer('?schedule=schedule-update&workspace=D:/demo',{edit:data=>{
     interactiveSchedules(data);
-    Object.assign(data.registry['system-fixed'],{name:'demo::scene_assembly::spawn_session',sourceEntries:structuredClone(sources)});
+    Object.assign(data.registry['system-fixed'],{name:'demo::scene_assembly::spawn_session',registrations:[{application:'main',schedule:'Update',scope:'runtime'}],sourceEntries:structuredClone(sources)});
   }});
   function assertLocations(){
     const details=page.get('details');
     assert.equal(details.querySelector('h2').textContent,'demo::scene_assembly::spawn_session');
+    assert.ok(!details.textContent.includes('main · Update · runtime'));
     assert.deepEqual(details.querySelectorAll('.source-group-label').map(item=>item.textContent),['定义位置','注册位置']);
     assert.deepEqual(details.querySelectorAll('.source-entry-label').map(item=>item.textContent),[label,label]);
     assert.deepEqual(details.querySelectorAll('[data-vscode-path]').map(link=>[link.dataset.vscodePath,link.dataset.vscodeLine,link.dataset.vscodeColumn]),sources.map(source=>[source.path,String(source.line),String(source.column)]));
@@ -906,12 +908,12 @@ test('unavailable local history and stale object routes retain working navigatio
   const unrelated=viewer('?object=item.Shared&node=resource.Config');assert.equal(unrelated.app.selection.node,'item.Shared');
 });
 
-test('card details preserve analysis gaps and authoritative sources without inventing access or definitions',()=>{
+test('card details hide analysis gaps while preserving their data and authoritative source evidence',()=>{
   const page=viewer('?feature=item&object=system-fixed');const details=page.get('details');
   assertCardDetails(page,'system-fixed');assert.ok(!details.textContent.includes('Query<&mut Shared>'));
   assert.deepEqual(page.data.registry['system-fixed'].reads,['item.Shared','item.Other','character.Shared','resource.Config','local.State','non_send.Native']);
   assert.deepEqual(page.data.registry['system-fixed'].filters,['Query<&mut Shared>','With<Pickable>']);
-  page.app.openObject('item.Other');page.flush();assertCardDetails(page,'item.Other');assert.equal(details.querySelector('[data-vscode-path]'),null);assert.ok(details.textContent.includes('待核实'));assert.ok(!details.textContent.includes('not-a-definition.rs'));
+  page.app.openObject('item.Other');page.flush();assertCardDetails(page,'item.Other');assert.equal(details.querySelector('[data-vscode-path]'),null);assert.ok(!details.textContent.includes('待核实'));assert.ok(!details.textContent.includes('分析缺口'));assert.ok(!details.textContent.includes('not-a-definition.rs'));
   assert.deepEqual(page.data.registry['item.Other'].sourceGaps,['待核实：没有类型定义证据']);
 });
 
@@ -962,12 +964,14 @@ test('clear returns actual view legend and releases only graph or disappearing-b
 
 test('edge details and native labels preserve exact endpoint and operation source identity',()=>{
   const page=viewer('?feature=item&object=item.Shared',{edit:data=>{
-    const view=data.views.find(view=>view.objectId==='item.Shared');view.links.forEach((link,index)=>link.mermaidId='e'+index);
+    const view=data.views.find(view=>view.objectId==='item.Shared');view.links.forEach((link,index)=>{link.mermaidId='e'+index;link.sourceGaps=['待核实：动态目标']});
     view.svg=view.svg.replace('</svg>',view.links.map(link=>'<g class="edgeLabel"><g data-mermaid-native-id="'+link.mermaidId+'"><text>'+link.label+'</text></g></g>').join('')+'</svg>');
   }});
   const label=page.get('diagram').querySelector('[data-link-label-id="write"]');assert.equal(label.getAttribute('data-connect'),'system-fixed|item.Shared');
   assert.equal(label.classList.contains('edge-label'),true);assert.equal(label.classList.contains('edge'),false);
   mouseClick(page,label.querySelector('text'));assert.deepEqual(page.get('details').querySelectorAll('[data-open]').map(button=>button.dataset.open),['system-fixed','item.Shared']);assert.equal(page.get('details').querySelector('[data-vscode-line]').dataset.vscodeLine,'80');
+  assert.ok(page.get('details').textContent.includes('直接写入'));assert.ok(!page.get('details').textContent.includes('待核实：动态目标'));
+  assert.deepEqual(page.app.view.links.find(link=>link.id==='write').sourceGaps,['待核实：动态目标']);
   for(const key of ['Enter',' ']){label.dispatch('keydown',{key});assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.write.label)}
   page.click(page.get('details').querySelector('[data-open="system-fixed"]'));assert.equal(page.app.view.id,'object:system-fixed');
 });
@@ -1078,10 +1082,11 @@ test('generated scripts deduplicate source links while preserving copying, inval
   const details=document.getElementById('details');
   async function assertSources(){
     const links=details.querySelectorAll('a[data-vscode-path]');
-    assert.equal(links.length,11);assert.equal(links.filter(link=>link.getAttribute('aria-disabled')==='true').length,10);
+    assert.equal(links.length,10);assert.equal(links.filter(link=>link.getAttribute('aria-disabled')==='true').length,8);
     assert.equal(links[0].href,'vscode://file/D:/demo/src/dedup.rs:7:1');
     assert.equal(details.querySelector('.source-entry-label').textContent,'同一定位补充');
-    assert.equal(details.querySelectorAll('[data-source-unavailable]').filter(item=>item.textContent.includes('依赖源码根目录缺失')).length,2);
+    assert.equal(details.querySelectorAll('[data-source-unavailable]').filter(item=>item.textContent.includes('配置此依赖包')).length,1);
+    assert.ok(links.every(link=>link.dataset.vscodeDependencyRoot===undefined));
     assert.equal(links.filter(link=>link.title==='源码路径、包身份或行列无效，无法打开。').length,8);
     details.querySelector('[data-source-location] button').dispatch('click');await advance();
     assert.equal(copied.at(-1),'D:/demo/src/dedup.rs:7:1');

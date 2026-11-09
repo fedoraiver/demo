@@ -1,8 +1,16 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import vm from 'node:vm';
-import { inferWorkspaceRoot, normalizeSourceEntry, normalizeWorkspaceRoot, sourceEditorAssets, vscodeUri } from '../src/source-editor.mjs';
+import { dependencyKind, inferWorkspaceRoot, normalizeSourceEntry, normalizeWorkspaceRoot, sourceEditorAssets, vscodeUri } from '../src/source-editor.mjs';
 import { testDocument } from './test-dom.mjs';
+
+test('CI Cargo roots never become local editor targets without a browser mapping', () => {
+  const dependency = { name: 'bevy_picking', version: '0.20.0', root: '/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bevy_picking-0.20.0' };
+  const page = browserFixture('https://example.test/demo/pages/ecs-architecture.html', { dependency });
+  assert.equal(page.editorLink.href, '#workspace-config');
+  assert.equal(page.field().value, 'bevy_picking-0.20.0/src/中文 #%.rs:8:1');
+  assert.match(page.editorLink.title, /配置.*Cargo/);
+});
 
 test('normalizes Windows, UNC and POSIX absolute workspace roots without depending on the host OS', () => {
   assert.equal(normalizeWorkspaceRoot(' d:\\worktrees\\diagram\\demo\\ '), 'D:/worktrees/diagram/demo');
@@ -61,17 +69,24 @@ test('shared source normalization preserves editor validation and leaves semanti
   assert.deepEqual(normalizeSourceEntry(source),{path:'src/scene.rs',line:7,column:1,dependency:source.dependency});
   assert.deepEqual(source,original);
   for(const invalid of [{...source,path:'../outside.rs'},{...source,column:0},{...source,dependency:{...source.dependency,name:'../example'}}])assert.throws(()=>normalizeSourceEntry(invalid));
-  assert.equal(vscodeUri('D:/demo',source),'vscode://file/E:/cargo/example/src/scene.rs:7:1');
+  assert.throws(()=>vscodeUri('D:/demo',source),/not configured/);
+  assert.equal(vscodeUri('D:/demo',source,null,{'example@1.2.3':'E:/local/example'}),'vscode://file/E:/local/example/src/scene.rs:7:1');
 });
 
-test('Cargo dependency locations use their validated root independently of the project workspace', () => {
-  const source = { path: 'src/中文 #%.rs', line: 5, column: 9, dependency: { name: 'avian3d', version: '0.7.0', root: 'C:/Cargo 缓存 #%/avian3d-0.7.0' } };
-  const expected = 'vscode://file/C:/Cargo%20%E7%BC%93%E5%AD%98%20%23%25/avian3d-0.7.0/src/%E4%B8%AD%E6%96%87%20%23%25.rs:5:9';
-  for (const workspace of [null, undefined, 'relative', 'E:/other-project']) assert.equal(vscodeUri(workspace, source), expected);
-  assert.equal(vscodeUri(null, { ...source, dependency: { ...source.dependency, root: '//server/share/cargo/avian3d-0.7.0' } }),
-    'vscode://file//server/share/cargo/avian3d-0.7.0/src/%E4%B8%AD%E6%96%87%20%23%25.rs:5:9');
-  assert.equal(vscodeUri(null, { ...source, dependency: { name: 'some-crate_name', version: '1.2.3-beta.1+build.2', root: '/home/user/cargo' } }),
-    'vscode://file/home/user/cargo/src/%E4%B8%AD%E6%96%87%20%23%25.rs:5:9');
+test('Cargo registry mappings use local directories independent of producer platform, username and registry hash', () => {
+  for (const root of ['/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/avian3d-0.7.0',
+    'C:\\Users\\builder\\.cargo\\registry\\src\\index.crates.io-6f17d22bba15001f\\avian3d-0.7.0',
+    '//?/C:/other-cargo/registry/src/custom-registry-abcdef/avian3d-0.7.0']) {
+    const source = { path: 'src/中文 #%.rs', line: 5, column: 9, dependency: { name: 'avian3d', version: '0.7.0', root } };
+    assert.equal(dependencyKind(source.dependency), 'registry');
+    assert.throws(() => vscodeUri('D:/project', source), /not configured/);
+    for (const workspace of [null, undefined, 'relative', 'E:/other-project']) {
+      assert.equal(vscodeUri(workspace, source, 'C:/Cargo 缓存 #%/registry/src/local-hash'),
+        'vscode://file/C:/Cargo%20%E7%BC%93%E5%AD%98%20%23%25/registry/src/local-hash/avian3d-0.7.0/src/%E4%B8%AD%E6%96%87%20%23%25.rs:5:9');
+    }
+    assert.equal(vscodeUri(null, source, '/home/local/.cargo/registry/src/another-hash'),
+      'vscode://file/home/local/.cargo/registry/src/another-hash/avian3d-0.7.0/src/%E4%B8%AD%E6%96%87%20%23%25.rs:5:9');
+  }
 });
 
 test('dependency identities, roots and relative paths cannot become arbitrary editor targets', () => {
@@ -181,16 +196,24 @@ function browserFixture(pageUrl, { storage = memoryStorage(), clipboard, depende
   document.createElement = name => new Element(name);
   const dialog = new Element('dialog', { 'data-workspace-dialog': '' });
   const input = new Element('input', { 'data-workspace-root': '' });
+  const cargoInput = new Element('input', { 'data-cargo-registry-root': '' });
+  const packageLabel = new Element('label', { 'data-cargo-package-config': '' });
+  const packageName = new Element('span', { 'data-cargo-package-name': '' });
+  const packageInput = new Element('input', { 'data-cargo-package-root': '' });
+  packageLabel.append(packageName, packageInput);
   const error = new Element('p', { 'data-workspace-error': '' });
   const form = new Element('form', { 'data-workspace-form': '' });
   const cancel = new Element('button', { 'data-workspace-cancel': '' });
   const reset = new Element('button', { 'data-workspace-reset': '' });
-  form.append(input, error, cancel, reset);
+  form.append(input, cargoInput, packageLabel, error, cancel, reset);
   dialog.append(form);
   const config = new Element('button', { 'data-workspace-config': '' });
   const container = new Element('div');
   const editorLink = new Element('a', { 'data-vscode-path': 'src/中文 #%.rs', 'data-vscode-line': '8' });
-  if (dependency) for (const [key, value] of Object.entries(dependency)) editorLink.dataset['vscodeDependency' + key[0].toUpperCase() + key.slice(1)] = value;
+  if (dependency) {
+    for (const key of ['name', 'version']) editorLink.dataset['vscodeDependency' + key[0].toUpperCase() + key.slice(1)] = dependency[key];
+    editorLink.dataset.vscodeDependencyKind = dependencyKind(dependency);
+  }
   const offlineLink = new Element('a', { href: 'ecs-source.html?file=src%2Fmain.rs#L8' });
   container.append(editorLink, offlineLink);
   document.append(dialog, config, container);
@@ -208,7 +231,7 @@ function browserFixture(pageUrl, { storage = memoryStorage(), clipboard, depende
     } } });
   if (storageAccessBlocked) Object.defineProperty(context, 'localStorage', { get() { throw new Error('Storage unavailable'); } });
   vm.runInContext(sourceEditorAssets().script + '\nglobalThis.editor = sourceEditor;', context);
-  return { editor: context.editor, document, editorLink, offlineLink, dialog, input, error, form, config,
+  return { editor: context.editor, document, editorLink, offlineLink, dialog, input, cargoInput, packageLabel, packageName, packageInput, error, form, config,
     container, reset, historyCalls, location, storage, field: () => container.querySelector('[data-source-location]')?.children[0],
     copy: () => container.querySelector('[data-source-location]')?.children[1],
     feedback: () => container.querySelector('[data-source-copy-feedback]'),
@@ -256,84 +279,117 @@ test('HTTP pages require explicit configuration and configure only after a user 
   assert.equal(page.document.querySelector('[data-workspace-status]'), null);
 });
 
-test('dependency editor links and copy locations work on HTTP without configuring a project', async () => {
-  const dependency = { name: 'avian3d', version: '0.7.0', root: 'C:/Cargo & 中文 #%/avian3d-0.7.0' };
+test('dependency mappings and portable copy locations work independently of the project workspace', async () => {
+  const dependency = { name: 'avian3d', version: '0.7.0', root: '/home/runner/.cargo/registry/src/ci-hash/avian3d-0.7.0' };
   const copied = [];
   for (const query of ['', '?workspace=relative', '?workspace=E%3A%2Fother']) {
     const page = browserFixture('https://example.test/docs/diagrams/ecs-source.html' + query,
       { dependency, clipboard: { writeText: async value => copied.push(value) } });
-    assert.equal(page.editorLink.href, vscodeUri(null, { path: 'src/中文 #%.rs', line: 8, dependency }));
+    assert.equal(page.editorLink.href, '#workspace-config');
+    assert.equal((await page.document.dispatch('click', page.editorLink)).defaultPrevented, true);
+    assert.equal(page.dialog.open, true);
+    page.cargoInput.value = 'C:/local/registry/src/local-hash';
+    await page.form.dispatch('submit');
+    assert.equal(page.dialog.open, false);
+    assert.equal(page.editorLink.href, 'vscode://file/C:/local/registry/src/local-hash/avian3d-0.7.0/src/%E4%B8%AD%E6%96%87%20%23%25.rs:8:1');
     assert.equal(page.editorLink.dataset.workspaceState, 'ready');
-    assert.equal(page.field().value, dependency.root + '/src/中文 #%.rs:8:1');
+    assert.equal(page.field().value, 'avian3d-0.7.0/src/中文 #%.rs:8:1');
     assert.equal((await page.document.dispatch('click', page.editorLink)).defaultPrevented, false);
-    assert.notEqual(page.dialog.open, true);
     await page.copy().dispatch('click');
     assert.equal(page.copy().textContent, '已复制');
     page.editor.configure('F:/changed-project');
-    assert.equal(page.field().value, dependency.root + '/src/中文 #%.rs:8:1');
+    assert.equal(page.field().value, 'avian3d-0.7.0/src/中文 #%.rs:8:1');
     page.advance(2000);
     assert.equal(page.copy().textContent, '复制定位');
   }
-  assert.deepEqual(copied, Array(3).fill(dependency.root + '/src/中文 #%.rs:8:1'));
-  const invalid = browserFixture('https://example.test/docs/diagrams/ecs-source.html', { dependency: { name: 'avian3d', version: '0.7.0' } });
-  assert.equal(invalid.editorLink.href, null);
-  assert.equal(invalid.field().value, 'src/中文 #%.rs:8:1');
-  assert.match(invalid.container.querySelector('[data-source-unavailable]').textContent, /依赖源码根目录缺失/);
-  assert.equal((await invalid.document.dispatch('click', invalid.editorLink)).defaultPrevented, true);
+  assert.deepEqual(copied, Array(3).fill('avian3d-0.7.0/src/中文 #%.rs:8:1'));
 });
 
-test('unavailable dependency roots preserve copyable coordinates and never use the configured project root', async () => {
-  for (const root of [undefined, '', 'relative', '//?/GLOBALROOT/Device/HarddiskVolume1', 'C:/../outside']) {
-    const copied = [];
-    const dependency = { name: 'bevy_asset', version: '0.20.0', ...(root === undefined ? {} : { root }) };
-    const page = browserFixture('https://example.test/docs/diagrams/ecs-architecture.html?workspace=D%3A%2Fdemo',
-      { dependency, clipboard: { writeText: async value => copied.push(value) } });
-    assert.equal(page.editorLink.href, null);
-    assert.equal(page.editorLink.getAttribute('aria-disabled'), 'true');
-    assert.equal(page.editorLink.dataset.workspaceState, 'unavailable');
-    assert.equal(page.field().value, 'src/中文 #%.rs:8:1');
-    const reason = page.container.querySelector('[data-source-unavailable]');
-    assert.match(reason.textContent, /依赖源码根目录(?:缺失|无效)/);
-    assert.equal(page.editorLink.title, reason.textContent);
-    await page.copy().dispatch('click');
-    assert.deepEqual(copied, ['src/中文 #%.rs:8:1']);
-    assert.equal(page.copy().textContent, '已复制');
+test('Cargo configuration survives reloads and cross-page navigation without leaking producer paths', () => {
+  const dependency = { name: 'bevy_picking', version: '0.20.0', root: '/home/runner/.cargo/registry/src/ci-hash/bevy_picking-0.20.0' };
+  const storage = memoryStorage();
+  const page = browserFixture('https://example.test/docs/diagrams/ecs-architecture.html', { dependency, storage });
+  page.editor.configureCargoRegistry('C:/Users/local/.cargo/registry/src/local-hash');
+  const restored = browserFixture('https://example.test/docs/diagrams/ecs-source.html?file=cargo/bevy_picking-0.20.0/src/lib.rs#L8', { dependency, storage });
+  assert.equal(restored.editorLink.href, page.editorLink.href);
+  const next = new URL(page.offlineLink.href);
+  assert.equal(next.searchParams.get('cargoRegistry'), 'C:/Users/local/.cargo/registry/src/local-hash');
+  assert.equal(next.hash, '#L8');
+  assert.doesNotMatch(next.href, /runner|ci-hash/);
+  next.searchParams.set('cargoRegistry', '/home/local/.cargo/registry/src/override');
+  const requested = browserFixture(next.href, { dependency, storage });
+  assert.ok(requested.editorLink.href.includes('/override/'));
+  page.editor.reset();
+  assert.equal(page.editorLink.href, '#workspace-config');
+  assert.equal(new URL(page.offlineLink.href).searchParams.get('cargoRegistry'), null);
+  assert.equal(storage.values.size, 0);
+});
+
+test('package mappings take precedence, persist without storage and reject invalid directories atomically', async () => {
+  const dependency = { name: 'example', version: '1.0.0', root: '/home/runner/.cargo/registry/src/ci-hash/example-1.0.0' };
+  const page = browserFixture('https://example.test/docs/diagrams/ecs-architecture.html', { dependency, storageAccessBlocked: true, historyBlocked: true });
+  page.editor.configureCargoRegistry('C:/registry/local-hash');
+  page.editor.configureCargoPackage(dependency, '//server/share/example-local');
+  assert.ok(page.editorLink.href.startsWith('vscode://file//server/share/example-local/'));
+  const next = browserFixture(page.editor.withWorkspace('ecs-source.html'), { dependency, storageAccessBlocked: true });
+  assert.equal(next.editorLink.href, page.editorLink.href);
+  await page.document.dispatch('click', page.config);
+  assert.equal(page.packageLabel.hidden, false);
+  assert.equal(page.packageInput.value, '//server/share/example-local');
+  page.packageInput.value = '../outside';
+  await page.form.dispatch('submit');
+  assert.equal(page.dialog.open, true);
+  assert.ok(page.error.textContent);
+  assert.equal(page.editorLink.href, next.editorLink.href);
+  const invalid = new URL('https://example.test/docs/diagrams/ecs-source.html');
+  invalid.searchParams.set('cargoRegistry', 'relative');
+  invalid.searchParams.set('cargoPackages', JSON.stringify({ 'example@1.0.0': 'relative' }));
+  const rejected = browserFixture(invalid.href, { dependency });
+  assert.equal(rejected.editorLink.href, '#workspace-config');
+  assert.doesNotMatch(rejected.field().value, /runner|ci-hash/);
+});
+
+test('Git, path and unknown dependencies require explicit local package mappings', async () => {
+  for (const root of [undefined, '', 'relative', '/home/runner/.cargo/git/checkouts/example-abcd/123456', 'C:/workspace/example']) {
+    const dependency = { name: 'example', version: '1.2.3', ...(root === undefined ? {} : { root }) };
+    const page = browserFixture('https://example.test/docs/diagrams/ecs-architecture.html?workspace=D%3A%2Fdemo', { dependency });
+    page.editor.configureCargoRegistry('/home/local/.cargo/registry/src/local-hash');
+    assert.equal(page.editorLink.href, '#workspace-config');
+    assert.equal(page.editorLink.dataset.workspaceState, 'unconfigured');
+    assert.equal(page.field().value, 'example-1.2.3/src/中文 #%.rs:8:1');
+    assert.match(page.container.querySelector('[data-source-unavailable]').textContent, /配置此依赖包.*Git/);
     assert.equal((await page.document.dispatch('click', page.editorLink)).defaultPrevented, true);
-    assert.notEqual(page.dialog.open, true);
-    page.editor.configure('E:/other');
-    assert.equal(page.editorLink.href, null);
-    assert.equal(page.field().value, 'src/中文 #%.rs:8:1');
-    page.editorLink.dataset.vscodeDependencyRoot = '//?/C:/Cargo 中文 #%/bevy_asset-0.20.0';
-    page.editor.refreshLinks();
-    assert.equal(page.editorLink.getAttribute('aria-disabled'), null);
-    assert.equal(page.editorLink.dataset.workspaceState, 'ready');
-    assert.equal(reason.textContent, '');
-    assert.equal(page.copy().textContent, '复制定位');
-    assert.equal(page.field().value, 'C:/Cargo 中文 #%/bevy_asset-0.20.0/src/中文 #%.rs:8:1');
-    assert.equal(page.editorLink.href, 'vscode://file/C:/Cargo%20%E4%B8%AD%E6%96%87%20%23%25/bevy_asset-0.20.0/src/%E4%B8%AD%E6%96%87%20%23%25.rs:8:1');
+    assert.equal(page.packageLabel.hidden, false);
+    assert.match(page.packageName.textContent, /example@1.2.3/);
+    page.packageInput.value = 'E:/本机 example';
+    await page.form.dispatch('submit');
+    assert.equal(page.editorLink.href, 'vscode://file/E:/%E6%9C%AC%E6%9C%BA%20example/src/%E4%B8%AD%E6%96%87%20%23%25.rs:8:1');
+    assert.equal(page.container.querySelector('[data-source-unavailable]').textContent, '');
+    page.editor.configure('F:/other-project');
+    assert.ok(page.editorLink.href.startsWith('vscode://file/E:/'));
+    assert.equal(new URL(page.offlineLink.href).searchParams.get('cargoPackages'), '{"example@1.2.3":"E:/本机 example"}');
   }
 });
 
-test('extended Windows dependency roots encode safe URIs without invoking navigation during refresh or configuration', async () => {
+test('local package mappings support Windows extended and UNC directories without navigating during configuration', async () => {
   for (const [root, expected] of [
     ['\\\\?\\C:\\Cargo 中文 #%\\bevy_asset-0.20.0', 'vscode://file/C:/Cargo%20%E4%B8%AD%E6%96%87%20%23%25'],
     ['\\\\?\\UNC\\server\\share\\Cargo 中文 #%\\bevy_asset-0.20.0', 'vscode://file//server/share/Cargo%20%E4%B8%AD%E6%96%87%20%23%25'],
   ]) {
-    const page = browserFixture('https://example.test/docs/diagrams/ecs-architecture.html',
-      { dependency: { name: 'bevy_asset', version: '0.20.0', root } });
+    const dependency = { name: 'bevy_asset', version: '0.20.0', root: '/ci/unusable/source' };
+    const page = browserFixture('https://example.test/docs/diagrams/ecs-architecture.html', { dependency });
     const before = page.location.href;
     page.editor.refreshLinks();
     assert.equal(page.location.href, before);
-    page.editor.configure('D:/project');
+    page.editor.configureCargoPackage(dependency, root);
     assert.equal(new URL(page.location.href).protocol, 'https:');
-    assert.equal(new URL(page.location.href).searchParams.get('workspace'), 'D:/project');
     assert.equal(page.editorLink.href, expected + '/bevy_asset-0.20.0/src/%E4%B8%AD%E6%96%87%20%23%25.rs:8:1');
     assert.equal((await page.document.dispatch('click', page.editorLink)).defaultPrevented, false);
   }
 });
 
-test('dependency copy feedback follows only the latest request and current dependency location', async () => {
-  const pending = [], dependency = { name: 'avian3d', version: '0.7.0', root: 'C:/cargo/avian3d-0.7.0' };
+test('dependency copy feedback follows the current portable source location', async () => {
+  const pending = [], dependency = { name: 'avian3d', version: '0.7.0', root: '/ci/unusable/source' };
   const page = browserFixture('https://example.test/docs/diagrams/ecs-source.html', {
     dependency, clipboard: { writeText() { const copy = deferred(); pending.push(copy); return copy.promise; } },
   });
@@ -342,11 +398,11 @@ test('dependency copy feedback follows only the latest request and current depen
   pending[0].resolve(); await earlier;
   assert.equal(page.copy().textContent, '已复制');
   const moving = page.copy().dispatch('click');
-  page.editorLink.dataset.vscodeDependencyRoot = 'D:/different-cargo/avian3d-0.7.0';
+  page.editorLink.dataset.vscodeLine = '42';
   page.editor.refreshLinks();
   pending[2].resolve(); await moving;
   assert.equal(page.copy().textContent, '复制定位');
-  assert.equal(page.field().value, 'D:/different-cargo/avian3d-0.7.0/src/中文 #%.rs:8:1');
+  assert.equal(page.field().value, 'avian3d-0.7.0/src/中文 #%.rs:42:1');
   const denied = page.copy().dispatch('click');
   pending[3].reject(new Error('Denied')); await denied;
   assert.equal(page.field().selected, true);
@@ -588,8 +644,8 @@ test('shared assets keep only configuration controls and omit the bottom status 
   const dialog = document.querySelector('[data-workspace-dialog]');
   assert.ok(dialog);
   assert.ok(dialog.querySelector('[data-workspace-root]'));
-  assert.equal(dialog.querySelectorAll('p').length, 1);
-  assert.equal(dialog.querySelector('p').getAttribute('data-workspace-error'), '');
+  assert.equal(dialog.querySelectorAll('p').length, 2);
+  assert.equal(dialog.querySelector('[data-workspace-error]').getAttribute('data-workspace-error'), '');
   assert.equal(dialog.querySelectorAll('button').length, 3);
   assert.match(dialog.textContent, /保存目录/);
   assert.match(dialog.textContent, /恢复默认/);
