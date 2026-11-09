@@ -52,16 +52,15 @@ test('the existing ECS category labels and rounded Entity/Component styles remai
   assert.equal(NODE_STYLES.entity.shape, NODE_STYLES.system.shape);
 });
 
-test('edge legends use the exact English vocabulary while existing Chinese labels stay intact', () => {
+test('edge legends and fixed Chinese relation labels follow the semantic catalog', () => {
   assert.deepEqual(Object.values(EDGE_STYLES).map(style => style.legendLabel), [
-    'Schedule order', 'Explicit ordering', 'Nested schedule execution', 'Read access', 'Write / Output',
-    'Message write', 'Message read', 'Event trigger', 'Observer invocation', 'State transition',
-    'Reference', 'Relationship', 'SystemSet membership', 'System group membership', 'Ordering contract participation', 'Registration', 'Dependency',
+    'Schedule order', 'Explicit ordering', 'Nested schedule execution', 'Read access', 'Mutable access', 'Read / Mutable access', 'Write access', 'Query filter', 'Component membership', 'Entity creation', 'Insertion', 'Removal', 'Initialization', 'Entity destruction',
+    'Message publication', 'Message read', 'Event trigger', 'Event reception', 'State transition',
+    'Reference', 'Relationship', 'SystemSet membership', 'System group membership', 'Ordering contract participation', 'Registration', 'Condition binding', 'Structural alternative', 'Dependency',
   ]);
   assert.deepEqual(Object.values(EDGE_STYLES).map(style => style.label), [
-    'Schedule 先后', '显式执行依赖', '内部调度', '读取：数据 → 系统', '修改：系统 → 数据',
-    '发布：生产者 → 消息缓冲', '消费：消息缓冲 → 消费者', '发出：发起者 → 事件', '触发：来源 → Observer', '状态转换',
-    '普通引用：持有者 → 目标', 'Bevy 关系：关系源 → 目标', '系统集合 → 成员系统', '系统分组 → 成员系统', '调度契约 → 参与集合', '装配方 → 注册对象', '契约使用方 → 提供方',
+    'Schedule先后', '执行依赖', '内部调度', '读访问', '写访问', '读写访问', '写访问', '查询筛选', '包含', '创建', '插入', '移除', '按需初始化', '销毁',
+    '发布消息', '消息读访问', '触发事件', '接收事件', '状态转换', '引用', 'Bevy关系', '集合成员', '分组成员', '调度契约参与', '注册', '条件绑定', '结构候选', '契约依赖',
   ]);
 });
 
@@ -128,6 +127,19 @@ test('unclassified kinds, triggers and registration roles fail instead of fallin
   assert.throws(() => edgeSemanticOf({ ...base, kind: 'registration' }, registry), /registration source is not classified/);
   assert.throws(() => edgeSemanticOf({ ...base, from: 'missing', kind: 'read' }, registry), /endpoint missing/);
   assert.throws(() => displayLabelOf(base, 'new-edge', registry), /Unknown architecture edge semantic/);
+  assert.throws(() => displayLabelOf(base, 'toString', registry, 'detail'), /Unknown architecture edge semantic/);
+});
+
+test('compiler operation meanings stay distinct and message parameters express access permissions', () => {
+  const records = { ...registry, messages: { kind: 'Messages<T>' }, message: { kind: 'Message' } };
+  for (const kind of ['mutable_access', 'filter', 'contains', 'create', 'insert', 'remove', 'initialize', 'despawn']) {
+    const link = { id: kind, from: 'movement', to: 'gravity', kind: 'write', factKind: kind };
+    assert.equal(edgeSemanticOf(link, records), kind);
+  }
+  assert.equal(edgeSemanticOf({ id: 'reader', from: 'messages', to: 'movement', kind: 'read', evidence: 'parameter' }, records), 'read');
+  assert.equal(edgeSemanticOf({ id: 'writer', from: 'movement', to: 'message', kind: 'write', factKind: 'mutable_access', evidence: 'parameter' }, records), 'mutable_access');
+  assert.equal(edgeSemanticOf({ id: 'publish', from: 'movement', to: 'message', kind: 'write', factKind: 'publish', evidence: 'body' }, records), 'publish');
+  assert.throws(() => edgeSemanticOf({ id: 'assignment', from: 'movement', to: 'gravity', kind: 'write', factKind: 'modify' }, records), /Unknown architecture edge kind/);
 });
 
 test('only source-backed Schedule contexts classify Engine flow registration edges', () => {
@@ -138,20 +150,38 @@ test('only source-backed Schedule contexts classify Engine flow registration edg
   assert.throws(() => edgeSemanticOf(link, { ...records, schedule: { kind: 'Engine flow' } }), /registration source is not classified/);
 });
 
-test('edge labels contain contract names and domain conditions rather than repeated relation categories', () => {
+test('edge labels keep fixed semantic words and append only exact relation names or constraints', () => {
   const cases = [
-    ['R 设置', 'read', '设置'], ['R / W 守卫', 'write', '守卫'], ['W MenuHover', 'publish', 'MenuHover'],
-    ['读取', 'consume', ''], ['W', 'write', ''], ['触发', 'emit', ''], ['chain', 'order', ''], ['after', 'order', ''],
-    ['chain / Commands', 'order', 'Commands'], ['after(Writeback)', 'order', 'Writeback'], ['after StepSimulation', 'order', 'StepSimulation'],
-    ['Build →', 'order', 'Build'], ['Pointer → Style', 'order', 'Pointer → Style'],
-    ['读取 PrototypeConfig', 'dependency', 'PrototypeConfig'], ['使用 Avian 身体与碰撞层', 'dependency', 'Avian 身体与碰撞层'],
-    ['写入 / 结构变更（待核实）', 'write', '结构变更（待核实）'],
-    ['发布 SoundRequest', 'dependency', 'SoundRequest'], ['消费交互请求', 'read', '交互请求'],
-    ['先安装 Egui', 'registration', 'Egui'], ['显式安装', 'registration', ''],
-    ['禁用默认 LogPlugin / AudioPlugin', 'registration', '禁用默认 LogPlugin / AudioPlugin'],
-    ['ChildOf 层级', 'relationship', 'ChildOf 层级'], ['HeldBy', 'relationship', 'HeldBy'],
-    ['落水时解除持握', 'read', '落水时解除持握'], ['保存成功后应用', 'write', '保存成功后应用'],
-    ['Fire<MoveAction>', 'observe', 'Fire<MoveAction>'], ['进入 PlayState::Paused', 'transition', '进入 PlayState::Paused'],
+    ['R 设置', 'read', '读访问 · 设置'], ['R / W 守卫', 'write', '写访问 · 守卫'], ['W MenuHover', 'publish', '发布消息 · MenuHover'],
+    ['读取', 'consume', '消息读访问'], ['W', 'write', '写访问'], ['触发', 'emit', '触发事件'], ['chain', 'order', '执行依赖'], ['after', 'order', '执行依赖'],
+    ['chain / Commands', 'order', '执行依赖 · Commands'], ['after(Writeback)', 'order', '执行依赖 · Writeback'], ['after StepSimulation', 'order', '执行依赖 · StepSimulation'],
+    ['Build →', 'order', '执行依赖 · Build'], ['Pointer → Style', 'order', '执行依赖 · Pointer → Style'],
+    ['读取 PrototypeConfig', 'dependency', '契约依赖 · PrototypeConfig'], ['使用 Avian 身体与碰撞层', 'dependency', '契约依赖 · Avian 身体与碰撞层'],
+    ['写入 / 结构变更（待核实）', 'write', '写访问 · 结构变更（待核实）'],
+    ['发布 SoundRequest', 'dependency', '契约依赖 · SoundRequest'], ['消费交互请求', 'read', '读访问 · 消费交互请求'],
+    ['先安装 Egui', 'registration', '注册 · Egui'], ['显式安装', 'registration', '注册'], ['注册调用', 'registration', '注册'],
+    ['禁用默认 LogPlugin / AudioPlugin', 'registration', '注册 · 禁用默认 LogPlugin / AudioPlugin'],
+    ['ChildOf 层级', 'relationship', 'Bevy关系 · ChildOf 层级'], ['HeldBy', 'relationship', 'Bevy关系 · HeldBy'],
+    ['落水时解除持握', 'read', '读访问 · 落水时解除持握'], ['保存成功后应用', 'write', '写访问 · 保存成功后应用'],
+    ['Fire<MoveAction>', 'observe', '接收事件 · Fire<MoveAction>'], ['进入 PlayState::Paused', 'transition', '状态转换 · 进入 PlayState::Paused'],
+    ['存在性约束', 'filter', '查询筛选'], ['With<MenuFocus>', 'filter', '查询筛选 · With<MenuFocus>'],
+    ['结构候选', 'alternative', '结构候选'], ['运行条件', 'condition', '条件绑定'], ['写入消息', 'publish', '发布消息'],
+    ['读取输入函数', 'read', '读访问 · 读取输入函数'],
+    ['读访问 · 读访问 · OriginalConstraint', 'read', '读访问 · OriginalConstraint'],
   ];
   for (const [label, semantic, expected] of cases) assert.equal(displayLabelOf({ label }, semantic, registry), expected, label);
+  for (const [semantic, style] of Object.entries(EDGE_STYLES)) assert.equal(displayLabelOf({}, semantic, registry), style.label, semantic);
+});
+
+test('message parameter labels express read and write permissions without claiming publication', () => {
+  const records = { ...registry, messages: { kind: 'Messages<T>' }, message: { kind: 'Message' } };
+  assert.equal(displayLabelOf({ from: 'messages', to: 'movement', label: '读取' }, 'read', records), '消息读访问');
+  assert.equal(displayLabelOf({ from: 'movement', to: 'message', label: '可变访问' }, 'mutable_access', records), '消息写访问');
+  assert.equal(displayLabelOf({ from: 'movement', to: 'message', label: '写入消息' }, 'publish', records), '发布消息');
+});
+
+test('Mermaid Schedule links use the same fixed ordering and nested labels', () => {
+  const links = scheduleLinksFor([{ id: 'Update', track: 'frame', order: 1 },
+    { id: 'PostUpdate', track: 'frame', order: 2 }, { id: 'EguiPrimaryContextPass', order: 3 }]);
+  assert.deepEqual(links.map(link => [link.edgeSemantic, link.displayLabel]), [['schedule', 'Schedule先后'], ['nested', '内部调度']]);
 });

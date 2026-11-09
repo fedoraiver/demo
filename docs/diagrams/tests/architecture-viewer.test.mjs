@@ -64,17 +64,17 @@ function fixture() {
   return{model:{features,entities:[{id:'item',components:[{id:'item.Shared'},{id:'item.Other'}]},{id:'character',components:[{id:'character.Shared'}]}]},registry,views,objects,schedulePluginCatalog,objectAliases:{'old-component-type':['item.Shared','character.Shared'],'old-function':['system-fixed','system-update']},features,infrastructureFeatures:projectInfrastructureFeatures(registry),scheduleLegendLabels:SCHEDULE_LEGEND_LABELS,guideSamples:{schedule:scheduleSamples,nodes:Object.fromEntries(Object.keys(NODE_STYLES).map(type=>[type,'<svg data-sample="'+type+'"></svg>'])),edges:Object.fromEntries(Object.keys(EDGE_STYLES).map(type=>[type,'<svg data-sample="'+type+'"></svg>']))},styles:{nodes:NODE_STYLES,edges:EDGE_STYLES,selection:SELECTION_STYLE,externalReference:EXTERNAL_REFERENCE_STYLE}};
 }
 
-function viewer(query='?object=item.Shared',{historyUnavailable=false,width=1440,edit=()=>{},createScheduleRenderer,loadView,pinView,createObjectRelationRenderer}={}) {
+function viewer(query='?object=item.Shared',{historyUnavailable=false,width=1440,edit=()=>{},createFlow,createScheduleRenderer,loadView,pinView,createObjectRelationRenderer}={}) {
   const data=fixture();edit(data);
   const html=renderArchitectureViewer({...data,features:data.features});
   const fullViews=data.views;
-  if(loadView)data.views=fullViews.map(view=>({...Object.fromEntries(['id','aspect','engine','label','feature','objectId','centerNodeId','application','scheduleLabel','systemCount','width','height','filename','legendKinds','relationCount'].filter(key=>view[key]!==undefined).map(key=>[key,view[key]])),...(view.schedulePluginGroups?{schedulePluginGroups:view.schedulePluginGroups.map(group=>({id:group.id,systemCount:new Set(group.systemNames).size}))}:{}),resources:{data:{url:'../data/'+view.id+'.json',sha256:'a'.repeat(64)},svg:{url:'../svg/'+view.id+'.svg',sha256:'b'.repeat(64)}}}));
+  if(loadView)data.views=fullViews.map(view=>({...Object.fromEntries(['id','aspect','engine','label','feature','objectId','centerNodeId','application','scheduleLabel','systemCount','width','height','filename','legendKinds','relationCount','visualEdgeCount'].filter(key=>view[key]!==undefined).map(key=>[key,view[key]])),...(view.schedulePluginGroups?{schedulePluginGroups:view.schedulePluginGroups.map(group=>({id:group.id,systemCount:new Set(group.systemNames).size}))}:{}),resources:{data:{url:'../data/'+view.id+'.json',sha256:'a'.repeat(64)},svg:{url:'../svg/'+view.id+'.svg',sha256:'b'.repeat(64)}}}));
   const document=testDocument(html),location=new URL('file:///D:/demo/docs/diagrams/ecs-architecture.html'+query),frames=[],events=new Map(),entries=[{href:location.href,state:null}],historyWrites=[];let index=0;
   const history={get state(){return entries[index].state},get length(){return entries.length},replaceState(state,_,href){if(historyUnavailable)throw new Error('unavailable');historyWrites.push('replace');location.href=new URL(href,location).href;entries[index]={href:location.href,state:structuredClone(state)}},pushState(state,_,href){if(historyUnavailable)throw new Error('unavailable');historyWrites.push('push');entries.splice(index+1);location.href=new URL(href,location).href;entries.push({href:location.href,state:structuredClone(state)});index++}};
   const window={innerWidth:width,innerHeight:900,addEventListener(name,listener){events.set(name,listener)}};
   const canvas=document.getElementById('canvas');canvas.clientWidth=950;canvas.clientHeight=600;
   const refreshed=[];
-  const app=createArchitectureViewer({data,document,location,history,window,requestAnimationFrame:callback=>frames.push(callback),sourceEditor:{refreshLinks:scope=>refreshed.push(scope),withWorkspace:href=>href},navigation:createArchitectureNavigation(data.features,data.views.filter(view=>view.aspect==='schedule')),createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction,createGestures:createArchitectureGestures,createObjectSearch:createArchitectureSearch,createScheduleRenderer,loadView,pinView,createObjectRelationRenderer});
+  const app=createArchitectureViewer({data,document,location,history,window,requestAnimationFrame:callback=>frames.push(callback),sourceEditor:{refreshLinks:scope=>refreshed.push(scope),withWorkspace:href=>href},navigation:createArchitectureNavigation(data.features,data.views.filter(view=>view.aspect==='schedule')),createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction,createGestures:createArchitectureGestures,createObjectSearch:createArchitectureSearch,createFlow,createScheduleRenderer,loadView,pinView,createObjectRelationRenderer});
   function flush(){while(frames.length)frames.splice(0).forEach(callback=>callback())}flush();
   function click(element){assert.ok(element,'control exists');element.click();flush()}
   return{data,fullViews,app,document,location,history,historyWrites,canvas,window,emit:(name,event)=>events.get(name)?.(event),refreshed,get:id=>document.getElementById(id),click,flush,choose(id){const select=document.getElementById('view-select');select.value=id;select.dispatch('change');flush()},async settle(){await app.ready;flush()},activate(id,key='Enter'){const node=document.getElementById('diagram').querySelector('[data-id="'+id+'"]');assert.ok(node,'visible node '+id);node.dispatch('keydown',{key});flush()},back(){assert.ok(index>0);location.href=entries[--index].href;events.get('popstate')();flush()},forward(){assert.ok(index+1<entries.length);location.href=entries[++index].href;events.get('popstate')();flush()}};
@@ -88,7 +88,15 @@ const advance=async()=>{for(let step=0;step<8;step++)await Promise.resolve()};
 
 function assertCardDetails(page,id){
   const details=page.get('details'),record=page.data.registry[id],opensObject=page.app.view.objectId!==id;
-  const sources=(record.sourceEntries||[]).filter(source=>source.path&&Number.isSafeInteger(source.line)&&source.line>0);
+  const members=page.app.view.nodes.find(node=>node.id===id)?.sourceNodeIds||[id];
+  const entries=members.flatMap(member=>page.data.registry[member]?.sourceEntries||[]);
+  const sourceKeys=new Set();
+  const sources=entries.filter(source=>{
+    if(!source.path||!Number.isSafeInteger(source.line)||source.line<1)return false;
+    const key=JSON.stringify([source.role||'related',source.dependency||null,source.path,source.line,source.column??1]);
+    if(sourceKeys.has(key))return false;
+    sourceKeys.add(key);return true;
+  });
   assert.equal(details.children[0].textContent,record.name);assert.ok(details.children[1].textContent.includes(record.kind));
   if(record.description)assert.ok(!details.textContent.includes(record.description));
   assert.ok(!details.querySelectorAll('h3').some(heading=>heading.textContent==='注册位置'));
@@ -229,7 +237,7 @@ test('external legend resources use image references while legacy samples remain
 });
 
 test('external bootstrap embeds only its index and file URLs explain the local server without making requests',async()=>{
-  const data=fixture(),bootstrap={schemaVersion:6,runtimeUrl:'../data/runtime.json',runtimeSha256:'a'.repeat(64),manifestUrl:'../data/manifest.json',manifestSha256:'b'.repeat(64),buildId:'build-test',sourceCommit:'c'.repeat(40),target:'x86_64-unknown-linux-gnu'},html=renderArchitectureViewer({...data,externalBootstrap:bootstrap});
+  const data=fixture(),bootstrap={schemaVersion:7,runtimeUrl:'../data/runtime.json',runtimeSha256:'a'.repeat(64),manifestUrl:'../data/manifest.json',manifestSha256:'b'.repeat(64),buildId:'build-test',sourceCommit:'c'.repeat(40),target:'x86_64-unknown-linux-gnu'},html=renderArchitectureViewer({...data,externalBootstrap:bootstrap});
   assert.deepEqual(JSON.parse(html.match(/id="architecture-data"[^>]*>([\s\S]*?)<\/script>/)[1]),bootstrap);
   assert.ok(!html.includes('完整插件说明'));assert.ok(!html.includes('data-schedule-sample='));for(const{attributes,script}of scriptsIn(html))if(!attributes.includes('application/json'))new vm.Script(script);
   const document=testDocument(html);let requests=0;
@@ -733,6 +741,7 @@ test('folded function nodes restore object selections without merging Schedule r
     assert.equal(page.get('diagram').querySelector('[data-id="system-fixed"]').classList.contains('selected'),true);
     assert.equal(page.get('diagram').querySelector('[data-id="system-update"]'),null);
     assertCardDetails(page,'system-fixed');
+    assert.deepEqual(page.get('details').querySelectorAll('[data-vscode-line]').map(anchor=>anchor.dataset.vscodeLine),['40','50','60']);
     assert.equal(page.app.view.links.find(link=>link.id==='read-update').to,'system-update');
     assert.equal(page.app.view.links.find(link=>link.id==='read-update').displayTo,'system-fixed');
   }
@@ -758,6 +767,72 @@ test('global search reaches isolated objects and distinguishes same names by own
   page.click(page.get('object-results').querySelector('[data-object="resource.Config"]'));assert.equal(page.app.view.id,'object:resource.Config');
   assert.equal(page.app.view.nodes.length,1);assertFitted(page);
   page.back();assert.equal(page.get('object-results').querySelector('h2').textContent,'1 个匹配对象');assert.equal(page.get('search').value,'Config');
+});
+
+test('System details omit run conditions while keeping their source positions', () => {
+  const page = viewer('?object=system-fixed', { edit(data) {
+    data.registry['system-fixed'].runConditions = [{ id: 'playing', name: 'only_while_playing' }];
+  } });
+  page.app.select('system-fixed');
+  assert.equal(page.get('details').textContent.includes('运行条件'), false);
+  assert.equal(page.get('details').textContent.includes('only_while_playing'), false);
+  assertCardDetails(page, 'system-fixed');
+  assert.deepEqual(page.data.registry['system-fixed'].runConditions, [{ id: 'playing', name: 'only_while_playing' }]);
+});
+
+function accessPairFixture(data) {
+  const target = data.views.find(view => view.objectId === 'item.Shared');
+  const write = target.links.find(link => link.id === 'write');
+  const read = { ...target.links.find(link => link.id === 'read-update'), to: 'system-fixed' };
+  target.links = [read, write];
+  target.visualEdgeGroups = [{ id: 'access-pair', from: 'item.Shared', to: 'system-fixed',
+    forwardIds: [read.id], backwardIds: [write.id], edgeSemantic: 'read_write', displayLabel: '读写访问', mermaidId: 'e-pair' }];
+  target.svg = target.svg.replace(/<path class="edge"[^>]*\/>/g, '')
+    .replace('</svg>', '<path class="edge" data-link-id="access-pair" tabindex="0" role="button"/>'
+      + '<g class="edgeLabel"><g data-mermaid-native-id="e-pair"><text>读写访问</text></g></g></svg>');
+}
+
+test('a bidirectional display edge selects both canonical directions and shows their evidence', () => {
+  const page = viewer('?object=item.Shared', { edit: accessPairFixture });
+  mouseClick(page, page.get('diagram').querySelector('[data-link-id="access-pair"]'));
+  assert.equal(page.get('diagram').querySelector('[data-link-id="access-pair"]').classList.contains('focused'), true);
+  assert.ok(page.get('details').textContent.includes('读写访问'), page.get('details').textContent);
+  assert.ok(page.get('details').textContent.includes('↔'));
+  assert.deepEqual(page.get('details').querySelectorAll('section.relation-evidence').map(section => section.querySelector('h3').textContent), ['读访问', '写访问']);
+  assert.deepEqual(page.get('details').querySelectorAll('[data-vscode-line]').map(anchor => anchor.dataset.vscodeLine), ['90', '80']);
+  assert.equal(page.app.view.links.length, 2);
+  const label=page.get('diagram').querySelector('[data-link-label-id="access-pair"]');
+  assert.ok(label.getAttribute('aria-label').includes('↔'));
+  label.dispatch('keydown',{key:'Enter'});
+  assert.ok(page.get('details').textContent.includes('读写访问'));
+});
+
+test('canonical relation deep links select their display group below the dense threshold', () => {
+  const page = viewer('?object=item.Shared&objectRelation=write', { edit: accessPairFixture });
+  assert.equal(page.get('diagram').querySelector('[data-link-id="access-pair"]').classList.contains('focused'), true);
+  assert.ok(page.get('details').textContent.includes('读写访问'));
+  page.app.openObject('resource.Config');
+  page.flush();
+  page.back();
+  assert.ok(page.get('details').textContent.includes('读写访问'));
+  assert.equal(page.location.searchParams.get('objectRelation'), 'write');
+});
+
+test('viewer rebuilds and clears flow decorations through navigation and page restoration', () => {
+  const events = [];
+  const page = viewer('?object=item.Shared', { createFlow({ diagram, button }) {
+    assert.equal(diagram.id, 'diagram');
+    assert.notEqual(button.getAttribute('data-flow-toggle'), null);
+    return { clear() { events.push('clear'); }, refresh() { events.push('refresh'); } };
+  } });
+  assert.deepEqual(events.slice(-2), ['clear', 'refresh']);
+  page.app.openObject('resource.Config');
+  page.flush();
+  assert.deepEqual(events.slice(-2), ['clear', 'refresh']);
+  page.emit('pagehide', { persisted: true });
+  assert.equal(events.at(-1), 'clear');
+  page.emit('pageshow', { persisted: true });
+  assert.equal(events.at(-1), 'refresh');
 });
 
 test('Entity Name search opens each same-named creation template with its exact title and source',()=>{
@@ -1047,7 +1122,7 @@ test('rendered HTML groups exported Schedules by application and embeds mixed of
   const document=testDocument(html);assert.equal(document.querySelectorAll('optgroup').filter(group=>group.getAttribute('label')?.endsWith(' Schedule')).flatMap(group=>group.querySelectorAll('option')).length,3);
   const groups=document.querySelectorAll('optgroup').map(group=>group.getAttribute('label'));
   assert.ok(groups.includes('main Schedule'));assert.ok(groups.includes('RenderApp Schedule'));
-  const embedded=JSON.parse(/<script id="architecture-data" type="application\/json">([\s\S]*?)<\/script>/.exec(html)[1]);assert.equal(embedded.schemaVersion,5);assert.ok(embedded.objects.length);assert.ok(embedded.objectAliases['old-function']);assert.equal(embedded.registry['system-fixed'].filters[0],'Query<&mut Shared>');assert.deepEqual(embedded.schedulePluginCatalog,fixture().schedulePluginCatalog);assert.equal(embedded.scheduleInteractions.schemaVersion,1);
+  const embedded=JSON.parse(/<script id="architecture-data" type="application\/json">([\s\S]*?)<\/script>/.exec(html)[1]);assert.equal(embedded.schemaVersion,6);assert.ok(embedded.objects.length);assert.ok(embedded.objectAliases['old-function']);assert.equal(embedded.registry['system-fixed'].filters[0],'Query<&mut Shared>');assert.deepEqual(embedded.schedulePluginCatalog,fixture().schedulePluginCatalog);assert.equal(embedded.scheduleInteractions.schemaVersion,1);
 });
 
 test('generated embedded scripts execute their search factory and category handlers without module globals',()=>{
@@ -1431,6 +1506,29 @@ function focusedRelation(target,id) {
   return {...target,nodes,links:[link],svg:'<svg>'+nodes.map(node=>'<g class="node" data-id="'+node.id+'" data-instance="'+node.instance+'" data-visual-type="'+node.visualType+'"><rect data-shape-part="'+node.instance+'"/></g>').join('')+'<path class="edge" data-link-id="'+id+'"/></svg>',renderKey:target.id+':relation:'+id};
 }
 function chooseRelation(page,id) { page.click(page.get('relation-list').querySelector('[data-relation="'+id+'"]')); }
+
+test('failed grouped relation rendering preserves both directions and original source positions', async () => {
+  const page=viewer('?object=item.Shared&objectRelation=write', {
+    edit(data) {
+      accessPairFixture(data);
+      const target=data.views.find(view=>view.objectId==='item.Shared');
+      for(let index=0;index<63;index++){
+        const id='extra-read-'+index;
+        target.links.push({...target.links[0],id});
+        target.visualEdgeGroups.push({id:'visual-'+id,from:'item.Shared',to:'system-fixed',
+          forwardIds:[id],backwardIds:[],edgeSemantic:'read',displayLabel:'读访问 · 条件 '+index});
+      }
+      target.relationCount=65;
+      target.visualEdgeCount=64;
+    },
+    createObjectRelationRenderer:()=>({render:async()=>{throw new Error('native renderer failed');}}),
+  });
+  await page.settle();
+  assert.match(page.get('schedule-status').textContent,/显示失败/);
+  assert.equal(page.get('relation-list').querySelectorAll('[data-relation]').length,64);
+  assert.deepEqual(page.get('details').querySelectorAll('section.relation-evidence').map(section=>section.querySelector('h3').textContent),['读访问','写访问']);
+  assert.deepEqual(page.get('details').querySelectorAll('[data-vscode-line]').map(anchor=>anchor.dataset.vscodeLine),['90','80']);
+});
 
 test('dense defaults show all canonical relationships without loading or attaching the full SVG',async()=>{
   const requests=[];

@@ -42,11 +42,11 @@ test('relation runtime failed import can retry without caching a broken factory'
 test('external startup validates the relation runtime identity while keeping its module unloaded',async()=>{
   const runtime={url:'../runtime/object-relations.mjs',sha256:'a'.repeat(64),bytes:100};
   async function startup(mismatch=false){
-    const data={schemaVersion:6,buildId:'b',model:{features:[]},views:[],objectRelationRuntime:runtime};
+    const data={schemaVersion:7,buildId:'b',model:{features:[]},views:[],objectRelationRuntime:runtime};
     const manifest={schemaVersion:2,buildId:'b',objectRelationRuntime:{path:'runtime/object-relations.mjs',sha256:(mismatch?'b':'a').repeat(64),bytes:100}};
     const payloads=new Map([['https://local.test/data/runtime.json',new TextEncoder().encode(JSON.stringify(data))],['https://local.test/data/manifest.json',new TextEncoder().encode(JSON.stringify(manifest))]]);
     const hash=url=>createHash('sha256').update(payloads.get(url)).digest('hex');
-    const bootstrap={schemaVersion:6,buildId:'b',runtimeUrl:'../data/runtime.json',runtimeSha256:hash('https://local.test/data/runtime.json'),manifestUrl:'../data/manifest.json',manifestSha256:hash('https://local.test/data/manifest.json')};
+    const bootstrap={schemaVersion:7,buildId:'b',runtimeUrl:'../data/runtime.json',runtimeSha256:hash('https://local.test/data/runtime.json'),manifestUrl:'../data/manifest.json',manifestSha256:hash('https://local.test/data/manifest.json')};
     const document=testDocument('<div id="schedule-status"></div>'),requests=[];let options;
     const app=await startExternalArchitecture({bootstrap,document,window:{},location:new URL('https://local.test/pages/view.html'),crypto:webcrypto,fetch:async url=>{requests.push(url);const bytes=payloads.get(url);assert.ok(bytes,'startup only fetches shared metadata');return{ok:true,arrayBuffer:async()=>bytes.buffer}},createNavigation:()=>({}),createViewer:value=>{options=value;return{ready:Promise.resolve()}}});
     return{app,options,requests,document};

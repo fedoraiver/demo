@@ -26,7 +26,7 @@ export function mermaidDependencyIdentity(workspace, { environment = process.env
 
 // 只散列实际绘图输入；定位证据不参与 SVG 编译。
 export function mermaidRenderIdentity(view, registry, dependencies) {
-  const inputs = { version: 4, id: view.id, definition: view.mermaid, dependencies,
+  const inputs = { version: 5, id: view.id, definition: view.mermaid, dependencies,
     categories: view.nodes.map(node => [node.id, node.visualType, NODE_STYLES[node.visualType].label]),
     titles: view.nodes.map(node => [node.id, registry[node.id].name, registry[node.id].feature]),
     componentDetails: view.componentDetails };

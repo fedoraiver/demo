@@ -46,6 +46,25 @@ test('reverse native paths keep logical source contact at the end and target mar
   assert.ok(inspectViewRoutes(fixture).edges[0].arrowIssues.includes('path-source-direction'));
 });
 
+test('bidirectional native paths check target contact and arrowhead obstacles at both ends', () => {
+  const arrows = marker.replace('orient="auto"', 'orient="auto-start-reverse"');
+  const fixture = view(arrows + endpoint('a') + endpoint('b') + edge('M24 50H176', 'edge', 'marker-start="url(#arrow)" marker-end="url(#arrow)"'), ['a', 'b'], [
+    { id: 'forward', from: 'a', to: 'b' }, { id: 'backward', from: 'b', to: 'a' },
+  ]);
+  fixture.visualEdgeGroups = [{ id: 'edge', mermaidId: 'e0', from: 'a', to: 'b', forwardIds: ['forward'], backwardIds: ['backward'] }];
+  const original = fixture.svg;
+  assert.deepEqual(inspectViewRoutes(fixture).edges[0].arrowIssues, []);
+  for (const path of ['M34 50H176', 'M24 50H166']) {
+    fixture.svg = original.replace('M24 50H176', path);
+    assert.ok(inspectViewRoutes(fixture).edges[0].arrowIssues.includes('marker-target-gap'));
+  }
+  fixture.svg = original.replace('M24 50H176', 'M24 50H10H176');
+  assert.ok(inspectViewRoutes(fixture).edges[0].arrowIssues.includes('marker-target-direction'));
+  fixture.svg = original.replace('</svg>', card('obstacle', '<rect PART x="27" y="52" width="1" height="1"/>') + '</svg>');
+  fixture.nodes.push({ id: 'obstacle' });
+  assert.deepEqual(inspectViewRoutes(fixture).collisions, [{ edge: 'edge', id: 'obstacle', kind: 'node' }]);
+});
+
 test('routing uses all native shape types and does not confuse empty polygon corners with card interiors', () => {
   for (const shape of ['<rect PART x="80" y="20" width="40" height="60"/>', '<polygon PART points="80,50 100,20 120,50 100,80"/>', '<ellipse PART cx="100" cy="50" rx="20" ry="30"/>', '<path PART d="M80 30Q100 10 120 30V70Q100 90 80 70Z"/>']) {
     const result = inspectViewRoutes(view(endpoint('a') + endpoint('b') + card('obstacle', shape) + edge('M20 50H180')));

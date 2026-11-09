@@ -26,6 +26,7 @@ import { SCHEDULE_LEGEND_LABELS } from './schedule-legend.mjs';
 import { artifactFile, pathsForRepository, repositoryRoot } from './paths.mjs';
 import { readArchitectureData, embeddedArchitectureBootstrap } from './architecture-artifacts.mjs';
 import { validateArchitectureSvg } from './architecture-asset-loader.mjs';
+import { createVisualEdgeGroups, visualEdgesOf } from './architecture-visual-edges.mjs';
 
 const legacyAspects = ['systems', 'data', 'events'];
 const linkKinds = new Set(['order', 'read', 'write', 'trigger', 'transition', 'reference', 'relationship', 'registration', 'dependency']);
@@ -48,7 +49,10 @@ function attributeValues(svg, name) {
 }
 
 function decodeMermaidText(value) {
-  return value.replace(/\*\*(.+?)\*\*/g, '$1').replace(/<br\s*\/?\s*>/gi, '\n').replace(/#(amp|lt|gt|quot|apos|\d+);/g, (_, entity) => ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[entity] ?? String.fromCodePoint(Number(entity)));
+  return value.replace(/\*\*(.+?)\*\*/g, '$1').replace(/<br\s*\/?\s*>/gi, '\n').replace(/#(amp|lt|gt|quot|apos|\d+);|&(quot|num);/g, (_, entity, html) => {
+    if (html) return html === 'quot' ? '"' : '#';
+    return ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[entity] ?? String.fromCodePoint(Number(entity));
+  });
 }
 
 function decodeMermaidNodeLabel(value) {
@@ -88,11 +92,23 @@ function checkActualEdgeStyle(element, semantic, elements, id) {
   requireCondition(expected && actual.stroke?.toLowerCase() === expected.stroke.toLowerCase()
     && Math.abs(parseFloat(actual['stroke-width']) - expected.width) < .01 && dashValue(actual['stroke-dasharray']) === dashValue(expected.dash), `Mermaid edge style mismatch: ${id}`);
   const reverse = element.attrs['data-native-reverse'] === 'true';
-  const markerId = nativeMarkerProperty(element, reverse ? 'marker-start' : 'marker-end')?.match(/^url\([^#]*#([^)]*)\)$/)?.[1];
-  const marker = elements.find(item => item.tag === 'marker' && item.attrs.id === markerId);
-  requireCondition(marker && ['auto', 'auto-start-reverse'].includes(marker.attrs.orient), `Missing Mermaid target arrow: ${id}`);
-  requireCondition(descendantsOf(elements, marker).some(item => ['path', 'polygon'].includes(item.tag)
-    && (nativeSvgProperty(item, 'fill')?.toLowerCase() === expected.stroke.toLowerCase() || reverse && nativeSvgProperty(item, 'fill') === 'context-stroke')), `Mermaid arrow color mismatch: ${id}`);
+  for (const side of semantic === 'read_write' ? ['start', 'end'] : [reverse ? 'start' : 'end']) {
+    const markerId = nativeMarkerProperty(element, `marker-${side}`)?.match(/^url\([^#]*#([^)]*)\)$/)?.[1];
+    const marker = elements.find(item => item.tag === 'marker' && item.attrs.id === markerId);
+    requireCondition(marker && ['auto', 'auto-start-reverse'].includes(marker.attrs.orient), `Missing Mermaid target arrow: ${id}`);
+    requireCondition(descendantsOf(elements, marker).some(item => ['path', 'polygon'].includes(item.tag)
+      && (nativeSvgProperty(item, 'fill')?.toLowerCase() === expected.stroke.toLowerCase() || reverse && nativeSvgProperty(item, 'fill') === 'context-stroke')), `Mermaid arrow color mismatch: ${id}`);
+  }
+}
+
+function visualGroupIdentities(groups) {
+  const fields = ['id', 'from', 'to', 'forwardIds', 'backwardIds', 'edgeSemantic', 'displayLabel'];
+  return groups.map(group => Object.fromEntries(fields.map(field => [field, group[field]])));
+}
+
+export function checkVisualEdgeGroups(view, registry) {
+  if (!view.visualEdgeGroups) return;
+  requireCondition(isDeepStrictEqual(visualGroupIdentities(view.visualEdgeGroups), visualGroupIdentities(createVisualEdgeGroups(view.links, registry))), `Visual edge groups differ from canonical relations: ${view.id}`);
 }
 
 function checkNodeAppearance(parts, expected, external, id) {
@@ -219,6 +235,7 @@ export function checkMermaidAccessibility(view) {
 
 export function checkMermaidStyles(view, registry) {
   if (!styledView(view)) return;
+  checkVisualEdgeGroups(view, registry);
   const elements = svgElements(view.svg);
   if (view.layout === 'app-schedule') for (const group of view.scheduleGroups.filter(group => !group.nodes.length && !(group.visualAttachments || []).length)) {
     const anchor = elements.find(item => item.attrs.id?.startsWith(`${view.id}-flowchart-phase_anchor_${group.mermaidId}-`));
@@ -237,8 +254,12 @@ export function checkMermaidStyles(view, registry) {
     const visibleText = rows?.length ? rows.map(row => row.text).join('\n') : label?.text;
     requireCondition(label && compactText(visibleText) && compactText(visibleText) === compactText(renderedNodeLabel(node)), `Mermaid rendered node label mismatch: ${node.id}`);
   }
-  for (const link of view.links) {
-    requireCondition(link.edgeSemantic === edgeSemanticOf(link, registry) && link.displayLabel === displayLabelOf(link, link.edgeSemantic, registry), `Visual edge semantic mismatch: ${link.id}`);
+  for (const link of visualEdgesOf(view)) {
+    if (!view.visualEdgeGroups) requireCondition(link.edgeSemantic === edgeSemanticOf(link, registry) && link.displayLabel === displayLabelOf(link, link.edgeSemantic, registry), `Visual edge semantic mismatch: ${link.id}`);
+    if (view.visualEdgeGroups) {
+      const label = elements.find(item => item.attrs['data-mermaid-native-id'] === link.mermaidId && (item.attrs.class || '').split(/\s+/).includes('label'));
+      requireCondition(label && compactText(label.text) === compactText(link.displayLabel), `Mermaid rendered edge label mismatch: ${link.id}`);
+    }
     const element = elements.find(item => item.tag === 'path' && item.attrs['data-link-id'] === link.id);
     requireCondition(element?.attrs['data-edge-semantic'] === link.edgeSemantic, `Visual edge semantic metadata mismatch: ${link.id}`);
     requireCondition((element?.attrs['data-native-reverse'] === 'true') === Boolean(link.nativeReverse), `Visual native edge direction mismatch: ${link.id}`);
@@ -300,6 +321,7 @@ export function checkMermaidLayout(view) {
 }
 
 export function checkMermaidSource(view, registry, scheduleDefinitions) {
+  checkVisualEdgeGroups(view, registry);
   const appSchedule = view.layout === 'app-schedule';
   requireCondition(view.scheduleOrientation === undefined, `Obsolete Schedule orientation metadata: ${view.id}`);
   requireCondition(!appSchedule, `Retired manual App schedule view: ${view.id}`);
@@ -343,7 +365,7 @@ export function checkMermaidSource(view, registry, scheduleDefinitions) {
       layout.set(invisible[2], { from: invisible[1], to: invisible[4], directed: invisible[3] === '-->' });
       continue;
     }
-    const link = /^([A-Za-z]\w*)\s+([A-Za-z]\w*)@(-{2,}>|-\.->|-{3,})\s*(?:\|"((?:[^"\\]|\\.)*)"\|\s*)?([A-Za-z]\w*)\s*;?$/.exec(line);
+    const link = /^([A-Za-z]\w*)\s+([A-Za-z]\w*)@(<-->|-{2,}>|-\.->|-{3,})\s*(?:\|"((?:[^"\\]|\\.)*)"\|\s*)?([A-Za-z]\w*)\s*;?$/.exec(line);
     if (link) {
       requireCondition(!links.has(link[2]), `Duplicate Mermaid edge declaration: ${link[2]}`);
       links.set(link[2], { from: link[1], to: link[5], arrow: link[3], label: decodeMermaidText(link[4] || '') });
@@ -371,12 +393,13 @@ export function checkMermaidSource(view, registry, scheduleDefinitions) {
   requireCondition(nodes.size === view.nodes.length + entityHeaders.size + phaseAnchors.length, `Mermaid node declaration count mismatch: ${view.id}`);
   for (const [id] of entityHeaders) requireCondition(nodes.get(id)?.shape === 'text', `Invalid Entity header declaration: ${view.id}/${id}`);
   const ids = new Set();
-  for (const link of view.links) {
+  for (const link of visualEdgesOf(view)) {
     const declaration = links.get(link.mermaidId);
     const logical = displayEndpoints(link), [from, to] = link.nativeReverse ? [...logical].reverse() : logical;
     requireCondition(declaration && !ids.has(link.mermaidId) && declaration.from === canonicalToMermaid.get(from)
       && declaration.to === canonicalToMermaid.get(to), `Mermaid edge declaration mismatch: ${link.id}`);
-    requireCondition(link.nativeReverse ? ['component', 'object'].includes(view.aspect) && /^-{3,}$/.test(declaration.arrow) : /^(?:-{2,}>|-\.->)$/.test(declaration.arrow), `Mermaid edge arrow declaration mismatch: ${link.id}`);
+    const bidirectional = link.forwardIds?.length > 0 && link.backwardIds?.length > 0;
+    requireCondition(bidirectional ? !link.nativeReverse && declaration.arrow === '<-->' : link.nativeReverse ? ['component', 'object'].includes(view.aspect) && /^-{3,}$/.test(declaration.arrow) : /^(?:-{2,}>|-\.->)$/.test(declaration.arrow), `Mermaid edge arrow declaration mismatch: ${link.id}`);
     if (styledView(view)) requireCondition(compactText(declaration.label) === compactText(link.displayLabel), `Mermaid edge display label mismatch: ${link.id}`);
     ids.add(link.mermaidId);
   }
@@ -388,7 +411,7 @@ export function checkMermaidSource(view, registry, scheduleDefinitions) {
     if (styledView(view)) requireCondition(compactText(declaration.label) === compactText(link.displayLabel), `Mermaid Schedule edge display label mismatch: ${link.id}`);
     scheduleIds.add(link.mermaidId);
   }
-  requireCondition(links.size === view.links.length + scheduleIds.size, `Mermaid edge declaration count mismatch: ${view.id}`);
+  requireCondition(links.size === visualEdgesOf(view).length + scheduleIds.size, `Mermaid edge declaration count mismatch: ${view.id}`);
   requireCondition(Array.isArray(view.layoutLinks) && layout.size === view.layoutLinks.length, `Mermaid layout edge declaration count mismatch: ${view.id}`);
   const layoutIds = new Set();
   for (const link of view.layoutLinks) {
@@ -548,6 +571,8 @@ export function checkObjectViews(views, catalog) {
         && !view.links.some(link => isComponent(link.from) || isComponent(link.to)), `Entity object view contains Component geometry: ${view.id}`);
     }
     const graph = catalog.graphFor(object.id);
+    if (graph.visualEdgeGroups) requireCondition(Array.isArray(view.visualEdgeGroups)
+      && isDeepStrictEqual(visualGroupIdentities(view.visualEdgeGroups), visualGroupIdentities(graph.visualEdgeGroups)), `Object view visual edge groups mismatch: ${view.id}`);
     requireCondition(isDeepStrictEqual(nodeKeys(view.nodes), nodeKeys(graph.nodes)), `Object view direct-neighbor coverage mismatch: ${view.id}`);
     const actual = new Map(view.links.map(link => [link.id, link]));
     requireCondition(actual.size === view.links.length && actual.size === graph.links.length
@@ -601,16 +626,18 @@ export function checkArchitecture(root) {
     const renderedElements = svgElements(view.svg);
     const nodes = renderedElements.filter(item => Object.hasOwn(item.attrs, 'data-id')).map(item => item.attrs);
     const links = renderedElements.filter(item => item.tag === 'path' && Object.hasOwn(item.attrs, 'data-link-id')).map(item => item.attrs);
-    requireCondition(nodes.length === view.nodes.length && links.length === view.links.length, 'Rendered graph element coverage mismatch: ' + view.id);
+    requireCondition(nodes.length === view.nodes.length && links.length === visualEdgesOf(view).length, 'Rendered graph element coverage mismatch: ' + view.id);
     for (const node of view.nodes) {
       const rendered = nodes.find(value => value['data-instance'] === node.instance);
       requireCondition(rendered && !instances.has(node.instance) && rendered['data-id'] === node.id && rendered['data-role'] === node.role
         && rendered['data-feature'] === registry[node.id].feature, 'Rendered object identity mismatch: ' + node.id);
       instances.add(node.instance);
     }
-    for (const link of view.links) {
+    for (const link of visualEdgesOf(view)) {
       const rendered = links.find(value => value['data-link-id'] === link.id);
       requireCondition(rendered && rendered['data-connect'] === displayEndpoints(link).join('|'), 'Rendered relation endpoint mismatch: ' + link.id);
+      if (view.visualEdgeGroups) requireCondition(rendered['data-visual-edge-id'] === link.id
+        && rendered['data-canonical-relations'] === JSON.stringify([...link.forwardIds, ...link.backwardIds]), 'Rendered relation membership mismatch: ' + link.id);
     }
     checkMermaidAccessibility(view);
     checkMermaidSource(view, registry, new Map());

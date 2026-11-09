@@ -1,4 +1,4 @@
-import { isDenseObjectView } from './architecture-object-relations.mjs';
+import { displayEdgesOf, findVisualEdge, isDenseObjectView } from './architecture-object-relations.mjs';
 import { computeObjectFocus } from './architecture-focus.mjs';
 import { architectureRelationsAssets, createArchitectureRelations, createLazyObjectRelationRenderer } from './architecture-relations.mjs';
 import { dependencyKind, normalizeSourceEntry, normalizeWorkspaceRoot, sourceEditorAssets } from './source-editor.mjs';
@@ -8,6 +8,7 @@ import { INFRASTRUCTURE_FEATURES, projectInfrastructureFeatures, projectPluginMe
 import { architectureSplitterAssets } from './architecture-splitter.mjs';
 import { architectureInteractionAssets } from './architecture-interaction.mjs';
 import { architectureGestureAssets } from './architecture-gestures.mjs';
+import { architectureFlowAssets } from './architecture-flow.mjs';
 import { architectureSearchAssets } from './architecture-search.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE } from './architecture-style.mjs';
 import { SCHEDULE_LEGEND_LABELS } from './schedule-legend.mjs';
@@ -16,7 +17,7 @@ import { isDeepStrictEqual } from 'node:util';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-export function createArchitectureViewer({ data: DATA, document, location, history, window, requestAnimationFrame, sourceEditor, navigation, createSplitter, createInteraction, createGestures, createObjectSearch, createScheduleRenderer, loadView, pinView, createObjectRelationRenderer, loadObjectRelationRuntime }) {
+export function createArchitectureViewer({ data: DATA, document, location, history, window, requestAnimationFrame, sourceEditor, navigation, createSplitter, createInteraction, createGestures, createObjectSearch, createFlow, createScheduleRenderer, loadView, pinView, createObjectRelationRenderer, loadObjectRelationRuntime }) {
   const canvas=document.getElementById('canvas'),diagram=document.getElementById('diagram'),details=document.getElementById('details');
   const results=document.getElementById('object-results'),picker=document.getElementById('view-select'),workspace=document.getElementById('workspace');
   const scheduleRenderer=createScheduleRenderer?.();
@@ -24,6 +25,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   let relationFullView=null,relationSelectionCleared=false,relationPending=false;
   const relations=createArchitectureRelations({document,registry:DATA.registry,edgeStyles:DATA.styles.edges,onChoose:id=>changeRelation(id),onList:()=>changeRelation(null),onFull:()=>changeRelation(null,true),onRemember:()=>rememberView()});
   const interaction=createInteraction({diagram,nodeStyles:DATA.styles.nodes,selectionStyle:DATA.styles.selection});
+  const flow=createFlow?.({diagram,window,button:document.querySelector('[data-flow-toggle]')});
   const safe=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const componentEntities=new Map();
   for(const entity of DATA.model.entities)for(const component of entity.components){const owners=componentEntities.get(component.id)||[];owners.push(entity.canonical_entity||'entity-'+entity.id);componentEntities.set(component.id,owners)}
@@ -127,7 +129,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     const nodes=[];
     for(const[type,style]of Object.entries(DATA.styles.nodes))if(view.nodes.some(node=>node.visualType===type))nodes.push('<div class="guide-row" data-guide-node-type="'+safe(type)+'"><span class="guide-sample">'+guideSample(DATA.guideSamples.nodes[type])+'</span><span>'+safe(style.legendLabel)+'</span></div>');
     const external=view.nodes.some(node=>node.role==='external')?'<div class="guide-reference" data-guide-external-reference>'+safe(DATA.styles.externalReference.legendLabel)+'</div>':'';
-    const semantics=new Set([...view.links,...view.scheduleLinks].map(link=>link.edgeSemantic));
+    const semantics=new Set([...displayEdgesOf(view),...view.scheduleLinks].map(link=>link.edgeSemantic));
     const edges=Object.entries(DATA.styles.edges).filter(([semantic])=>semantics.has(semantic)).map(([semantic,style])=>'<div class="guide-row" data-guide-edge-semantic="'+safe(semantic)+'"><span class="guide-sample">'+guideSample(DATA.guideSamples.edges[semantic])+'</span><span>'+safe(style.legendLabel)+'</span></div>');
     details.innerHTML='<div class="guide" lang="en" aria-label="Legend">'+(nodes.length?'<h3>Nodes</h3>'+nodes.join('')+external:'')+(edges.length?'<h3>Edges</h3>'+edges.join(''):'')+'</div>';details.scrollTop=0;
   }
@@ -135,9 +137,12 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   function showDetail(id){
     id=canonical(id);if(!DATA.registry[id]){guide();return}const record=DATA.registry[id];
     const identity=record.typeIdentity,packageName=identity?.package&&identity.package.name+' '+identity.package.version;
-    const conditions=(record.runConditions||[]).map(entry=>entry.name||entry.id);
+    const conditions=record.kind==='System'?[]:(record.runConditions||[]).map(entry=>entry.name||entry.id);
     const local=record.kind==='Local'?[record.callableId,record.parameter===undefined?null:'参数槽 '+record.parameter].filter(Boolean):[];
-    details.innerHTML='<h2>'+safe(record.name||id)+'</h2><p>'+safe([record.kind,packageName||record.feature].filter(Boolean).join(' · '))+'</p>'+(objectView(id)&&view.objectId!==id?'<button data-object="'+safe(id)+'">打开对象关系图 ↗</button>':'')+list('运行条件',conditions)+list('局部存储',local)+sourcesList(record.sourceEntries);
+    const node=view.nodes.find(candidate=>candidate.id===visibleNode(id));
+    const members=(node?.sourceNodeIds||[id]).map(member=>DATA.registry[member]).filter(Boolean);
+    const sources=members.flatMap(member=>member.sourceEntries||[]);
+    details.innerHTML='<h2>'+safe(record.name||id)+'</h2><p>'+safe([record.kind,packageName||record.feature].filter(Boolean).join(' · '))+'</p>'+(objectView(id)&&view.objectId!==id?'<button data-object="'+safe(id)+'">打开对象关系图 ↗</button>':'')+list('运行条件',conditions)+list('局部存储',local)+sourcesList(sources);
     sourceEditor.refreshLinks(details);details.scrollTop=0;
   }
   function releaseDiagramFocus(){const active=document.activeElement;if(active?.closest('#diagram')||active?.id==='clear-selection')canvas.focus({preventScroll:true})}
@@ -154,17 +159,72 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   function focusSchedule(id){if(id)focusSection(view.sections.find(section=>section.schedule===id))}
   function relationshipValue(value){return value===null?'无':typeof value==='boolean'?(value?'是':'否'):typeof value==='object'?JSON.stringify(value):String(value)}
   function edgeEndpoint(id,schedule){const entry=schedule?view.scheduleGroups.find(group=>group.id===id):DATA.registry[id];return'<button class="data-link" '+(schedule?'data-schedule':'data-open')+'="'+safe(id)+'">'+safe(entry?.name||entry?.label||id)+'</button>'}
-  function showEdgeDetail(link,schedule){
+  function groupEvidence(ids, title, sourceView) {
+    const members=sourceView.links.filter(member=>ids.includes(member.id));
+    if(!members.length)return '';
+    const records=members.map(member=>({...DATA.registry[member.id],...member}));
+    const distinct=values=>[...new Map(values.map(value=>[JSON.stringify(value),value])).values()];
+    const operations=records.flatMap(record=>record.bodyOperations||[]);
+    const accesses=records.flatMap(record=>record.parameterAccesses||[]);
+    const ownerIds=new Set([...records.flatMap(record=>[record.from,record.to]),...accesses.map(access=>access.registeredOwner)]);
+    const owners=[...ownerIds].map(id=>DATA.registry[id]).filter(owner=>['System','Observer'].includes(owner?.kind));
+    const registrations=owners.flatMap(owner=>owner.registrations||[]);
+    const contexts=distinct(registrations.map(registration=>[registration.application,registration.schedule].filter(Boolean).join(' · ')).filter(Boolean));
+    const conditions=distinct([...records,...accesses,...operations].flatMap(evidence=>evidence.conditions||evidence.guards||[])
+      .concat(owners.flatMap(owner=>owner.runConditions||[]),registrations.flatMap(registration=>registration.run_if||[])))
+      .map(condition=>typeof condition==='string'?condition:condition.expression||condition.name||condition.label||condition.id).filter(Boolean);
+    const scopes=distinct([...accesses,...operations].map(evidence=>evidence.scope).filter(Boolean))
+      .map(scope=>scope==='current'?'当前 World':scope);
+    const deferred=distinct(operations.map(operation=>operation.deferred).filter(value=>value!==undefined&&value!==false));
+    const notes=distinct(records.flatMap(record=>record.notes||[]));
+    const events=distinct(records.map(record=>record.eventId).filter(Boolean));
+    const sources=records.flatMap(record=>record.sourceEntries||[]);
+    const properties=['cardinality','reverse','linked_spawn'].map(key=>{
+      const values=distinct(records.filter(record=>Object.hasOwn(record,key)).map(record=>record[key]));
+      return list(({cardinality:'数量约束',reverse:'反向关系',linked_spawn:'连带生命周期'})[key],values.map(relationshipValue),4);
+    }).join('');
+    const accessDetails=distinct(records.filter(record=>['read','mutable_access','write'].includes(record.factKind||record.operation||record.kind))
+      .map(record=>record.label).filter(label=>label&&!/^(?:R|W|read|mutable_access|读取|可变访问|读访问|写访问)$/.test(label)));
+    const contracts=distinct(records.filter(record=>!['read','mutable_access','write'].includes(record.factKind||record.operation||record.kind))
+      .map(record=>record.label).filter(Boolean));
+    return '<section class="relation-evidence"><h3>'+safe(title)+'</h3>'
+      +properties+list('触发事件',events,4)+list('完整契约与约束',contracts,4)+list('访问说明',accessDetails,4)+list('应用与调度',contexts,4)
+      +list('访问范围',scopes,4)+list('生效条件',conditions,4)+list('延迟时机',deferred,4)
+      +list('约束与说明',notes,4)+sourcesList(sources)+'</section>';
+  }
+  function showEdgeDetail(link,schedule,sourceView=view){
+    if(!schedule&&Array.isArray(link.forwardIds)){
+      const style=DATA.styles.edges[link.edgeSemantic];
+      const both=Boolean(link.forwardIds.length&&link.backwardIds.length);
+      const arrow=both?' ↔ ':link.backwardIds.length?' ← ':' → ';
+      const directionTitle=ids=>{
+        const member=sourceView.links.find(candidate=>ids.includes(candidate.id));
+        const kind=member?.factKind||member?.operation||member?.kind;
+        const data=DATA.registry[kind==='read'?member?.from:member?.to];
+        const message=['Message','Messages<T>'].includes(data?.kind);
+        if(kind==='read')return message?'消息读访问':'读访问';
+        if(['mutable_access','write'].includes(kind))return message?'消息写访问':'写访问';
+        return '关系证据';
+      };
+      details.innerHTML='<span class="badge">'+safe(style?.label||link.edgeSemantic)+'</span>'
+        +'<h2>'+safe(link.displayLabel||style?.label||'关系')+'</h2>'
+        +'<p>'+edgeEndpoint(link.from,false)+safe(arrow)+edgeEndpoint(link.to,false)+'</p>'
+        +groupEvidence(link.forwardIds,directionTitle(link.forwardIds),sourceView)
+        +groupEvidence(link.backwardIds,directionTitle(link.backwardIds),sourceView)
+        +'<button class="reset" id="clear-selection">清除选择</button>';
+      sourceEditor.refreshLinks(details);details.scrollTop=0;return;
+    }
     const record=DATA.registry[link.id]||{},style=DATA.styles.edges[link.edgeSemantic],properties={...record,...link};
     details.innerHTML='<span class="badge">'+safe(style?.label||link.edgeSemantic||link.kind)+'</span><h2>'+safe(record.name||link.displayLabel||style?.label||'关系')+'</h2><p>来源：'+edgeEndpoint(link.from,schedule)+'</p><p>目标：'+edgeEndpoint(link.to,schedule)+'</p>'+(link.eventId?'<h3>触发事件</h3><p>'+edgeEndpoint(link.eventId,false)+'</p>':'')+(link.label?'<h3>完整契约与约束</h3><p>'+safe(link.label)+'</p>':'')+['cardinality','reverse','linked_spawn'].filter(key=>Object.hasOwn(properties,key)).map(key=>'<h3>'+({cardinality:'数量约束',reverse:'反向关系',linked_spawn:'连带生命周期'}[key])+'</h3><p>'+safe(relationshipValue(properties[key]))+'</p>').join('')+list('约束与说明',link.notes||record.notes)+sourcesList(link.sourceEntries||record.sourceEntries)+'<button class="reset" id="clear-selection">清除选择</button>';
     sourceEditor.refreshLinks(details);details.scrollTop=0;
   }
   function paintEdge(id,schedule=false){
     if(!view||interactionPaused())return;
-    const link=(schedule?view.scheduleLinks:view.links).find(candidate=>candidate.id===id);if(!link)return;
+    const link=schedule?view.scheduleLinks.find(candidate=>candidate.id===id):findVisualEdge(view,id);if(!link)return;
+    id=link.id;
     if(searchState.query.trim())searchState.cleared=true;activeSelection={kind:'edge',id,schedule};
     if(!schedule&&view.aspect==='object')interaction.paint(computeObjectFocus(view,activeSelection));
-    else{const endpoints=new Set([link.displayFrom??link.from,link.displayTo??link.to]);interaction.paint({selectedNodes:schedule?new Set():endpoints,dimNodes:new Set(view.nodes.filter(node=>!endpoints.has(node.id)).map(node=>node.id)),selectedSchedules:schedule?endpoints:new Set(),focusedEdges:new Set([id]),dimEdges:new Set([...view.links,...view.scheduleLinks].filter(edge=>edge.id!==id).map(edge=>edge.id))})}
+    else{const endpoints=new Set([link.displayFrom??link.from,link.displayTo??link.to]);interaction.paint({selectedNodes:schedule?new Set():endpoints,dimNodes:new Set(view.nodes.filter(node=>!endpoints.has(node.id)).map(node=>node.id)),selectedSchedules:schedule?endpoints:new Set(),focusedEdges:new Set([id]),dimEdges:new Set([...displayEdgesOf(view),...view.scheduleLinks].filter(edge=>edge.id!==id).map(edge=>edge.id))})}
     showEdgeDetail(link,schedule);rememberView();
   }
   function openOwner(feature){const id=ownerObject(feature);if(objectView(id))openObject(id);else navigate({schedule:selection.schedule,node:null})}
@@ -193,12 +253,22 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     selection={...selection,node:null};
     updateUrl();
   }
-  function bindEdgeLabels(){
-    const links=[...view.links,...view.scheduleLinks];
+  function bindEdgeLabels() {
+    const links=[...displayEdgesOf(view),...view.scheduleLinks];
     for(const label of diagram.querySelectorAll('g.edgeLabel')){
-      const ids=new Set([label.dataset.mermaidNativeId,...[...label.querySelectorAll('[data-mermaid-native-id]')].map(item=>item.dataset.mermaidNativeId)].filter(Boolean)),matches=links.filter(link=>ids.has(link.mermaidId));
+      const ids=new Set([label.dataset.mermaidNativeId,...[...label.querySelectorAll('[data-mermaid-native-id]')]
+        .map(item=>item.dataset.mermaidNativeId)].filter(Boolean));
+      const matches=links.filter(link=>ids.has(link.mermaidId));
       if(matches.length!==1)continue;
-      const link=matches[0],schedule=view.scheduleLinks.includes(link);label.setAttribute('data-link-label-id',link.id);label.setAttribute(schedule?'data-schedule-link-id':'data-link-id',link.id);label.setAttribute(schedule?'data-schedule-connect':'data-connect',(link.displayFrom||link.from)+'|'+(link.displayTo||link.to));label.classList.add('edge-label');label.setAttribute('tabindex','0');label.setAttribute('role','button');label.setAttribute('aria-label',(link.displayLabel||link.label||DATA.styles.edges[link.edgeSemantic]?.label||'关系')+' · '+link.from+' → '+link.to);
+      const link=matches[0],schedule=view.scheduleLinks.includes(link);
+      const arrow=link.forwardIds?.length&&link.backwardIds?.length?' ↔ ':' → ';
+      label.setAttribute('data-link-label-id',link.id);
+      label.setAttribute(schedule?'data-schedule-link-id':'data-link-id',link.id);
+      label.setAttribute(schedule?'data-schedule-connect':'data-connect',(link.displayFrom||link.from)+'|'+(link.displayTo||link.to));
+      label.classList.add('edge-label');
+      label.setAttribute('tabindex','0');
+      label.setAttribute('role','button');
+      label.setAttribute('aria-label',(link.displayLabel||link.label||DATA.styles.edges[link.edgeSemantic]?.label||'关系')+' · '+link.from+arrow+link.to);
     }
   }
   function bindScheduleObjects(){
@@ -215,7 +285,28 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     }
     for(const element of titles){const binding=byGraphName.get('set|'+element.dataset.clusterName),owner=binding&&scheduleElements.get(binding.id)?.[0];if(!owner||!owner.getAttribute('id')||element.dataset.clusterId!==owner.getAttribute('id'))continue;element.setAttribute('data-schedule-node',binding.id);element.setAttribute('data-schedule-title',binding.id);element.setAttribute('aria-hidden','true');scheduleElements.get(binding.id).push(element)}
   }
-  function renderDiagram(){const focused=document.activeElement?.closest('[data-schedule-node]')?.dataset.scheduleNode;gestures.reset();interaction.paint({nativeOnly:!renderedObject});scheduleElements.clear();diagram.innerHTML=view.svg||'';renderedObject=view.aspect==='object';if(renderedObject)bindEdgeLabels();else bindScheduleObjects();if(focused)(scheduleElements.get(focused)?.[0]||canvas).focus({preventScroll:true});canvas.querySelector('.empty-state')?.remove();if(!view.svg){const empty=document.createElement('div');empty.className='empty-state';empty.innerHTML='<h3>'+(view.relationPresentation==='list'?'从关系列表选择一条关系':view.aspect==='schedule'?'当前筛选没有匹配系统':'当前视图没有相关节点')+'</h3>';canvas.appendChild(empty)}}
+  function renderDiagram() {
+    const focused=document.activeElement?.closest('[data-schedule-node]')?.dataset.scheduleNode;
+    gestures.reset();
+    flow?.clear();
+    interaction.paint({nativeOnly:!renderedObject});
+    scheduleElements.clear();
+    diagram.innerHTML=view.svg||'';
+    renderedObject=view.aspect==='object';
+    if(renderedObject)bindEdgeLabels();
+    else bindScheduleObjects();
+    flow?.refresh();
+    if(focused)(scheduleElements.get(focused)?.[0]||canvas).focus({preventScroll:true});
+    canvas.querySelector('.empty-state')?.remove();
+    if(!view.svg){
+      const empty=document.createElement('div');
+      empty.className='empty-state';
+      const title=view.relationPresentation==='list'?'从关系列表选择一条关系'
+        :view.aspect==='schedule'?'当前筛选没有匹配系统':'当前视图没有相关节点';
+      empty.innerHTML='<h3>'+title+'</h3>';
+      canvas.appendChild(empty);
+    }
+  }
   function hideResults(){results.hidden=true;document.getElementById('search').setAttribute('aria-expanded','false');resultIndex=-1}
   function closeResults(){if(!searchState.open&&results.hidden)return;searchState.open=false;searchRevision++;hideResults();rememberView()}
   function positionPopup(element,anchor){
@@ -281,7 +372,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   function applyView(target,snapshot,request,key=null,objectSearchState=null){
     view=target;displayedScheduleKey=null;activeSelection={kind:'none'};selectedScheduleId=null;const object=view.aspect==='object';
     prepareView(view);renderDiagram();if(!object)selectSchedule(selection.scheduleNode,{remember:false,preserveCenter:false});guide();restoreSearch(objectSearchState);const rendered=view,center=view.centerNodeId||view.objectId;
-    requestAnimationFrame(()=>{if(request!==renderRequest||view!==rendered)return;if(restoresViewport(snapshot,view,key)){scale=snapshot.scale;panX=snapshot.panX;panY=snapshot.panY;transform();if(activeSelection.kind!=='search'){if(snapshot.active?.kind==='edge')paintEdge(snapshot.active.id,snapshot.active.schedule);else if(snapshot.active?.kind==='node')select(snapshot.active.id)}}else{fit();const id=selection.node||(object&&!pluginView(view)&&!view.relationPresentation?center:null);if(id&&!aliasCandidates.length&&!objectSearchState?.query)select(id)}if(view.relationPresentation==='relation'&&selection.objectRelation&&!relationSelectionCleared&&(!restoresViewport(snapshot,view,key)||snapshot.active?.kind!=='none'))paintEdge(selection.objectRelation);displayedScheduleKey=object?null:key;rememberView()});
+    requestAnimationFrame(()=>{if(request!==renderRequest||view!==rendered)return;if(restoresViewport(snapshot,view,key)){scale=snapshot.scale;panX=snapshot.panX;panY=snapshot.panY;transform();if(activeSelection.kind!=='search'){if(snapshot.active?.kind==='edge')paintEdge(snapshot.active.id,snapshot.active.schedule);else if(snapshot.active?.kind==='node')select(snapshot.active.id)}}else{fit();const id=selection.node||(object&&!pluginView(view)&&!view.relationPresentation?center:null);if(id&&!aliasCandidates.length&&!objectSearchState?.query)select(id)}if(view.aspect==='object'&&view.relationPresentation!=='list'&&selection.objectRelation&&!relationSelectionCleared&&(!restoresViewport(snapshot,view,key)||snapshot.active?.kind!=='none'))paintEdge(selection.objectRelation);displayedScheduleKey=object?null:key;rememberView()});
   }
   function presentSchedule(target,snapshot,request,key){
     view=target;displayedScheduleKey=null;renderDiagram();selectSchedule(selection.scheduleNode,{remember:false,preserveCenter:false});canvasSize=measureCanvas();
@@ -312,8 +403,8 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
       applyView({...target,renderKey:target.id+':all',relationPresentation:'all'},snapshot,request,null,objectSearchState);pendingRender=Promise.resolve();return pendingRender;
     }
     selection={...selection,node:null};updateUrl();
-    const id=selection.objectRelation,link=target.links.find(candidate=>candidate.id===id);
-    const blank={...target,nodes:[],links:[],scheduleLinks:[],svg:null,width:1,height:1,renderKey:target.id+':list',relationPresentation:'list'};
+    const id=selection.objectRelation,link=findVisualEdge(target,id);
+    const blank={...target,nodes:[],links:[],visualEdgeGroups:[],scheduleLinks:[],svg:null,width:1,height:1,renderKey:target.id+':list',relationPresentation:'list'};
     applyView(blank,snapshot,request,null,objectSearchState);
     if(!id){pendingRender=Promise.resolve();return pendingRender}
     if(!link){status('这条关系已不存在，请从完整列表重新选择。',true);pendingRender=Promise.resolve();return pendingRender}
@@ -322,7 +413,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
       if(request!==renderRequest||pageSuspended||!rendered)return;
       relationPending=false;canvas.setAttribute('aria-busy','false');status('');
       applyView({...rendered,id:target.id,renderKey:rendered.renderKey||target.id+':relation:'+id,relationPresentation:'relation'},snapshot,request,null,searchSnapshot());
-    }).catch(error=>{if(request!==renderRequest||pageSuspended)return;relationPending=false;canvas.setAttribute('aria-busy','false');status('所选关系显示失败，请重试或选择其他关系。',true);showEdgeDetail(link,false);const retry=document.createElement('button');retry.id='retry-relation';retry.type='button';retry.textContent='重试';retry.onclick=()=>renderSelection(true);document.getElementById('schedule-status').appendChild(retry);});
+    }).catch(error=>{if(request!==renderRequest||pageSuspended)return;relationPending=false;canvas.setAttribute('aria-busy','false');status('所选关系显示失败，请重试或选择其他关系。',true);showEdgeDetail(link,false,target);const retry=document.createElement('button');retry.id='retry-relation';retry.type='button';retry.textContent='重试';retry.onclick=()=>renderSelection(true);document.getElementById('schedule-status').appendChild(retry);});
     return pendingRender;
   }
   function renderLoadedSelection(restore=false,restored=null,loaded=null,requestId=null,preserveUi=false){
@@ -444,8 +535,8 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   document.addEventListener('focusin',event=>{if(!event.target.closest('.schedule-multiselect')&&!event.target.closest('#schedule-clear'))closeFilterMenu()});
   document.getElementById('schedule-clear').onclick=()=>{filterState={includePlugins:[],excludePlugins:[],includeNames:[],excludeNames:[],include:'',exclude:''};changeFilters()};
   // BFCache 会复用本页实例；中止活动任务，不永久销毁后续筛选所需的 renderer。
-  window.addEventListener('pagehide',()=>{pageSuspended=true;renderRequest++;loadAbort?.abort();scheduleRenderer?.cancel?.();relationRenderer?.cancel?.();canvas.setAttribute('aria-busy','false');status('')});
-  window.addEventListener('pageshow',event=>{if(!pageSuspended||!event?.persisted)return;pageSuspended=false;if(relationPending){renderSelection(true);return}if(loadView&&(viewLoading||view?.id!==desiredViewId||view?.aspect==='schedule'&&displayedScheduleKey!==scheduleKey()))renderSelection(true,null,view?.id===desiredViewId);else if(view?.aspect==='schedule'&&displayedScheduleKey!==scheduleKey())renderSchedule(scheduleViews.find(candidate=>candidate.id===selection.schedule),null,++renderRequest,true)});
+  window.addEventListener('pagehide',()=>{pageSuspended=true;renderRequest++;loadAbort?.abort();scheduleRenderer?.cancel?.();relationRenderer?.cancel?.();flow?.clear();canvas.setAttribute('aria-busy','false');status('')});
+  window.addEventListener('pageshow',event=>{if(!pageSuspended||!event?.persisted)return;pageSuspended=false;flow?.refresh();if(relationPending){renderSelection(true);return}if(loadView&&(viewLoading||view?.id!==desiredViewId||view?.aspect==='schedule'&&displayedScheduleKey!==scheduleKey()))renderSelection(true,null,view?.id===desiredViewId);else if(view?.aspect==='schedule'&&displayedScheduleKey!==scheduleKey())renderSchedule(scheduleViews.find(candidate=>candidate.id===selection.schedule),null,++renderRequest,true)});
   window.addEventListener('popstate',()=>{selection=navigation.resolve(location.search);objectOrigin=history.state?.architectureObjectOrigin||null;renderSelection(true)});canvasSize=measureCanvas();
   window.addEventListener('resize',()=>{splitter.refresh();positionResults();if(openFilter)positionPopup(document.getElementById('schedule-'+openFilter+'-menu'),document.getElementById('schedule-'+openFilter));const next=measureCanvas();
     // 手机地址栏和软键盘只改变高度时，不重置用户缩放或平移。
@@ -462,13 +553,13 @@ export async function startExternalArchitecture(options) {
   status.hidden = false; status.textContent = '正在加载架构数据…';
   if (location.protocol === 'file:') { status.textContent = '请从项目根目录运行 node docs/diagrams/serve.mjs，再打开终端显示的本地地址。'; return null; }
   try {
-    if (bootstrap.schemaVersion !== 6) throw new Error('Unsupported architecture bootstrap');
+    if (bootstrap.schemaVersion !== 7) throw new Error('Unsupported architecture bootstrap');
     const request = { baseUrl: location.href, fetch: fetcher, crypto };
     const [data, manifest] = await Promise.all([
       readArchitectureResource({ url: bootstrap.runtimeUrl, sha256: bootstrap.runtimeSha256 }, { ...request, json: true }),
       readArchitectureResource({ url: bootstrap.manifestUrl, sha256: bootstrap.manifestSha256 }, { ...request, json: true }),
     ]);
-    if (data.schemaVersion !== 6 || manifest.schemaVersion !== 2 || data.buildId !== bootstrap.buildId || manifest.buildId !== bootstrap.buildId
+    if (data.schemaVersion !== 7 || manifest.schemaVersion !== 2 || data.buildId !== bootstrap.buildId || manifest.buildId !== bootstrap.buildId
       || ['sourceCommit','target'].some(field=>data[field]!==bootstrap[field]||manifest[field]!==bootstrap[field])) throw new Error('Architecture build identity mismatch');
     const relationRuntime = data.objectRelationRuntime, manifestRuntime = manifest.objectRelationRuntime;
     if(Boolean(relationRuntime)!==Boolean(manifestRuntime)||relationRuntime&&(relationRuntime.url!=='../'+manifestRuntime.path||relationRuntime.sha256!==manifestRuntime.sha256||relationRuntime.bytes!==manifestRuntime.bytes))throw new Error('Object relation runtime identity mismatch');
@@ -571,15 +662,17 @@ export function renderArchitectureViewer({ model, registry, views, features, gui
   const projectOptions = pluginOptions(menu.project, '项目插件');
   const infrastructureOptions = pluginOptions(menu.infrastructure, '基础设施插件');
   const filterMenu = side => `<div class="schedule-multiselect"><button id="schedule-${side}" class="filter-toggle" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="schedule-${side}-menu">${side === 'include' ? '包含 Plugin · 全部' : '排除 Plugin · 无'}</button><section id="schedule-${side}-menu" class="filter-menu" role="dialog" aria-label="${side === 'include' ? '包含 Plugin' : '排除 Plugin'}" hidden><input id="schedule-${side}-search" type="search" placeholder="搜索 Plugin 名称或分组说明" aria-label="搜索${side === 'include' ? '包含' : '排除'}选项" autocomplete="off"><div class="filter-actions"><button id="schedule-${side}-select" type="button">全选当前搜索结果</button><button id="schedule-${side}-clear" type="button">清空${side === 'include' ? '包含' : '排除'}</button></div><div id="schedule-${side}-options" class="filter-options"></div></section></div>`;
-  const state = JSON.stringify(externalBootstrap || { schemaVersion: 5, model, registry, views, guideSamples, scheduleLegendLabels: SCHEDULE_LEGEND_LABELS, objects, objectAliases, sourceRoleLabels, schedulePluginCatalog, scheduleInteractions, infrastructureFeatures, styles: { nodes: NODE_STYLES, edges: EDGE_STYLES, selection: SELECTION_STYLE, externalReference: EXTERNAL_REFERENCE_STYLE } }).replace(/</g, '\\u003c');
+  const state = JSON.stringify(externalBootstrap || { schemaVersion: 6, model, registry, views, guideSamples, scheduleLegendLabels: SCHEDULE_LEGEND_LABELS, objects, objectAliases, sourceRoleLabels, schedulePluginCatalog, scheduleInteractions, infrastructureFeatures, styles: { nodes: NODE_STYLES, edges: EDGE_STYLES, selection: SELECTION_STYLE, externalReference: EXTERNAL_REFERENCE_STYLE } }).replace(/</g, '\\u003c');
+  const flow = architectureFlowAssets();
   const editor = sourceEditorAssets(), navigation = architectureNavigationAssets(features, scheduleViews), splitter = architectureSplitterAssets(), interaction = architectureInteractionAssets(), gestures = architectureGestureAssets(), search = architectureSearchAssets(), relations = architectureRelationsAssets();
   const navigationScript = externalBootstrap ? `const architectureNavigationFactory=(()=>{const infrastructureIds=${JSON.stringify(INFRASTRUCTURE_FEATURES.map(feature => feature.id))};\n${[defaultArchitectureSchedule,resolveArchitectureSelection,architectureUrl,createArchitectureNavigation].map(fn=>fn.toString()).join('\n')}\nreturn createArchitectureNavigation;})();` : navigation.script;
-  const dependencies = 'document,location,history,window,requestAnimationFrame,sourceEditor,createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction,createGestures:createArchitectureGestures,createObjectSearch:createArchitectureSearch,createScheduleRenderer:window.createScheduleRenderer';
+  const dependencies = 'document,location,history,window,requestAnimationFrame,sourceEditor,createSplitter:createArchitectureSplitter,createInteraction:createArchitectureInteraction,createGestures:createArchitectureGestures,createObjectSearch:createArchitectureSearch,createFlow:createArchitectureFlow,createScheduleRenderer:window.createScheduleRenderer';
   const focusScript = [normalizeWorkspaceRoot,normalizeSourceEntry,dependencyKind,computeObjectFocus].map(fn=>fn.toString()).join('\n');
   const startup = externalBootstrap ? `${focusScript}\n${assetLoaderAssets().script}\n${startExternalArchitecture.toString()}\nwindow.architectureReady=startExternalArchitecture({bootstrap:JSON.parse(document.getElementById("architecture-data").textContent),${dependencies},createNavigation:architectureNavigationFactory,createViewer:(${createArchitectureViewer.toString()})});` : `${focusScript}\nconst architectureViewer=(${createArchitectureViewer.toString()})({data:JSON.parse(document.getElementById("architecture-data").textContent),${dependencies},navigation:architectureNavigation});`;
   return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Crect width='10' height='10' rx='2' fill='%232563EB'/%3E%3C/svg%3E"><title>demo · ECS 架构</title><style>
 ${architectureShellStyle}
 ${relations.style}
+${flow.style}
 ${editor.style}
-</style></head><body><header><span class="brand">DEMO</span><select id="view-select" class="view-picker" aria-label="选择架构图">${scheduleOptions}${projectOptions}${infrastructureOptions}<optgroup id="current-object-option" label="当前对象"></optgroup></select><div class="object-search"><input id="search" type="search" placeholder="搜索全部对象" aria-label="搜索全部架构对象" aria-controls="object-results" aria-expanded="false" autocomplete="off"><section id="object-results" class="object-results" aria-label="对象搜索结果" hidden><div id="search-kind-controls"><div class="search-filter-header"><button id="search-kinds-toggle" type="button" aria-expanded="false" aria-controls="search-kinds">类型 · 全部</button><button id="search-kinds-all" type="button">全部类型</button></div><div id="search-kinds" class="search-kinds" role="group" aria-label="搜索对象类别" hidden></div></div><div id="search-matches" class="search-matches" aria-live="polite"></div></section></div><div class="tools"><button id="return-context" hidden>返回原视图</button><button id="return-overview">返回调度图</button><button id="zoom-out" aria-label="缩小">−</button><span id="zoom-label">100%</span><button id="zoom-in" aria-label="放大">＋</button><button id="readable">阅读大小</button><button id="fit">适合窗口</button><button type="button" data-workspace-config>配置工作区</button></div></header><main class="main"><section id="schedule-filter" class="schedule-filter" role="group" aria-label="筛选 Schedule">${filterMenu('include')}${filterMenu('exclude')}<button type="button" id="schedule-clear">清空</button></section><div id="schedule-status" class="schedule-status" role="status" aria-live="polite" hidden></div><section id="workspace" class="workspace"><section class="canvas-wrap">${relations.markup}<div id="canvas" class="canvas" tabindex="-1" role="region" aria-label="架构图画布"><div id="diagram" class="diagram"></div></div></section><div id="details-resizer" class="details-resizer" tabindex="0" role="separator" aria-orientation="vertical" aria-label="调整详情宽度" aria-controls="details"></div><aside id="details" class="side" aria-live="polite"></aside></section></main>${editor.markup}<script id="architecture-data" type="application/json">${state}</script><script>${editor.script}</script><script>${navigationScript}</script><script>${splitter.script}</script><script>${interaction.script}</script><script>${gestures.script}</script><script>${search.script}</script><script>${relations.script}</script><script>${runtimeAssets.script}</script><script>${startup}</script></body></html>`;
+</style></head><body><header><span class="brand">DEMO</span><select id="view-select" class="view-picker" aria-label="选择架构图">${scheduleOptions}${projectOptions}${infrastructureOptions}<optgroup id="current-object-option" label="当前对象"></optgroup></select><div class="object-search"><input id="search" type="search" placeholder="搜索全部对象" aria-label="搜索全部架构对象" aria-controls="object-results" aria-expanded="false" autocomplete="off"><section id="object-results" class="object-results" aria-label="对象搜索结果" hidden><div id="search-kind-controls"><div class="search-filter-header"><button id="search-kinds-toggle" type="button" aria-expanded="false" aria-controls="search-kinds">类型 · 全部</button><button id="search-kinds-all" type="button">全部类型</button></div><div id="search-kinds" class="search-kinds" role="group" aria-label="搜索对象类别" hidden></div></div><div id="search-matches" class="search-matches" aria-live="polite"></div></section></div><div class="tools"><button id="return-context" hidden>返回原视图</button><button id="return-overview">返回调度图</button><button id="zoom-out" aria-label="缩小">−</button><span id="zoom-label">100%</span><button id="zoom-in" aria-label="放大">＋</button><button id="readable">阅读大小</button><button id="fit">适合窗口</button><button type="button" data-workspace-config>配置工作区</button>${flow.markup}</div></header><main class="main"><section id="schedule-filter" class="schedule-filter" role="group" aria-label="筛选 Schedule">${filterMenu('include')}${filterMenu('exclude')}<button type="button" id="schedule-clear">清空</button></section><div id="schedule-status" class="schedule-status" role="status" aria-live="polite" hidden></div><section id="workspace" class="workspace"><section class="canvas-wrap">${relations.markup}<div id="canvas" class="canvas" tabindex="-1" role="region" aria-label="架构图画布"><div id="diagram" class="diagram"></div></div></section><div id="details-resizer" class="details-resizer" tabindex="0" role="separator" aria-orientation="vertical" aria-label="调整详情宽度" aria-controls="details"></div><aside id="details" class="side" aria-live="polite"></aside></section></main>${editor.markup}<script id="architecture-data" type="application/json">${state}</script><script>${editor.script}</script><script>${navigationScript}</script><script>${splitter.script}</script><script>${interaction.script}</script><script>${gestures.script}</script><script>${search.script}</script><script>${relations.script}</script><script>${flow.script}</script><script>${runtimeAssets.script}</script><script>${startup}</script></body></html>`;
 }

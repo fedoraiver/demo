@@ -298,7 +298,8 @@ function architectureDetails(registry, workspace = 'D:/demo', clipboard) {
     localStorage: { getItem: () => null },
     history: { replaceState: (_, __, url) => { location.href = url; } },
     setTimeout: () => 1, clearTimeout() {},
-    view: { objectId: 'data' }, DATA: { registry },
+    view: { objectId: 'data', nodes: Object.keys(registry).map(id => ({ id })) }, DATA: { registry },
+    visibleNode: id => id,
     guide() {}, objectView: () => ({}),
   });
   const editorScript = scriptsIn(html).find(item => item.script.startsWith('const sourceEditor ='))?.script;

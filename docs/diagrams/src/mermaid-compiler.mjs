@@ -50,9 +50,9 @@ export async function compileMermaidViews(views, compile, { jobs = mermaidJobCou
 }
 
 // maxEdges 是 Mermaid 的安全配置，须在每次初始化时按当前候选的全部边设置。
-export function mermaidInitializeConfig({ aspect, mermaid = '', links = [], scheduleLinks = [], layoutLinks = [] }) {
+export function mermaidInitializeConfig({ aspect, mermaid = '', links = [], visualEdgeGroups, scheduleLinks = [], layoutLinks = [] }) {
   return { startOnLoad: false, maxTextSize: Math.max(mermaidConfiguration(aspect).maxTextSize, mermaid.length),
-    maxEdges: Math.max(500, links.length + scheduleLinks.length + layoutLinks.length) };
+    maxEdges: Math.max(500, (visualEdgeGroups ?? links).length + scheduleLinks.length + layoutLinks.length) };
 }
 
 // 同一图的所有候选共享独立上下文，避免同源页面挤在同一 Chrome renderer 中。
@@ -78,7 +78,7 @@ export async function compileGuideSamples(browser) {
     if (kind === 'node') {
       // 占位文字只参与原生形状的尺寸计算，样例的含义由旁边的 HTML 标签表达。
       lines.push(`g_node@{ shape: ${NODE_STYLES[type].shape}, label: "MMMMMM" }`, `class g_node node_${type}`);
-    } else lines.push('g_from@{ shape: anchor, label: " " }', 'g_to@{ shape: anchor, label: " " }', 'g_from g_edge@--> g_to', `class g_edge edge_${type}`);
+    } else lines.push('g_from@{ shape: anchor, label: " " }', 'g_to@{ shape: anchor, label: " " }', `g_from g_edge@${type === 'read_write' ? '<-->' : '-->'} g_to`, `class g_edge edge_${type}`);
     const source = lines.join('\n');
     const { data } = await renderMermaid(browser, source, 'svg', { fontEmbed: false, svgId: id, backgroundColor: 'transparent',
       mermaidConfig: mermaidInitializeConfig({ aspect: 'systems', mermaid: source, links: kind === 'edge' ? [{ id: 'g_edge' }] : [] }) });

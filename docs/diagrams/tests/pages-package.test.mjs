@@ -20,11 +20,11 @@ function fixture(t, { realPages = false } = {}) {
     const target = path.join(paths.generatedDirectory, filename);
     fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, text);
   };
-  const data = { schemaVersion: 5, model: { schemaVersion: 2, features: [], entities: [] }, registry: { a: { name: 'A', kind: 'System' } },
+  const data = { schemaVersion: 6, model: { schemaVersion: 2, features: [], entities: [] }, registry: { a: { name: 'A', kind: 'System' } },
     infrastructureFeatures: [], guideSamples: { nodes: { system: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"/>' }, edges: {} },
     views: [{ id: 'object-a', aspect: 'object', engine: 'mermaid', objectId: 'a', centerNodeId: 'a', label: 'A',
       filename: 'ecs-object-a.svg', mermaidFilename: 'ecs-object-a.mmd', svg: '<svg xmlns="http://www.w3.org/2000/svg" id="object-a" viewBox="0 0 10 10"/>', mermaid: 'flowchart LR\na[A]',
-      nodes: [{ id: 'a' }], links: [], sections: [], width: 10, height: 10 },
+      nodes: [{ id: 'a' }], links: [], visualEdgeGroups: [], sections: [], width: 10, height: 10 },
     { id: 'schedule-main', aspect: 'schedule', engine: 'graphviz', application: 'main', label: 'Update', filename: 'ecs-schedule-main.svg',
       dotFilename: 'ecs-schedule-main.dot', svg: '<svg xmlns="http://www.w3.org/2000/svg" id="schedule-main" viewBox="0 0 10 10"/>', dot: 'digraph G { a; }', nodes: [], links: [], sections: [], width: 10, height: 10 }] };
   for (const view of data.views) {

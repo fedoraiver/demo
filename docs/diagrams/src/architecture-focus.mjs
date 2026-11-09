@@ -4,7 +4,8 @@ export function computeObjectFocus(view, selection = { kind: 'none' }) {
   const result = { selectedNodes, dimNodes, focusedEdges, dimEdges };
   if (view?.aspect !== 'object') return result;
   const visibleNodes = new Set(view.nodes.map(node => node.id));
-  const edges = view.links.map(link => ({ id: link.id, from: link.displayFrom ?? link.from, to: link.displayTo ?? link.to }))
+  const edges = (view.visualEdgeGroups ?? view.links).map(link => ({ id: link.id, from: link.displayFrom ?? link.from, to: link.displayTo ?? link.to,
+    members: [...(link.forwardIds || []), ...(link.backwardIds || [])] }))
     .filter(link => visibleNodes.has(link.from) && visibleNodes.has(link.to));
   const relevant = new Set();
   if (selection.kind === 'node' && visibleNodes.has(selection.id)) {
@@ -13,7 +14,7 @@ export function computeObjectFocus(view, selection = { kind: 'none' }) {
       focusedEdges.add(link.id); relevant.add(link.from); relevant.add(link.to);
     }
   } else if (selection.kind === 'edge') {
-    const link = edges.find(link => link.id === selection.id);
+    const link = edges.find(link => link.id === selection.id || link.members.includes(selection.id));
     if (!link) return result;
     focusedEdges.add(link.id);
     for (const id of [link.from, link.to]) { selectedNodes.add(id); relevant.add(id); }

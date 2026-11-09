@@ -10,6 +10,7 @@ import { sourceFingerprint } from '../src/debugdump-input.mjs';
 import { renderGraphView } from '../src/architecture-renderer.mjs';
 import { checkObjectViews } from '../src/check-ecs.mjs';
 import { projectObjectRelation } from '../src/architecture-object-relations.mjs';
+import { createMenuFocusAccessFixture } from './fixtures/menu-focus-access.mjs';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
@@ -119,7 +120,8 @@ test('object cards fold repeated registrations of one callable without changing 
     feature: object.feature, aspect: 'object', label: object.id, summary: '一跳对象关系。' }, catalog.graphFor(object.id), registry, model.features));
   assert.equal(checkObjectViews(views, catalog), catalog.objects.length);
   const componentView = views.find(view => view.objectId === 'type-component');
-  assert.equal(componentView.links.find(link => link.id === 'read').nativeReverse, true);
+  assert.equal(componentView.visualEdgeGroups.find(group => group.forwardIds.includes('read')).nativeReverse, true);
+  assert.equal(componentView.links.find(link => link.id === 'read').nativeReverse, undefined);
   const projected = projectObjectRelation(componentView, 'mutable');
   assert.deepEqual(projected.nodes.map(node => node.id), ['type-component', 'registration-1']);
   assert.equal(projected.links[0].from, 'registration-2');
@@ -130,7 +132,7 @@ test('object cards fold repeated registrations of one callable without changing 
   assert.throws(() => checkObjectViews(views, catalog), /direct-neighbor coverage mismatch/);
 });
 
-test('card folding never equates names, generic instances, applications, conditions, groups, observers or Local state', t => {
+test('function cards share concrete identity across registrations while keeping generic, role and Local identities separate', t => {
   const { model, object } = fixture(t), source = model.relations[0].sourceEntries;
   const system = (id, extra = {}) => ({ ...object(id, 'System'), name: 'same_function', callableIds: ['same-callable'],
     registrations: [{ application: 'main', schedule: 'Update', scope: 'runtime' }], ...extra });
@@ -142,16 +144,60 @@ test('card folding never equates names, generic instances, applications, conditi
     system('local-a', { kind: 'Local' }), system('local-b', { kind: 'Local' })];
   extras[0].declarationId = 'same-generic-declaration';
   model.objects.push(...extras);
-  for (const record of extras) model.relations.push({ id: 'read-' + record.id, from: record.id, to: 'type-component', kind: 'read', sourceEntries: source });
+  for (const record of extras) model.relations.push({ id: 'read-' + record.id, from: record.id, to: 'type-component', kind: 'read', evidence: 'parameter', sourceEntries: source });
   const catalog = createCompilerObjectCatalog(model), graph = catalog.graphFor('type-component');
-  assert.equal(graph.nodes.filter(node => node.id === 'same-a').length, 1);
-  assert.ok(!graph.nodes.some(node => node.id === 'same-b'));
-  for (const record of extras.slice(2)) assert.ok(graph.nodes.some(node => node.id === record.id), record.id);
-  assert.equal(graph.links.filter(link => link.displayFrom === 'same-a').length, 1);
-  assert.deepEqual(graph.nodes.find(node => node.id === 'same-a').sourceNodeIds, ['same-a', 'same-b']);
+  const family = graph.nodes.find(node => node.sourceNodeIds?.includes('same-a'));
+  assert.deepEqual(family.sourceNodeIds, ['condition', 'other-app', 'same-a', 'same-b', 'unknown-app']);
+  assert.equal(graph.nodes.filter(node => node.sourceNodeIds?.includes('same-a')).length, 1);
+  for (const id of ['other-callable', 'group', 'observer', 'local-a', 'local-b']) assert.ok(graph.nodes.some(node => node.id === id), id);
+  const familyGroups = graph.visualEdgeGroups.filter(group => group.from === family.id);
+  assert.equal(familyGroups.length, 4);
+  assert.ok(familyGroups.some(group => group.forwardIds.join(',') === 'read-same-a,read-same-b'));
   const localGraph = catalog.graphFor('local-a');
   assert.deepEqual(localGraph.nodes.map(node => node.id), ['local-a', 'type-component']);
   assert.ok(localGraph.nodes.every(node => !node.sourceNodeIds), 'Unrelated members of a callable family must not imply shared local state');
+});
+
+test('static Observer cards fold by concrete callable and preserve the MenuFocus access projection', () => {
+  const { model, callbacks } = createMenuFocusAccessFixture();
+  const original = JSON.stringify(model), catalog = createCompilerObjectCatalog(model), graph = catalog.graphFor('focus');
+  assert.equal(model.objects.length, 24);
+  assert.equal(model.relations.length, 34);
+  assert.equal(catalog.links.length, 23);
+  assert.equal(graph.nodes.length, 14);
+  assert.equal(graph.links.length, 23);
+  assert.equal(graph.visualEdgeGroups.length, 13);
+  assert.equal(graph.visualEdgeGroups.filter(group => group.edgeSemantic === 'read').length, 6);
+  assert.equal(graph.visualEdgeGroups.filter(group => group.edgeSemantic === 'mutable_access').length, 7);
+  assert.ok(graph.visualEdgeGroups.every(group => group.displayLabel === (group.edgeSemantic === 'read' ? '读访问' : '写访问')));
+  assert.ok(graph.visualEdgeGroups.every(group => group.backwardIds.length === 0));
+  for (const name of callbacks) {
+    const card = graph.nodes.find(node => node.id === `observer-${name}-0`);
+    assert.deepEqual(card.sourceNodeIds, [0, 1, 2].map(index => `observer-${name}-${index}`));
+  }
+  assert.deepEqual(graph.visualEdgeGroups.flatMap(group => [...group.forwardIds, ...group.backwardIds]).sort(), graph.links.map(link => link.id).sort());
+  assert.equal(JSON.stringify(model), original);
+});
+
+test('Observer cards share concrete identity across applications and scopes while preserving access contexts', t => {
+  const { model, object } = fixture(t);
+  const observer = (id, extra = {}) => ({ ...object(id, 'Observer'), name: 'same_label', registrationScope: 'static-callsite', callableIds: ['same-callable'], ...extra });
+  const records = [observer('observer-a'), observer('observer-b'),
+    observer('other-generic', { callableIds: ['other-instance'] }),
+    observer('other-declaration', { callableIds: ['other-declaration-callable'] }),
+    observer('runtime-observer', { registrationScope: 'runtime' }),
+    observer('main-observer', { registrations: [{ application: 'main' }] }),
+    observer('render-observer', { registrations: [{ application: 'RenderApp' }] }),
+    observer('observer-group', { kind: 'Observer group', callableIds: ['same-callable', 'another'] })];
+  model.objects.push(...records);
+  for (const record of records) model.relations.push({ id: 'access-' + record.id, from: 'type-component', to: record.id, kind: 'read', evidence: 'parameter', sourceEntries: [] });
+  const graph = createCompilerObjectCatalog(model).graphFor('type-component');
+  const family = graph.nodes.find(node => node.sourceNodeIds?.includes('observer-a'));
+  assert.deepEqual(family.sourceNodeIds, ['main-observer', 'observer-a', 'observer-b', 'render-observer', 'runtime-observer']);
+  for (const id of ['other-generic', 'other-declaration', 'observer-group']) assert.ok(graph.nodes.some(node => node.id === id), id);
+  const familyGroups = graph.visualEdgeGroups.filter(group => group.to === family.id);
+  assert.equal(familyGroups.length, 4);
+  assert.ok(familyGroups.some(group => group.forwardIds.join(',') === 'access-observer-a,access-observer-b'));
 });
 
 test('one-hop presentation keeps full facts while hiding Entity components and Plugin neighbors', t => {
@@ -183,7 +229,9 @@ test('runtime predicates keep their own objects and reference the guarded object
   const registry = Object.fromEntries(model.objects.map(record => [record.id, record]));
   const view = renderGraphView({ id: catalog.objectById['runtime-predicate'].viewId, objectId: 'runtime-predicate', centerNodeId: 'runtime-predicate',
     feature: 'project', aspect: 'object', label: '运行条件', summary: '谓词及直接受控对象。' }, graph, registry, model.features);
-  assert.equal(view.links[0].displayLabel, '运行条件');
+  assert.equal(view.visualEdgeGroups[0].edgeSemantic, 'condition');
+  assert.equal(view.visualEdgeGroups[0].displayLabel, '条件绑定');
+  assert.deepEqual(view.links, graph.links);
   assert.deepEqual(model.scheduleInteractions.views, []);
   assert.equal(JSON.stringify(model), before);
 });
@@ -202,7 +250,8 @@ test('compiler event access and trigger operations render exact observe and emit
     feature: 'project', aspect: 'object', label: '事件关系', summary: '编译器事件事实。' }, graph, registry, model.features);
   for (const [fact, semantic] of [[facts[0], 'observe'], [facts[2], 'emit']]) {
     const link = view.links.find(link => link.id === fact.id);
-    assert.deepEqual([link.from, link.to, link.kind, link.edgeSemantic, link.factKind, link.operation],
+    const group = view.visualEdgeGroups.find(group => group.forwardIds.includes(fact.id));
+    assert.deepEqual([link.from, link.to, link.kind, group.edgeSemantic, link.factKind, link.operation],
       [fact.from, fact.to, semantic, semantic, fact.kind, fact.kind]);
     assert.deepEqual(link.sourceEntries, fact.sourceEntries);
   }
@@ -257,12 +306,13 @@ test('same-entity structural candidates stay separate across independent groups 
     feature: 'project', aspect: 'object', label: '结构候选', summary: '分别保留独立候选组。' }, graph, registry, model.features);
   for (const fact of model.relations.filter(relation => relation.kind === 'alternative')) {
     const link = view.links.find(link => link.id === fact.id);
-    assert.deepEqual([link.from, link.to, link.kind, link.edgeSemantic, link.factKind, link.operation, link.displayLabel,
+    const group = view.visualEdgeGroups.find(group => group.forwardIds.includes(fact.id));
+    assert.deepEqual([link.from, link.to, link.kind, group.edgeSemantic, link.factKind, link.operation, group.displayLabel,
       link.alternativeGroup, link.selection, link.possible, link.alternativeContext],
-    [fact.from, fact.to, 'reference', 'reference', 'alternative', 'alternative', '结构候选', fact.alternativeGroup, 'one-of', true, [fact.alternativeGroup]]);
+    [fact.from, fact.to, 'reference', 'alternative', 'alternative', 'alternative', '结构候选', fact.alternativeGroup, 'one-of', true, [fact.alternativeGroup]]);
     assert.deepEqual(link.sourceEntries, fact.sourceEntries);
   }
-  assert.equal(view.links.filter(link => link.edgeSemantic === 'relationship').length, 0);
+  assert.equal(view.visualEdgeGroups.filter(group => group.edgeSemantic === 'relationship').length, 0);
   assert.deepEqual(view.entityGroups, []);
   const candidateGraph = catalog.graphFor('candidate-a');
   assert.deepEqual(new Set(candidateGraph.nodes.map(node => node.id)), new Set(['candidate-a', 'template-root', 'candidate-child']));

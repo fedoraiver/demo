@@ -1,3 +1,4 @@
+import { visualEdgesOf } from './architecture-visual-edges.mjs';
 import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
 import { VIEWER_BACKGROUND } from './viewer-theme.mjs';
 import { measureMermaidNodes } from './svg-shape-geometry.mjs';
@@ -29,10 +30,11 @@ const hasClass = (node, value) => (node.getAttribute('class') || '').split(/\s+/
 const number = (node, name) => Number(node.getAttribute(name) || 0);
 export function nativeLabelMismatches(view) {
   const nodes = view.nodes.filter(node => typeof node.displayLabel === 'string');
-  if (!nodes.length) return [];
+  const groups = (view.visualEdgeGroups || []).filter(group => typeof group.displayLabel === 'string' && group.displayLabel);
+  if (!nodes.length && !groups.length) return [];
   const document = new DOMParser().parseFromString(view.svg, 'image/svg+xml'), all = elements(document.documentElement);
   const compact = value => String(value ?? '').replace(/[\s\u200B]+/g, '');
-  return nodes.filter(node => {
+  const nodeMismatches = nodes.filter(node => {
     const element = all.find(item => item.getAttribute('data-id') === node.id);
     const label = node.presentation === 'entity-container'
       ? all.find(item => item.getAttribute('data-entity-header') === node.instance)
@@ -41,6 +43,11 @@ export function nativeLabelMismatches(view) {
     const visible = rows?.length ? rows.map(row => row.textContent).join('\n') : label?.textContent;
     return !label || !compact(visible) || compact(visible) !== compact(node.displayLabel);
   }).map(node => node.id);
+  const edgeMismatches = groups.filter(group => {
+    const label = all.find(element => hasClass(element, 'label') && element.getAttribute('data-mermaid-native-id') === group.mermaidId);
+    return !label || compact(label.textContent) !== compact(group.displayLabel);
+  }).map(group => group.id);
+  return [...nodeMismatches, ...edgeMismatches];
 }
 function boxInRoot(rect) {
   let x = number(rect, 'x'), y = number(rect, 'y');
@@ -68,7 +75,7 @@ export function normalizeMermaidSvg(view, source, registry, { clusterLabelBounds
     }
     return { label, bounds };
   }
-  const edgeElements = new Map([...view.links, ...view.scheduleLinks, ...view.layoutLinks].map(link => [link.mermaidId, findEdge(link.mermaidId)]));
+  const edgeElements = new Map([...visualEdgesOf(view), ...view.scheduleLinks, ...view.layoutLinks].map(link => [link.mermaidId, findEdge(link.mermaidId)]));
   for (const node of all) if (node.hasAttribute('data-id')) { node.setAttribute('data-mermaid-native-id', node.getAttribute('data-id')); node.removeAttribute('data-id'); }
   const nodeElements = new Map();
   for (const node of view.nodes) {
@@ -102,7 +109,7 @@ export function normalizeMermaidSvg(view, source, registry, { clusterLabelBounds
     element.setAttribute('data-center-x', String(position.x + position.width / 2)); element.setAttribute('data-center-y', String(position.y + position.height / 2));
     return { ...node, position };
   });
-  for (const link of [...view.links, ...view.scheduleLinks]) {
+  for (const link of [...visualEdgesOf(view), ...view.scheduleLinks]) {
     const element = edgeElements.get(link.mermaidId);
     if (!element) throw new Error(`Mermaid semantic edge missing: ${view.id}/${link.id}`);
     const schedule = view.scheduleLinks.includes(link);
@@ -111,14 +118,18 @@ export function normalizeMermaidSvg(view, source, registry, { clusterLabelBounds
       wrapper.setAttribute('class', `${wrapper.getAttribute('class')} edge-label`);
       wrapper.setAttribute(schedule ? 'data-schedule-link-id' : 'data-link-id', link.id);
     }
-    element.setAttribute('class', `${element.getAttribute('class')} edge ${schedule ? 'schedule-edge' : link.kind}`);
+    element.setAttribute('class', `${element.getAttribute('class')} edge ${schedule ? 'schedule-edge' : link.kind || link.edgeSemantic}`);
     element.setAttribute(schedule ? 'data-schedule-link-id' : 'data-link-id', link.id);
     element.setAttribute(schedule ? 'data-schedule-connect' : 'data-connect', `${link.displayFrom ?? link.from}|${link.displayTo ?? link.to}`);
-    if (!schedule) element.setAttribute('data-canonical-connect', `${link.from}|${link.to}`);
+    if (!schedule && link.forwardIds) {
+      element.setAttribute('data-visual-edge-id', link.id);
+      element.setAttribute('data-canonical-relations', JSON.stringify([...link.forwardIds, ...link.backwardIds]));
+    } else if (!schedule) element.setAttribute('data-canonical-connect', `${link.from}|${link.to}`);
     element.setAttribute('data-mermaid-id', link.mermaidId);
     element.setAttribute('data-edge-semantic', link.edgeSemantic);
     if (link.nativeReverse) element.setAttribute('data-native-reverse', 'true');
-    element.setAttribute('tabindex', '0'); element.setAttribute('role', 'button'); element.setAttribute('aria-label', `${link.displayLabel || EDGE_STYLES[link.edgeSemantic].label} · ${link.from} → ${link.to}`);
+    const direction = link.backwardIds?.length ? link.forwardIds.length ? '↔' : '←' : '→';
+    element.setAttribute('tabindex', '0'); element.setAttribute('role', 'button'); element.setAttribute('aria-label', `${link.displayLabel || EDGE_STYLES[link.edgeSemantic].label} · ${link.from} ${direction} ${link.to}`);
     element.setAttribute('style', `${element.getAttribute('style') || ''};--edge-width:${EDGE_STYLES[link.edgeSemantic].width}px`);
   }
   for (const link of view.layoutLinks) {
@@ -244,7 +255,7 @@ export function routedMermaid(view, { curves = new Map(), spacing = 0, spans = n
       for (const id of selected) if (!view.nodes.some(node => node.mermaidId === id)) throw new Error(`Missing native card container: ${view.id}/${id}`);
     } else if (cardContainers === 'related') {
       const members = new Set((view.entityGroups || []).flatMap(group => group.components));
-      const linked = new Set(view.links.flatMap(link => [link.displayFrom ?? link.from, link.displayTo ?? link.to]));
+      const linked = new Set(visualEdgesOf(view).flatMap(link => [link.displayFrom ?? link.from, link.displayTo ?? link.to]));
       selected = new Set(view.nodes.filter(node => members.has(node.id) ? linked.has(node.id) : ['system', 'observer'].includes(node.visualType)).map(node => node.mermaidId));
     }
     source = source.replace(/  (n\d+)@\{[^\n]+\n  class \1 node_\w+(?:\n  class \1 external_node)?/g, (declaration, id) => selected && !selected.has(id) ? declaration : `  subgraph layout_card_${id}[" "]\n${declaration}\n  end\n  style layout_card_${id} fill:none,stroke:none`);
@@ -277,7 +288,7 @@ function entityHeaderContext(view) {
   const pairs = new Set(view.layoutLinks.map(link => `${link.from}|${link.to}`));
   for (const group of (view.entityGroups || []).filter(group => group.expanded !== false)) {
     const members = new Set(group.components);
-    for (const link of view.links) {
+    for (const link of visualEdgesOf(view)) {
       const from = link.displayFrom ?? link.from, to = link.displayTo ?? link.to;
       const incoming = members.has(to) && !members.has(from), outgoing = members.has(from) && !members.has(to);
       if (!incoming && !outgoing) continue;
@@ -297,7 +308,7 @@ function entityHeaderContext(view) {
 
 function objectNeighborContext(view, side = 'input') {
   const center = view.centerNodeId || view.objectId, byId = new Map(view.nodes.map(node => [node.id, node.mermaidId]));
-  const neighbors = [...new Set(view.links.filter(link => side === 'input' ? (link.displayTo ?? link.to) === center
+  const neighbors = [...new Set(visualEdgesOf(view).filter(link => side === 'input' ? (link.displayTo ?? link.to) === center
     : !link.nativeReverse && (link.displayFrom ?? link.from) === center && (link.displayTo ?? link.to) !== center)
     .map(link => byId.get(side === 'input' ? link.displayFrom ?? link.from : link.displayTo ?? link.to)).filter(Boolean))];
   if (neighbors.length < 2) return view;
@@ -343,7 +354,7 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
   const labelVariants = new Set();
   for (const [attempt, { spacing, span, labelEdges, labelSpan, reverseRelationEdges, cardContainers, headerContext, entityContainers, entityOrder, padding, incomingContext, outgoingContext, loneInputOutput }] of profiles.entries()) {
     try {
-      const spans = new Map(span ? [...view.links, ...view.scheduleLinks].map(edge => [edge.mermaidId, span]) : []);
+      const spans = new Map(span ? [...visualEdgesOf(view), ...view.scheduleLinks].map(edge => [edge.mermaidId, span]) : []);
       for (const id of labelEdges ?? []) spans.set(id, labelSpan);
       const base = loneInputOutput ? loneInputOutputContext : outgoingContext ? outputContext : incomingContext ? inputContext : headerContext ? context : view;
       const route = curves => ({ ...base, mermaid: routedMermaid(base, { spacing, spans, curves, reverseRelationEdges, cardContainers, entityContainers, entityOrder, padding, wrappingWidth }) });
@@ -399,7 +410,7 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
       if (dagre && !attempt && view.aspect === 'data') {
         const containers = new Map((view.entityGroups || []).map(group => [group.entity, group.mermaidId]));
         const bad = new Set(invalid.map(edge => edge.id));
-        const entityContainers = [...new Set(view.links.filter(link => bad.has(link.id)).flatMap(link => [link.displayFrom ?? link.from, link.displayTo ?? link.to]).filter(id => containers.has(id)).map(id => containers.get(id)))];
+        const entityContainers = [...new Set(visualEdgesOf(view).filter(link => bad.has(link.id)).flatMap(link => [link.displayFrom ?? link.from, link.displayTo ?? link.to]).filter(id => containers.has(id)).map(id => containers.get(id)))];
         if (entityContainers.length) {
           entityWrapperCandidates = true;
           wrapperProfiles = context === view ? 1 : 3;
@@ -434,7 +445,7 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
           if (entityContainers) {
             const containers = new Set(entityContainers);
             const nodes = new Map(view.nodes.map(node => [node.id, node.mermaidId]));
-            const network = view.links.filter(link => containers.has(nodes.get(link.displayFrom ?? link.from)) && containers.has(nodes.get(link.displayTo ?? link.to)));
+            const network = visualEdgesOf(view).filter(link => containers.has(nodes.get(link.displayFrom ?? link.from)) && containers.has(nodes.get(link.displayTo ?? link.to)));
             const networkEdges = network.map(link => link.mermaidId);
             if (networkEdges.some(id => !labelEdges.includes(id))) {
               const reaches = (id, target, seen = new Set()) => {
@@ -476,7 +487,7 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
       }
       if (dagre && view.aspect === 'object' && !endpointClearanceAdded && !layoutError && invalid.length
         && invalid.every(edge => !edge.axis && !edge.curved && !edge.collisions.length && !edge.arrowIssues.length)) {
-        const link = view.links.find(link => invalid.some(edge => edge.id === link.id));
+        const link = visualEdgesOf(view).find(link => invalid.some(edge => edge.id === link.id));
         if (link) {
           const nodes = new Map(view.nodes.map(node => [node.id, node.mermaidId]));
           const endpoints = [...new Set([link.displayFrom ?? link.from, link.displayTo ?? link.to].map(id => nodes.get(id)).filter(Boolean))];
@@ -488,12 +499,12 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
       if (dagre && view.aspect === 'object' && !layoutError && invalid.length
         && invalid.every(edge => !edge.axis && !edge.curved && !edge.collisions.length && !edge.arrowIssues.length)) {
         const center = view.centerNodeId || view.objectId;
-        const failedOutput = view.links.some(link => !link.nativeReverse && (link.displayFrom ?? link.from) === center && invalid.some(edge => edge.id === link.id));
+        const failedOutput = visualEdgesOf(view).some(link => !link.nativeReverse && (link.displayFrom ?? link.from) === center && invalid.some(edge => edge.id === link.id));
         if (!outputContext && failedOutput) {
           outputContext = objectNeighborContext(view, 'output');
           if (outputContext !== view) profiles.splice(attempt + 1, 0, { spacing: 0, span: 0, outgoingContext: true });
         }
-        const failedLoneInput = inputContext === view && view.links.some(link => (link.displayTo ?? link.to) === center
+        const failedLoneInput = inputContext === view && visualEdgesOf(view).some(link => (link.displayTo ?? link.to) === center
           && (link.displayFrom ?? link.from) !== center && invalid.some(edge => edge.id === link.id));
         if (!loneInputOutputContext && !failedOutput && failedLoneInput) {
           loneInputOutputContext = objectNeighborContext(view, 'output');

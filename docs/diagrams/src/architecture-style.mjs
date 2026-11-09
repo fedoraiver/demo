@@ -54,23 +54,34 @@ export const NODE_STYLES = {
 };
 
 export const EDGE_STYLES = {
-  schedule: { label: 'Schedule 先后', legendLabel: 'Schedule order', stroke: '#334155', width: 3, dash: null },
-  order: { label: '显式执行依赖', legendLabel: 'Explicit ordering', stroke: '#334155', width: 2, dash: null },
+  schedule: { label: 'Schedule先后', legendLabel: 'Schedule order', stroke: '#334155', width: 3, dash: null },
+  order: { label: '执行依赖', legendLabel: 'Explicit ordering', stroke: '#334155', width: 2, dash: null },
   nested: { label: '内部调度', legendLabel: 'Nested schedule execution', stroke: '#334155', width: 1.8, dash: '10 5' },
-  read: { label: '读取：数据 → 系统', legendLabel: 'Read access', stroke: '#3567A6', width: 1.6, dash: '6 4' },
-  write: { label: '修改：系统 → 数据', legendLabel: 'Write / Output', stroke: '#2F7161', width: 1.8, dash: null },
-  publish: { label: '发布：生产者 → 消息缓冲', legendLabel: 'Message write', stroke: '#247B91', width: 1.8, dash: '10 4 2 4' },
-  consume: { label: '消费：消息缓冲 → 消费者', legendLabel: 'Message read', stroke: '#247B91', width: 1.8, dash: '2 4' },
-  emit: { label: '发出：发起者 → 事件', legendLabel: 'Event trigger', stroke: '#B66B2D', width: 1.8, dash: null },
-  observe: { label: '触发：来源 → Observer', legendLabel: 'Observer invocation', stroke: '#B66B2D', width: 1.8, dash: '2 4' },
+  read: { label: '读访问', messageLabel: '消息读访问', legendLabel: 'Read access', stroke: '#3567A6', width: 1.6, dash: '6 4' },
+  mutable_access: { label: '写访问', messageLabel: '消息写访问', legendLabel: 'Mutable access', stroke: '#2F7161', width: 1.8, dash: null },
+  read_write: { label: '读写访问', legendLabel: 'Read / Mutable access', stroke: '#277A83', width: 2, dash: '8 3' },
+  write: { label: '写访问', messageLabel: '消息写访问', legendLabel: 'Write access', stroke: '#2F7161', width: 1.6, dash: '8 3 2 3' },
+  filter: { label: '查询筛选', legendLabel: 'Query filter', stroke: '#7A6F42', width: 1.4, dash: '3 4' },
+  contains: { label: '包含', legendLabel: 'Component membership', stroke: '#4B8060', width: 1.4, dash: '8 4' },
+  create: { label: '创建', legendLabel: 'Entity creation', stroke: '#A6533B', width: 2, dash: null },
+  insert: { label: '插入', legendLabel: 'Insertion', stroke: '#42844E', width: 2, dash: '10 3' },
+  remove: { label: '移除', legendLabel: 'Removal', stroke: '#A44D4D', width: 2, dash: '5 3' },
+  initialize: { label: '按需初始化', legendLabel: 'Initialization', stroke: '#A5792C', width: 2, dash: '10 3 2 3' },
+  despawn: { label: '销毁', legendLabel: 'Entity destruction', stroke: '#99483E', width: 2.2, dash: '2 3' },
+  publish: { label: '发布消息', legendLabel: 'Message publication', stroke: '#247B91', width: 1.8, dash: '10 4 2 4' },
+  consume: { label: '消息读访问', legendLabel: 'Message read', stroke: '#247B91', width: 1.8, dash: '2 4' },
+  emit: { label: '触发事件', legendLabel: 'Event trigger', stroke: '#B66B2D', width: 1.8, dash: null },
+  observe: { label: '接收事件', legendLabel: 'Event reception', stroke: '#B66B2D', width: 1.8, dash: '2 4' },
   transition: { label: '状态转换', legendLabel: 'State transition', stroke: '#A64E76', width: 2, dash: '10 4 2 4' },
-  reference: { label: '普通引用：持有者 → 目标', legendLabel: 'Reference', stroke: '#7B4DB2', width: 1.5, dash: '6 4' },
-  relationship: { label: 'Bevy 关系：关系源 → 目标', legendLabel: 'Relationship', stroke: '#7B4DB2', width: 1.8, dash: null },
-  set_membership: { label: '系统集合 → 成员系统', legendLabel: 'SystemSet membership', stroke: '#6A778C', width: 1.4, dash: '2 4' },
-  group_membership: { label: '系统分组 → 成员系统', legendLabel: 'System group membership', stroke: '#607C96', width: 1.4, dash: '2 4' },
-  constraint: { label: '调度契约 → 参与集合', legendLabel: 'Ordering contract participation', stroke: '#6A778C', width: 1.4, dash: '10 4 2 4' },
-  registration: { label: '装配方 → 注册对象', legendLabel: 'Registration', stroke: '#64748B', width: 1.5, dash: '6 4' },
-  dependency: { label: '契约使用方 → 提供方', legendLabel: 'Dependency', stroke: '#64748B', width: 1.5, dash: '10 5' },
+  reference: { label: '引用', legendLabel: 'Reference', stroke: '#7B4DB2', width: 1.5, dash: '6 4' },
+  relationship: { label: 'Bevy关系', legendLabel: 'Relationship', stroke: '#7B4DB2', width: 1.8, dash: null },
+  set_membership: { label: '集合成员', legendLabel: 'SystemSet membership', stroke: '#6A778C', width: 1.4, dash: '2 4' },
+  group_membership: { label: '分组成员', legendLabel: 'System group membership', stroke: '#607C96', width: 1.4, dash: '2 4' },
+  constraint: { label: '调度契约参与', legendLabel: 'Ordering contract participation', stroke: '#6A778C', width: 1.4, dash: '10 4 2 4' },
+  registration: { label: '注册', legendLabel: 'Registration', stroke: '#64748B', width: 1.5, dash: '6 4' },
+  condition: { label: '条件绑定', legendLabel: 'Condition binding', stroke: '#7B6F9C', width: 1.5, dash: '4 3 1 3' },
+  alternative: { label: '结构候选', legendLabel: 'Structural alternative', stroke: '#8C6E43', width: 1.6, dash: '7 3 1 3' },
+  dependency: { label: '契约依赖', legendLabel: 'Dependency', stroke: '#64748B', width: 1.5, dash: '10 5' },
 };
 
 export function mermaidStyleDefinitions(nodeTypes, edgeTypes) {
@@ -87,22 +98,24 @@ export function visualTypeOf(node) {
   return type;
 }
 
-const messageTypes = new Set(['message', 'message_buffer']);
 const directSemantics = new Set(['order', 'transition', 'reference', 'relationship', 'dependency', 'observe', 'emit']);
+const factSemantics = new Set(['read', 'mutable_access', 'filter', 'contains', 'create', 'insert', 'remove', 'initialize', 'despawn', 'publish', 'consume', 'condition', 'alternative']);
 
 export function edgeSemanticOf(link, registry) {
-  if (directSemantics.has(link.kind)) return link.kind;
+  const kind = link.factKind ?? link.operation ?? link.kind;
+  if (directSemantics.has(kind)) return kind;
   const from = registry[link.from], to = registry[link.to];
   if (!from || !to) throw new Error(`Architecture edge endpoint missing: ${link.id || `${link.from} → ${link.to}`}`);
-  if (link.kind === 'read') return messageTypes.has(visualTypeOf(from)) ? 'consume' : 'read';
-  if (link.kind === 'write') return messageTypes.has(visualTypeOf(to)) ? 'publish' : 'write';
-  if (link.kind === 'trigger') {
+  if (factSemantics.has(kind)) return kind;
+  if (kind === 'write') return link.evidence === 'parameter' ? 'mutable_access' : 'write';
+  if (kind === 'event') return 'observe';
+  if (kind === 'trigger') {
     if (link.projection === 'observer-trigger' && registry[link.eventId]?.kind === 'EntityEvent' && visualTypeOf(to) === 'observer') return 'observe';
     if (visualTypeOf(from) === 'event' && ['observer', 'observer_group'].includes(visualTypeOf(to))) return 'observe';
     if (visualTypeOf(to) === 'event') return 'emit';
     throw new Error(`Architecture trigger has no event/Observer contract: ${link.id}`);
   }
-  if (link.kind === 'registration') {
+  if (kind === 'registration' || kind === 'membership') {
     const kind = nodeKindOf(from);
     if (kind === 'Scheduling constraint') return 'constraint';
     if (kind === 'SystemSet') return 'set_membership';
@@ -115,21 +128,59 @@ export function edgeSemanticOf(link, registry) {
   throw new Error(`Unknown architecture edge kind: ${link.kind} (${link.id || 'unnamed'})`);
 }
 
-export function displayLabelOf(link, semantic, registry) {
+const edgeLabelPrefixes = {
+  schedule: ['Schedule 先后', 'Schedule先后'],
+  order: ['显式执行依赖', '执行依赖', 'chain', 'after', 'before'],
+  nested: ['内部调度', 'chain', 'after', 'before'],
+  read: ['读取：数据 → 系统', '消息读访问', '读访问', '读取', '读写', '消费'],
+  mutable_access: ['可变访问：系统 → 数据', '消息写访问', '写访问', '可变访问', '写入', '修改', '读写'],
+  read_write: ['读取与可变访问', '读写访问', '读访问', '写访问', '读取', '可变访问', '读写'],
+  write: ['修改：系统 → 数据', '写访问：系统 → 数据', '消息写访问', '写访问', '可变访问', '写入', '修改', '读写'],
+  filter: ['存在性约束', '查询筛选'], contains: ['实体包含组件', '包含组件', '包含'],
+  create: ['创建实体', '创建'], insert: ['插入组件或资源', '插入'], remove: ['移除组件或资源', '移除'],
+  initialize: ['按需初始化'], despawn: ['销毁实体', '销毁'],
+  publish: ['发布：生产者 → 消息缓冲', '发布消息', '写入消息', '发布', '写入'],
+  consume: ['消费：消息缓冲 → 消费者', '消息读访问', '消费消息', '读取', '消费'],
+  emit: ['发出：发起者 → 事件', '触发事件', '发出', '触发'],
+  observe: ['触发：来源 → Observer', '接收事件', '观察事件', '触发'],
+  transition: ['状态转换'], reference: ['普通引用：持有者 → 目标', '普通引用', '引用'],
+  relationship: ['Bevy 关系：关系源 → 目标', 'Bevy关系'],
+  set_membership: ['系统集合 → 成员系统', '集合成员'], group_membership: ['系统分组 → 成员系统', '分组成员'],
+  constraint: ['调度契约 → 参与集合', '调度契约参与'],
+  registration: ['装配方 → 注册对象', '注册调用', '安装调用', '首先安装', '显式安装', '先安装', '再安装', '安装', '注册'],
+  condition: ['条件绑定', '运行条件'], alternative: ['结构候选'],
+  dependency: ['契约使用方 → 提供方', '契约依赖', '读取', '使用', '发布'],
+};
+
+export function edgeLabelDetailsOf(link, semantic) {
   if (!Object.hasOwn(EDGE_STYLES, semantic)) throw new Error(`Unknown architecture edge semantic: ${semantic}`);
-  let label = String(link.label ?? '').trim();
-  if (!label) return '';
-  // 只移除关系类别前缀；条件、Commands 可见时机和具体领域名仍留在线上。
-  label = label.replace(/^(?:R\s*\/\s*W|R|W)(?:\s+|$)/, '').trim();
-  if (['read', 'write', 'publish', 'consume', 'dependency'].includes(semantic)) {
-    label = label.replace(/^(?:读写|读取|写入|修改|消费|发布|使用)\s*(?:\/\s*)?/, '').trim();
-  }
-  if (semantic === 'registration') label = label.replace(/^(?:首先安装|先安装|再安装|显式安装|安装|注册)\s*/, '').trim();
+  let detail = String(link.label ?? '').trim();
+  const prefixes = [...edgeLabelPrefixes[semantic], 'R / W', 'R/W', 'R', 'W'].sort((a, b) => b.length - a.length);
+  // 仅识别确定的类别前缀与分隔符，领域名称和约束原文保持完整。
+  let previous;
+  do {
+    previous = detail;
+    for (const prefix of prefixes) {
+      if (detail === prefix) return '';
+      if (detail.startsWith(prefix) && /^[\s:：/·]/.test(detail.slice(prefix.length))) {
+        detail = detail.slice(prefix.length).replace(/^[\s:：/·]+/, '');
+      }
+    }
+  } while (detail !== previous);
   if (['order', 'nested', 'schedule'].includes(semantic)) {
-    label = label.replace(/^chain(?:\s*\/\s*)?/, '').replace(/^(?:after|before)\((.+)\)$/, '$1').replace(/^(?:after|before)\s+/, '').replace(/\s*→\s*$/, '').trim();
+    detail = detail.replace(/^(?:after|before)\((.+)\)$/, '$1').replace(/\s*→\s*$/, '').trim();
   }
-  if (/^(?:R|W|读取|写入|修改|触发|发布|消费|安装|注册|after|before|chain)$/.test(label)) return '';
-  return label;
+  return detail;
+}
+
+export function displayLabelOf(link, semantic, registry, details = edgeLabelDetailsOf(link, semantic)) {
+  if (!Object.hasOwn(EDGE_STYLES, semantic)) throw new Error(`Unknown architecture edge semantic: ${semantic}`);
+  const style = EDGE_STYLES[semantic];
+  const dataId = semantic === 'read' ? link.from : link.to;
+  const data = registry?.[dataId];
+  const message = data && ['message', 'message_buffer'].includes(visualTypeOf(data));
+  const label = message && style.messageLabel ? style.messageLabel : style.label;
+  return details ? label + ' · ' + details : label;
 }
 
 export function scheduleLinksFor(groups) {
@@ -140,7 +191,7 @@ export function scheduleLinksFor(groups) {
   }
   const mainTracks = new Set(['startup', 'frame', 'conditional', 'fixed']);
   const main = groups.filter(group => mainTracks.has(group.track) || group.id === 'RunFixedMainLoop.AfterFixedMainLoop').toSorted((a, b) => a.order - b.order);
-  const links = main.slice(1).map((group, index) => ({ id: `schedule-${main[index].id}-${group.id}`, from: main[index].id, to: group.id, edgeSemantic: 'schedule', displayLabel: '' }));
-  if (ids.has('PostUpdate') && ids.has('EguiPrimaryContextPass')) links.push({ id: 'nested-PostUpdate-EguiPrimaryContextPass', from: 'PostUpdate', to: 'EguiPrimaryContextPass', edgeSemantic: 'nested', displayLabel: '' });
+  const links = main.slice(1).map((group, index) => ({ id: `schedule-${main[index].id}-${group.id}`, from: main[index].id, to: group.id, edgeSemantic: 'schedule', displayLabel: EDGE_STYLES.schedule.label }));
+  if (ids.has('PostUpdate') && ids.has('EguiPrimaryContextPass')) links.push({ id: 'nested-PostUpdate-EguiPrimaryContextPass', from: 'PostUpdate', to: 'EguiPrimaryContextPass', edgeSemantic: 'nested', displayLabel: EDGE_STYLES.nested.label });
   return links;
 }
