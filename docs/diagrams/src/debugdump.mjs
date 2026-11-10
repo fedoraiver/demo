@@ -6,6 +6,7 @@ import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
 import { parseScheduleGraph, scheduleGraphInput, scheduleGraphFacts, SCHEDULE_MODEL_VERSION } from './schedule-graph.mjs';
 import { SCHEDULE_THEME, SCHEDULE_THEME_VERSION } from './schedule-theme.mjs';
 import { normalizeScheduleSvg as normalizeSvg } from './schedule-svg.mjs';
+import { inspectScheduleRoutes, renderScheduleLayout } from './schedule-layout.mjs';
 import { scheduleLegendKinds } from './schedule-legend.mjs';
 import { artifactFile, artifactRelativePath, pathsForRepository } from './paths.mjs';
 
@@ -41,7 +42,7 @@ export async function parseDebugdump({ manifest, schedules }) {
 export async function renderDebugdump({ manifest, schedules, views: inputViews }) {
   const viz = await instance();
   const views = inputViews.map(view => {
-    const geometry = normalizeScheduleSvg(viz.renderString(scheduleGraphInput(view.scheduleGraph, SCHEDULE_THEME), { engine: 'dot', format: 'svg' }), view.id);
+    const geometry = normalizeScheduleSvg(renderScheduleLayout(viz, scheduleGraphInput(view.scheduleGraph, SCHEDULE_THEME)).svg, view.id);
     const result = {};
     for (const [key, value] of Object.entries(view)) {
       if (key === 'exportInfo') Object.assign(result, geometry);
@@ -85,6 +86,8 @@ export function checkDebugdumpViews(directory, root, views) {
     scheduleGraphFacts(view.scheduleGraph);
     requireCondition(JSON.stringify(view.legendKinds) === JSON.stringify(scheduleLegendKinds(view.scheduleGraph)), `Schedule legend categories mismatch: ${view.id}`);
     const normalized = normalizeScheduleSvg(view.svg, view.id);
+    const routes = inspectScheduleRoutes(view.svg, scheduleGraphInput(view.scheduleGraph, SCHEDULE_THEME));
+    requireCondition(routes.every(route => !route.issues.length && !route.clearanceIssues.length), `Schedule native routing validation failed: ${view.id}`);
     requireCondition(view.width === normalized.width && view.height === normalized.height && normalized.svg === view.svg, `Schedule SVG dimensions mismatch: ${view.id}`);
     requireCondition(fs.readFileSync(classified ? artifactFile(paths, view) : path.join(directory, view.filename), 'utf8') === view.svg, `Schedule SVG file mismatch: ${view.id}`);
     requireCondition(['nodes', 'links', 'scheduleLinks', 'sections'].every(key => Array.isArray(view[key]) && view[key].length === 0), `Schedule SVG has object interaction metadata: ${view.id}`);

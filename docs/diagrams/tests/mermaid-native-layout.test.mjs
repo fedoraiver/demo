@@ -13,7 +13,6 @@ import { compileRoutedView, nativeLabelMismatches } from '../src/mermaid-core.mj
 import { svgElements } from '../src/svg-shape-geometry.mjs';
 import { checkGuideSamples, checkMermaidSource, checkMermaidStyles } from '../src/check-ecs.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE } from '../src/architecture-style.mjs';
-import { VIEWER_BACKGROUND } from '../src/viewer-theme.mjs';
 import { isVisibleRelation, visualEdgesOf } from '../src/architecture-visual-edges.mjs';
 import { createCompilerObjectCatalog } from '../src/rustc-model.mjs';
 import { createMenuFocusAccessFixture } from './fixtures/menu-focus-access.mjs';
@@ -63,9 +62,9 @@ test('one native bidirectional path retains both canonical accesses and validate
   assert.ok(nativeMarkerProperty(paths[0], 'marker-start')); assert.ok(nativeMarkerProperty(paths[0], 'marker-end'));
   assert.match(paths[0].attrs['aria-label'], /↔/);
   assert.match(paths[0].attrs['aria-label'], /读写访问/);
-  const missingLabel = { ...result, svg: result.svg.replace('读写访问</tspan>', '错误标签</tspan>') };
-  assert.deepEqual(nativeLabelMismatches(missingLabel), [result.visualEdgeGroups[0].id]);
-  assert.throws(() => checkMermaidStyles(missingLabel, registry), /rendered edge label mismatch/);
+  const visibleLabel = { ...result, svg: result.svg.replace('</svg>', '<g class="edgeLabel"><g class="label" data-mermaid-native-id="e0"><text>读写访问</text></g></g></svg>') };
+  assert.deepEqual(nativeLabelMismatches(visibleLabel), [result.visualEdgeGroups[0].id]);
+  assert.throws(() => checkMermaidStyles(visibleLabel, registry), /unexpected visible edge label/);
   assert.deepEqual(JSON.parse(paths[0].attrs['data-canonical-relations']).sort(), graph.links.map(link => link.id).sort());
   assert.throws(() => checkMermaidSource({ ...result, mermaid: result.mermaid.replace('e0@<-->', 'e0@-->') }, registry, new Map()), /arrow declaration/);
   for (const marker of ['start', 'end']) {
@@ -83,10 +82,12 @@ test('one native bidirectional path retains both canonical accesses and validate
   assert.equal(constrained.visualEdgeGroups[0].displayLabel, '读写访问 · ' + detail);
   const withDetail = await compileFixture(constrained, constrainedGraph, 'native-bidirectional-constraint', registry);
   assert.deepEqual(nativeLabelMismatches(withDetail), []);
+  const described = svgElements(withDetail.svg).find(element => element.tag === 'path' && element.attrs['data-link-id']);
+  assert.ok(described.attrs['aria-label'].includes('读写访问 · ' + detail));
 });
 
 for (const id of ['object-7dbecb473f3bff18', 'object-1c0bc2f73463f19b']) {
-  test(`native edge labels have opaque viewer-colored backgrounds: ${id}`, { skip: !chromium, timeout: 180000 }, async () => {
+  test(`native edges keep semantic descriptions without visible labels: ${id}`, { skip: !chromium, timeout: 180000 }, async () => {
     const { view, registry, features } = JSON.parse(fs.readFileSync(new URL(`./fixtures/${id}-native.json`, import.meta.url), 'utf8'));
     const graph = { centerNodeId: view.centerNodeId, nodes: view.nodes.map(({ id: nodeId, role }) => ({ id: nodeId, role })), links: view.links };
     const generated = renderGraphView(view, graph, registry, features);
@@ -98,27 +99,17 @@ for (const id of ['object-7dbecb473f3bff18', 'object-1c0bc2f73463f19b']) {
       assert.deepEqual(nativeLabelMismatches(result), []);
       const elements = svgElements(result.svg), compact = text => text.replace(/[\s\u200B\uFEFF]/g, '');
       for (const link of visualEdgesOf(result).filter(link => link.displayLabel)) {
+        const path = elements.find(element => element.tag === 'path' && element.attrs['data-link-id'] === link.id);
+        assert.ok(path.attrs['aria-label'].includes(link.displayLabel));
         const label = elements.find(element => element.attrs['data-mermaid-native-id'] === link.mermaidId && (element.attrs.class || '').split(/\s+/).includes('label'));
-        assert.ok(label, `Missing edge label ${link.mermaidId}`);
-        assert.equal(compact(label.text), compact(link.displayLabel));
+        assert.ok(!label || !compact(label.text));
       }
       checkMermaidGeometry(result.svg, result);
       const routes = inspectViewRoutes(result);
       assert.equal(routes.edges.length, result.visualEdgeGroups.length);
       assert.deepEqual(routes.collisions, []);
-      assert.ok(routes.edges.every(edge => !edge.arrowIssues.length && (edge.axis ? !edge.curved : edge.curved)));
-      const page = await browser.newPage();
-      await page.setContent(result.svg);
-      const backgrounds = await page.$$eval('.edgeLabel .label rect.background', rects => rects.map(rect => {
-        let opacity = 1;
-        for (let element = rect; element; element = element.parentElement) opacity *= Number(getComputedStyle(element).opacity);
-        const style = getComputedStyle(rect);
-        return { opacity: opacity * Number(style.fillOpacity), fill: style.fill };
-      }));
-      assert.equal(backgrounds.length, visualEdgesOf(result).filter(link => link.displayLabel).length);
-      const color = VIEWER_BACKGROUND.match(/\w\w/g).map(value => parseInt(value, 16));
-      for (const background of backgrounds) assert.deepEqual(background, { opacity: 1, fill: `rgb(${color.join(', ')})` });
-      await page.close();
+      assert.ok(routes.edges.every(edge => !edge.arrowIssues.length && !edge.clearanceIssues.length && (edge.axis ? !edge.curved : edge.curved)));
+      assert.ok(elements.filter(element => (element.attrs.class || '').split(/\s+/).includes('edgeLabel')).every(label => !compact(label.text)));
     } finally { await browser.close(); }
   });
 }
@@ -143,7 +134,7 @@ async function compileFixture(view, graph, name, registry = {}, options = {}) {
     checkMermaidSource(result, registry, new Map());
     const inspection = inspectViewRoutes(result);
     assert.deepEqual(inspection.collisions, []);
-    assert(inspection.edges.every(edge => !edge.arrowIssues.length && (edge.axis ? !edge.curved : edge.curved)),
+    assert(inspection.edges.every(edge => !edge.arrowIssues.length && !edge.clearanceIssues.length && (edge.axis ? !edge.curved : edge.curved)),
       'Every native path, label and marker meets the strict shared geometry rules');
     fs.writeFileSync(path.join(temporary, `${name}.svg`), result.svg);
     return result;

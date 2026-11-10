@@ -108,16 +108,27 @@ test('selection and external reference conventions share one catalog without cha
   assert.equal(selectedFillColor('none'), null);
 });
 
-test('all edge meanings have distinct color, weight and dash signatures', () => {
-  const signatures = new Set();
+test('all edge meanings use one flow dash while preserving their semantic colors and weights', () => {
+  const approved = {
+    schedule: ['#334155', 3], order: ['#334155', 2], nested: ['#334155', 1.8], read: ['#3567A6', 1.6],
+    mutable_access: ['#2F7161', 1.8], read_write: ['#277A83', 2], write: ['#2F7161', 1.6], filter: ['#7A6F42', 1.4],
+    contains: ['#4B8060', 1.4], create: ['#A6533B', 2], insert: ['#42844E', 2], remove: ['#A44D4D', 2],
+    initialize: ['#A5792C', 2], despawn: ['#99483E', 2.2], publish: ['#247B91', 1.8], consume: ['#247B91', 1.8],
+    emit: ['#B66B2D', 1.8], observe: ['#B66B2D', 1.8], transition: ['#A64E76', 2], reference: ['#7B4DB2', 1.5],
+    relationship: ['#7B4DB2', 1.8], set_membership: ['#6A778C', 1.4], group_membership: ['#607C96', 1.4],
+    constraint: ['#6A778C', 1.4], registration: ['#64748B', 1.5], condition: ['#7B6F9C', 1.5],
+    alternative: ['#8C6E43', 1.6], dependency: ['#64748B', 1.5],
+  };
+  assert.deepEqual(Object.keys(EDGE_STYLES), Object.keys(approved));
+  for (const [semantic, style] of Object.entries(EDGE_STYLES)) {
+    assert.deepEqual([style.stroke, style.width], approved[semantic], semantic);
+    assert.equal(style.dash, '6 4', semantic);
+  }
   for (const style of Object.values(EDGE_STYLES)) {
     assert.match(style.label, /\S/);
     assert.match(style.stroke, /^#[\dA-F]{6}$/);
     assert.ok(style.width > 0);
-    assert.ok(style.dash === null || /^(?:\d+\s+)+\d+$/.test(style.dash));
-    signatures.add([style.stroke, style.width, style.dash].join('|'));
   }
-  assert.equal(signatures.size, Object.keys(EDGE_STYLES).length);
 });
 
 test('unclassified kinds, triggers and registration roles fail instead of falling back to a gray edge', () => {

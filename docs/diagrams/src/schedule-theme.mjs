@@ -2,7 +2,7 @@
 import { ARCHITECTURE_TEXT_STYLE, NODE_STYLES, EDGE_STYLES } from './architecture-style.mjs';
 import { VIEWER_BACKGROUND } from './viewer-theme.mjs';
 
-export const SCHEDULE_THEME_VERSION = 6;
+export const SCHEDULE_THEME_VERSION = 7;
 export const SCHEDULE_THEME = {
   version: SCHEDULE_THEME_VERSION,
   background: VIEWER_BACKGROUND,
@@ -15,6 +15,8 @@ export const SCHEDULE_THEME = {
   clusterLabelPadding: 4,
   clusterTitleLayer: 'native-foreground',
   splines: 'polyline',
+  ranksep: 1,
+  nodesep: .30,
   fontMetricMarginPerCharacter: 0.025,
   system: { ...NODE_STYLES.system },
   systemSet: { ...NODE_STYLES.system_set },

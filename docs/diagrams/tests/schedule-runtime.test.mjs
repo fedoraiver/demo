@@ -4,7 +4,12 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { Worker as ThreadWorker } from 'node:worker_threads';
 import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
+import { instance } from '@viz-js/viz';
 import { createScheduleRenderer, scheduleRuntimeAssets } from '../src/schedule-runtime.mjs';
+import { filterScheduleGraph, parseScheduleGraph, scheduleGraphInput, scheduleSystemCount } from '../src/schedule-graph.mjs';
+import { SCHEDULE_THEME } from '../src/schedule-theme.mjs';
+import { renderScheduleLayout } from '../src/schedule-layout.mjs';
+import { normalizeScheduleSvg } from '../src/schedule-svg.mjs';
 
 const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 10"><path d="M1,2 L3,4"/></svg>';
 const graph = { schemaVersion: 1, name: 'example', directed: true, strict: false, attributes: {},
@@ -194,7 +199,13 @@ test('offline runtime bundle defines a lazy factory without constructing a Worke
   assert.doesNotMatch(assets.script, /[ \t]+\r?$/m);
   const noticeLiteral = assets.script.match(/^void ("(?:[^"\\]|\\.)*");\n/);
   assert.ok(noticeLiteral, 'the complete license is embedded without changing its original whitespace');
-  assert.equal(JSON.parse(noticeLiteral[1]), fs.readFileSync(new URL('../licenses/SCHEDULE-RUNTIME-LICENSES.txt', import.meta.url), 'utf8'));
+  const notices = JSON.parse(noticeLiteral[1]);
+  assert.equal(notices, fs.readFileSync(new URL('../licenses/SCHEDULE-RUNTIME-LICENSES.txt', import.meta.url), 'utf8'));
+  for (const name of ['@xmldom/xmldom', 'svgpath', 'svg-path-bbox']) {
+    const metadata = JSON.parse(fs.readFileSync(new URL('../node_modules/' + name + '/package.json', import.meta.url), 'utf8'));
+    assert.ok(notices.includes(name + ' ' + metadata.version));
+    assert.ok(notices.includes(fs.readFileSync(new URL('../node_modules/' + name + '/LICENSE', import.meta.url), 'utf8').trim()));
+  }
 });
 
 test('the actual embedded Worker runs Graphviz without fetching any external asset', async () => {
@@ -227,5 +238,15 @@ test('the actual embedded Worker runs Graphviz without fetching any external ass
     assert.match(result.svg, /xlink:title="demo::系统&lt;Tuple&lt;A, B&gt;&gt;"/);
     assert.match(result.svg, /class="schedule-cluster-title"/);
     assert.match(result.svg, /data-cluster-name="cluster_systems"/);
+    const native = await instance();
+    const scheduleGraph = parseScheduleGraph(native, fs.readFileSync(new URL('./fixtures/native-state-transition.dot', import.meta.url), 'utf8'));
+    const includeNames = scheduleGraph.nodes.flatMap(node => node.attributes.tooltip ? [node.attributes.tooltip] : []);
+    const filtered = filterScheduleGraph(scheduleGraph, { includeNames });
+    const expected = normalizeScheduleSvg(renderScheduleLayout(native, scheduleGraphInput(filtered, SCHEDULE_THEME)).svg,
+      'schedule-state-transition', { DOMParser, XMLSerializer });
+    const state = await renderer.render({ ...view, id: 'schedule-state-transition', scheduleGraph, systemCount: scheduleSystemCount(scheduleGraph) }, { includeNames });
+    assert.equal(state.svg, expected.svg, 'Static and embedded Worker layout must produce the same checked native StateTransition geometry');
+    assert.equal(state.width, expected.width);
+    assert.equal(state.height, expected.height);
   } finally { renderer.dispose(); }
 });

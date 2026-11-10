@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import fs from 'node:fs';
-import { isDenseObjectView, projectObjectRelation, objectRelationRenderKey, relationRows } from '../src/architecture-object-relations.mjs';
+import { isDenseObjectView, projectObjectRelation, objectRelationRenderKey, relationRows, findVisualEdge } from '../src/architecture-object-relations.mjs';
 const {createObjectRelationRenderer,compileObjectRelationNative}=await import('../src/object-relation-runtime-browser.mjs');
 const fixture=JSON.parse(fs.readFileSync(new URL('./fixtures/object-relations.json',import.meta.url)));
 const full=fixture.view,links=full.links,registry=fixture.registry,views=[full],data={model:{features:fixture.features}},manifest={buildId:fixture.provenance.buildId};
@@ -29,7 +29,7 @@ test('display groups project both directions and resolve existing canonical rela
   const write = { id: 'write-original', from: 'system', to: 'data', sourceEntries: [{ path: 'src/write.rs', line: 9 }] };
   const group = { id: 'visual-access', from: 'data', to: 'system', forwardIds: [read.id], backwardIds: [write.id], displayLabel: '读写访问' };
   const view = { aspect: 'object', objectId: 'data', nodes: [{ id: 'data' }, { id: 'system' }], links: [read, write], visualEdgeGroups: [group] };
-  for (const id of [group.id, read.id, write.id]) {
+  for (const id of [group.id, read.id, write.id, 'visual-edge-' + read.id, 'visual-edge-' + write.id]) {
     const projection = projectObjectRelation(view, id);
     assert.deepEqual(projection.links, [read, write]);
     assert.deepEqual(projection.visualEdgeGroups, [group]);
@@ -39,6 +39,14 @@ test('display groups project both directions and resolve existing canonical rela
   assert.equal(rows.length, 1);
   assert.equal(rows[0].id, group.id);
   assert.equal(rows[0].bidirectional, true);
+});
+
+test('old display group links resolve through retained members with exact identities taking precedence', () => {
+  const merged = { id: 'visual-edge-first', forwardIds: ['first', 'second'], backwardIds: [] };
+  const exact = { id: 'visual-edge-second', forwardIds: ['third'], backwardIds: [] };
+  assert.equal(findVisualEdge({ visualEdgeGroups: [merged] }, 'visual-edge-second'), merged);
+  assert.equal(findVisualEdge({ visualEdgeGroups: [merged, exact] }, 'visual-edge-second'), exact);
+  assert.equal(findVisualEdge({ visualEdgeGroups: [merged] }, 'visual-edge-unknown'), undefined);
 });
 
 test('every real visible relation retains exact link, canonical endpoints, evidence and display nodes',()=>{

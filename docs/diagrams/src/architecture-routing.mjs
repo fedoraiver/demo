@@ -3,6 +3,7 @@ import { flattenShape, pathAxis, pathCurveDeviation, pathTerminals, pointSegment
 
 export const ROUTING_STYLE = Object.freeze({ axisTolerance: .5, geometryTolerance: .25, curve: 'basis', curveFallbacks: ['bumpX', 'bumpY'] });
 export const ROUTING_GEOMETRY = Object.freeze({ tolerance: ROUTING_STYLE.geometryTolerance, axisTolerance: ROUTING_STYLE.axisTolerance });
+export const ROUTING_CLEARANCE = Object.freeze({ endpointGap: 40, visibleShaft: 24 });
 export const displayEndpoints = link => [link.displayFrom ?? link.from, link.displayTo ?? link.to];
 const epsilon = 1e-8;
 const cross = (a, b, p) => (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]);
@@ -33,6 +34,47 @@ function winding(point, contours) {
 
 const filledContains = (point, parts) => parts.some(part => part.fillRule === 'evenodd' ? Math.abs(winding(point, part.contours)) % 2 === 1 : winding(point, part.contours) !== 0);
 const boundarySegments = parts => parts.flatMap(part => part.contours.flatMap(contour => contour.points.slice(1).map((last, index) => [contour.points[index], last])));
+
+export function boundsSeparation(first, last) {
+  return Math.hypot(Math.max(0, first.x - last.x - last.width, last.x - first.x - first.width),
+    Math.max(0, first.y - last.y - last.height, last.y - first.y - first.height));
+}
+
+/** 按原生轮廓切分实际路径，取未被箭头、端点和标题覆盖的最长连续箭杆。 */
+export function visibleShaftLength(path, blockers = []) {
+  const parts = blockers.flatMap(blocker => blocker.parts), boundaries = boundarySegments(parts);
+  let longest = 0;
+  for (const contour of path) {
+    let current = 0;
+    for (let index = 1; index < contour.points.length; index++) {
+      const first = contour.points[index - 1], last = contour.points[index];
+      const direction = [last[0] - first[0], last[1] - first[1]], length = Math.hypot(...direction);
+      if (length < epsilon) continue;
+      const cuts = [0, 1];
+      for (const [start, end] of boundaries) {
+        const boundary = [end[0] - start[0], end[1] - start[1]], offset = [start[0] - first[0], start[1] - first[1]];
+        const denominator = direction[0] * boundary[1] - direction[1] * boundary[0];
+        if (Math.abs(denominator) > epsilon) {
+          const along = (offset[0] * boundary[1] - offset[1] * boundary[0]) / denominator;
+          const across = (offset[0] * direction[1] - offset[1] * direction[0]) / denominator;
+          if (along > 0 && along < 1 && across >= 0 && across <= 1) cuts.push(along);
+        } else if (Math.abs(cross(first, last, start)) <= epsilon) {
+          for (const point of [start, end]) {
+            const along = ((point[0] - first[0]) * direction[0] + (point[1] - first[1]) * direction[1]) / (length * length);
+            if (along > 0 && along < 1) cuts.push(along);
+          }
+        }
+      }
+      cuts.sort((a, b) => a - b);
+      for (let at = 1; at < cuts.length; at++) {
+        const middle = (cuts[at - 1] + cuts[at]) / 2;
+        if (filledContains(first.map((value, axis) => value + direction[axis] * middle), parts)) current = 0;
+        else { current += length * (cuts[at] - cuts[at - 1]); longest = Math.max(longest, current); }
+      }
+    }
+  }
+  return longest;
+}
 
 /** 按真实轮廓而非轴向包围框避让；误差带内采取保守判定。 */
 export function pathIntersectsOutline(path, obstacle, { tolerance = ROUTING_GEOMETRY.tolerance, clearance = 0 } = {}) {
@@ -308,8 +350,21 @@ export function inspectViewRoutes(view, options = {}) {
     }
     const first = path[0]?.points, last = path.at(-1)?.points;
     const axis = pathAxis(element, options.axisTolerance ?? ROUTING_GEOMETRY.axisTolerance), curveCommands = /[CQAST]/i.test(element.attrs.d);
+    const source = obstacles.find(obstacle => obstacle.id === endpoints[0] && !obstacle.kind.endsWith('-header'));
+    const target = obstacles.find(obstacle => obstacle.id === endpoints[1] && !obstacle.kind.endsWith('-header'));
+    const containsEndpoint = (outer, inner) => outer && inner && outer !== inner
+      && outer.kind.endsWith('-container') && outer.members.includes(inner.id);
+    const nested = endpoints[0] === endpoints[1] || containsEndpoint(source, target) || containsEndpoint(target, source);
+    const endpointGap = source && target && !nested ? boundsSeparation(source.bounds, target.bounds) : null;
+    const endpointBlockers = [source, target].filter(obstacle => obstacle
+      && !containsEndpoint(obstacle, obstacle === source ? target : source));
+    const visibleShaft = visibleShaftLength(path, [arrow, startArrow, ...endpointBlockers,
+      ...obstacles.filter(obstacle => obstacle.kind.endsWith('-header'))].filter(Boolean));
+    const clearanceIssues = [];
+    if (endpointGap !== null && endpointGap < ROUTING_CLEARANCE.endpointGap - epsilon) clearanceIssues.push('endpoint-gap');
+    if (visibleShaft < ROUTING_CLEARANCE.visibleShaft - epsilon) clearanceIssues.push('visible-shaft');
     edges.push({ id: link.id, mermaidId: link.mermaidId, kind, axis, curved: !axis && pathCurveDeviation(element) > tolerance, curveCommands,
-      collisions, arrowIssues: [...(bidirectional
+      endpointGap, visibleShaft, clearanceIssues, collisions, arrowIssues: [...(bidirectional
         ? arrowTargetIssues(startArrow, obstacles.find(obstacle => obstacle.id === endpoints[0] && !obstacle.kind.endsWith('-header')), tolerance)
         : pathSourceIssues(element, obstacles.find(obstacle => obstacle.id === endpoints[0] && !obstacle.kind.endsWith('-header')), tolerance, link.nativeReverse === true)),
         ...arrowTargetIssues(arrow, obstacles.find(obstacle => obstacle.id === endpoints[1] && !obstacle.kind.endsWith('-header')), tolerance)], start: link.nativeReverse ? last?.at(-1) : first?.[0], end: link.nativeReverse ? first?.[0] : last?.at(-1) });

@@ -71,8 +71,11 @@ test('automatically selected browsers and font context participate in geometry i
 
 test('SVG input identity ignores source positions and tracks visible or embedded titles', () => {
   const identity = mermaidRenderIdentity(view, registry, '{}');
+  assert.equal(identity.inputs.version, hash(JSON.stringify(6)));
   const moved = structuredClone(view); moved.links[0].sourceEntries[0].line = 200;
   assert.deepEqual(mermaidRenderIdentity(moved, registry, '{}'), identity);
+  const described = structuredClone(view); described.links[0].displayLabel = '保留在无障碍名称的关系说明';
+  assert.notEqual(mermaidRenderIdentity(described, registry, '{}').fingerprint, identity.fingerprint);
   assert.deepEqual(mermaidRenderIdentity(view, { a: { ...registry.a, description: '不参与绘图的旧字段。' } }, '{}'), identity);
   assert.notEqual(mermaidRenderIdentity(view, { a: { ...registry.a, name: 'NewName' } }, '{}').fingerprint, identity.fingerprint);
   assert.notEqual(mermaidRenderIdentity({ ...view, mermaid: view.mermaid + 'n1[B]\n' }, registry, '{}').fingerprint, identity.fingerprint);

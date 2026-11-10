@@ -10,7 +10,6 @@ import { checkMermaidGeometry } from '../src/diagram-geometry.mjs';
 import { nativeLabelMismatches } from '../src/mermaid-core.mjs';
 import { inspectViewRoutes } from '../src/architecture-routing.mjs';
 import { validateArchitectureSvg } from '../src/architecture-asset-loader.mjs';
-import { VIEWER_BACKGROUND } from '../src/viewer-theme.mjs';
 
 const chromium = process.env.MERMAID_CHROMIUM_PATH || [process.env.ProgramFiles, process.env['ProgramFiles(x86)'], process.env.LOCALAPPDATA]
   .filter(Boolean).flatMap(base => [path.join(base, 'Google/Chrome/Application/chrome.exe'), path.join(base, 'Microsoft/Edge/Application/msedge.exe')])
@@ -18,7 +17,7 @@ const chromium = process.env.MERMAID_CHROMIUM_PATH || [process.env.ProgramFiles,
 const repository = fileURLToPath(new URL('../../../', import.meta.url));
 
 // 静态夹具来自真实对象目录；此测试只编译空白文档中的 SVG，不访问正式查看器或 generated。
-test('the shipped object relation bundle compiles real labelled, reverse and long-generic relations offline', { skip: !chromium, timeout: 180000 }, async t => {
+test('the shipped object relation bundle compiles described, reverse and long-generic relations without visible labels offline', { skip: !chromium, timeout: 180000 }, async t => {
   const captured = JSON.parse(fs.readFileSync(new URL('./fixtures/object-relations-native.json', import.meta.url), 'utf8'));
   const generic = JSON.parse(fs.readFileSync(new URL('./fixtures/object-relations.json', import.meta.url), 'utf8'));
   assert.equal(captured.provenance.buildId, generic.provenance.buildId);
@@ -62,13 +61,8 @@ test('the shipped object relation bundle compiles real labelled, reverse and lon
           const preview = document.createElement('div');
           preview.innerHTML = compiled.svg;
           document.body.appendChild(preview);
-          const backgrounds = [...preview.querySelectorAll('.edgeLabel .label rect.background')].map(rect => {
-            let opacity = 1;
-            for (let element = rect; element; element = element.parentElement) opacity *= Number(getComputedStyle(element).opacity);
-            const style = getComputedStyle(rect);
-            return { opacity: opacity * Number(style.fillOpacity), fill: style.fill };
-          });
-          results.push({ key: entry.key, compiled, cachedSame: cached === compiled, backgrounds,
+          const edgeLabels = [...preview.querySelectorAll('.edgeLabel text,.edge-label text')].map(text => text.textContent.trim()).filter(Boolean);
+          results.push({ key: entry.key, compiled, cachedSame: cached === compiled, edgeLabels,
             compilerContainers: document.querySelectorAll('[data-object-relation-compiler]').length,
             sentinelUnchanged: document.getElementById(entry.view.id) === sentinel && sentinel.outerHTML === previous });
           preview.remove(); sentinel.remove();
@@ -86,7 +80,6 @@ test('the shipped object relation bundle compiles real labelled, reverse and lon
   assert.deepEqual(requests, [], 'The complete shipped bundle must not request scripts, fonts or other external resources');
   assert.equal(rendered.factsUnchanged, true, 'Native compilation must not mutate the captured facts');
   const nativeIds = new Set();
-  const backgroundColor = 'rgb(' + VIEWER_BACKGROUND.match(/\w\w/g).map(value => parseInt(value, 16)).join(', ') + ')';
   for (const [index, result] of rendered.results.entries()) await t.test(result.key, () => {
     const input = cases[index], original = input.view.links.find(link => link.id === input.relationId), view = result.compiled;
     const endpointIds = [...new Set([original.displayFrom ?? original.from, original.displayTo ?? original.to])];
@@ -112,9 +105,8 @@ test('the shipped object relation bundle compiles real labelled, reverse and lon
     const inspection = inspectViewRoutes(view);
     assert.equal(inspection.edges.length, 1);
     assert.deepEqual(inspection.collisions, []);
-    assert.ok(inspection.edges.every(edge => !edge.arrowIssues.length && (edge.axis ? !edge.curved : edge.curved)));
-    assert.equal(result.backgrounds.length, (view.visualEdgeGroups ?? view.links).filter(link => link.displayLabel).length);
-    for (const background of result.backgrounds) assert.deepEqual(background, { opacity: 1, fill: backgroundColor });
+    assert.ok(inspection.edges.every(edge => !edge.arrowIssues.length && !edge.clearanceIssues.length && (edge.axis ? !edge.curved : edge.curved)));
+    assert.deepEqual(result.edgeLabels, []);
     fs.writeFileSync(path.join(runDirectory, result.key + '.svg'), view.svg);
   });
 });

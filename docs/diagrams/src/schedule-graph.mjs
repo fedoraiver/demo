@@ -214,10 +214,17 @@ export function scheduleGraphInput(model, theme = null) {
     }) },
     nodes: group.nodes.map(name => nodeInput(nodes.get(name))), subgraphs: group.subgraphs.map(name => subgraphInput(groups.get(name))),
   });
-  return { name: model.name, directed: model.directed, strict: model.strict, graphAttributes: { ...model.attributes, ...common, ...(theme ? { bgcolor: theme.background, splines: theme.splines } : {}) },
-    nodes: model.nodes.map(nodeInput), edges: model.edges.map(edge => ({ tail: edge.tail, head: edge.head, attributes: {
-      ...edge.attributes, ...(theme ? { ...common, color: theme.edge.stroke, penwidth: String(theme.edge.width) } : {}),
-    } })), subgraphs: model.subgraphs.filter(group => !parents.has(group.name)).map(subgraphInput) };
+  return { name: model.name, directed: model.directed, strict: model.strict, graphAttributes: { ...model.attributes, ...common,
+    ...(theme ? { bgcolor: theme.background, splines: theme.splines, ranksep: String(theme.ranksep), nodesep: String(theme.nodesep) } : {}) },
+    nodes: model.nodes.map(nodeInput), edges: model.edges.map((edge, index) => {
+      const attributes = { ...edge.attributes };
+      if (theme) {
+        for (const key of ['label', 'xlabel', 'headlabel', 'taillabel']) delete attributes[key];
+        Object.assign(attributes, common, { id: attributes.id || 'schedule-edge-' + index, color: theme.edge.stroke, penwidth: String(theme.edge.width),
+          style: [...(attributes.style || '').split(',').map(style => style.trim()).filter(style => style && !['solid', 'dotted', 'dashed', 'bold'].includes(style)), 'dashed'].join(',') });
+      }
+      return { tail: edge.tail, head: edge.head, attributes };
+    }), subgraphs: model.subgraphs.filter(group => !parents.has(group.name)).map(subgraphInput) };
 }
 
 export function scheduleGraphFacts(model) {

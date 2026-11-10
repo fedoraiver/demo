@@ -206,7 +206,8 @@ export function checkScheduleGuideSamples(samples, sampleIds = new Set()) {
       const paths = parts.filter(element => element.tag === 'path'), arrows = parts.filter(element => element.tag === 'polygon');
       requireCondition(paths.length === 1 && arrows.length === (kind === 'order' ? 1 : 0), `Schedule guide arrow mismatch: ${kind}`);
       requireCondition(parts.every(element => { const style = effectiveStyle(element); return style.stroke?.toLowerCase() === expected.stroke.toLowerCase()
-        && dashValue(style['stroke-dasharray']) === null && Math.abs(parseFloat(style['stroke-width'] || 1) - expected.width) < .01; })
+        && dashValue(style['stroke-dasharray']) === (element.tag === 'path' ? dashValue(expected.dash) : null)
+        && Math.abs(parseFloat(style['stroke-width'] || 1) - expected.width) < .01; })
         && arrows.every(element => effectiveStyle(element).fill?.toLowerCase() === expected.stroke.toLowerCase()), `Schedule guide edge style mismatch: ${kind}`);
     } else {
       checkNodeAppearance(parts, expected, false, id);
@@ -256,16 +257,16 @@ export function checkMermaidStyles(view, registry) {
   }
   for (const link of visualEdgesOf(view)) {
     if (!view.visualEdgeGroups) requireCondition(link.edgeSemantic === edgeSemanticOf(link, registry) && link.displayLabel === displayLabelOf(link, link.edgeSemantic, registry), `Visual edge semantic mismatch: ${link.id}`);
-    if (view.visualEdgeGroups) {
-      const label = elements.find(item => item.attrs['data-mermaid-native-id'] === link.mermaidId && (item.attrs.class || '').split(/\s+/).includes('label'));
-      requireCondition(label && compactText(label.text) === compactText(link.displayLabel), `Mermaid rendered edge label mismatch: ${link.id}`);
-    }
     const element = elements.find(item => item.tag === 'path' && item.attrs['data-link-id'] === link.id);
     requireCondition(element?.attrs['data-edge-semantic'] === link.edgeSemantic, `Visual edge semantic metadata mismatch: ${link.id}`);
     requireCondition((element?.attrs['data-native-reverse'] === 'true') === Boolean(link.nativeReverse), `Visual native edge direction mismatch: ${link.id}`);
     checkActualEdgeStyle(element, link.edgeSemantic, elements, link.id);
   }
   for (const link of view.scheduleLinks || []) checkActualEdgeStyle(elements.find(item => item.tag === 'path' && item.attrs['data-schedule-link-id'] === link.id), link.edgeSemantic, elements, link.id);
+  for (const link of [...visualEdgesOf(view), ...(view.scheduleLinks || [])]) {
+    const visible = elements.some(item => item.attrs['data-mermaid-native-id'] === link.mermaidId && (item.attrs.class || '').split(/\s+/).includes('label') && compactText(item.text));
+    requireCondition(!visible, `Mermaid unexpected visible edge label: ${link.id}`);
+  }
 }
 
 export function checkDataSections(view) {
@@ -302,6 +303,7 @@ export function checkViewRouting(view) {
   for (const edge of result.edges) {
     requireCondition(!edge.collisions.length, `Mermaid edge obstructed: ${view.id}/${edge.id}/${edge.collisions.map(item => item.id).join(',')}`);
     requireCondition(!edge.arrowIssues.length, `Mermaid arrow mismatch: ${view.id}/${edge.id}/${edge.arrowIssues.join(',')}`);
+    requireCondition(!edge.clearanceIssues.length, `Mermaid route clearance mismatch: ${view.id}/${edge.id}/${edge.clearanceIssues.join(',')}`);
     requireCondition(edge.axis ? !edge.curved : edge.curved, `Mermaid edge must be ${edge.axis ? 'straight' : 'curved'}: ${view.id}/${edge.id}`);
     if (view.routing) {
       const curve = new RegExp(`^\\s*${edge.mermaidId}@\\{\\s*curve:\\s*(\\w+)\\s*\\}`, 'm').exec(view.mermaid)?.[1] || 'linear';
@@ -400,7 +402,7 @@ export function checkMermaidSource(view, registry, scheduleDefinitions) {
       && declaration.to === canonicalToMermaid.get(to), `Mermaid edge declaration mismatch: ${link.id}`);
     const bidirectional = link.forwardIds?.length > 0 && link.backwardIds?.length > 0;
     requireCondition(bidirectional ? !link.nativeReverse && declaration.arrow === '<-->' : link.nativeReverse ? ['component', 'object'].includes(view.aspect) && /^-{3,}$/.test(declaration.arrow) : /^(?:-{2,}>|-\.->)$/.test(declaration.arrow), `Mermaid edge arrow declaration mismatch: ${link.id}`);
-    if (styledView(view)) requireCondition(compactText(declaration.label) === compactText(link.displayLabel), `Mermaid edge display label mismatch: ${link.id}`);
+    requireCondition(!compactText(declaration.label), `Mermaid unexpected visible edge label: ${link.id}`);
     ids.add(link.mermaidId);
   }
   const scheduleIds = new Set();
@@ -408,7 +410,7 @@ export function checkMermaidSource(view, registry, scheduleDefinitions) {
     const declaration = links.get(link.mermaidId), from = view.scheduleGroups.find(group => group.id === link.from), to = view.scheduleGroups.find(group => group.id === link.to);
     requireCondition(declaration && from && to && !scheduleIds.has(link.mermaidId) && !ids.has(link.mermaidId)
       && declaration.from === from.mermaidId && declaration.to === to.mermaidId, `Mermaid Schedule edge declaration mismatch: ${link.id}`);
-    if (styledView(view)) requireCondition(compactText(declaration.label) === compactText(link.displayLabel), `Mermaid Schedule edge display label mismatch: ${link.id}`);
+    requireCondition(!compactText(declaration.label), `Mermaid unexpected visible Schedule edge label: ${link.id}`);
     scheduleIds.add(link.mermaidId);
   }
   requireCondition(links.size === visualEdgesOf(view).length + scheduleIds.size, `Mermaid edge declaration count mismatch: ${view.id}`);
@@ -560,15 +562,15 @@ export function checkObjectViews(views, catalog) {
     seen.add(object.id);
     requireCondition(view.centerNodeId === object.id && view.nodes.filter(node => node.id === object.id).length === 1, `Object view center mismatch: ${view.id}`);
     requireCondition(!view.links.some(link => link.projection === 'observer-trigger'), `Observer trigger projection outside a system view: ${view.id}`);
-    // 插件专属图为单卡，关系仍保留在目录和其他对象图；实体中心隐藏组件几何。
+    // 插件专属图为单卡，关系仍保留在目录和其他对象图；实体与系统中心隐藏组件几何。
     if (['Plugin', 'PluginGroup'].includes(object.kind)) {
       requireCondition(view.nodes.length === 1 && view.links.length === 0 && (view.scheduleLinks || []).length === 0,
         `Plugin object view must contain only its own card: ${view.id}`);
     }
-    if (object.kind === 'Entity') {
+    if (['Entity', 'System'].includes(object.kind)) {
       const isComponent = id => objects.get(id)?.kind === 'Component';
       requireCondition(!view.nodes.some(node => isComponent(node.id))
-        && !view.links.some(link => isComponent(link.from) || isComponent(link.to)), `Entity object view contains Component geometry: ${view.id}`);
+        && !view.links.some(link => isComponent(link.from) || isComponent(link.to)), `${object.kind} object view contains Component geometry: ${view.id}`);
     }
     const graph = catalog.graphFor(object.id);
     if (graph.visualEdgeGroups) requireCondition(Array.isArray(view.visualEdgeGroups)

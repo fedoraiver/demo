@@ -42,7 +42,7 @@ export function createArchitectureFlow({ diagram, window = diagram.ownerDocument
   const document = diagram.ownerDocument;
   const namespace = 'http://www.w3.org/2000/svg';
   const reducedMotion = window?.matchMedia?.('(prefers-reduced-motion: reduce)');
-  let layer = null, source = null, resizeObserver = null, appearanceObserver = null;
+  let layer = null, source = null, nativeStyle = null, suppressionRules = '', resizeObserver = null, appearanceObserver = null;
   let disposed = false, channels = [], revision = 0;
 
   function nativeTransform(element) {
@@ -53,7 +53,8 @@ export function createArchitectureFlow({ diagram, window = diagram.ownerDocument
     return transforms.join(' ');
   }
   function labelMask() {
-    const labels = new Set([...source.querySelectorAll('.edgeLabel'), ...source.querySelectorAll('.edge-label'), ...source.querySelectorAll('g.edge text')]);
+    const labels = new Set([...source.querySelectorAll('.edgeLabel'), ...source.querySelectorAll('.edge-label'),
+      ...source.querySelectorAll('g.edge text'), ...source.querySelectorAll('.schedule-cluster-title')]);
     const boxes = [...labels].map(element => ({ element, box: element.getBBox() })).filter(({ box }) => box.width > 0 && box.height > 0);
     if (!boxes.length) return null;
     const bounds = (source.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
@@ -81,6 +82,43 @@ export function createArchitectureFlow({ diagram, window = diagram.ownerDocument
     layer.appendChild(defs);
     return id;
   }
+  function halfMask(original, direction, transform) {
+    const defs = document.createElementNS(namespace, 'defs'), mask = document.createElementNS(namespace, 'mask');
+    const id = (source.getAttribute('id') || 'architecture') + '-flow-half-' + ++revision;
+    mask.setAttribute('id', id);
+    mask.setAttribute('maskUnits', 'userSpaceOnUse');
+    mask.setAttribute('maskContentUnits', 'userSpaceOnUse');
+    const bounds = source.getAttribute('viewBox').trim().split(/[\s,]+/);
+    for (const [index, name] of ['x', 'y', 'width', 'height'].entries()) mask.setAttribute(name, bounds[index]);
+    const path = document.createElementNS(namespace, 'path');
+    path.setAttribute('d', original.getAttribute('d'));
+    if (transform) path.setAttribute('transform', transform);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', 'white');
+    path.setAttribute('stroke-linecap', 'butt');
+    path.setAttribute('pathLength', '1');
+    path.setAttribute('stroke-dasharray', '.5 .5');
+    path.setAttribute('stroke-dashoffset', direction === -1 ? '0' : '-.5');
+    mask.appendChild(path);
+    defs.appendChild(mask);
+    layer.appendChild(defs);
+    return { id, path };
+  }
+  function nativeSelector(element) {
+    const parts = [];
+    for (let item = element; item; item = item.parentElement) {
+      if (item.id) {
+        parts.unshift('[id=' + JSON.stringify(item.id) + ']');
+        if (item === source) return parts.join(' > ');
+        if (source.id) return '[id=' + JSON.stringify(source.id) + '] ' + parts.join(' > ');
+      } else {
+        const parent = item.parentElement;
+        const peers = parent ? [...parent.children].filter(peer => peer.tagName === item.tagName) : [];
+        parts.unshift(item.tagName.toLowerCase() + (parent ? ':nth-of-type(' + (peers.indexOf(item) + 1) + ')' : ''));
+      }
+    }
+    return parts.join(' > ');
+  }
 
   function sync() {
     const paused = !enabled || Boolean(document.hidden) || Boolean(reducedMotion?.matches);
@@ -88,6 +126,7 @@ export function createArchitectureFlow({ diagram, window = diagram.ownerDocument
       layer.setAttribute('data-flow-paused', String(paused));
       layer.style.visibility = paused ? 'hidden' : 'visible';
     }
+    if (nativeStyle) nativeStyle.textContent = paused ? '' : suppressionRules;
     if (button) {
       button.setAttribute('aria-pressed', String(enabled));
       button.title = reducedMotion?.matches ? '系统已减少动态效果，连线流动暂停' : enabled ? '暂停连线流动' : '开启连线流动';
@@ -108,11 +147,13 @@ export function createArchitectureFlow({ diagram, window = diagram.ownerDocument
     }
   }
   function syncAppearance() {
-    for (const { original, decoration } of channels) {
+    for (const { original, decoration, mask } of channels) {
       const style = window?.getComputedStyle?.(original);
       const width = parseFloat(style?.getPropertyValue('stroke-width') || original.getAttribute('stroke-width') || '1.6');
-      decoration.setAttribute('stroke-width', String(Math.max(.8, width * .75)));
-      let opacity = .9 * Number(style?.getPropertyValue('stroke-opacity') || original.getAttribute('stroke-opacity') || 1);
+      decoration.setAttribute('stroke', style?.getPropertyValue('stroke') || original.getAttribute('stroke') || '#334155');
+      decoration.setAttribute('stroke-width', String(width));
+      if (mask) mask.path.setAttribute('stroke-width', String(width + 2));
+      let opacity = Number(style?.getPropertyValue('stroke-opacity') || original.getAttribute('stroke-opacity') || 1);
       if (width <= 0 || style?.getPropertyValue('stroke') === 'none') opacity = 0;
       for (let item = original; item && item !== source.parentElement; item = item.parentElement) {
         const current = window?.getComputedStyle?.(item);
@@ -129,7 +170,10 @@ export function createArchitectureFlow({ diagram, window = diagram.ownerDocument
     resizeObserver = null;
     appearanceObserver = null;
     layer?.remove();
+    nativeStyle?.remove();
     layer = null;
+    nativeStyle = null;
+    suppressionRules = '';
     source = null;
     channels = [];
   }
@@ -152,10 +196,17 @@ export function createArchitectureFlow({ diagram, window = diagram.ownerDocument
     const mask = labelMask();
     if (mask) traces.setAttribute('mask', `url(#${mask})`);
     layer.appendChild(traces);
+    const rules = [];
     for (const original of source.querySelectorAll('path')) {
       if (!original.getAttribute('d')) continue;
+      if (original.hasAttribute('data-link-hit-id')) continue;
       if (!original.hasAttribute('data-link-id') && !original.hasAttribute('data-schedule-link-id') && !original.closest('g.edge')) continue;
       const directions = architectureFlowDirections(original, window);
+      if (!directions.length) continue;
+      const length = original.getTotalLength();
+      if (!Number.isFinite(length) || length <= 0) continue;
+      // 零长度 dash 隐去静止线体，保留原生 marker 的颜色、尺寸及端点。
+      rules.push(nativeSelector(original) + '{stroke-dasharray:0 ' + (length + 10) + '!important;stroke-dashoffset:0!important;stroke-linecap:butt!important}');
       const transform = nativeTransform(original);
       for (const direction of directions) {
         const decoration = document.createElementNS(namespace, 'path');
@@ -163,15 +214,23 @@ export function createArchitectureFlow({ diagram, window = diagram.ownerDocument
         decoration.setAttribute('d', original.getAttribute('d'));
         decoration.setAttribute('data-flow-direction', direction === 1 ? 'forward' : 'reverse');
         decoration.setAttribute('fill', 'none');
-        decoration.setAttribute('stroke', '#ffffff');
         decoration.setAttribute('pointer-events', 'none');
         if (transform) decoration.setAttribute('transform', transform);
-        if (directions.length > 1 && direction === -1) decoration.style.setProperty('animation-delay', '-.4s');
-        traces.appendChild(decoration);
-        channels.push({ original, decoration });
+        const mask = directions.length > 1 ? halfMask(original, direction, transform) : null;
+        if (mask) {
+          const half = document.createElementNS(namespace, 'g');
+          half.setAttribute('mask', `url(#${mask.id})`);
+          half.appendChild(decoration);
+          traces.appendChild(half);
+        } else traces.appendChild(decoration);
+        channels.push({ original, decoration, mask });
       }
     }
     if (!channels.length) { clear(); return 0; }
+    nativeStyle = document.createElement('style');
+    nativeStyle.setAttribute('data-architecture-flow-native', '');
+    suppressionRules = '@media(prefers-reduced-motion:no-preference){' + rules.join('\n') + '}';
+    diagram.appendChild(nativeStyle);
     diagram.appendChild(layer);
     syncSize();
     syncAppearance();
@@ -210,10 +269,10 @@ export function architectureFlowAssets() {
   return {
     style: `
 [data-architecture-flow-overlay]{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
-.architecture-flow-channel{stroke-dasharray:3 13;stroke-linecap:round;animation:architecture-edge-flow 1.2s linear infinite;pointer-events:none}
+.architecture-flow-channel{stroke-dasharray:6 4;stroke-linecap:butt;animation:architecture-edge-flow 1.2s linear infinite;pointer-events:none}
 .architecture-flow-channel[data-flow-direction="reverse"]{animation-direction:reverse}
 [data-flow-paused="true"] .architecture-flow-channel{animation-play-state:paused}
-@keyframes architecture-edge-flow{from{stroke-dashoffset:0}to{stroke-dashoffset:-16}}
+@keyframes architecture-edge-flow{from{stroke-dashoffset:0}to{stroke-dashoffset:-10}}
 @media(prefers-reduced-motion:reduce){[data-architecture-flow-overlay]{visibility:hidden!important}.architecture-flow-channel{animation-play-state:paused}}
 `,
     markup: '<button type="button" data-flow-toggle aria-pressed="true" title="暂停连线流动">连线流动</button>',

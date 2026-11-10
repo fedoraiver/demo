@@ -13,6 +13,8 @@ const serialize = element => new XMLSerializer().serializeToString(element);
 const geometryTags = new Set(['path', 'polygon', 'polyline', 'rect', 'circle', 'ellipse', 'text']);
 function nativeGeometry(text) {
   return [...parse(text).getElementsByTagName('*')].filter(element => geometryTags.has(element.localName)).map(element => {
+    // 线型是主题展示属性，原生几何、字体和变换仍逐项比较。
+    element.removeAttribute('stroke-dasharray');
     const transforms = [], anchors = [];
     for (let parent = element.parentNode; parent?.nodeType === 1; parent = parent.parentNode) {
       if (parent.hasAttribute('transform')) transforms.push(parent.getAttribute('transform'));

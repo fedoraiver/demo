@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 6000 1000"><g transform="scale(1 1) rotate(0) translate(4 942)"><g id="node5" class="node" xmlns="http://www.w3.org/2000/svg">
+<title>node_System(SystemKey(4v1))</title>
+<g id="a_node5"><a xmlns:xlink="http://www.w3.org/1999/xlink" xlink:title="bevy_core_pipeline::deferred::node::late_deferred_prepass">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M2685.06,-756C2685.06,-756 2555.53,-756 2555.53,-756 2549.53,-756 2543.53,-750 2543.53,-744 2543.53,-744 2543.53,-732 2543.53,-732 2543.53,-726 2549.53,-720 2555.53,-720 2555.53,-720 2685.06,-720 2685.06,-720 2691.06,-720 2697.06,-726 2697.06,-732 2697.06,-732 2697.06,-744 2697.06,-744 2697.06,-750 2691.06,-756 2685.06,-756"/>
+<text xml:space="preserve" text-anchor="middle" x="2620.3" y="-733.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">late_deferred_prepass</text>
+</a>
+</g>
+</g>
+<g id="node45" class="node" xmlns="http://www.w3.org/2000/svg">
+<title>node_System(SystemKey(40v1))</title>
+<g id="a_node45"><a xmlns:xlink="http://www.w3.org/1999/xlink" xlink:title="bevy_pbr::render::gpu_preprocess::main_build_indirect_parameters">
+<path fill="#eff3f8" stroke="#3567a6" stroke-width="1.6" d="M3456.66,-642C3456.66,-642 3261.72,-642 3261.72,-642 3255.72,-642 3249.72,-636 3249.72,-630 3249.72,-630 3249.72,-618 3249.72,-618 3249.72,-612 3255.72,-606 3261.72,-606 3261.72,-606 3456.66,-606 3456.66,-606 3462.66,-606 3468.66,-612 3468.66,-618 3468.66,-618 3468.66,-630 3468.66,-630 3468.66,-636 3462.66,-642 3456.66,-642"/>
+<text xml:space="preserve" text-anchor="middle" x="3359.19" y="-619.8" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14.00" fill="#1f3340">main_build_indirect_parameters</text>
+</a>
+</g>
+</g>
+<g id="schedule-edge-43" class="edge" xmlns="http://www.w3.org/2000/svg">
+<title>node_System(SystemKey(4v1))-&gt;node_System(SystemKey(40v1))</title>
+<g id="a_schedule-edge-43"><a xmlns:xlink="http://www.w3.org/1999/xlink" xlink:title="SystemTypeSet:bevy_core_pipeline::deferred::node::late_deferred_prepass → main_build_indirect_parameters">
+<path fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="5,2" d="M2697.73,-726.18C2825.48,-706.41 3083.43,-666.51 3236.42,-642.84"/>
+<polygon fill="#334155" stroke="#334155" stroke-width="2" points="3236.73,-646.33 3246.08,-641.34 3235.66,-639.41 3236.73,-646.33"/>
+</a>
+</g>
+</g></g></svg>

@@ -113,6 +113,25 @@ test('Component fallback combines native card containers and increased spacing b
   assert.equal(JSON.parse(/^---\n([\s\S]*?)\n---/.exec(result.mermaid)[1]).config.flowchart.rankSpacing, 72);
 });
 
+test('native spacing retries reject short shafts and close endpoints through the shared route gate', async () => {
+  const { view, registry } = clearanceFixture('dagre', 'overview'), before = structuredClone(view), attempts = [];
+  const result = await compileRoutedView(view, registry, async candidate => candidate, {
+    onAttempt: attempt => attempts.push(attempt),
+    checks: {
+      labels: () => [], geometry: () => {},
+      routes: candidate => {
+        const configuration = JSON.parse(/^---\n([\s\S]*?)\n---/.exec(candidate.mermaid)[1]).config;
+        return { edges: [{ id: 'short', mermaidId: 'e0', axis: 'horizontal', curved: false, collisions: [], arrowIssues: [],
+          clearanceIssues: configuration.flowchart.rankSpacing >= 72 ? [] : ['endpoint-gap', 'visible-shaft'] }] };
+      },
+    },
+  });
+  assert.ok(attempts.length);
+  assert.ok(attempts.every(attempt => attempt.invalid[0].clearanceIssues.includes('visible-shaft')));
+  assert.equal(JSON.parse(/^---\n([\s\S]*?)\n---/.exec(result.mermaid)[1]).config.flowchart.rankSpacing, 72);
+  assert.deepEqual(view, before);
+});
+
 test('object native retries preserve default success and try selective system containers after general clearance', async () => {
   const { view, registry, native } = clearanceFixture('dagre', 'object'), candidates = [];
   view.nodes[0].visualType = 'system'; view.nodes[1].visualType = 'resource';

@@ -3,7 +3,6 @@ import { NODE_STYLES, EDGE_STYLES, EXTERNAL_REFERENCE_STYLE, ARCHITECTURE_TEXT_S
 import { INFRASTRUCTURE_FEATURES } from './architecture-infrastructure.mjs';
 import { architectureDisplayName } from './architecture-labels.mjs';
 
-import { VIEWER_BACKGROUND } from './viewer-theme.mjs';
 import { createVisualEdgeGroups, isVisibleRelation } from './architecture-visual-edges.mjs';
 
 export const DATA_GROUP_LABELS = { catalog: '数据与实体', relations: '数据流与关系' };
@@ -150,8 +149,6 @@ function wrap(value, limit = 36) {
   return lines;
 }
 const text = values => values.filter(Boolean).flatMap(value => wrap(value)).map(escape).join('<br/>');
-// 原生边标签先经 HTML 清洗器还原引号与 #，再交给 Mermaid 测量和排版。
-const edgeText = value => text([value]).replaceAll('#quot;', '&quot;').replaceAll('#35;', '&num;');
 function nodeText(name, context) {
   return [...wrap(name).map(line => `**${escape(line)}**`),
     ...context.filter(Boolean).flatMap(value => wrap(value)).map(escape)].join('<br/>');
@@ -236,15 +233,12 @@ function definition(view, graph, registry, features, scheduleGroups = [], buildO
   const types = { nodeTypes: Object.keys(NODE_STYLES).filter(type => nodes.some(node => node.visualType === type)), edgeTypes: Object.keys(EDGE_STYLES).filter(type => [...links, ...scheduleLinks].some(link => link.edgeSemantic === type)) };
   const configuration = mermaidConfiguration(view.aspect);
   if (view.aspect === 'component') Object.assign(configuration.flowchart, { nodeSpacing: 16, rankSpacing: 32 });
-  if (view.aspect === 'object') Object.assign(configuration.flowchart, { nodeSpacing: 16, rankSpacing: 48 });
+  if (view.aspect === 'object') Object.assign(configuration.flowchart, { nodeSpacing: 24, rankSpacing: 80 });
   if (links.some(link => link.nativeReverse)) {
     // Mermaid 12 不支持单向左箭头。源配置复用本图真实关系生成的原生 pointStart；不改编译后的路径或 marker。
     const marker = `${view.id}_flowchart-v2-pointStart`;
     configuration.themeCSS = links.filter(link => link.nativeReverse).map(link => `#${view.id}-${link.mermaidId}{marker-start:url(#${marker})!important}`).join('\n')
       + `\n#${marker} path{fill:context-stroke!important;stroke:context-stroke!important}`;
-  }
-  if (links.some(link => link.displayLabel)) {
-    configuration.themeCSS = [configuration.themeCSS, `.edgeLabel rect { opacity:1!important; fill:${VIEWER_BACKGROUND}!important; }`].filter(Boolean).join('\n');
   }
   const lines = ['---', JSON.stringify({ config: configuration }, null, 2), '---', `flowchart ${view.aspect === 'component' ? 'RL' : ['overview', 'events', 'object'].includes(view.aspect) ? 'LR' : 'TB'}`, `  accTitle: ${mermaidEntities(view.label)}`, `  accDescr: ${mermaidEntities(view.summary)}`, '  %% n*/e* 是业务节点/关系，sc* 是阶段关系；layout_* 仅用于排版。'];
   lines.push(...mermaidStyleDefinitions(types.nodeTypes, types.edgeTypes).map(line => '  ' + line));
@@ -259,7 +253,7 @@ function definition(view, graph, registry, features, scheduleGroups = [], buildO
   }
   function edge(link, from, to) {
     const bidirectional = link.forwardIds?.length > 0 && link.backwardIds?.length > 0;
-    lines.push(`  ${link.nativeReverse ? to : from} ${link.mermaidId}@${bidirectional ? '<-->' : link.nativeReverse ? '---' : '-->'}${link.displayLabel ? `|"${edgeText(link.displayLabel)}"|` : ''} ${link.nativeReverse ? from : to}`, `  class ${link.mermaidId} edge_${link.edgeSemantic}`);
+    lines.push(`  ${link.nativeReverse ? to : from} ${link.mermaidId}@${bidirectional ? '<-->' : link.nativeReverse ? '---' : '-->'} ${link.nativeReverse ? from : to}`, `  class ${link.mermaidId} edge_${link.edgeSemantic}`);
   }
   function declareLinks(selected = links) {
     for (const link of selected) {

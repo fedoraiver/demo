@@ -1,4 +1,4 @@
-// 显示边只归组可验证的访问事实，成员关系及原始端点继续保存在 links 中。
+// 显示边汇总同向同语义事实，成员关系及原始端点继续保存在 links 中。
 import { displayLabelOf, edgeLabelDetailsOf, edgeSemanticOf } from './architecture-style.mjs';
 
 export function relationKind(link) {
@@ -34,15 +34,13 @@ function registrationContext(record = {}) {
   };
 }
 
-function parameterContext(link, registry, pairing = false) {
+function parameterContexts(link, registry) {
   const records = [registry[link.from], registry[link.to]];
   const callable = records.find(record => record?.callableIds?.length === 1);
   const data = records.find(record => record !== callable);
   const fallback = {
     callableId: callable?.callableIds[0],
     typeInstanceId: data?.typeInstanceId ?? data?.id ?? (callable === registry[link.from] ? link.to : link.from),
-    parameter: link.parameter ?? (link.sourceEntries || []).filter(source => source.role === 'parameter')
-      .map(source => [source.path, source.line, source.column ?? 1]),
     scope: link.scope,
     storage: link.storage,
   };
@@ -50,7 +48,6 @@ function parameterContext(link, registry, pairing = false) {
   const proofs = observations.map(access => ({
     callableId: access.callableId,
     typeInstanceId: access.typeInstanceId,
-    ...(!pairing ? { parameter: access.parameter } : {}),
     storage: access.storage,
     scope: access.scope,
     directRoot: access.directRoot,
@@ -60,12 +57,9 @@ function parameterContext(link, registry, pairing = false) {
     deferred: access.deferred,
     registration: registrationContext(registry[access.registeredOwner] ?? callable),
   }));
-  const uniqueProofs = [...new Map(proofs.map(proof => [keyOf(proof), proof])).entries()]
-    .sort(([a], [b]) => a.localeCompare(b)).map(([, proof]) => proof);
-  return {
-    proofs: uniqueProofs,
-    fromContext: registrationContext(registry[link.from]),
-    toContext: registrationContext(registry[link.to]),
+  const context = {
+    endpointContexts: [registrationContext(registry[link.from]), registrationContext(registry[link.to])]
+      .sort((a, b) => keyOf(a).localeCompare(keyOf(b))),
     scope: link.scope,
     world: link.world,
     worldId: link.worldId,
@@ -73,17 +67,16 @@ function parameterContext(link, registry, pairing = false) {
     deferred: link.deferred,
     guardSources: (link.sourceEntries || []).filter(source => source.guardKind),
   };
+  return proofs.map(proof => ({ ...context, proof }));
 }
 
-function accessContext(link, registry, pairing = false) {
-  const context = parameterContext(link, registry, pairing);
-  if (pairing) {
-    const contexts = [context.fromContext, context.toContext].sort((a, b) => keyOf(a).localeCompare(keyOf(b)));
-    delete context.fromContext;
-    delete context.toContext;
-    context.endpointContexts = contexts;
-  }
-  return keyOf(context);
+function reverseCompatibilityKey(group, registry) {
+  if (!['read', 'mutable_access'].includes(group.semantic)
+    || !group.links.every(link => link.evidence === 'parameter' || link.parameterAccesses?.length)) return;
+  const link = group.links[0];
+  // 槽位可不同，全部来源的存储、注册、World、条件和延迟上下文必须集合相等。
+  const contexts = [...new Set(group.links.flatMap(member => parameterContexts(member, registry)).map(keyOf))].sort();
+  return keyOf([[endpoint(link, 'from'), endpoint(link, 'to')].sort(), contexts]);
 }
 
 function makeGroup(links, registry, backward = []) {
@@ -113,22 +106,17 @@ export function createVisualEdgeGroups(links, registry) {
     if (typeof link.id !== 'string' || !link.id || ids.has(link.id)) throw new Error('Missing or duplicate visual relation identity: ' + link.id);
     ids.add(link.id);
     const semantic = edgeSemanticOf(link, registry);
-    const parameterAccess = (link.evidence === 'parameter' || link.parameterAccesses?.length)
-      && ['read', 'mutable_access'].includes(semantic);
-    const key = parameterAccess
-      ? keyOf([endpoint(link, 'from'), endpoint(link, 'to'), semantic, accessContext(link, registry)])
-      : keyOf(['relation', link.id]);
-    if (!grouped.has(key)) grouped.set(key, { links: [], parameterAccess, semantic });
+    const key = keyOf([endpoint(link, 'from'), endpoint(link, 'to'), semantic]);
+    if (!grouped.has(key)) grouped.set(key, { links: [], semantic });
     grouped.get(key).links.push(link);
   }
   const directional = [...grouped.values()].sort((a, b) => a.links.map(link => link.id).sort()[0].localeCompare(b.links.map(link => link.id).sort()[0]));
   const candidates = new Map();
-  for (const group of directional.filter(group => group.parameterAccess)) {
-    const link = group.links[0];
-    const pair = [endpoint(link, 'from'), endpoint(link, 'to')].sort();
-    const key = keyOf([pair, accessContext(link, registry, true)]);
-    if (!candidates.has(key)) candidates.set(key, []);
-    candidates.get(key).push(group);
+  for (const group of directional) {
+    group.reverseKey = reverseCompatibilityKey(group, registry);
+    if (!group.reverseKey) continue;
+    if (!candidates.has(group.reverseKey)) candidates.set(group.reverseKey, []);
+    candidates.get(group.reverseKey).push(group);
   }
   const consumed = new Set();
   const result = [];
@@ -136,9 +124,8 @@ export function createVisualEdgeGroups(links, registry) {
     if (consumed.has(group)) continue;
     const link = group.links[0];
     let backward;
-    if (group.parameterAccess) {
-      const key = keyOf([[endpoint(link, 'from'), endpoint(link, 'to')].sort(), accessContext(link, registry, true)]);
-      const family = candidates.get(key);
+    if (group.reverseKey) {
+      const family = candidates.get(group.reverseKey);
       if (family.length === 2 && family[0].semantic !== family[1].semantic) {
         const other = family.find(candidate => candidate !== group);
         const reverse = other.links[0];

@@ -6,6 +6,7 @@ import { NODE_STYLES } from './architecture-style.mjs';
 import { pathsForRepository } from './paths.mjs';
 import { replaceArtifactSync } from './architecture-artifact-writer.mjs';
 import { architectureBrowserPath } from './architecture-browser.mjs';
+import { visualEdgesOf } from './architecture-visual-edges.mjs';
 
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const geometryFields = ['svg', 'mermaid', 'width', 'height', 'bounds', 'routing', 'sections', 'entityGroups', 'layoutLinks'];
@@ -26,9 +27,11 @@ export function mermaidDependencyIdentity(workspace, { environment = process.env
 
 // 只散列实际绘图输入；定位证据不参与 SVG 编译。
 export function mermaidRenderIdentity(view, registry, dependencies) {
-  const inputs = { version: 5, id: view.id, definition: view.mermaid, dependencies,
+  const inputs = { version: 6, id: view.id, definition: view.mermaid, dependencies,
     categories: view.nodes.map(node => [node.id, node.visualType, NODE_STYLES[node.visualType].label]),
     titles: view.nodes.map(node => [node.id, registry[node.id].name, registry[node.id].feature]),
+    edgeDescriptions: [...visualEdgesOf(view), ...(view.scheduleLinks || [])].map(link => [link.id, link.from, link.to,
+      link.displayFrom, link.displayTo, link.edgeSemantic, link.displayLabel, link.forwardIds, link.backwardIds]),
     componentDetails: view.componentDetails };
   return { fingerprint: hash(JSON.stringify(inputs)),
     inputs: Object.fromEntries(Object.entries(inputs).filter(([, value]) => value !== undefined)

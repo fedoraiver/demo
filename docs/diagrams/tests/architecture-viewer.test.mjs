@@ -769,15 +769,18 @@ test('global search reaches isolated objects and distinguishes same names by own
   page.back();assert.equal(page.get('object-results').querySelector('h2').textContent,'1 个匹配对象');assert.equal(page.get('search').value,'Config');
 });
 
-test('System details omit run conditions while keeping their source positions', () => {
-  const page = viewer('?object=system-fixed', { edit(data) {
-    data.registry['system-fixed'].runConditions = [{ id: 'playing', name: 'only_while_playing' }];
-  } });
-  page.app.select('system-fixed');
-  assert.equal(page.get('details').textContent.includes('运行条件'), false);
-  assert.equal(page.get('details').textContent.includes('only_while_playing'), false);
-  assertCardDetails(page, 'system-fixed');
-  assert.deepEqual(page.data.registry['system-fixed'].runConditions, [{ id: 'playing', name: 'only_while_playing' }]);
+test('all node kinds omit run conditions while retaining their source evidence and model conditions', () => {
+  for (const id of ['system-fixed', 'system-update', 'set-shared', 'resource.Config', 'entity-item', 'local.State', 'item.Shared']) {
+    const page = viewer('?object=' + id, { edit(data) {
+      if (id === 'system-update') data.registry[id].kind = 'Observer';
+      data.registry[id].runConditions = [{ id: 'playing', name: 'only_while_playing' }];
+    } });
+    page.app.select(id);
+    assert.equal(page.get('details').textContent.includes('运行条件'), false, id);
+    assert.equal(page.get('details').textContent.includes('only_while_playing'), false, id);
+    assertCardDetails(page, id);
+    assert.deepEqual(page.data.registry[id].runConditions, [{ id: 'playing', name: 'only_while_playing' }]);
+  }
 });
 
 function accessPairFixture(data) {
@@ -788,8 +791,7 @@ function accessPairFixture(data) {
   target.visualEdgeGroups = [{ id: 'access-pair', from: 'item.Shared', to: 'system-fixed',
     forwardIds: [read.id], backwardIds: [write.id], edgeSemantic: 'read_write', displayLabel: '读写访问', mermaidId: 'e-pair' }];
   target.svg = target.svg.replace(/<path class="edge"[^>]*\/>/g, '')
-    .replace('</svg>', '<path class="edge" data-link-id="access-pair" tabindex="0" role="button"/>'
-      + '<g class="edgeLabel"><g data-mermaid-native-id="e-pair"><text>读写访问</text></g></g></svg>');
+    .replace('</svg>', '<path class="edge" data-link-id="access-pair" tabindex="0" role="button" aria-label="读写访问 · item.Shared ↔ system-fixed"/></svg>');
 }
 
 test('a bidirectional display edge selects both canonical directions and shows their evidence', () => {
@@ -801,10 +803,55 @@ test('a bidirectional display edge selects both canonical directions and shows t
   assert.deepEqual(page.get('details').querySelectorAll('section.relation-evidence').map(section => section.querySelector('h3').textContent), ['读访问', '写访问']);
   assert.deepEqual(page.get('details').querySelectorAll('[data-vscode-line]').map(anchor => anchor.dataset.vscodeLine), ['90', '80']);
   assert.equal(page.app.view.links.length, 2);
-  const label=page.get('diagram').querySelector('[data-link-label-id="access-pair"]');
-  assert.ok(label.getAttribute('aria-label').includes('↔'));
-  label.dispatch('keydown',{key:'Enter'});
+  const path=page.get('diagram').querySelector('[data-link-id="access-pair"]');
+  assert.ok(path.getAttribute('aria-label').includes('↔'));
+  path.dispatch('keydown',{key:'Enter'});
   assert.ok(page.get('details').textContent.includes('读写访问'));
+});
+
+test('grouped relation details omit all condition fields and keep operation context and sources', () => {
+  const page = viewer('?object=item.Shared', { edit(data) {
+    accessPairFixture(data);
+    const owner = data.registry['system-fixed'];
+    owner.runConditions = [{ name: 'owner_predicate' }];
+    owner.registrations[0].run_if = ['registration_predicate'];
+    const target = data.views.find(view => view.objectId === 'item.Shared');
+    for (const link of target.links) {
+      link.conditions = [{ expression: 'relation_predicate' }];
+      link.parameterAccesses = [{ conditions: [{ expression: 'access_predicate' }] }];
+      link.bodyOperations = [{ conditions: [{ expression: 'body_predicate' }], scope: 'current', deferred: true }];
+    }
+  } });
+  mouseClick(page, page.get('diagram').querySelector('[data-link-hit-id="access-pair"]'));
+  const text = page.get('details').textContent;
+  for (const hidden of ['运行条件', '生效条件', 'owner_predicate', 'registration_predicate', 'relation_predicate', 'access_predicate', 'body_predicate']) assert.equal(text.includes(hidden), false, hidden);
+  assert.ok(text.includes('FixedUpdate'));
+  assert.ok(text.includes('当前 World'));
+  assert.ok(text.includes('延迟时机'));
+  assert.deepEqual(page.get('details').querySelectorAll('[data-vscode-line]').map(anchor => anchor.dataset.vscodeLine), ['90', '80']);
+  assert.equal(page.app.view.links[0].bodyOperations[0].conditions[0].expression, 'body_predicate');
+});
+
+test('condition relations keep their source positions without repeating runtime-condition contract text', () => {
+  for (const grouped of [false, true]) {
+    const page = viewer('?object=system-fixed', { edit(data) {
+      const target = data.views.find(view => view.objectId === 'system-fixed');
+      const set = data.views.find(view => view.objectId === 'set-shared').nodes[0];
+      target.nodes = [target.nodes.find(node => node.id === 'system-fixed'), set];
+      const relation = { id: 'condition-source', from: 'set-shared', to: 'system-fixed', kind: 'reference', factKind: 'condition',
+        edgeSemantic: 'condition', label: '运行条件', displayLabel: '条件绑定', sourceEntries: [{ role: 'condition', path: 'src/item.rs', line: 88 }] };
+      target.links = [relation];
+      if (grouped) target.visualEdgeGroups = [{ ...relation, id: 'visual-edge-condition-source', forwardIds: [relation.id], backwardIds: [] }];
+      target.svg = '<svg>' + target.nodes.map(node => '<g class="node" data-id="' + node.id + '" data-instance="' + node.instance
+        + '" data-visual-type="' + node.visualType + '"><rect data-shape-part="' + node.instance + '"/></g>').join('')
+        + '<path data-link-id="' + (grouped ? 'visual-edge-condition-source' : relation.id) + '" role="button" tabindex="0"/></svg>';
+    } });
+    mouseClick(page, page.get('diagram').querySelector('[data-link-hit-id]'));
+    assert.ok(page.get('details').textContent.includes('条件绑定'));
+    assert.equal(page.get('details').textContent.includes('运行条件'), false);
+    assert.equal(page.get('details').querySelector('[data-vscode-line]').dataset.vscodeLine, '88');
+    assert.equal(page.app.view.links[0].label, '运行条件');
+  }
 });
 
 test('canonical relation deep links select their display group below the dense threshold', () => {
@@ -1037,17 +1084,22 @@ test('clear returns actual view legend and releases only graph or disappearing-b
   page.activate('item.Shared');page.get('diagram').querySelector('[data-id="item.Shared"]').focus();page.app.select(null);assert.equal(page.document.activeElement,page.canvas);
 });
 
-test('edge details and native labels preserve exact endpoint and operation source identity',()=>{
+test('unlabelled edge hit targets preserve exact endpoint and operation source identity',()=>{
   const page=viewer('?feature=item&object=item.Shared',{edit:data=>{
     const view=data.views.find(view=>view.objectId==='item.Shared');view.links.forEach((link,index)=>{link.mermaidId='e'+index;link.sourceGaps=['待核实：动态目标']});
-    view.svg=view.svg.replace('</svg>',view.links.map(link=>'<g class="edgeLabel"><g data-mermaid-native-id="'+link.mermaidId+'"><text>'+link.label+'</text></g></g>').join('')+'</svg>');
   }});
-  const label=page.get('diagram').querySelector('[data-link-label-id="write"]');assert.equal(label.getAttribute('data-connect'),'system-fixed|item.Shared');
-  assert.equal(label.classList.contains('edge-label'),true);assert.equal(label.classList.contains('edge'),false);
-  mouseClick(page,label.querySelector('text'));assert.deepEqual(page.get('details').querySelectorAll('[data-open]').map(button=>button.dataset.open),['system-fixed','item.Shared']);assert.equal(page.get('details').querySelector('[data-vscode-line]').dataset.vscodeLine,'80');
+  const diagram = page.get('diagram'), path = diagram.querySelector('[data-link-id="write"]'), hit = diagram.querySelector('[data-link-hit-id="write"]');
+  assert.equal(hit.getAttribute('stroke-width'), '12');
+  assert.equal(hit.style.getPropertyValue('stroke'), 'transparent');
+  assert.equal(hit.style.getPropertyValue('stroke-dasharray'), 'none');
+  for (const name of ['data-link-id', 'data-connect', 'tabindex', 'role']) assert.equal(hit.getAttribute(name), null);
+  assert.equal(hit.getAttribute('aria-hidden'), 'true');
+  assert.equal(diagram.querySelector('[data-link-label-id]'), null);
+  assert.equal(diagram.querySelectorAll('[data-link-id]').length, page.app.view.links.length);
+  mouseClick(page,hit);assert.deepEqual(page.get('details').querySelectorAll('[data-open]').map(button=>button.dataset.open),['system-fixed','item.Shared']);assert.equal(page.get('details').querySelector('[data-vscode-line]').dataset.vscodeLine,'80');
   assert.ok(page.get('details').textContent.includes('直接写入'));assert.ok(!page.get('details').textContent.includes('待核实：动态目标'));
   assert.deepEqual(page.app.view.links.find(link=>link.id==='write').sourceGaps,['待核实：动态目标']);
-  for(const key of ['Enter',' ']){label.dispatch('keydown',{key});assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.write.label)}
+  for(const key of ['Enter',' ']){path.dispatch('keydown',{key});assert.equal(page.get('details').querySelector('.badge').textContent,EDGE_STYLES.write.label)}
   page.click(page.get('details').querySelector('[data-open="system-fixed"]'));assert.equal(page.app.view.id,'object:system-fixed');
 });
 
