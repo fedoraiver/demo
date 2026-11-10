@@ -1,4 +1,5 @@
-// Node 与浏览器共用校验及标题绘制层次，保留 Graphviz 的原生坐标、字体、节点和路径。
+// Node 与浏览器共用校验、线型及标题绘制层次，保留 Graphviz 的原生坐标、字体、节点和路径。
+import { SCHEDULE_THEME } from './schedule-theme.mjs';
 const allowedElements = new Set(['svg', 'g', 'title', 'desc', 'a', 'text', 'tspan', 'polygon', 'polyline', 'path', 'rect', 'circle', 'ellipse', 'defs', 'clipPath', 'linearGradient', 'radialGradient', 'stop']);
 const requireCondition = (condition, message) => { if (!condition) throw new Error(message); };
 
@@ -63,6 +64,9 @@ export function normalizeScheduleSvg(text, id, dom = globalThis) {
   svg.setAttribute('role', 'img');
   svg.setAttribute('aria-label', id);
   svg.setAttribute('data-diagram-engine', 'graphviz');
+  for (const group of [...svg.getElementsByTagName('g')].filter(element => element.getAttribute('class') === 'edge')) {
+    for (const path of [...group.getElementsByTagName('path')]) path.setAttribute('stroke-dasharray', SCHEDULE_THEME.edge.dash);
+  }
   foregroundClusterTitles(svg, id);
   return { svg: new dom.XMLSerializer().serializeToString(svg), width: bounds[2], height: bounds[3] };
 }

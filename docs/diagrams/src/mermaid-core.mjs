@@ -30,7 +30,7 @@ const hasClass = (node, value) => (node.getAttribute('class') || '').split(/\s+/
 const number = (node, name) => Number(node.getAttribute(name) || 0);
 export function nativeLabelMismatches(view) {
   const nodes = view.nodes.filter(node => typeof node.displayLabel === 'string');
-  const groups = (view.visualEdgeGroups || []).filter(group => typeof group.displayLabel === 'string' && group.displayLabel);
+  const groups = [...visualEdgesOf(view), ...(view.scheduleLinks || [])];
   if (!nodes.length && !groups.length) return [];
   const document = new DOMParser().parseFromString(view.svg, 'image/svg+xml'), all = elements(document.documentElement);
   const compact = value => String(value ?? '').replace(/[\s\u200B]+/g, '');
@@ -44,8 +44,7 @@ export function nativeLabelMismatches(view) {
     return !label || !compact(visible) || compact(visible) !== compact(node.displayLabel);
   }).map(node => node.id);
   const edgeMismatches = groups.filter(group => {
-    const label = all.find(element => hasClass(element, 'label') && element.getAttribute('data-mermaid-native-id') === group.mermaidId);
-    return !label || compact(label.textContent) !== compact(group.displayLabel);
+    return all.some(element => hasClass(element, 'label') && element.getAttribute('data-mermaid-native-id') === group.mermaidId && compact(element.textContent));
   }).map(group => group.id);
   return [...nodeMismatches, ...edgeMismatches];
 }
@@ -330,7 +329,7 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
 } } = {}) {
   const configuration = JSON.parse(/^---\r?\n([\s\S]*?)\r?\n---/.exec(view.mermaid)[1]).config;
   const dagre = (configuration.layout ?? 'dagre') === 'dagre';
-  const invalidRoute = edge => edge.collisions.length || edge.arrowIssues.length || (edge.axis ? edge.curved : !edge.curved);
+  const invalidRoute = edge => edge.collisions.length || edge.arrowIssues.length || edge.clearanceIssues?.length || (edge.axis ? edge.curved : !edge.curved);
   let profiles = dagre ? [0, 16, 32].flatMap(spacing => Array.from({ length: 9 }, (_, span) => ({ spacing, span }))) : [{ spacing: 0, span: 0 }];
   const context = dagre && view.aspect === 'data' ? entityHeaderContext(view) : view;
   const preferredContext = context !== view ? { spacing: 32, span: 8, headerContext: true } : null;
@@ -532,5 +531,5 @@ export async function compileRoutedView(view, registry, compileNative, { onAttem
     }
   }
   if (final?.svg) await onFailure({ view: final, inspection });
-  throw new Error(`Mermaid routing failed: ${view.id}: ${[layoutError, ...inspection.edges.filter(invalidRoute).map(edge => `${edge.id} → ${edge.collisions.map(item => `${item.id} (${item.kind})`).concat(edge.arrowIssues).join(',') || 'line/curve mismatch'}`)].filter(Boolean).join('; ')}`);
+  throw new Error(`Mermaid routing failed: ${view.id}: ${[layoutError, ...inspection.edges.filter(invalidRoute).map(edge => `${edge.id} → ${edge.collisions.map(item => `${item.id} (${item.kind})`).concat(edge.arrowIssues, edge.clearanceIssues || []).join(',') || 'line/curve mismatch'}`)].filter(Boolean).join('; ')}`);
 }

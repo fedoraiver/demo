@@ -318,7 +318,7 @@ export function createCompilerObjectCatalog(model, inputRegistry) {
   }));
   function graphFor(id) {
     const object = objectById[id]; requireCondition(object, 'Unknown compiler architecture object: ' + id);
-    const incident = neighbors.get(id), selected = ['Plugin', 'PluginGroup'].includes(object.kind) ? [] : object.kind === 'Entity'
+    const incident = neighbors.get(id), selected = ['Plugin', 'PluginGroup'].includes(object.kind) ? [] : ['Entity', 'System'].includes(object.kind)
       ? incident.filter(link => [link.from, link.to].every(endpoint => registry[endpoint].kind !== 'Component')) : incident;
     const ids = unique([id, ...selected.flatMap(link => [link.from, link.to])]);
     // 当前一跳按具体函数折叠卡片，静态 Observer 来源继续作为成员证据保留。

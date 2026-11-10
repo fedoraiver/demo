@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { arrowGeometry, inspectViewRoutes, nativeMarkerProperty, nativeSvgProperty, pathIntersectsOutline, ROUTING_STYLE, routingObstacles } from '../src/architecture-routing.mjs';
+import { arrowGeometry, boundsSeparation, inspectViewRoutes, nativeMarkerProperty, nativeSvgProperty, pathIntersectsOutline, ROUTING_CLEARANCE, ROUTING_STYLE, routingObstacles, visibleShaftLength } from '../src/architecture-routing.mjs';
 import { flattenPath, svgElements } from '../src/svg-shape-geometry.mjs';
 
 const card = (id, shape, extra = '') => `<g class="node" data-id="${id}" data-instance="v--${id}" ${extra}>${shape.replaceAll('PART', `data-shape-part="v--${id}"`)}</g>`;
@@ -9,6 +9,24 @@ const view = (contents, nodes = ['a', 'b', 'obstacle'], links = [{ id: 'edge', m
 const endpoint = id => card(id, `<rect PART x="${id === 'a' ? 0 : 180}" y="40" width="20" height="20"/>`);
 const marker = '<defs><marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10Z"/></marker></defs>';
 const label = (x, y, width = 20, height = 10) => `<g class="edgeLabel" transform="translate(${x} ${y})"><g class="label" data-mermaid-native-id="e0"><g><rect class="background" x="0" y="0" width="${width}" height="${height}"/><text>Contract</text></g></g></g>`;
+
+test('visible shaft excludes arrowheads and title backgrounds without adding disjoint pieces', () => {
+  const obstacle = (x, width) => ({ parts: [{ contours: [{ closed: true, points: [[x, -5], [x + width, -5], [x + width, 5], [x, 5], [x, -5]] }] }] });
+  assert.equal(visibleShaftLength(flattenPath('M0 0H100'), [obstacle(80, 20), obstacle(40, 10)]), 40);
+  assert.equal(visibleShaftLength(flattenPath('M0 0H100'), [obstacle(0, 100)]), 0);
+  assert.equal(visibleShaftLength(flattenPath('M0 0H20M40 0H60')), 20);
+  assert.equal(boundsSeparation({ x: 0, y: 0, width: 20, height: 20 }, { x: 50, y: 60, width: 20, height: 20 }), 50);
+  assert.deepEqual(ROUTING_CLEARANCE, { endpointGap: 40, visibleShaft: 24 });
+});
+
+test('native route clearance rejects close endpoints and shafts hidden by their endpoint outlines', () => {
+  const close = view(card('a', '<rect PART x="0" y="40" width="20" height="20"/>')
+    + card('b', '<rect PART x="50" y="40" width="20" height="20"/>') + edge('M20 50H50'), ['a', 'b']);
+  assert.deepEqual(inspectViewRoutes(close).edges[0].clearanceIssues, ['endpoint-gap']);
+  const hidden = view(endpoint('a') + endpoint('b') + edge('M180 50H199'), ['a', 'b']);
+  assert.deepEqual(inspectViewRoutes(hidden).edges[0].clearanceIssues, ['visible-shaft']);
+  assert.deepEqual(inspectViewRoutes(view(endpoint('a') + endpoint('b') + edge('M20 50H180'), ['a', 'b'])).edges[0].clearanceIssues, []);
+});
 
 test('bound edge labels cannot replace the real path when they precede it in native SVG order', () => {
   const boundLabel = '<g class="edgeLabel edge-label" data-link-id="edge"><g class="label" data-mermaid-native-id="e0"><rect class="background" x="80" y="5" width="20" height="10"/><text>Contract</text></g></g>';

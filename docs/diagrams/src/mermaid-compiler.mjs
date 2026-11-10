@@ -155,7 +155,7 @@ async function compileRoutedView(browser, view, registry, checks) {
   return compileRoutedViewCore(view, registry, (candidate, records) => compileNativeView(browser, candidate, records), {
     checks,
     onAttempt({ attempt, layoutError, invalid }) {
-      console.log(`Mermaid routing: ${view.id}, attempt ${attempt}, ${[layoutError, ...invalid.map(edge => `${edge.id}[${edge.collisions.map(item => item.id).concat(edge.arrowIssues).join(',')}]`)].filter(Boolean).join('; ')}`);
+      console.log(`Mermaid routing: ${view.id}, attempt ${attempt}, ${[layoutError, ...invalid.map(edge => `${edge.id}[${edge.collisions.map(item => item.id).concat(edge.arrowIssues, edge.clearanceIssues || []).join(',')}]`)].filter(Boolean).join('; ')}`);
     },
     onFailure(failure) {
       const diagnostics = path.join(root, 'tmp/ecs-architecture/routing');
@@ -192,7 +192,7 @@ export async function compileArchitectureArtifacts(views, registry) {
           await checks.geometry(result);
           if ((await checks.labels(result)).length) throw new Error('Cached native labels are incomplete');
           const inspection = await checks.routes(result);
-          if (inspection.edges.some(edge => edge.collisions.length || edge.arrowIssues.length || (edge.axis ? edge.curved : !edge.curved))) throw new Error('Cached native routing is stale');
+          if (inspection.edges.some(edge => edge.collisions.length || edge.arrowIssues.length || edge.clearanceIssues?.length || (edge.axis ? edge.curved : !edge.curved))) throw new Error('Cached native routing is stale');
         } catch (error) {
           if (checks.isFatalError(error)) throw error;
           cacheSummary.rejected++;

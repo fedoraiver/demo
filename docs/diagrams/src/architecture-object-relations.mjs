@@ -6,8 +6,11 @@ export function displayEdgesOf(view) {
 }
 
 export function findVisualEdge(view, id) {
-  return displayEdgesOf(view).find(edge => edge.id === id
-    || edge.forwardIds?.includes(id) || edge.backwardIds?.includes(id));
+  const edges = displayEdgesOf(view);
+  const exact = edges.find(edge => edge.id === id);
+  if (exact) return exact;
+  const memberId = typeof id === 'string' && id.startsWith('visual-edge-') ? id.slice('visual-edge-'.length) : id;
+  return edges.find(edge => edge.forwardIds?.includes(memberId) || edge.backwardIds?.includes(memberId));
 }
 
 export function isDenseObjectView(view, threshold = DENSE_OBJECT_RELATION_THRESHOLD) {

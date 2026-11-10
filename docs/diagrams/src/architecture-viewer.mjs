@@ -45,7 +45,14 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   const visibleNode=(id,target=view)=>{const key=canonical(id);return target?.aspect==='object'?target.nodes?.find(node=>node.id===key||node.sourceNodeIds?.includes(key))?.id||key:key};
   function objectContext(id){const record=DATA.registry[id]||{},owners=(componentEntities.get(id)||[]).map(owner=>DATA.registry[owner]?.name),schedules=(record.registrations||[]).map(registration=>registration.schedule).filter(Boolean);return[record.owner,...owners,...new Set(schedules),id].filter(Boolean).join(' · ')}
   function objectResults(ids){return ids.map(id=>'<button class="result" data-object="'+safe(id)+'">'+safe(DATA.registry[id]?.name||id)+'<small>'+safe([DATA.registry[id]?.kind,objectContext(id)].filter(Boolean).join(' · '))+'</small></button>').join('')}
-  function transform(){diagram.style.transform='translate('+panX+'px,'+panY+'px) scale('+scale+')';interaction.setScale(scale);const percent=scale*100;document.getElementById('zoom-label').textContent=(percent<1?Number(percent.toPrecision(2)):Math.round(percent))+'%'}
+  function transform(){
+    diagram.style.transform='translate('+panX+'px,'+panY+'px) scale('+scale+')';
+    interaction.setScale(scale);
+    // SVG 的 non-scaling-stroke 不抵消外层 CSS 缩放，命中宽度按屏幕像素补偿。
+    for(const hit of diagram.querySelectorAll('[data-link-hit-id]'))hit.style.setProperty('stroke-width',12/scale+'px','important');
+    const percent=scale*100;
+    document.getElementById('zoom-label').textContent=(percent<1?Number(percent.toPrecision(2)):Math.round(percent))+'%';
+  }
   const fittedScale=()=>Math.min((canvas.clientWidth-28)/view.width,(canvas.clientHeight-28)/view.height,1);
   // 超大图在适合窗口后仍可缩小四倍；画布扩大时不把既有的小比例突然放大。
   const clampScale=value=>Math.min(2.4,Math.max(Math.min(.08,fittedScale()/4,scale),value));
@@ -137,12 +144,11 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
   function showDetail(id){
     id=canonical(id);if(!DATA.registry[id]){guide();return}const record=DATA.registry[id];
     const identity=record.typeIdentity,packageName=identity?.package&&identity.package.name+' '+identity.package.version;
-    const conditions=record.kind==='System'?[]:(record.runConditions||[]).map(entry=>entry.name||entry.id);
     const local=record.kind==='Local'?[record.callableId,record.parameter===undefined?null:'参数槽 '+record.parameter].filter(Boolean):[];
     const node=view.nodes.find(candidate=>candidate.id===visibleNode(id));
     const members=(node?.sourceNodeIds||[id]).map(member=>DATA.registry[member]).filter(Boolean);
     const sources=members.flatMap(member=>member.sourceEntries||[]);
-    details.innerHTML='<h2>'+safe(record.name||id)+'</h2><p>'+safe([record.kind,packageName||record.feature].filter(Boolean).join(' · '))+'</p>'+(objectView(id)&&view.objectId!==id?'<button data-object="'+safe(id)+'">打开对象关系图 ↗</button>':'')+list('运行条件',conditions)+list('局部存储',local)+sourcesList(sources);
+    details.innerHTML='<h2>'+safe(record.name||id)+'</h2><p>'+safe([record.kind,packageName||record.feature].filter(Boolean).join(' · '))+'</p>'+(objectView(id)&&view.objectId!==id?'<button data-object="'+safe(id)+'">打开对象关系图 ↗</button>':'')+list('局部存储',local)+sourcesList(sources);
     sourceEditor.refreshLinks(details);details.scrollTop=0;
   }
   function releaseDiagramFocus(){const active=document.activeElement;if(active?.closest('#diagram')||active?.id==='clear-selection')canvas.focus({preventScroll:true})}
@@ -170,9 +176,6 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     const owners=[...ownerIds].map(id=>DATA.registry[id]).filter(owner=>['System','Observer'].includes(owner?.kind));
     const registrations=owners.flatMap(owner=>owner.registrations||[]);
     const contexts=distinct(registrations.map(registration=>[registration.application,registration.schedule].filter(Boolean).join(' · ')).filter(Boolean));
-    const conditions=distinct([...records,...accesses,...operations].flatMap(evidence=>evidence.conditions||evidence.guards||[])
-      .concat(owners.flatMap(owner=>owner.runConditions||[]),registrations.flatMap(registration=>registration.run_if||[])))
-      .map(condition=>typeof condition==='string'?condition:condition.expression||condition.name||condition.label||condition.id).filter(Boolean);
     const scopes=distinct([...accesses,...operations].map(evidence=>evidence.scope).filter(Boolean))
       .map(scope=>scope==='current'?'当前 World':scope);
     const deferred=distinct(operations.map(operation=>operation.deferred).filter(value=>value!==undefined&&value!==false));
@@ -185,11 +188,11 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     }).join('');
     const accessDetails=distinct(records.filter(record=>['read','mutable_access','write'].includes(record.factKind||record.operation||record.kind))
       .map(record=>record.label).filter(label=>label&&!/^(?:R|W|read|mutable_access|读取|可变访问|读访问|写访问)$/.test(label)));
-    const contracts=distinct(records.filter(record=>!['read','mutable_access','write'].includes(record.factKind||record.operation||record.kind))
+    const contracts=distinct(records.filter(record=>!['read','mutable_access','write','condition'].includes(record.factKind||record.operation||record.kind))
       .map(record=>record.label).filter(Boolean));
     return '<section class="relation-evidence"><h3>'+safe(title)+'</h3>'
       +properties+list('触发事件',events,4)+list('完整契约与约束',contracts,4)+list('访问说明',accessDetails,4)+list('应用与调度',contexts,4)
-      +list('访问范围',scopes,4)+list('生效条件',conditions,4)+list('延迟时机',deferred,4)
+      +list('访问范围',scopes,4)+list('延迟时机',deferred,4)
       +list('约束与说明',notes,4)+sourcesList(sources)+'</section>';
   }
   function showEdgeDetail(link,schedule,sourceView=view){
@@ -215,7 +218,8 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
       sourceEditor.refreshLinks(details);details.scrollTop=0;return;
     }
     const record=DATA.registry[link.id]||{},style=DATA.styles.edges[link.edgeSemantic],properties={...record,...link};
-    details.innerHTML='<span class="badge">'+safe(style?.label||link.edgeSemantic||link.kind)+'</span><h2>'+safe(record.name||link.displayLabel||style?.label||'关系')+'</h2><p>来源：'+edgeEndpoint(link.from,schedule)+'</p><p>目标：'+edgeEndpoint(link.to,schedule)+'</p>'+(link.eventId?'<h3>触发事件</h3><p>'+edgeEndpoint(link.eventId,false)+'</p>':'')+(link.label?'<h3>完整契约与约束</h3><p>'+safe(link.label)+'</p>':'')+['cardinality','reverse','linked_spawn'].filter(key=>Object.hasOwn(properties,key)).map(key=>'<h3>'+({cardinality:'数量约束',reverse:'反向关系',linked_spawn:'连带生命周期'}[key])+'</h3><p>'+safe(relationshipValue(properties[key]))+'</p>').join('')+list('约束与说明',link.notes||record.notes)+sourcesList(link.sourceEntries||record.sourceEntries)+'<button class="reset" id="clear-selection">清除选择</button>';
+    const condition=(properties.factKind||properties.operation||properties.kind)==='condition';
+    details.innerHTML='<span class="badge">'+safe(style?.label||link.edgeSemantic||link.kind)+'</span><h2>'+safe(record.name||link.displayLabel||style?.label||'关系')+'</h2><p>来源：'+edgeEndpoint(link.from,schedule)+'</p><p>目标：'+edgeEndpoint(link.to,schedule)+'</p>'+(link.eventId?'<h3>触发事件</h3><p>'+edgeEndpoint(link.eventId,false)+'</p>':'')+(link.label&&!condition?'<h3>完整契约与约束</h3><p>'+safe(link.label)+'</p>':'')+['cardinality','reverse','linked_spawn'].filter(key=>Object.hasOwn(properties,key)).map(key=>'<h3>'+({cardinality:'数量约束',reverse:'反向关系',linked_spawn:'连带生命周期'}[key])+'</h3><p>'+safe(relationshipValue(properties[key]))+'</p>').join('')+list('约束与说明',link.notes||record.notes)+sourcesList(link.sourceEntries||record.sourceEntries)+'<button class="reset" id="clear-selection">清除选择</button>';
     sourceEditor.refreshLinks(details);details.scrollTop=0;
   }
   function paintEdge(id,schedule=false){
@@ -253,22 +257,30 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     selection={...selection,node:null};
     updateUrl();
   }
-  function bindEdgeLabels() {
-    const links=[...displayEdgesOf(view),...view.scheduleLinks];
-    for(const label of diagram.querySelectorAll('g.edgeLabel')){
-      const ids=new Set([label.dataset.mermaidNativeId,...[...label.querySelectorAll('[data-mermaid-native-id]')]
-        .map(item=>item.dataset.mermaidNativeId)].filter(Boolean));
-      const matches=links.filter(link=>ids.has(link.mermaidId));
-      if(matches.length!==1)continue;
-      const link=matches[0],schedule=view.scheduleLinks.includes(link);
-      const arrow=link.forwardIds?.length&&link.backwardIds?.length?' ↔ ':' → ';
-      label.setAttribute('data-link-label-id',link.id);
-      label.setAttribute(schedule?'data-schedule-link-id':'data-link-id',link.id);
-      label.setAttribute(schedule?'data-schedule-connect':'data-connect',(link.displayFrom||link.from)+'|'+(link.displayTo||link.to));
-      label.classList.add('edge-label');
-      label.setAttribute('tabindex','0');
-      label.setAttribute('role','button');
-      label.setAttribute('aria-label',(link.displayLabel||link.label||DATA.styles.edges[link.edgeSemantic]?.label||'关系')+' · '+link.from+arrow+link.to);
+  function bindEdgeTargets() {
+    const paths = [...diagram.querySelectorAll('path[data-link-id]'), ...diagram.querySelectorAll('path[data-schedule-link-id]')];
+    for (const path of paths) {
+      const hit = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      for (const name of ['d', 'transform', 'pathLength']) {
+        const value = path.getAttribute(name);
+        if (value !== null) hit.setAttribute(name, value);
+      }
+      hit.setAttribute('data-link-hit-id', path.dataset.scheduleLinkId || path.dataset.linkId);
+      if (path.dataset.scheduleLinkId !== undefined) hit.setAttribute('data-schedule-link-hit', 'true');
+      hit.setAttribute('aria-hidden', 'true');
+      hit.setAttribute('focusable', 'false');
+      hit.setAttribute('fill', 'none');
+      hit.setAttribute('stroke', 'transparent');
+      hit.setAttribute('stroke-width', '12');
+      hit.setAttribute('vector-effect', 'non-scaling-stroke');
+      hit.style.setProperty('pointer-events', 'stroke');
+      hit.style.setProperty('cursor', 'pointer');
+      hit.style.setProperty('stroke', 'transparent', 'important');
+      hit.style.setProperty('stroke-width', '12px', 'important');
+      hit.style.setProperty('stroke-dasharray', 'none', 'important');
+      hit.style.setProperty('marker-start', 'none', 'important');
+      hit.style.setProperty('marker-end', 'none', 'important');
+      path.insertAdjacentElement('afterend', hit);
     }
   }
   function bindScheduleObjects(){
@@ -293,7 +305,7 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     scheduleElements.clear();
     diagram.innerHTML=view.svg||'';
     renderedObject=view.aspect==='object';
-    if(renderedObject)bindEdgeLabels();
+    if(renderedObject)bindEdgeTargets();
     else bindScheduleObjects();
     flow?.refresh();
     if(focused)(scheduleElements.get(focused)?.[0]||canvas).focus({preventScroll:true});
@@ -455,13 +467,13 @@ export function createArchitectureViewer({ data: DATA, document, location, histo
     if(loadView)return renderSelection(false,null,true);
     return renderSchedule(scheduleViews.find(candidate=>candidate.id===selection.schedule),null,++renderRequest,true);
   }
-  function activateEdge(element){paintEdge(element.dataset.scheduleLinkId||element.dataset.linkId,element.dataset.scheduleLinkId!==undefined)}
-  function diagramTarget(target){if(view.aspect!=='object')return null;for(let item=target;item&&item!==diagram;item=item.parentElement)if(item.dataset.id!==undefined||item.dataset.linkId!==undefined||item.dataset.scheduleLinkId!==undefined)return item;return null}
+  function activateEdge(element){paintEdge(element.dataset.scheduleLinkId||element.dataset.linkId||element.dataset.linkHitId,element.dataset.scheduleLinkId!==undefined||element.dataset.scheduleLinkHit!==undefined)}
+  function diagramTarget(target){if(view.aspect!=='object')return null;for(let item=target;item&&item!==diagram;item=item.parentElement)if(item.dataset.id!==undefined||item.dataset.linkId!==undefined||item.dataset.scheduleLinkId!==undefined||item.dataset.linkHitId!==undefined)return item;return null}
   function activateNode(element){select(element?.dataset.id||null)}
   function activateDiagram(target){
     if(interactionPaused()||target?.closest('#diagram')!==diagram)return false;
     if(view.aspect==='schedule'){const element=target.closest('[data-schedule-node]');if(!element||!scheduleElements.get(element.dataset.scheduleNode)?.includes(element))return false;for(let item=target;item!==element;item=item.parentElement)if(['node','cluster','edge','schedule-cluster-title'].some(name=>item.classList.contains(name)))return false;if(element.dataset.scheduleTitle!==undefined)scheduleElements.get(element.dataset.scheduleNode)[0].focus({preventScroll:true});selectSchedule(element.dataset.scheduleNode);return true}
-    const element=diagramTarget(target);if(!element)return false;element.dataset.linkId!==undefined||element.dataset.scheduleLinkId!==undefined?activateEdge(element):activateNode(element);return true;
+    const element=diagramTarget(target);if(!element)return false;element.dataset.linkId!==undefined||element.dataset.scheduleLinkId!==undefined||element.dataset.linkHitId!==undefined?activateEdge(element):activateNode(element);return true;
   }
   function clearCanvasSelection(){
     const selected=view.aspect==='schedule'?selectedScheduleId||selection.scheduleNode||selection.node:selection.node;

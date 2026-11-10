@@ -1,4 +1,5 @@
 import test from 'node:test';
+import { createControlsCharacterAccessFixture } from './fixtures/controls-character-access.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -151,8 +152,8 @@ test('function cards share concrete identity across registrations while keeping 
   assert.equal(graph.nodes.filter(node => node.sourceNodeIds?.includes('same-a')).length, 1);
   for (const id of ['other-callable', 'group', 'observer', 'local-a', 'local-b']) assert.ok(graph.nodes.some(node => node.id === id), id);
   const familyGroups = graph.visualEdgeGroups.filter(group => group.from === family.id);
-  assert.equal(familyGroups.length, 4);
-  assert.ok(familyGroups.some(group => group.forwardIds.join(',') === 'read-same-a,read-same-b'));
+  assert.equal(familyGroups.length, 1);
+  assert.deepEqual(familyGroups[0].forwardIds, ['read-condition', 'read-other-app', 'read-same-a', 'read-same-b', 'read-unknown-app']);
   const localGraph = catalog.graphFor('local-a');
   assert.deepEqual(localGraph.nodes.map(node => node.id), ['local-a', 'type-component']);
   assert.ok(localGraph.nodes.every(node => !node.sourceNodeIds), 'Unrelated members of a callable family must not imply shared local state');
@@ -179,6 +180,28 @@ test('static Observer cards fold by concrete callable and preserve the MenuFocus
   assert.equal(JSON.stringify(model), original);
 });
 
+test('ControlsCharacter summaries retain 21 canonical facts in ten cards and nine display edges', () => {
+  const { model, center } = createControlsCharacterAccessFixture();
+  const original = structuredClone(model), catalog = createCompilerObjectCatalog(model), graph = catalog.graphFor(center);
+  assert.equal(graph.nodes.length, 10);
+  assert.equal(graph.links.length, 21);
+  assert.equal(graph.visualEdgeGroups.length, 9);
+  assert.equal(graph.visualEdgeGroups.filter(group => group.edgeSemantic === 'read').length, 8);
+  const inserted = graph.visualEdgeGroups.find(group => group.edgeSemantic === 'insert');
+  assert.deepEqual(inserted.forwardIds, ['insert-spawn-OnExit(MainMenu)', 'insert-spawn-Startup']);
+  const facing = graph.visualEdgeGroups.find(group => group.forwardIds.includes('read-facing-FixedUpdate'));
+  assert.deepEqual(facing.forwardIds, ['read-facing-FixedUpdate', 'read-facing-RunFixedMainLoop']);
+  assert.ok(graph.visualEdgeGroups.every(group => group.backwardIds.length === 0));
+  assert.deepEqual(graph.visualEdgeGroups.flatMap(group => group.forwardIds).sort(), model.relations.map(link => link.id).sort());
+  for (const link of graph.links) {
+    const { displayFrom, displayTo, ...canonical } = link;
+    assert.deepEqual(canonical, catalog.links.find(relation => relation.id === link.id));
+  }
+  assert.deepEqual(model, original);
+  const reversed = createCompilerObjectCatalog({ ...model, objects: [...model.objects].reverse(), relations: [...model.relations].reverse() });
+  assert.deepEqual(reversed.graphFor(center).visualEdgeGroups, graph.visualEdgeGroups);
+});
+
 test('Observer cards share concrete identity across applications and scopes while preserving access contexts', t => {
   const { model, object } = fixture(t);
   const observer = (id, extra = {}) => ({ ...object(id, 'Observer'), name: 'same_label', registrationScope: 'static-callsite', callableIds: ['same-callable'], ...extra });
@@ -196,16 +219,19 @@ test('Observer cards share concrete identity across applications and scopes whil
   assert.deepEqual(family.sourceNodeIds, ['main-observer', 'observer-a', 'observer-b', 'render-observer', 'runtime-observer']);
   for (const id of ['other-generic', 'other-declaration', 'observer-group']) assert.ok(graph.nodes.some(node => node.id === id), id);
   const familyGroups = graph.visualEdgeGroups.filter(group => group.to === family.id);
-  assert.equal(familyGroups.length, 4);
-  assert.ok(familyGroups.some(group => group.forwardIds.join(',') === 'access-observer-a,access-observer-b'));
+  assert.equal(familyGroups.length, 1);
+  assert.deepEqual(familyGroups[0].forwardIds, ['access-main-observer', 'access-observer-a', 'access-observer-b', 'access-render-observer', 'access-runtime-observer']);
 });
 
-test('one-hop presentation keeps full facts while hiding Entity components and Plugin neighbors', t => {
+test('one-hop presentation keeps full facts while hiding Entity and System components and Plugin neighbors', t => {
   const { model } = fixture(t), registry = Object.fromEntries(model.objects.map(object => [object.id, object]));
   const catalog = createCompilerObjectCatalog(model, registry);
   assert.equal(catalog.links.length, model.relations.length);
   assert.deepEqual(catalog.graphFor('decl-plugin').nodes.map(node => node.id), ['decl-plugin']);
   assert.equal(catalog.graphFor('decl-plugin').links.length, 0);
+  assert.deepEqual(catalog.graphFor('registration-1').nodes.map(node => node.id), ['registration-1', 'decl-plugin', 'template-root']);
+  assert.deepEqual(catalog.graphFor('registration-1').links.map(link => link.id), ['install', 'entity-reference']);
+  assert.deepEqual(catalog.graphFor('registration-2').nodes.map(node => node.id), ['registration-2']);
   assert.deepEqual(new Set(catalog.graphFor('template-root').nodes.map(node => node.id)), new Set(['template-root', 'registration-1']));
   assert.deepEqual(catalog.graphFor('type-component').links.map(link => link.id), ['contains', 'read', 'mutable']);
   assert.equal(catalog.graphFor('type-component').links.find(link => link.id === 'mutable').kind, 'write');
@@ -216,6 +242,24 @@ test('one-hop presentation keeps full facts while hiding Entity components and P
   const view = views.find(view => view.objectId === 'type-component'); view.links.pop();
   assert.throws(() => checkObjectViews(views, catalog), /incident-link coverage mismatch/);
   assert.deepEqual(viewerModel(model).entities, [{ id: 'template-root', canonical_entity: 'template-root', components: [{ id: 'type-component' }] }]);
+});
+
+test('System filtering uses the projected kind while Observers and Component reverse lookup retain their facts', t => {
+  const { model, object } = fixture(t);
+  model.objects.push(object('observer', 'Observer'), { ...object('resource', 'Resource'), typeIdentity: { roles: ['Resource', 'Component'] } });
+  model.relations.push({ id: 'observer-read', from: 'type-component', to: 'observer', kind: 'read', evidence: 'parameter', sourceEntries: [] },
+    { id: 'resource-read', from: 'resource', to: 'registration-1', kind: 'read', evidence: 'parameter', sourceEntries: [] });
+  const original = structuredClone(model), catalog = createCompilerObjectCatalog(model);
+  assert.deepEqual(catalog.graphFor('observer').nodes.map(node => node.id), ['observer', 'type-component']);
+  assert.deepEqual(catalog.graphFor('observer').links.map(link => link.id), ['observer-read']);
+  const system = catalog.graphFor('registration-1');
+  assert.ok(system.nodes.some(node => node.id === 'resource'));
+  assert.ok(!system.nodes.some(node => node.id === 'type-component'));
+  assert.ok(system.links.some(link => link.id === 'resource-read'));
+  assert.ok(!system.links.some(link => link.id === 'read'));
+  assert.deepEqual(catalog.graphFor('type-component').links.map(link => link.id), ['contains', 'read', 'mutable', 'observer-read']);
+  assert.equal(catalog.links.length, model.relations.length);
+  assert.deepEqual(model, original);
 });
 
 test('runtime predicates keep their own objects and reference the guarded object without fabricated DOT nodes', t => {

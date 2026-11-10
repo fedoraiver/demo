@@ -4,7 +4,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import { checkArchitecture as checkArchitectureWithDependencies, checkDataSections, checkEntityGroups, checkEntityViewProjections, checkViewRouting, checkGuideSamples, checkObjectViews, checkObserverTriggerProjections, checkMermaidLayout, checkMermaidSource } from '../src/check-ecs.mjs';
+import { checkArchitecture as checkArchitectureWithDependencies, checkDataSections, checkEntityGroups, checkEntityViewProjections, checkViewRouting, checkGuideSamples, checkScheduleGuideSamples, checkObjectViews, checkObserverTriggerProjections, checkMermaidLayout, checkMermaidSource } from '../src/check-ecs.mjs';
+import { instance as graphvizInstance } from '@viz-js/viz';
+import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
+import { compileScheduleGuideSamples } from '../src/schedule-legend-compiler.mjs';
 import { checkMermaidGeometry, checkSvgGeometry } from '../src/diagram-geometry.mjs';
 import { NODE_STYLES, EDGE_STYLES, SELECTION_STYLE, EXTERNAL_REFERENCE_STYLE, visualTypeOf, edgeSemanticOf, displayLabelOf } from '../src/architecture-style.mjs';
 import { isMainPluginRegistration, scheduleGroupLabel, isUnscheduledTriggerNode } from '../src/architecture-model.mjs';
@@ -22,6 +25,25 @@ const fixtureViewCount = 1 + 3 * (1 + INFRASTRUCTURE_FEATURES.length);
 const fixtureOverviewNodeCount = 2 + INFRASTRUCTURE_FEATURES.length;
 const extensionFeature = INFRASTRUCTURE_FEATURES.find(feature => feature.section === 'third_party');
 
+test('Schedule guides require uniform dashed shafts, solid arrows and no visible edge text', async () => {
+  const samples = compileScheduleGuideSamples(await graphvizInstance(), { DOMParser, XMLSerializer });
+  assert.doesNotThrow(() => checkScheduleGuideSamples(samples));
+  for (const kind of ['order', 'set_membership']) {
+    const changed = structuredClone(samples);
+    assert.ok(changed.edges[kind].includes('stroke-dasharray="6 4"'));
+    changed.edges[kind] = changed.edges[kind].replace('stroke-dasharray="6 4"', 'stroke-dasharray="1 1"');
+    assert.throws(() => checkScheduleGuideSamples(changed), /Schedule guide edge style mismatch/);
+  }
+  const text = structuredClone(samples);
+  text.edges.order = text.edges.order.replace('</svg>', '<text>排序说明</text></svg>');
+  assert.throws(() => checkScheduleGuideSamples(text), /Unexpected visible text/);
+  const arrow = structuredClone(samples), document = new DOMParser().parseFromString(arrow.edges.order, 'image/svg+xml');
+  const edge = [...document.getElementsByTagName('g')].find(element => element.getAttribute('class') === 'edge');
+  edge.getElementsByTagName('polygon')[0].setAttribute('stroke-dasharray', '6 4');
+  arrow.edges.order = new XMLSerializer().serializeToString(document);
+  assert.throws(() => checkScheduleGuideSamples(arrow), /Schedule guide edge style mismatch/);
+});
+
 test('Mermaid source checks decode node YAML escapes without decoding literal entity names twice', () => {
   const registry = {
     'entity-982861bbae8d50e84ce84440': { kind: 'Entity', feature: 'ui', name: 'format!("Menu small button: {title}")' },
@@ -36,6 +58,19 @@ test('Mermaid source checks decode node YAML escapes without decoding literal en
   assert.throws(() => checkMermaidSource({ ...view, mermaid: view.mermaid.replace('Menu', 'Other') }, registry, new Map()), /node style or label mismatch/);
   assert.throws(() => checkMermaidSource({ ...view, mermaid: view.mermaid.replace('\\u0022Menu', '\\u0023Menu') }, registry, new Map()), /node style or label mismatch/);
   assert.throws(() => checkMermaidSource({ ...view, mermaid: view.mermaid.replace('\\u0022Menu', '\\qMenu') }, registry, new Map()), /Invalid Mermaid node YAML escape/);
+});
+
+test('independent object checks reject Component geometry for Entity and System centers while allowing Observer reverse access', () => {
+  for (const kind of ['Entity', 'System', 'Observer']) {
+    const objects = [{ id: 'owner', kind, viewId: 'object-owner', feature: 'fixture' },
+      { id: 'component', kind: 'Component', viewId: 'object-component', feature: 'fixture' }];
+    const relation = { id: 'access', from: 'component', to: 'owner', kind: 'read' };
+    const views = objects.map(object => ({ id: object.viewId, objectId: object.id, centerNodeId: object.id,
+      aspect: 'object', feature: object.feature, nodes: objects.map(({ id }) => ({ id, role: 'internal' })), links: [relation] }));
+    const catalog = { objects, graphFor: id => views.find(view => view.objectId === id) };
+    if (kind === 'Observer') assert.equal(checkObjectViews(views, catalog), 2);
+    else assert.throws(() => checkObjectViews(views, catalog), new RegExp(kind + ' object view contains Component geometry'));
+  }
 });
 
 const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('"', '&quot;');
@@ -277,7 +312,7 @@ test('all-view routing checks translated native geometry, curves and unrelated c
   assert.throws(() => checkViewRouting(fixture('M0,10 H120 V140')), /must be curved/);
   const observer = fixture('M0,60 L120,60'); observer.aspect = 'events'; observer.nodes[0].visualType = 'observer';
   assert.throws(() => checkViewRouting(observer), /Mermaid edge obstructed/);
-  const endpoint = fixture('M0,60 L120,60'); endpoint.links[0].to = 'component';
+  const endpoint = fixture('M-20,60 L120,60'); endpoint.links[0].to = 'component';
   assert.doesNotThrow(() => checkViewRouting(endpoint));
 });
 

@@ -22,7 +22,7 @@ test('parameter duplicates share one display edge while retaining every canonica
   assert.deepEqual(links, original);
 });
 
-test('application, Schedule, World, slot, type, conditions and deferred context keep accesses separate', () => {
+test('same-direction access summaries retain members with different registration and parameter contexts', () => {
   for (const change of [
     (link, registry) => { registry.b.registrations[0].application = 'RenderApp'; },
     (link, registry) => { registry.b.registrations[0].schedule = 'PostUpdate'; },
@@ -36,7 +36,11 @@ test('application, Schedule, World, slot, type, conditions and deferred context 
     const { registry, access } = fixture();
     const changed = access('read-b', 'b');
     change(changed, registry);
-    assert.equal(createVisualEdgeGroups([access('read-a'), changed], registry).length, 2);
+    const links = [access('read-a'), changed], original = structuredClone(links);
+    const groups = createVisualEdgeGroups(links, registry);
+    assert.equal(groups.length, 1);
+    assert.deepEqual(groups[0].forwardIds, ['read-a', 'read-b']);
+    assert.deepEqual(links, original);
   }
 });
 
@@ -73,12 +77,69 @@ test('the same concrete type in Component and Resource storage keeps separate di
   assert.deepEqual(groups.flatMap(group => group.forwardIds).sort(), ['component-read', 'resource-write']);
 });
 
-test('multiple parameter slots do not pair greedily with one reverse access', () => {
+test('multiple slots with the same complete context form one bidirectional summary', () => {
   const { registry, access } = fixture();
   const first = access('a-read'), second = access('b-read');
   second.parameterAccesses[0].parameter = '2';
   const mutable = access('c-mutable', 'a', { from: 'a', to: 'data', displayTo: 'data', kind: 'write', factKind: 'mutable_access' });
-  assert.equal(createVisualEdgeGroups([first, second, mutable], registry).length, 3);
+  const groups = createVisualEdgeGroups([first, second, mutable], registry);
+  assert.equal(groups.length, 1);
+  assert.deepEqual(groups[0].forwardIds, ['a-read', 'b-read']);
+  assert.deepEqual(groups[0].backwardIds, ['c-mutable']);
+});
+
+test('bidirectional summaries require the complete context sets from every member to match', () => {
+  for (const change of [
+    (link, registry) => { registry.b.registrations[0].application = 'RenderApp'; },
+    (link, registry) => { registry.b.registrations[0].schedule = 'PostUpdate'; },
+    (link, registry) => { registry.b.worldAccessScope = 'render'; },
+    (link, registry) => { registry.b.runConditions = ['enabled']; },
+    link => { link.parameterAccesses[0].scope = 'main'; },
+    link => { link.parameterAccesses[0].storage = 'Component'; },
+    link => { link.parameterAccesses[0].typeInstanceId = 'other-instance'; },
+    link => { link.parameterAccesses[0].callableId = 'other-callable'; },
+    link => { link.parameterAccesses[0].directRoot = false; },
+    link => { link.parameterAccesses[0].worldId = 'other-world'; },
+    link => { link.parameterAccesses[0].conditions = [{ expression: 'enabled' }]; },
+    link => { link.parameterAccesses[0].deferred = true; },
+    link => { link.world = 'other-world'; },
+    link => { link.conditions = [{ expression: 'enabled', guardKind: 'condition' }]; },
+    link => { link.deferred = true; },
+    link => { link.sourceEntries.push({ path: 'src/system.rs', line: 4, guardKind: 'if', expression: 'enabled' }); },
+  ]) {
+    const { registry, access } = fixture();
+    const changed = access('b-read', 'b');
+    change(changed, registry);
+    const mutable = access('c-mutable', 'a', { from: 'a', to: 'data', displayTo: 'data', kind: 'mutable_access' });
+    const groups = createVisualEdgeGroups([access('a-read'), changed, mutable], registry);
+    assert.equal(groups.length, 2);
+    assert.ok(groups.every(group => group.backwardIds.length === 0));
+    assert.deepEqual(groups.flatMap(group => group.forwardIds).sort(), ['a-read', 'b-read', 'c-mutable']);
+  }
+});
+
+test('all parameter proofs are compared as a set independently of canonical partition and input order', () => {
+  const { registry, access } = fixture();
+  const first = access('a-read'), second = access('b-read');
+  second.parameterAccesses[0].scope = 'main';
+  const mutable = access('c-mutable', 'a', { from: 'a', to: 'data', displayTo: 'data', kind: 'mutable_access',
+    parameterAccesses: [...first.parameterAccesses, ...second.parameterAccesses].map(proof => ({ ...proof, parameter: 'other-slot' })) });
+  const links = [first, second, mutable], groups = createVisualEdgeGroups(links, registry);
+  assert.equal(groups.length, 1);
+  assert.deepEqual(groups[0].forwardIds, ['a-read', 'b-read']);
+  assert.deepEqual(groups[0].backwardIds, ['c-mutable']);
+  assert.deepEqual(createVisualEdgeGroups([...links].reverse(), registry), groups);
+  mutable.parameterAccesses.reverse();
+  assert.deepEqual(createVisualEdgeGroups(links, registry), groups);
+});
+
+test('a body access among parameter members prevents a bidirectional parameter claim', () => {
+  const { registry, access } = fixture();
+  const links = [access('a-read'), access('b-body', 'a', { evidence: 'body', parameterAccesses: undefined }),
+    access('c-mutable', 'a', { from: 'a', to: 'data', displayTo: 'data', kind: 'mutable_access' })];
+  const groups = createVisualEdgeGroups(links, registry);
+  assert.equal(groups.length, 2);
+  assert.ok(groups.every(group => group.backwardIds.length === 0));
 });
 
 test('same-direction accesses and display self loops never acquire an invented reverse direction', () => {
@@ -91,16 +152,23 @@ test('same-direction accesses and display self loops never acquire an invented r
   assert.equal(createVisualEdgeGroups([read, sameDirection], registry).length, 2);
 });
 
-test('body facts and non-access semantics retain independent display edges', () => {
+test('body and operation facts share only their directed endpoint and semantic summary', () => {
   const { registry, access } = fixture();
   const links = [access('read-a', 'a', { evidence: 'body', parameterAccesses: undefined }),
     access('read-b', 'a', { evidence: 'body', parameterAccesses: undefined }),
-    { id: 'insert-a', from: 'a', to: 'data', kind: 'write', factKind: 'insert' },
-    { id: 'insert-b', from: 'a', to: 'data', kind: 'write', factKind: 'insert' }];
+    { id: 'insert-a', from: 'a', to: 'data', kind: 'write', factKind: 'insert',
+      bodyOperations: [{ operationId: 'operation-a', registeredOwner: 'a', entity: 'entity-a', deferred: true, conditions: ['branch-a'] }] },
+    { id: 'insert-b', from: 'b', displayFrom: 'a', to: 'data', kind: 'write', factKind: 'insert', worldId: 'other-world',
+      bodyOperations: [{ operationId: 'operation-b', registeredOwner: 'b', entity: 'entity-b', deferred: false, conditions: ['branch-b'] }] }];
+  const original = structuredClone(links);
   const groups = createVisualEdgeGroups(links, registry);
-  assert.equal(groups.length, 4);
+  assert.equal(groups.length, 2);
   assert.deepEqual(groups.flatMap(group => [...group.forwardIds, ...group.backwardIds]).sort(), links.map(link => link.id).sort());
-  assert.deepEqual(groups.map(group => group.edgeSemantic), ['insert', 'insert', 'read', 'read']);
+  assert.deepEqual(groups.map(group => group.edgeSemantic), ['insert', 'read']);
+  assert.deepEqual(groups[0].forwardIds, ['insert-a', 'insert-b']);
+  assert.ok(groups.every(group => group.backwardIds.length === 0));
+  assert.deepEqual(links, original);
+  assert.deepEqual(createVisualEdgeGroups([...links].reverse(), registry), groups);
 });
 
 test('assignments are filtered explicitly and invalid or duplicate canonical identities fail', () => {

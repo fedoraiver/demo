@@ -3,7 +3,6 @@ import test from 'node:test';
 import { renderGraphView, mermaidConfiguration, entityComponentColumns, dataLayoutColumns, dataObserverLayoutPairs, observerBranchLayoutPairs } from '../src/architecture-renderer.mjs';
 import { NODE_STYLES, EDGE_STYLES, EXTERNAL_REFERENCE_STYLE } from '../src/architecture-style.mjs';
 import { INFRASTRUCTURE_FEATURES } from '../src/architecture-infrastructure.mjs';
-import { VIEWER_BACKGROUND } from '../src/viewer-theme.mjs';
 import { mermaidRenderIdentity } from '../src/mermaid-cache.mjs';
 
 function isolatedView(record, { role = 'internal', aspect = 'data' } = {}) {
@@ -28,13 +27,14 @@ test('Component views rank every native relation System to Component to Entity w
   assert.deepEqual(view.links, graph.links);
   assert.deepEqual(view.visualEdgeGroups.map(({ from, to, nativeReverse }) => [from, to, nativeReverse]), [['component', 'entity', undefined], ['component', 'system', true], ['system', 'component', undefined]]);
   assert.deepEqual(view.visualEdgeGroups.map(group => group.displayLabel), ['引用 · 所属实体', '读访问', '写访问']);
-  assert.match(view.mermaid, /n2 e1@---\|"读访问"\| n1/);
-  assert.match(view.mermaid, /n2 e2@-->\|"写访问"\| n1/);
-  assert.match(view.mermaid, /n1 e0@-->\|"引用 · 所属实体"\| n0/);
+  assert.match(view.mermaid, /n2 e1@--- n1/);
+  assert.match(view.mermaid, /n2 e2@--> n1/);
+  assert.match(view.mermaid, /n1 e0@--> n0/);
+  assert.doesNotMatch(view.mermaid, /e\d+@[^\n]*\|/);
   const config = JSON.parse(/^---\n([\s\S]*?)\n---/.exec(view.mermaid)[1]).config;
   assert.match(config.themeCSS, /#component-test-e1\{marker-start:url\(#component-test_flowchart-v2-pointStart\)!important\}/);
   assert.match(config.themeCSS, /fill:context-stroke!important;stroke:context-stroke!important/);
-  assert.ok(config.themeCSS.includes(`.edgeLabel rect { opacity:1!important; fill:${VIEWER_BACKGROUND}!important; }`));
+  assert.ok(!config.themeCSS.includes('.edgeLabel rect'));
   const enriched = renderGraphView({ id: 'component-details', aspect: 'component', componentNodeId: 'component', componentDetails: { name: 'Component<f32>', description: 'all owners', display_summary: '完整类型用途' }, label: 'Component', summary: 'relations' }, graph, registry, []);
   assert.equal(enriched.nodes.find(node => node.id === 'component').nameLabel, 'Component<f32>');
   assert.deepEqual(enriched.nodes.find(node => node.id === 'component').contextLabel, []);
