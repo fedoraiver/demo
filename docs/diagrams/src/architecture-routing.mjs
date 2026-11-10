@@ -352,9 +352,13 @@ export function inspectViewRoutes(view, options = {}) {
     const axis = pathAxis(element, options.axisTolerance ?? ROUTING_GEOMETRY.axisTolerance), curveCommands = /[CQAST]/i.test(element.attrs.d);
     const source = obstacles.find(obstacle => obstacle.id === endpoints[0] && !obstacle.kind.endsWith('-header'));
     const target = obstacles.find(obstacle => obstacle.id === endpoints[1] && !obstacle.kind.endsWith('-header'));
-    const nested = source?.members.includes(target?.id) || target?.members.includes(source?.id);
+    const containsEndpoint = (outer, inner) => outer && inner && outer !== inner
+      && outer.kind.endsWith('-container') && outer.members.includes(inner.id);
+    const nested = endpoints[0] === endpoints[1] || containsEndpoint(source, target) || containsEndpoint(target, source);
     const endpointGap = source && target && !nested ? boundsSeparation(source.bounds, target.bounds) : null;
-    const visibleShaft = visibleShaftLength(path, [arrow, startArrow, source, target,
+    const endpointBlockers = [source, target].filter(obstacle => obstacle
+      && !containsEndpoint(obstacle, obstacle === source ? target : source));
+    const visibleShaft = visibleShaftLength(path, [arrow, startArrow, ...endpointBlockers,
       ...obstacles.filter(obstacle => obstacle.kind.endsWith('-header'))].filter(Boolean));
     const clearanceIssues = [];
     if (endpointGap !== null && endpointGap < ROUTING_CLEARANCE.endpointGap - epsilon) clearanceIssues.push('endpoint-gap');

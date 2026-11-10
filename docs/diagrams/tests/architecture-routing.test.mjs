@@ -28,6 +28,46 @@ test('native route clearance rejects close endpoints and shafts hidden by their 
   assert.deepEqual(inspectViewRoutes(view(endpoint('a') + endpoint('b') + edge('M20 50H180'), ['a', 'b'])).edges[0].clearanceIssues, []);
 });
 
+test('self loops skip endpoint separation while retaining visible shaft and native marker checks', () => {
+  const loop = view(marker + card('a', '<rect PART x="0" y="0" width="100" height="100"/>')
+    + edge('M100 50C180 50 180 -40 50 -40V-4', 'edge', 'marker-end="url(#arrow)"'), ['a'], [{ id: 'edge', mermaidId: 'e0', from: 'a', to: 'a' }]);
+  const route = inspectViewRoutes(loop).edges[0];
+  assert.equal(route.endpointGap, null);
+  assert.ok(route.visibleShaft >= 24);
+  assert.deepEqual(route.clearanceIssues, []);
+  assert.deepEqual(route.arrowIssues, []);
+  assert.deepEqual(route.collisions, []);
+  const short = view(marker + card('a', '<rect PART x="0" y="0" width="4" height="4"/>')
+    + edge('M4 2C10 2 10 -6 2 -6V-4', 'edge', 'marker-end="url(#arrow)"'), ['a'], loop.links);
+  const shortRoute = inspectViewRoutes(short).edges[0];
+  assert.equal(shortRoute.endpointGap, null);
+  assert.ok(shortRoute.visibleShaft < 24);
+  assert.deepEqual(shortRoute.clearanceIssues, ['visible-shaft']);
+  assert.deepEqual(shortRoute.arrowIssues, []);
+});
+
+test('nested endpoint bodies leave visible shaft space while child cards, titles and arrows remain blockers', () => {
+  const entity = card('entity', '<rect PART x="0" y="0" width="100" height="100"/>', 'data-presentation="entity-container"');
+  const child = card('child', '<rect PART x="40" y="40" width="20" height="20"/>');
+  const fixture = view(marker + entity + child + edge('M60 50H105H104', 'edge', 'marker-end="url(#arrow)"'), ['entity', 'child'],
+    [{ id: 'edge', mermaidId: 'e0', from: 'child', to: 'entity' }]);
+  fixture.nodes[0].presentation = 'entity-container';
+  fixture.entityGroups = [{ entity: 'entity', components: ['child'], headerBounds: { x: 5, y: 5, width: 30, height: 15 } }];
+  const route = inspectViewRoutes(fixture).edges[0];
+  assert.equal(route.endpointGap, null);
+  assert.equal(route.visibleShaft, 40);
+  assert.deepEqual(route.clearanceIssues, []);
+  assert.deepEqual(route.arrowIssues, []);
+  assert.deepEqual(route.collisions, []);
+  fixture.entityGroups[0].headerBounds = { x: 65, y: 45, width: 25, height: 10 };
+  assert.deepEqual(inspectViewRoutes(fixture).edges[0].clearanceIssues, ['visible-shaft']);
+  fixture.entityGroups[0].headerBounds = { x: 5, y: 5, width: 30, height: 15 };
+  fixture.svg = fixture.svg.replace('</svg>', card('other-child', '<rect PART x="80" y="45" width="5" height="10"/>') + '</svg>');
+  fixture.nodes.push({ id: 'other-child' });
+  fixture.entityGroups[0].components.push('other-child');
+  assert.deepEqual(inspectViewRoutes(fixture).collisions, [{ edge: 'edge', id: 'other-child', kind: 'node' }]);
+});
+
 test('bound edge labels cannot replace the real path when they precede it in native SVG order', () => {
   const boundLabel = '<g class="edgeLabel edge-label" data-link-id="edge"><g class="label" data-mermaid-native-id="e0"><rect class="background" x="80" y="5" width="20" height="10"/><text>Contract</text></g></g>';
   const content = boundLabel + endpoint('a') + endpoint('b');
