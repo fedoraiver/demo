@@ -1,3 +1,5 @@
+# Linux CI 脚本在所有检出中使用 LF。
+*.sh text eol=lf
 # 音频来源证据、配方和清单按原字节保存，避免自动换行破坏记录中的 SHA-256。
 assets/audio/** -text whitespace=cr-at-eol
 # 第三方许可证副本保留原有制表符和行尾空白，不对来源证据做格式清理。
@@ -9,3 +11,7 @@ docs/diagrams/tests/fixtures/native-postupdate.dot -text diff whitespace=cr-at-e
 docs/diagrams/tests/fixtures/native-render.dot -text diff whitespace=cr-at-eol,-blank-at-eol
 # 分发运行库的完整许可证保留来源格式。
 docs/diagrams/licenses/SCHEDULE-RUNTIME-LICENSES.txt -text -whitespace
+
+# 当前音频和字体资源按二进制处理，避免文本差异比较和文本合并。
+*.ogg binary
+*.ttf binary

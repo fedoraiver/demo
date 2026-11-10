@@ -1,17 +1,24 @@
 {
   "rust-analyzer.files.exclude": ["tmp"],
   "files.watcherExclude": {
-    "**/tmp/**": true
+    "tmp/**": true,
+    "target/**": true,
+    "logs/**": true,
+    "docs/diagrams/node_modules/**": true,
+    "docs/diagrams/generated/**": true
+  },
+  "search.exclude": {
+    "tmp/**": true,
+    "target/**": true,
+    "logs/**": true,
+    "docs/diagrams/node_modules/**": true,
+    "docs/diagrams/generated/**": true
   },
   "liveServer.settings.ignoreFiles": [
     ".vscode/**",
-    "**/*.scss",
-    "**/*.sass",
-    "**/*.ts",
-    "node_modules/**",
-    "venv/**",
-    ".venv/**",
-    "**/target/**",
-    "**/tmp/**"
+    "target/**",
+    "tmp/**",
+    "logs/**",
+    "docs/diagrams/node_modules/**"
   ]
 }

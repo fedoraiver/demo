@@ -8,7 +8,7 @@
 
 发布图表示原生 Linux 目标在导出时的注册结构，不代表 Windows、macOS、其他设备能力或随后动态注册的 Schedule。源码提交、目标及构建 ID 保存在启动数据和清单中，用于校验同轮资源。部署 job 只在同轮完整检查及静态包校验成功后运行，使用 Pages 写权限和 OIDC；构建 job 只有仓库读取权限。
 
-构建采用免费标准 `ubuntu-24.04` runner、Node 24、仓库固定 nightly 和锁定依赖。Xvfb 提供虚拟显示，Mesa Lavapipe 提供软件 Vulkan；专用导出仍完整装配插件，但不执行 Startup、游戏循环或渲染线程。无音频设备时的实际初始化结果记录在会话日志中，不通过删插件或测试夹具替代真实导出。
+构建采用免费标准 `ubuntu-latest` runner、Node 24、仓库固定 nightly 和锁定依赖。自动触发按工作流中的路径过滤，纯 Markdown 文档修改不构建或发布；手动运行不受路径过滤限制。Xvfb 提供虚拟显示，Mesa Lavapipe 提供软件 Vulkan；专用导出仍完整装配插件，但不执行 Startup、游戏循环或渲染线程。无音频设备时的实际初始化结果记录在会话日志中，不通过删插件或测试夹具替代真实导出。
 
 Puppeteer 浏览器来自图包锁定依赖，工作流显式设置 `MERMAID_CHROMIUM_PATH` 并启动检查。`package.json` 的 `allowScripts` 只批准锁定版本的 esbuild 与 Puppeteer 安装脚本，版本升级时同步复核；CI 显式启用 Chrome 下载，并跳过 headless-shell 和 Firefox，覆盖本地默认不下载浏览器的配置。`npm ci --foreground-scripts` 保留安装日志，随后 `npm exec --yes=false -- puppeteer browsers install chrome` 使用已安装的锁定 CLI 明确完成下载；下载失败直接停止，不以 postinstall 的退出结果推定浏览器存在。中文字体安装后，实际字体文件 SHA-256 和 fontconfig 版本生成 `MERMAID_RENDER_CONTEXT`；该值和浏览器字节身份共同参与图形缓存指纹。原生 Node 回归必须使用该浏览器，不能把缺少浏览器导致的跳过当作通过。
 
@@ -16,9 +16,11 @@ Rust 编译和对象绘图的初始并发均为 `2`，关闭开发／测试调�
 
 同一 PR／分支的新运行取消旧构建；Pages 部署单独串行，开始前再次核对 `master` 当前提交，旧构建只留审计、不覆盖新提交。构建记录进程峰值内存和每 `15` 秒磁盘样本。完整审计输出、编译事实及执行日志作为 Actions artifact 保存 `3` 天，静态 Pages artifact 同样保存 `3` 天。历史失败、中断或未知退出不能作为本轮成功依据。
 
+发布 job 使用同一已校验产物进行有界部署重试；部署成功后，独立的自动 HTTP 校验核对实际资源来源与完整性，并对传播延迟进行有界重试。校验失败则任务失败；可获得的证据写入 `tmp/ecs-architecture/deployment/verification.json`，并作为部署证据 artifact 保留供排查。此 HTTP 校验不是浏览器验收。发布 job 通过成功构建的输出获取 Pages 产物名称与发布证明的产物 ID。`Re-run failed jobs` 复用该构建的产物，不依赖发布 job 当前的重跑次数；产物超过保留期后需重新构建。新配置仅作用于使用该配置创建的运行，旧运行重跑仍沿用原提交的工作流。
+
 ## 本地执行与恢复
 
-完整发布流程在 Linux 原生环境执行。准备仓库工具链、PowerShell、Node、Bevy 编译依赖、虚拟显示、软件 Vulkan、中文字体及图包依赖；版本入口分别为 [rust-toolchain.toml](../../rust-toolchain.toml)、[Cargo.lock](../../Cargo.lock) 和 [package-lock.json](package-lock.json)。Linux 设备和浏览器环境可对照工作流准备，不为维护入口新建另一套 npm 环境。
+完整发布流程在 Linux 原生环境执行。准备仓库工具链、Bash、Python 3.11 以上版本、Node、Bevy 编译依赖、虚拟显示、软件 Vulkan、中文字体及图包依赖；版本入口分别为 [rust-toolchain.toml](../../rust-toolchain.toml)、[Cargo.lock](../../Cargo.lock) 和 [package-lock.json](package-lock.json)。Linux 设备和浏览器环境可对照工作流准备，不为维护入口新建另一套 npm 环境。
 
 在目标 checkout 内运行以下统一命令；跨目录调用时显式传入 `--workspace`。执行前核对工作树、分支和已有修改，生成不会自动暂存或提交。
 

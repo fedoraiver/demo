@@ -20,16 +20,23 @@ runs:
           libxkbcommon-x11-0 libwayland-dev libxkbcommon-dev
 
     - name: Install repository toolchain
-      shell: pwsh
+      shell: bash
       run: |
-        $toolchainJson = python -c "import json, pathlib, tomllib; print(json.dumps(tomllib.loads(pathlib.Path('rust-toolchain.toml').read_text())['toolchain']))"
-        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-        $toolchain = $toolchainJson | ConvertFrom-Json
-        rustup toolchain install $toolchain.channel --profile $toolchain.profile --component ($toolchain.components -join ',')
-        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        python3 - <<'PY'
+        import pathlib
+        import subprocess
+        import tomllib
+
+        toolchain = tomllib.loads(pathlib.Path('rust-toolchain.toml').read_text())['toolchain']
+        result = subprocess.run([
+            'rustup', 'toolchain', 'install', toolchain['channel'],
+            '--profile', toolchain['profile'],
+            '--component', ','.join(toolchain['components']),
+        ], check=False)
+        raise SystemExit(result.returncode)
+        PY
         rustc -vV
-        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-        Get-PSDrive -PSProvider FileSystem | Select-Object Name, Used, Free | Format-Table
+        df -h .
 
     # 只缓存下载数据；编译产物和分析证据由当前检出重新生成。
     - name: Cache Cargo downloads
@@ -44,16 +51,15 @@ runs:
 
     - name: Prepare locked dependencies
       if: ${{ inputs.prepare-build == 'true' }}
-      shell: pwsh
+      shell: bash
       run: |
         # 离线 metadata 会读取完整依赖图，预取时不按目标平台裁剪。
-        $manifests = @(
-          'Cargo.toml',
-          'tools/rustc-analysis/Cargo.toml',
-          'tools/check-entity-names/Cargo.toml',
+        manifests=(
+          'Cargo.toml'
+          'tools/rustc-analysis/Cargo.toml'
+          'tools/check-entity-names/Cargo.toml'
           'tools/check-named-fields/Cargo.toml'
         )
-        foreach ($manifest in $manifests) {
-          cargo fetch --locked --manifest-path $manifest
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-        }
+        for manifest in "${manifests[@]}"; do
+          cargo fetch --locked --manifest-path "$manifest"
+        done

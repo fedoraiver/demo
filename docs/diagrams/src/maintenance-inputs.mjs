@@ -31,7 +31,7 @@ export function fileSnapshot(workspace, names, { optional = true } = {}) {
 
 export function relevantInputNames(workspace) {
   const names = ['Cargo.toml', 'Cargo.lock', 'src', 'docs/diagrams/package.json', 'docs/diagrams/package-lock.json',
-    'docs/diagrams/src', 'docs/diagrams/tests', 'tools/rustc-analysis', 'scripts/rustc-analysis.ps1'];
+    'docs/diagrams/src', 'docs/diagrams/tests', 'tools/rustc-analysis', '.github/scripts/rustc-analysis.sh'];
   for (const name of ['build.rs', '.cargo/config.toml', 'rust-toolchain', 'rust-toolchain.toml']) if (fs.existsSync(path.join(workspace, name))) names.push(name);
   const root = path.join(workspace, 'docs/diagrams');
   if (fs.existsSync(root)) for (const name of fs.readdirSync(root)) if (name.endsWith('.mjs')) names.push(`docs/diagrams/${name}`);

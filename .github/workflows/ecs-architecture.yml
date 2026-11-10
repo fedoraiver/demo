@@ -6,33 +6,47 @@ on:
     paths:
       - 'src/**'
       - 'tools/rustc-analysis/**'
-      - 'scripts/rustc-analysis.ps1'
+      - '.github/scripts/**'
+      - 'assets/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
       - 'build.rs'
       - 'rust-toolchain.toml'
       - '.cargo/**'
+      - '.gitattributes'
       - 'docs/diagrams/**'
       - '.github/workflows/ecs-architecture.yml'
       - '.github/actions/setup-rust-checks/**'
+      - 'tools/check-*/Cargo.toml'
+      - 'tools/check-*/Cargo.lock'
+      - '!**/*.md'
   push:
     branches: [master]
     paths:
       - 'src/**'
       - 'tools/rustc-analysis/**'
-      - 'scripts/rustc-analysis.ps1'
+      - '.github/scripts/**'
+      - 'assets/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
       - 'build.rs'
       - 'rust-toolchain.toml'
       - '.cargo/**'
+      - '.gitattributes'
       - 'docs/diagrams/**'
       - '.github/workflows/ecs-architecture.yml'
       - '.github/actions/setup-rust-checks/**'
+      - 'tools/check-*/Cargo.toml'
+      - 'tools/check-*/Cargo.lock'
+      - '!**/*.md'
   workflow_dispatch:
 
 permissions:
   contents: read
+
+defaults:
+  run:
+    shell: bash
 
 concurrency:
   group: ecs-architecture-${{ github.event.pull_request.number || github.ref }}
@@ -41,9 +55,14 @@ concurrency:
 jobs:
   build:
     name: Linux architecture and static package
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 240
+    # 单独重跑发布时，GitHub 保留成功构建的输出，继续使用原产物。
+    outputs:
+      pages_artifact_name: ${{ env.PAGES_ARTIFACT_NAME }}
+      publication_proof_artifact_id: ${{ steps.publication_proof.outputs.artifact-id }}
     env:
+      PAGES_ARTIFACT_NAME: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
       CARGO_TERM_COLOR: always
       CARGO_BUILD_JOBS: '2'
       CARGO_PROFILE_DEV_DEBUG: '0'
@@ -122,7 +141,8 @@ jobs:
           ) > tmp/ecs-architecture/resource-disk.log &
           monitor_pid=$!
           trap 'kill "$monitor_pid" 2>/dev/null || true; wait "$monitor_pid" 2>/dev/null || true' EXIT
-          /usr/bin/time -v -o tmp/ecs-architecture/resource-time.txt xvfb-run -a npm run maintain --prefix docs/diagrams -- run > tmp/ecs-architecture/maintenance-result.stdout.log
+          # 最终状态已保存在本轮 state.json，避免重复保存完整状态。
+          /usr/bin/time -v -o tmp/ecs-architecture/resource-time.txt xvfb-run -a npm run maintain --prefix docs/diagrams -- run > /dev/null
 
       - name: Package and check static Pages files
         run: |
@@ -146,11 +166,14 @@ jobs:
         run: |
           mkdir -p tmp/ecs-architecture
           npm run maintain --prefix docs/diagrams -- report --format markdown > tmp/ecs-architecture/maintenance-summary.md
-          cat tmp/ecs-architecture/maintenance-summary.md >> "$GITHUB_STEP_SUMMARY"
-          printf '\n### Remaining resources\n\n```text\n' >> "$GITHUB_STEP_SUMMARY"
-          df -h . >> "$GITHUB_STEP_SUMMARY"
-          free -h >> "$GITHUB_STEP_SUMMARY"
-          printf '```\n' >> "$GITHUB_STEP_SUMMARY"
+          cat tmp/ecs-architecture/maintenance-summary.md | tee -a "$GITHUB_STEP_SUMMARY"
+          {
+            printf '\n### Build resource usage and remaining resources\n\n```text\n'
+            if [[ -f tmp/ecs-architecture/resource-time.txt ]]; then cat tmp/ecs-architecture/resource-time.txt; fi
+            df -h .
+            free -h
+            printf '```\n'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Preserve execution logs
         if: ${{ always() }}
@@ -167,7 +190,6 @@ jobs:
             tmp/ecs-architecture/render-fonts.txt
             tmp/ecs-architecture/resource-time.txt
             tmp/ecs-architecture/resource-disk.log
-            tmp/ecs-architecture/maintenance-result.stdout.log
             tmp/ecs-architecture/routing/*-failed.json
             tmp/ecs-architecture/routing/*-failed.svg
             tmp/ra/r/
@@ -192,10 +214,12 @@ jobs:
         if: ${{ github.ref == 'refs/heads/master' && github.event_name != 'pull_request' }}
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
+          name: ${{ env.PAGES_ARTIFACT_NAME }}
           path: tmp/ecs-architecture/pages
           retention-days: 3
 
       - name: Preserve expected publication proof
+        id: publication_proof
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: ecs-publication-proof-${{ github.run_id }}-${{ github.run_attempt }}
@@ -207,10 +231,11 @@ jobs:
     name: Publish architecture
     if: ${{ github.ref == 'refs/heads/master' && github.event_name != 'pull_request' }}
     needs: build
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
     permissions:
       contents: read
+      actions: read
       pages: write
       id-token: write
     concurrency:
@@ -249,15 +274,105 @@ jobs:
         if: ${{ steps.current.outputs.publish == 'true' }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: ecs-publication-proof-${{ github.run_id }}-${{ github.run_attempt }}
+          artifact-ids: ${{ needs.build.outputs.publication_proof_artifact_id }}
+          github-token: ${{ github.token }}
+          run-id: ${{ github.run_id }}
           path: tmp/ecs-architecture/publication-proof
       - name: Configure Pages
         if: ${{ steps.current.outputs.publish == 'true' }}
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
-      - name: Deploy checked static package
+      # 同一任务内复用已校验产物，首次失败后最多重试五次。
+      - name: Deploy checked static package (attempt 1 of 6)
+        if: ${{ steps.current.outputs.publish == 'true' }}
+        id: deployment_1
+        continue-on-error: true
+        timeout-minutes: 5
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+        with:
+          artifact_name: ${{ needs.build.outputs.pages_artifact_name }}
+          timeout: '300000'
+      - name: Wait before Pages retry 1
+        if: ${{ !cancelled() && steps.current.outputs.publish == 'true' && steps.deployment_1.outcome == 'failure' }}
+        id: retry_1
+        run: sleep 60
+      - name: Deploy checked static package (attempt 2 of 6)
+        if: ${{ !cancelled() && steps.current.outputs.publish == 'true' && steps.retry_1.outcome == 'success' }}
+        id: deployment_2
+        continue-on-error: true
+        timeout-minutes: 5
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+        with:
+          artifact_name: ${{ needs.build.outputs.pages_artifact_name }}
+          timeout: '300000'
+      - name: Wait before Pages retry 2
+        if: ${{ !cancelled() && steps.current.outputs.publish == 'true' && steps.deployment_2.outcome == 'failure' }}
+        id: retry_2
+        run: sleep 60
+      - name: Deploy checked static package (attempt 3 of 6)
+        if: ${{ !cancelled() && steps.current.outputs.publish == 'true' && steps.retry_2.outcome == 'success' }}
+        id: deployment_3
+        continue-on-error: true
+        timeout-minutes: 5
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+        with:
+          artifact_name: ${{ needs.build.outputs.pages_artifact_name }}
+          timeout: '300000'
+      - name: Wait before Pages retry 3
+        if: ${{ !cancelled() && steps.current.outputs.publish == 'true' && steps.deployment_3.outcome == 'failure' }}
+        id: retry_3
+        run: sleep 60
+      - name: Deploy checked static package (attempt 4 of 6)
+        if: ${{ !cancelled() && steps.current.outputs.publish == 'true' && steps.retry_3.outcome == 'success' }}
+        id: deployment_4
+        continue-on-error: true
+        timeout-minutes: 5
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+        with:
+          artifact_name: ${{ needs.build.outputs.pages_artifact_name }}
+          timeout: '300000'
+      - name: Wait before Pages retry 4
+        if: ${{ !cancelled() && steps.current.outputs.publish == 'true' && steps.deployment_4.outcome == 'failure' }}
+        id: retry_4
+        run: sleep 60
+      - name: Deploy checked static package (attempt 5 of 6)
+        if: ${{ !cancelled() && steps.current.outputs.publish == 'true' && steps.retry_4.outcome == 'success' }}
+        id: deployment_5
+        continue-on-error: true
+        timeout-minutes: 5
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+        with:
+          artifact_name: ${{ needs.build.outputs.pages_artifact_name }}
+          timeout: '300000'
+      - name: Wait before Pages retry 5
+        if: ${{ !cancelled() && steps.current.outputs.publish == 'true' && steps.deployment_5.outcome == 'failure' }}
+        id: retry_5
+        run: sleep 60
+      - name: Deploy checked static package (attempt 6 of 6)
+        if: ${{ !cancelled() && steps.current.outputs.publish == 'true' && steps.retry_5.outcome == 'success' }}
+        id: deployment_6
+        timeout-minutes: 5
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+        with:
+          artifact_name: ${{ needs.build.outputs.pages_artifact_name }}
+          timeout: '300000'
+      - name: Select successful Pages deployment
         if: ${{ steps.current.outputs.publish == 'true' }}
         id: deployment
-        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+        env:
+          # 官方 action 在等待完成前就输出地址，失败尝试的地址不能作为发布成功依据。
+          PAGE_URL: >-
+            ${{ steps.deployment_1.outcome == 'success' && steps.deployment_1.outputs.page_url ||
+                steps.deployment_2.outcome == 'success' && steps.deployment_2.outputs.page_url ||
+                steps.deployment_3.outcome == 'success' && steps.deployment_3.outputs.page_url ||
+                steps.deployment_4.outcome == 'success' && steps.deployment_4.outputs.page_url ||
+                steps.deployment_5.outcome == 'success' && steps.deployment_5.outputs.page_url ||
+                steps.deployment_6.outcome == 'success' && steps.deployment_6.outputs.page_url || '' }}
+        run: |
+          if [ -z "$PAGE_URL" ]; then
+            echo '::error::No successful Pages deployment URL was returned.'
+            exit 1
+          fi
+          echo "page_url=$PAGE_URL" >> "$GITHUB_OUTPUT"
       - name: Verify deployed Pages over HTTP
         if: ${{ steps.current.outputs.publish == 'true' }}
         env:

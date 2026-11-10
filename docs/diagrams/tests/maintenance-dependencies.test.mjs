@@ -73,7 +73,7 @@ test('CI saves the compact Markdown report before appending the same bytes to th
   const step = workflow.slice(start, workflow.indexOf('      - name:', start + 1));
   assert.match(step, /^\s{8}if: \$\{\{ always\(\) \}\}\s*$/m);
   const save = step.indexOf('report --format markdown > tmp/ecs-architecture/maintenance-summary.md');
-  const append = step.indexOf('cat tmp/ecs-architecture/maintenance-summary.md >> "$GITHUB_STEP_SUMMARY"');
+  const append = step.indexOf('cat tmp/ecs-architecture/maintenance-summary.md | tee -a "$GITHUB_STEP_SUMMARY"');
   assert.ok(save >= 0 && append > save);
   const logStart = workflow.indexOf('      - name: Preserve execution logs');
   assert.ok(logStart >= 0);

@@ -3,12 +3,44 @@ name: Rust checks
 on:
   pull_request:
     branches: [master]
+    paths:
+      - 'src/**'
+      - 'assets/**'
+      - 'tools/**'
+      - '.github/scripts/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'build.rs'
+      - 'rust-toolchain.toml'
+      - '.cargo/**'
+      - '.gitattributes'
+      - '.github/workflows/rust-rules.yml'
+      - '.github/actions/setup-rust-checks/**'
+      - '!**/*.md'
   push:
     branches: [master]
+    paths:
+      - 'src/**'
+      - 'assets/**'
+      - 'tools/**'
+      - '.github/scripts/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'build.rs'
+      - 'rust-toolchain.toml'
+      - '.cargo/**'
+      - '.gitattributes'
+      - '.github/workflows/rust-rules.yml'
+      - '.github/actions/setup-rust-checks/**'
+      - '!**/*.md'
   workflow_dispatch:
 
 permissions:
   contents: read
+
+defaults:
+  run:
+    shell: bash
 
 concurrency:
   group: rust-rules-${{ github.event.pull_request.number || github.ref }}
@@ -19,9 +51,6 @@ jobs:
     name: fmt
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    defaults:
-      run:
-        shell: pwsh
     steps:
       - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -35,16 +64,15 @@ jobs:
 
       - name: Check Rust formatting
         run: |
-          $manifests = @(
-            'Cargo.toml',
-            'tools/rustc-analysis/Cargo.toml',
-            'tools/check-entity-names/Cargo.toml',
+          manifests=(
+            'Cargo.toml'
+            'tools/rustc-analysis/Cargo.toml'
+            'tools/check-entity-names/Cargo.toml'
             'tools/check-named-fields/Cargo.toml'
           )
-          foreach ($manifest in $manifests) {
-            cargo fmt --manifest-path $manifest --all -- --check
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          }
+          for manifest in "${manifests[@]}"; do
+            cargo fmt --manifest-path "$manifest" --all -- --check
+          done
 
   quality:
     name: rust (${{ matrix.configuration }})
@@ -55,9 +83,6 @@ jobs:
       fail-fast: false
       matrix:
         configuration: [default, debugdump]
-    defaults:
-      run:
-        shell: pwsh
     env:
       CHECK_CONFIGURATION: ${{ matrix.configuration }}
       CARGO_TERM_COLOR: always
@@ -76,30 +101,27 @@ jobs:
       - name: Check all Cargo targets
         id: check
         run: |
-          $cargoArgs = @('check', '--locked', '--all-targets')
-          if ($env:CHECK_CONFIGURATION -eq 'debugdump') { $cargoArgs += @('--features', 'debugdump') }
-          cargo @cargoArgs
-          exit $LASTEXITCODE
+          cargo_args=(check --locked --all-targets)
+          if [[ "$CHECK_CONFIGURATION" == debugdump ]]; then cargo_args+=(--features debugdump); fi
+          cargo "${cargo_args[@]}"
 
       - name: Run Clippy with pedantic warnings
         id: clippy
         if: ${{ !cancelled() && steps.check.outcome == 'success' }}
         run: |
-          $cargoArgs = @('clippy', '--locked', '--all-targets')
-          if ($env:CHECK_CONFIGURATION -eq 'debugdump') { $cargoArgs += @('--features', 'debugdump') }
-          $cargoArgs += @('--', '--no-deps', '-W', 'clippy::pedantic')
-          cargo @cargoArgs
-          exit $LASTEXITCODE
+          cargo_args=(clippy --locked --all-targets)
+          if [[ "$CHECK_CONFIGURATION" == debugdump ]]; then cargo_args+=(--features debugdump); fi
+          cargo_args+=(-- --no-deps -W clippy::pedantic)
+          cargo "${cargo_args[@]}"
 
       - name: Run headless tests
         id: test
         if: ${{ !cancelled() && steps.check.outcome == 'success' }}
         run: |
-          $cargoArgs = @('test', '--locked')
-          if ($env:CHECK_CONFIGURATION -eq 'debugdump') { $cargoArgs += @('--features', 'debugdump') }
-          $cargoArgs += @('--', '--test-threads=1')
-          cargo @cargoArgs
-          exit $LASTEXITCODE
+          cargo_args=(test --locked)
+          if [[ "$CHECK_CONFIGURATION" == debugdump ]]; then cargo_args+=(--features debugdump); fi
+          cargo_args+=(-- --test-threads=1)
+          cargo "${cargo_args[@]}"
 
       - name: Summarize checks and disk space
         if: ${{ always() }}
@@ -108,21 +130,15 @@ jobs:
           CLIPPY_OUTCOME: ${{ steps.clippy.outcome }}
           TEST_OUTCOME: ${{ steps.test.outcome }}
         run: |
-          $summary = @(
-            "## Rust ($env:CHECK_CONFIGURATION)",
-            "Compilation: $env:CHECK_OUTCOME",
-            "Clippy (default levels and pedantic warnings): $env:CLIPPY_OUTCOME",
-            "Headless tests: $env:TEST_OUTCOME",
-            '',
-            '### Remaining disk space',
-            '| Drive | Free GiB |',
-            '| --- | ---: |'
-          )
-          foreach ($drive in Get-PSDrive -PSProvider FileSystem) {
-            $summary += ('| {0} | {1:N2} |' -f $drive.Name, ($drive.Free / 1GB))
-          }
-          $summary | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
-          Get-PSDrive -PSProvider FileSystem | Select-Object Name, Used, Free | Format-Table
+          {
+            printf '## Rust (%s)\n\n' "$CHECK_CONFIGURATION"
+            printf 'Compilation: %s\n' "$CHECK_OUTCOME"
+            printf 'Clippy (default levels and pedantic warnings): %s\n' "$CLIPPY_OUTCOME"
+            printf 'Headless tests: %s\n' "$TEST_OUTCOME"
+            printf '\n### Remaining disk space\n\n```text\n'
+            df -h .
+            printf '```\n'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
   rules:
     name: ${{ matrix.rule }}
@@ -133,12 +149,11 @@ jobs:
       fail-fast: false
       matrix:
         rule: [entity-names, named-fields]
-    defaults:
-      run:
-        shell: pwsh
     env:
       ANALYSIS_RULE: ${{ matrix.rule }}
       CARGO_TERM_COLOR: always
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
 
     steps:
       - name: Check out source
@@ -153,15 +168,13 @@ jobs:
       - name: Verify regressions and default configuration
         id: default
         run: |
-          pwsh -NoProfile -File "./scripts/check-$env:ANALYSIS_RULE.ps1"
-          exit $LASTEXITCODE
+          bash .github/scripts/rustc-analysis.sh verify --rule "$ANALYSIS_RULE" --workspace "$GITHUB_WORKSPACE"
 
       - name: Check debugdump configuration
         id: debugdump
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: |
-          pwsh -NoProfile -File ./scripts/rustc-analysis.ps1 check --rule $env:ANALYSIS_RULE --workspace $env:GITHUB_WORKSPACE --features debugdump
-          exit $LASTEXITCODE
+          bash .github/scripts/rustc-analysis.sh check --rule "$ANALYSIS_RULE" --workspace "$GITHUB_WORKSPACE" --features debugdump
 
       - name: Summarize checks and disk space
         if: ${{ always() }}
@@ -169,17 +182,11 @@ jobs:
           DEFAULT_OUTCOME: ${{ steps.default.outcome }}
           DEBUGDUMP_OUTCOME: ${{ steps.debugdump.outcome }}
         run: |
-          $summary = @(
-            "## $env:ANALYSIS_RULE",
-            "Default configuration and regressions: $env:DEFAULT_OUTCOME",
-            "debugdump configuration: $env:DEBUGDUMP_OUTCOME",
-            '',
-            '### Remaining disk space',
-            '| Drive | Free GiB |',
-            '| --- | ---: |'
-          )
-          foreach ($drive in Get-PSDrive -PSProvider FileSystem) {
-            $summary += ('| {0} | {1:N2} |' -f $drive.Name, ($drive.Free / 1GB))
-          }
-          $summary | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
-          Get-PSDrive -PSProvider FileSystem | Select-Object Name, Used, Free | Format-Table
+          {
+            printf '## %s\n\n' "$ANALYSIS_RULE"
+            printf 'Default configuration and regressions: %s\n' "$DEFAULT_OUTCOME"
+            printf 'debugdump configuration: %s\n' "$DEBUGDUMP_OUTCOME"
+            printf '\n### Remaining disk space\n\n```text\n'
+            df -h .
+            printf '```\n'
+          } | tee -a "$GITHUB_STEP_SUMMARY"

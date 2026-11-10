@@ -112,12 +112,12 @@ function defaultPipeline({ workspace, dependencies }) {
   const facts = path.join(compilerDirectory, 'facts.json'), runtime = path.join(compilerDirectory, 'runtime.json'), model = path.join(compilerDirectory, 'model.json');
   const inputs = relevantInputNames(workspace);
   const node = (filename, args = []) => ({ command: process.execPath, args: [filename, ...args] });
-  const analysis = args => ({ command: 'pwsh', args: ['-NoProfile', '-File', path.join(workspace, 'scripts/rustc-analysis.ps1'), ...args] });
+  const analysis = args => ({ command: 'bash', args: [path.join(workspace, '.github/scripts/rustc-analysis.sh'), ...args] });
   const compilerInputs = ['Cargo.toml', 'Cargo.lock', 'src', 'tools/rustc-analysis/Cargo.toml', 'tools/rustc-analysis/Cargo.lock',
     'tools/rustc-analysis/build.rs', 'tools/rustc-analysis/contract', 'tools/rustc-analysis/compiler',
     'tools/rustc-analysis/runner/Cargo.toml', 'tools/rustc-analysis/runner/src/host.rs',
     'tools/rustc-analysis/runner/src/report_cache.rs', 'tools/rustc-analysis/runner/src/unit_graph.rs', 'tools/rustc-analysis/runner/src/unit_binding.rs',
-    'tools/rustc-analysis/runner/src/lib.rs', 'tools/rustc-analysis/runner/src/main.rs', 'scripts/rustc-analysis.ps1', ...exportProducerInputs,
+    'tools/rustc-analysis/runner/src/lib.rs', 'tools/rustc-analysis/runner/src/main.rs', '.github/scripts/rustc-analysis.sh', ...exportProducerInputs,
     ...(fs.existsSync(path.join(workspace, 'build.rs')) ? ['build.rs'] : [])];
   return [
     { id: 'dependencies', inputs: ['docs/diagrams/package.json', 'docs/diagrams/package-lock.json'], outputs: [],

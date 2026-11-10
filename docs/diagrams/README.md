@@ -15,7 +15,7 @@ Schedule 始终保留右侧说明栏，未选择对象时显示当前调度的�
 | 视图 | 独立 SVG | 阅读目的与实现归属 |
 | --- | --- | --- |
 | 调度（`schedule`） | `ecs-schedule-<key>.svg` | 看一个应用内一个 Schedule 的系统、集合及顺序依赖；范围见[调度快照](#调度快照)。 |
-| 对象关系（`object`） | `ecs-object-<key>.svg` | Plugin／PluginGroup 为中心单卡；Entity 中心隐藏 Component，其余对象展示直接关系。完整规则见[对象专属图](#对象专属图)，从顶部入口、全局搜索或节点详情进入。 |
+| 对象关系（`object`） | `ecs-object-<key>.svg` | Plugin／PluginGroup 为中心单卡；Entity 或 System 中心隐藏 Component，其余对象展示直接关系。完整规则见[对象专属图](#对象专属图)，从顶部入口、全局搜索或节点详情进入。 |
 
 每张调度图保存同名 `.dot`，每张对象图保存同名 `.mmd`；正式调度清单与 DOT 保存在 `generated/dot/`。文件清单以 `generated/data/manifest.json` 及视图索引为准，构建清理已退出清单的产物，不生成旧功能总览、插件或基础设施系统图。对象 Mermaid 的 YAML frontmatter 使用合法 JSON 对象保存完整主题、布局及配置；锁定渲染依赖后可以从 DOT／Mermaid 重建独立 SVG。
 
@@ -353,10 +353,6 @@ Graphviz 调度图使用 DOT 原生布局和共享的调度几何检查。Mermai
 Mermaid 原生几何先查当前工作树的 `tmp/ecs-architecture/mermaid-build/geometry-cache/`，再查 Git 主工作树同路径的共享缓存；有效本地命中会补入共享池，共享池不可写时回退到本地。正式视图元数据和清单保存原始绘图输入的 `renderFingerprint`，没有临时缓存的 checkout 可在输入完全匹配且元数据、SVG、Mermaid 的 SHA-256 与字节数校验通过后复用正式产物。缺少输入指纹的旧产物不作为后备缓存，不凭 SVG 相同推定输入相同。所有命中仍执行当前文字、几何和路由检查，且使用当前模型的源码与关系证据。
 
 预检的 `renderCache` 和生成前的 `Mermaid cache candidates` 列出本地、共享、正式产物候选及缺失原因；候选数量不表示校验已通过。输入改变时可从元数据的 `renderInputs` 比较定义、标题、分类和依赖指纹，生成结束的 `Mermaid cache` 分别统计实际复用、重编译及拒绝数量。
-
-普通 `run` 保留独立历史，`--resume` 使用原运行。失败、中断或未知退出停止下游，不凭 mtime 或进程结束判定成功；同一工作区执行锁冲突直接失败，不抢占其他进程。多个本地 worktree 共享 Cargo 缓存时仍须由调用方串行安排。
-
-
 
 ### 本地自动预览
 
