@@ -177,7 +177,8 @@ fn real_native_plugin_loads_custom_and_partial_groups_and_rejects_invalid_file()
     let path = directory.join("settings.toml");
     let expected = SettingsDraft {
         max_fps: 75,
-        mouse_sensitivity: 0.031234567,
+        mouse_sensitivity_percent: (0.031234567_f64 / f64::from(DEFAULT_MOUSE_SENSITIVITY) * 100.0)
+            .to_string(),
         invert_y: true,
         audio: AudioSettings {
             master_volume: 73,
