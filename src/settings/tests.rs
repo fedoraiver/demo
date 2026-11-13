@@ -1,330 +1,205 @@
 use bevy::{
+    log::{
+        tracing::{self, Level},
+        tracing_subscriber::{self, fmt::MakeWriter},
+    },
+    reflect::{
+        TypeRegistry,
+        serde::{TypedReflectDeserializer, TypedReflectSerializer},
+    },
     time::{TimePlugin, TimeUpdateStrategy},
     winit::{UpdateMode, WinitSettings},
 };
-use uuid::Uuid;
-
-use super::config::read_settings;
-use super::*;
+use serde::de::DeserializeSeed;
+use serde_json::{Value, json};
 use std::{
-    fs, io,
-    num::NonZeroU32,
-    path::{Path, PathBuf},
+    any::TypeId,
+    sync::{Arc, Mutex},
     time::Duration,
 };
 
-fn settings_test_path() -> PathBuf {
-    let directory = Path::new(env!("CARGO_MANIFEST_DIR")).join("tmp/settings-tests");
-    fs::create_dir_all(&directory).unwrap();
-    directory.join(format!("{}.json", Uuid::new_v4()))
+use super::{config::FpsLimit, *};
+
+fn settings_types() -> TypeRegistry {
+    let mut types = TypeRegistry::new();
+    types.register::<GameSettings>();
+    types
+}
+
+// 使用与 SettingsPlugin 相同的类型注册和字段反序列化入口，测试数据留在内存。
+fn deserialize_field<T: 'static>(types: &TypeRegistry, value: Value) -> T {
+    let registration = types.get(TypeId::of::<T>()).unwrap();
+    *TypedReflectDeserializer::new(registration, types)
+        .deserialize(value)
+        .unwrap()
+        .try_downcast::<T>()
+        .unwrap()
 }
 
 #[test]
-fn defaults_and_json_validate_frame_rate_limit() {
-    assert_eq!(GameSettings::default().max_fps.get(), 60);
-    let omitted: GameSettings = serde_json::from_str("{}").unwrap();
-    assert_eq!(omitted.max_fps.get(), 60);
-    for max_fps in [60, 120, 144] {
-        let json = format!(r#"{{"max_fps": {max_fps}}}"#);
-        let custom: GameSettings = serde_json::from_str(&json).unwrap();
-        assert_eq!(custom.max_fps.get(), max_fps);
-    }
-    for invalid in [
-        r#"{"max_fps": 0}"#,
-        r#"{"max_fps": 1}"#,
-        r#"{"max_fps": 30}"#,
-        r#"{"max_fps": 59}"#,
-        r#"{"max_fps": -60}"#,
-        r#"{"max_fps": 60.5}"#,
-        r#"{"max_fps": "120"}"#,
-        r#"{"max_fp": 120}"#,
-    ] {
-        assert!(serde_json::from_str::<GameSettings>(invalid).is_err());
-    }
-}
-
-#[test]
-fn camera_settings_default_legacy_and_custom_values() {
-    let defaults = GameSettings::default();
-    assert_eq!(defaults.camera.mouse_sensitivity, 0.003);
-    assert!(!defaults.camera.invert_y);
-    for legacy in ["{}", r#"{"max_fps": 144}"#, r#"{"camera": {}}"#] {
-        let settings: GameSettings = serde_json::from_str(legacy).unwrap();
-        assert_eq!(settings.camera.mouse_sensitivity, 0.003);
-        assert!(!settings.camera.invert_y);
-    }
-    let custom: GameSettings =
-        serde_json::from_str(r#"{"camera": {"mouse_sensitivity": 0.006, "invert_y": true}}"#)
-            .unwrap();
-    assert_eq!(custom.camera.mouse_sensitivity, 0.006);
-    assert!(custom.camera.invert_y);
-    let partial: GameSettings = serde_json::from_str(r#"{"camera": {"invert_y": true}}"#).unwrap();
-    assert_eq!(partial.camera.mouse_sensitivity, 0.003);
-    assert!(partial.camera.invert_y);
-}
-
-#[test]
-fn ui_audio_defaults_partial_and_legacy_values_preserve_supported_settings() {
-    assert_eq!(GameSettings::default().audio, AudioSettings::default());
-    for legacy in ["{}", r#"{"audio": {}}"#, r#"{"audio": {"sfx_volume": 50}}"#] {
-        let settings: GameSettings = serde_json::from_str(legacy).unwrap();
-        assert_eq!(settings.audio, AudioSettings::default());
-    }
-    let partial: GameSettings = serde_json::from_str(r#"{"audio": {"ui_volume": 0}}"#).unwrap();
-    assert_eq!(partial.audio.master_volume, 100);
-    assert_eq!(partial.audio.ui_volume, 0);
-
-    let path = settings_test_path();
-    for legacy_sfx in ["0", "null", "false"] {
-        let json = format!(
-            r#"{{"max_fps": 144, "camera": {{"mouse_sensitivity": 0.006, "invert_y": true}}, "audio": {{"master_volume": 73, "ui_volume": 31, "sfx_volume": {legacy_sfx}}}}}"#
-        );
-        let decoded: GameSettings = serde_json::from_str(&json).unwrap();
-        assert_eq!(decoded.max_fps.get(), 144);
-        assert_eq!(decoded.camera.mouse_sensitivity, 0.006);
-        assert!(decoded.camera.invert_y);
-        assert_eq!(decoded.audio.master_volume, 73);
-        assert_eq!(decoded.audio.ui_volume, 31);
-
-        fs::write(&path, &json).unwrap();
-        let loaded = GameSettings::load(&path);
-        assert_eq!(loaded.max_fps.get(), 144);
-        assert_eq!(loaded.camera.mouse_sensitivity, 0.006);
-        assert!(loaded.camera.invert_y);
-        assert_eq!(loaded.audio, decoded.audio);
-        assert_eq!(fs::read_to_string(&path).unwrap(), json);
-    }
-    fs::remove_file(path).unwrap();
-}
-
-#[test]
-fn saving_legacy_settings_omits_retired_sfx_volume_and_keeps_ui_audio() {
-    let path = settings_test_path();
-    let original = r#"{"max_fps": 144, "camera": {"invert_y": true}, "audio": {"master_volume": 75, "ui_volume": 31, "sfx_volume": 50}}"#;
-    fs::write(&path, original).unwrap();
-    let draft = SettingsDraft::from_settings(&GameSettings::load(&path));
-    draft.to_settings().unwrap().save(&path).unwrap();
-
-    let saved: serde_json::Value =
-        serde_json::from_str(&fs::read_to_string(&path).unwrap()).unwrap();
+fn reflected_settings_preserve_scalar_fps_and_default_missing_fields() {
+    let types = settings_types();
+    let settings = GameSettings {
+        max_fps: deserialize_field(&types, json!(75)),
+        camera: deserialize_field(&types, json!({ "invert_y": true })),
+        audio: deserialize_field(&types, json!({ "ui_volume": 0 })),
+    };
+    assert_eq!(settings.max_fps.get(), 75);
+    assert_eq!(settings.camera.mouse_sensitivity, DEFAULT_MOUSE_SENSITIVITY);
+    assert!(settings.camera.invert_y);
+    assert_eq!(settings.audio.master_volume, MAX_AUDIO_VOLUME);
+    assert_eq!(settings.audio.ui_volume, 0);
     assert_eq!(
-        saved["audio"],
-        serde_json::json!({"master_volume": 75, "ui_volume": 31})
+        serde_json::to_value(TypedReflectSerializer::new(&settings, &types)).unwrap(),
+        json!({
+            "max_fps": 75,
+            "camera": {
+                "mouse_sensitivity": settings.camera.mouse_sensitivity,
+                "invert_y": true,
+            },
+            "audio": { "master_volume": MAX_AUDIO_VOLUME, "ui_volume": 0 },
+        })
     );
-    assert_eq!(saved["max_fps"], 144);
-    assert_eq!(saved["camera"]["invert_y"], true);
-    let reloaded = GameSettings::load(&path);
-    assert_eq!(reloaded.max_fps.get(), 144);
-    assert!(reloaded.camera.invert_y);
-    assert_eq!(reloaded.audio.master_volume, 75);
-    assert_eq!(reloaded.audio.ui_volume, 31);
-    fs::remove_file(path).unwrap();
-}
-
-#[test]
-fn legacy_sfx_compatibility_preserves_other_field_validation() {
-    let path = settings_test_path();
-    for invalid in [
-        r#"{"max_fps": 144, "audio": {}, "unknown": true}"#,
-        r#"{"max_fps": 144, "audio": {}, "camera": {"unknown": true}}"#,
-        r#"{"max_fps": 59, "audio": {}}"#,
-        r#"{"max_fps": 144, "audio": {}, "camera": {"mouse_sensitivity": 0}}"#,
-        r#"{"max_fps": 144, "max_fps": 240, "audio": {}}"#,
-        r#"{"max_fps": 144, "audio": {"sfx_volume": 50, "music_volume": 20}}"#,
-        r#"{"max_fps": 144, "audio": {"sfx_volume": 50, "ui_volume": 30, "ui_volume": 40}}"#,
-        r#"{"max_fps": 144, "audio": null}"#,
-    ] {
-        assert!(serde_json::from_str::<GameSettings>(invalid).is_err());
-        fs::write(&path, invalid).unwrap();
-        assert_eq!(
-            read_settings(&path).unwrap_err().kind(),
-            io::ErrorKind::InvalidData
-        );
-        assert_eq!(GameSettings::load(&path).max_fps.get(), 60);
-        assert_eq!(fs::read_to_string(&path).unwrap(), invalid);
+    for fps in [60, u32::MAX] {
+        assert_eq!(deserialize_field::<FpsLimit>(&types, json!(fps)).get(), fps);
     }
-    fs::remove_file(path).unwrap();
+}
+
+#[derive(Clone, Default)]
+struct WarningOutput {
+    bytes: Arc<Mutex<Vec<u8>>>,
+}
+
+impl<'a> MakeWriter<'a> for WarningOutput {
+    type Writer = <Mutex<Vec<u8>> as MakeWriter<'a>>::Writer;
+
+    fn make_writer(&'a self) -> Self::Writer {
+        self.bytes.as_ref().make_writer()
+    }
 }
 
 #[test]
-fn invalid_ui_audio_falls_back_and_cannot_replace_existing_settings() {
-    let path = settings_test_path();
-    for field in ["master_volume", "ui_volume"] {
-        for value in ["101", "255", "256", "-1", "50.5", "null", "true", "\"NaN\""] {
-            let json = format!(r#"{{"max_fps": 144, "audio": {{"{field}": {value}}}}}"#);
-            assert!(serde_json::from_str::<GameSettings>(&json).is_err());
-            fs::write(&path, &json).unwrap();
-            let fallback = GameSettings::load(&path);
-            assert_eq!(fallback.max_fps.get(), 60);
-            assert_eq!(fallback.audio, AudioSettings::default());
-            assert_eq!(fs::read_to_string(&path).unwrap(), json);
+fn invalid_reflected_values_warn_and_only_replace_the_affected_field() {
+    let types = settings_types();
+    let defaults = GameSettings::default();
+    let output = WarningOutput::default();
+    let subscriber = tracing_subscriber::fmt()
+        .with_ansi(false)
+        .without_time()
+        .with_max_level(Level::WARN)
+        .with_writer(output.clone())
+        .finish();
+
+    tracing::subscriber::with_default(subscriber, || {
+        for invalid_fps in [-1, 0, 59, i64::from(u32::MAX) + 1] {
+            assert_eq!(
+                deserialize_field::<FpsLimit>(&types, json!(invalid_fps)),
+                defaults.max_fps
+            );
         }
+
+        for invalid_sensitivity in [0.0, -1.0, 1e39] {
+            let camera: CameraSettings = deserialize_field(
+                &types,
+                json!({ "mouse_sensitivity": invalid_sensitivity, "invert_y": true }),
+            );
+            assert_eq!(camera.mouse_sensitivity, defaults.camera.mouse_sensitivity);
+            assert!(camera.invert_y);
+        }
+
+        let audio: AudioSettings =
+            deserialize_field(&types, json!({ "master_volume": -1, "ui_volume": 31 }));
+        assert_eq!(audio.master_volume, defaults.audio.master_volume);
+        assert_eq!(audio.ui_volume, 31);
+
+        for invalid_volume in [101, 256] {
+            let audio: AudioSettings = deserialize_field(
+                &types,
+                json!({ "master_volume": 73, "ui_volume": invalid_volume }),
+            );
+            assert_eq!(audio.master_volume, 73);
+            assert_eq!(audio.ui_volume, defaults.audio.ui_volume);
+        }
+    });
+
+    let output = output.bytes.lock().unwrap();
+    let warnings = std::str::from_utf8(&output).unwrap();
+    for (field, value, fallback) in [
+        ("max_fps", 59.0, f64::from(defaults.max_fps.get())),
+        (
+            "camera.mouse_sensitivity",
+            0.0,
+            f64::from(defaults.camera.mouse_sensitivity),
+        ),
+        (
+            "camera.mouse_sensitivity",
+            1e39,
+            f64::from(defaults.camera.mouse_sensitivity),
+        ),
+        (
+            "audio.master_volume",
+            -1.0,
+            f64::from(defaults.audio.master_volume),
+        ),
+        (
+            "audio.ui_volume",
+            256.0,
+            f64::from(defaults.audio.ui_volume),
+        ),
+    ] {
+        assert!(
+            warnings.lines().any(|line| {
+                line.contains("WARN")
+                    && line.contains("demo::settings")
+                    && line.contains(field)
+                    && warning_number(line, "value=") == Some(value)
+                    && warning_number(line, "default=") == Some(fallback)
+            }),
+            "{field}: {warnings}"
+        );
     }
-    let original = r#"{"audio": {"master_volume": 75, "ui_volume": 50}}"#;
-    fs::write(&path, original).unwrap();
-    for audio in [
-        AudioSettings {
-            master_volume: 101,
+}
+
+fn warning_number(line: &str, field_prefix: &str) -> Option<f64> {
+    line.split_whitespace()
+        .find_map(|part| part.strip_prefix(field_prefix))?
+        .parse()
+        .ok()
+}
+
+#[test]
+fn invalid_drafts_are_rejected_instead_of_applying_defaults() {
+    for draft in [
+        SettingsDraft {
+            max_fps: 59,
             ..default()
         },
-        AudioSettings {
-            ui_volume: 101,
+        SettingsDraft {
+            mouse_sensitivity: f32::NAN,
+            ..default()
+        },
+        SettingsDraft {
+            audio: AudioSettings {
+                master_volume: 101,
+                ..default()
+            },
             ..default()
         },
     ] {
-        assert!(SettingsDraft { audio, ..default() }.to_settings().is_err());
-        let settings = GameSettings { audio, ..default() };
-        assert_eq!(
-            settings.save(&path).unwrap_err().kind(),
-            io::ErrorKind::InvalidInput
-        );
-        assert_eq!(fs::read_to_string(&path).unwrap(), original);
+        assert!(draft.to_settings().is_err());
     }
-    fs::remove_file(path).unwrap();
-}
-
-#[test]
-fn invalid_camera_settings_fall_back_without_overwriting_file() {
-    let path = settings_test_path();
-    for invalid in [
-        r#"{"max_fps": 240, "camera": {"mouse_sensitivity": 0}}"#,
-        r#"{"max_fps": 240, "camera": {"mouse_sensitivity": -0.003}}"#,
-        r#"{"max_fps": 240, "camera": {"mouse_sensitivity": 1e39}}"#,
-        r#"{"max_fps": 240, "camera": {"mouse_sensitivity": "NaN"}}"#,
-        r#"{"max_fps": 240, "camera": {"invert_y": 1}}"#,
-        r#"{"max_fps": 240, "camera": {"sensitivity": 0.003}}"#,
-    ] {
-        assert!(serde_json::from_str::<GameSettings>(invalid).is_err());
-        fs::write(&path, invalid).unwrap();
-        let settings = GameSettings::load(&path);
-        assert_eq!(settings.max_fps.get(), 60);
-        assert_eq!(settings.camera.mouse_sensitivity, 0.003);
-        assert!(!settings.camera.invert_y);
-        assert_eq!(fs::read_to_string(&path).unwrap(), invalid);
-    }
-    fs::remove_file(path).unwrap();
-}
-
-#[test]
-fn settings_file_and_failure_fallback_preserve_original_contents() {
-    let path = settings_test_path();
-    assert_eq!(GameSettings::load(&path).max_fps.get(), 60);
-    assert!(!path.exists());
-    fs::write(&path, r#"{"max_fps": 240}"#).unwrap();
-    assert_eq!(GameSettings::load(&path).max_fps.get(), 240);
-    for invalid in [
-        r#"{"max_fps": 0}"#,
-        r#"{"max_fps": 1}"#,
-        r#"{"max_fps": 30}"#,
-        r#"{"max_fps": 59}"#,
-    ] {
-        fs::write(&path, invalid).unwrap();
-        assert_eq!(
-            read_settings(&path).unwrap_err().kind(),
-            io::ErrorKind::InvalidData
-        );
-        assert_eq!(GameSettings::load(&path).max_fps.get(), 60);
-        assert_eq!(fs::read_to_string(&path).unwrap(), invalid);
-    }
-    fs::remove_file(path).unwrap();
-}
-
-#[test]
-fn save_creates_and_replaces_complete_settings_json() {
-    let path = settings_test_path();
-    GameSettings::default().save(&path).unwrap();
-    let draft = SettingsDraft {
-        max_fps: 165,
-        mouse_sensitivity: 0.0065,
-        invert_y: true,
-        audio: AudioSettings {
-            master_volume: 75,
-            ui_volume: 33,
-        },
-    };
-    draft.to_settings().unwrap().save(&path).unwrap();
-
-    let loaded = GameSettings::load(&path);
-    assert_eq!(loaded.max_fps.get(), 165);
-    assert_eq!(loaded.camera.mouse_sensitivity, 0.0065);
-    assert!(loaded.camera.invert_y);
-    assert_eq!(loaded.audio, draft.audio);
-    let saved = fs::read_to_string(&path).unwrap();
-    assert!(saved.ends_with('\n'));
-    assert!(
-        serde_json::from_str::<serde_json::Value>(&saved).unwrap()["audio"]
-            .get("sfx_volume")
-            .is_none()
-    );
-    fs::remove_file(path).unwrap();
-}
-
-#[test]
-fn invalid_settings_cannot_replace_existing_file() {
-    let path = settings_test_path();
-    let original = r#"{"max_fps": 90}"#;
-    fs::write(&path, original).unwrap();
-    let defaults = SettingsDraft::default();
-    for invalid_fps in [0, 1, 59] {
-        let invalid = SettingsDraft {
-            max_fps: invalid_fps,
-            ..defaults.clone()
-        };
-        assert_eq!(
-            invalid.to_settings().unwrap_err().kind(),
-            io::ErrorKind::InvalidInput
-        );
-    }
-    let mut settings = GameSettings::default();
-    settings.max_fps = NonZeroU32::new(59).unwrap();
-    assert!(settings.save(&path).is_err());
-    assert_eq!(fs::read_to_string(&path).unwrap(), original);
-    settings.max_fps = NonZeroU32::new(60).unwrap();
-    for invalid_sensitivity in [0.0, -0.003, f32::NAN, f32::INFINITY, f32::NEG_INFINITY] {
-        let invalid = SettingsDraft {
-            mouse_sensitivity: invalid_sensitivity,
-            ..defaults.clone()
-        };
-        assert_eq!(
-            invalid.to_settings().unwrap_err().kind(),
-            io::ErrorKind::InvalidInput
-        );
-        settings.camera.mouse_sensitivity = invalid_sensitivity;
-        assert!(settings.save(&path).is_err());
-        assert_eq!(fs::read_to_string(&path).unwrap(), original);
-    }
-    fs::remove_file(path).unwrap();
-}
-
-#[cfg(windows)]
-#[test]
-fn failed_file_replacement_preserves_original_settings() {
-    use std::os::windows::fs::OpenOptionsExt;
-
-    let path = settings_test_path();
-    let original = r#"{"max_fps": 144}"#;
-    fs::write(&path, original).unwrap();
-    // Windows 的独占句柄阻止替换，检验失败时不会先删除或截断原配置。
-    let locked = fs::OpenOptions::new()
-        .read(true)
-        .share_mode(0)
-        .open(&path)
-        .unwrap();
-    let draft = SettingsDraft {
-        max_fps: 240,
-        ..default()
-    };
-    assert!(draft.to_settings().unwrap().save(&path).is_err());
-    assert_eq!(draft.max_fps, 240);
-    drop(locked);
-    assert_eq!(fs::read_to_string(&path).unwrap(), original);
-    fs::remove_file(path).unwrap();
 }
 
 #[test]
 fn draft_preserves_custom_values_until_their_field_is_adjusted() {
-    let custom: GameSettings =
-        serde_json::from_str(r#"{"max_fps": 75, "camera": {"mouse_sensitivity": 0.03}}"#).unwrap();
+    let custom = GameSettings {
+        max_fps: FpsLimit::new(75).unwrap(),
+        camera: CameraSettings {
+            mouse_sensitivity: 0.03,
+            ..default()
+        },
+        ..default()
+    };
     let mut draft = SettingsDraft::from_settings(&custom);
     let converted = draft.to_settings().unwrap();
     assert_eq!(converted.max_fps.get(), 75);
@@ -374,9 +249,14 @@ fn draft_adjustments_remain_within_menu_limits() {
 
 #[test]
 fn ui_audio_draft_adjustments_preserve_values_and_clamp_only_edited_fields() {
-    let custom: GameSettings =
-        serde_json::from_str(r#"{"max_fps": 75, "audio": {"master_volume": 73, "ui_volume": 97}}"#)
-            .unwrap();
+    let custom = GameSettings {
+        max_fps: FpsLimit::new(75).unwrap(),
+        audio: AudioSettings {
+            master_volume: 73,
+            ui_volume: 97,
+        },
+        ..default()
+    };
     let mut draft = SettingsDraft::from_settings(&custom);
     assert_eq!(draft.to_settings().unwrap().audio, custom.audio);
     assert_eq!(draft.volume(SettingKey::FrameRate), None);
@@ -409,11 +289,11 @@ fn frame_rate_limit_configures_native_runner_for_both_focus_modes() {
         let mut app = App::new();
         app.add_plugins(TimePlugin)
             .insert_resource(GameSettings {
-                max_fps: NonZeroU32::new(fps).unwrap(),
+                max_fps: FpsLimit::new(fps).unwrap(),
                 ..default()
             })
-            .insert_resource(WinitSettings::continuous())
-            .add_plugins(SettingsPlugin);
+            .insert_resource(WinitSettings::continuous());
+        frame_pacing::register(&mut app);
         app.update();
 
         let winit = app.world().resource::<WinitSettings>();
@@ -440,12 +320,13 @@ fn changing_render_limit_preserves_fixed_simulation_timestep() {
         .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::from_millis(
             20,
         )))
-        .add_plugins(SettingsPlugin);
+        .init_resource::<GameSettings>();
+    frame_pacing::register(&mut app);
     app.update();
     let timestep = app.world().resource::<Time<Fixed>>().timestep();
     // 模拟菜单在 PreUpdate 应用配置，确认本帧结束时窗口循环已能读取新策略。
     app.add_systems(PreUpdate, |mut settings: ResMut<GameSettings>| {
-        settings.max_fps = NonZeroU32::new(120).unwrap();
+        settings.max_fps = FpsLimit::new(120).unwrap();
     });
     app.update();
     let winit = app.world().resource::<WinitSettings>();

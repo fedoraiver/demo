@@ -1,11 +1,11 @@
 //! 将帧率设置交给 Bevy 原生窗口循环，不更改固定步时钟。
 
-use super::GameSettings;
+use super::{GameSettings, config::FpsLimit};
 use bevy::{
     prelude::*,
     winit::{UpdateMode, WinitSettings},
 };
-use std::{num::NonZeroU32, time::Duration};
+use std::time::Duration;
 
 pub(super) fn register(app: &mut App) {
     app.init_resource::<WinitSettings>()
@@ -27,7 +27,7 @@ fn log_simulation_timestep(time: Res<Time<Fixed>>) {
 fn apply_frame_rate_limit(
     settings: Res<GameSettings>,
     mut winit: ResMut<WinitSettings>,
-    mut applied_max_fps: Local<Option<NonZeroU32>>,
+    mut applied_max_fps: Local<Option<FpsLimit>>,
 ) {
     if *applied_max_fps == Some(settings.max_fps) {
         return;
@@ -44,7 +44,7 @@ fn apply_frame_rate_limit(
     winit.unfocused_mode = mode;
     info!(
         target: "demo::settings",
-        max_fps_before = ?applied_max_fps.map(NonZeroU32::get),
+        max_fps_before = ?applied_max_fps.map(FpsLimit::get),
         max_fps_after = settings.max_fps.get(),
         reason = if applied_max_fps.is_some() {
             "settings_changed"

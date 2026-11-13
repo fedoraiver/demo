@@ -5,24 +5,32 @@ mod draft;
 mod frame_pacing;
 mod prototype;
 
-use bevy::prelude::*;
+use bevy::{prelude::*, settings::SettingsPlugin};
+use config::SETTINGS_APP_NAME;
 
 pub use config::{
     AudioSettings, CameraSettings, DEFAULT_MOUSE_SENSITIVITY, GameSettings, MAX_AUDIO_VOLUME,
-    SettingsFile,
 };
 pub use draft::{SettingKey, SettingsDraft};
 pub use prototype::PrototypeConfig;
 
-/// 注册设置资源、原型参数反射与渲染限帧，不覆盖调用方已提供的配置或固定时间步。
-pub struct SettingsPlugin;
+/// 加载玩家设置并注册原型参数反射和渲染限帧。
+pub struct GameSettingsPlugin;
 
-impl Plugin for SettingsPlugin {
+impl Plugin for GameSettingsPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<GameSettings>()
-            .init_resource::<SettingsFile>()
+        app.register_type::<GameSettings>()
+            .add_plugins(SettingsPlugin::new(SETTINGS_APP_NAME))
             .init_resource::<PrototypeConfig>()
             .register_type::<PrototypeConfig>();
+
+        let settings = app.world().resource::<GameSettings>();
+        info!(target: "demo::settings", max_fps = settings.max_fps.get(),
+            camera_mouse_sensitivity = settings.camera.mouse_sensitivity,
+            camera_invert_y = settings.camera.invert_y,
+            audio_master_volume = settings.audio.master_volume,
+            audio_ui_volume = settings.audio.ui_volume,
+            "Game settings initialized");
         frame_pacing::register(app);
     }
 }

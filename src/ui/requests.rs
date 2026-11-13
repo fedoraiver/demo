@@ -4,9 +4,9 @@ use super::{navigation::MenuContext, *};
 use crate::{
     audio::{SoundCue, SoundRequest},
     game_flow::AppState,
-    settings::{GameSettings, SettingsDraft, SettingsFile},
+    settings::{GameSettings, SettingsDraft},
 };
-use bevy::prelude::*;
+use bevy::{prelude::*, settings::SaveSettingsSync};
 use bevy_enhanced_input::prelude::EnhancedInputSystems;
 
 pub(super) fn register(app: &mut App) {
@@ -31,7 +31,7 @@ fn handle_requests(
     mut focus: ResMut<MenuFocus>,
     mut draft: ResMut<SettingsDraft>,
     mut settings: ResMut<GameSettings>,
-    path: Res<SettingsFile>,
+    mut commands: Commands,
     mut app_state: ResMut<NextState<AppState>>,
     mut exits: MessageWriter<AppExit>,
     controllers: Query<Entity, With<MenuContext>>,
@@ -182,29 +182,25 @@ fn handle_requests(
             *draft = SettingsDraft::default();
             menu.status = Some("Defaults restored. Choose Apply to save.".into());
         }
-        UiAction::ApplySettings if menu.page == MenuPage::Settings => {
-            match draft
-                .to_settings()
-                .and_then(|updated| updated.save(&path.path).map(|()| updated))
-            {
-                Ok(updated) => {
-                    info!(target: "demo::settings", path = %path.path.display(),
+        UiAction::ApplySettings if menu.page == MenuPage::Settings => match draft.to_settings() {
+            Ok(updated) => {
+                info!(target: "demo::settings",
                         max_fps_before = settings.max_fps.get(), max_fps_after = updated.max_fps.get(),
                         sensitivity_before = settings.camera.mouse_sensitivity, sensitivity_after = updated.camera.mouse_sensitivity,
                         invert_y_before = settings.camera.invert_y, invert_y_after = updated.camera.invert_y,
                         master_volume_before = settings.audio.master_volume, master_volume_after = updated.audio.master_volume,
                         ui_volume_before = settings.audio.ui_volume, ui_volume_after = updated.audio.ui_volume,
-                        reason = "settings_apply", "Game settings saved and applied");
-                    *settings = updated;
-                    menu.status = Some("Settings applied.".into());
-                }
-                Err(error) => {
-                    error!(target: "demo::settings", path = %path.path.display(), %error, operation = "apply_settings", "Failed to save settings");
-                    menu.status = Some("Could not save settings. Your changes are still available; try Apply again.".into());
-                    cue = SoundCue::MenuCancel;
-                }
+                        reason = "settings_apply", "Game settings applied");
+                *settings = updated;
+                commands.queue(SaveSettingsSync::Always);
+                menu.status = Some("Settings applied.".into());
             }
-        }
+            Err(error) => {
+                warn!(target: "demo::settings", %error, reason = "invalid_settings_input", "Settings input validation failed");
+                menu.status = Some(format!("Could not apply settings. {error}"));
+                cue = SoundCue::MenuCancel;
+            }
+        },
         _ => return,
     }
     if !matches!(action, UiAction::SetVolume(..) | UiAction::FinishVolumeEdit) {

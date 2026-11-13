@@ -83,7 +83,7 @@ flowchart TD
 | physics | `GamePhysicsPlugin` | [Avian、重力与碰撞](physics.md)。 |
 | [scene_assembly](../../src/scene_assembly/mod.rs) | `SceneAssemblyPlugin` | 以 BSN 装配程序生成的平地、玩家、控制者、相机、灯光和三个方块。 |
 | ui | `GameUiPlugin` | [页面、菜单、控件与背景](ui.md)。 |
-| settings | `SettingsPlugin` | [设置、草稿、原型参数与限帧](settings.md)。 |
+| settings | `GameSettingsPlugin` | [设置、草稿、原型参数与限帧](settings.md)。 |
 | audio | `GameAudioPlugin` | [声音请求、混音与设备输出](audio.md)。 |
 | inspector | `InspectorPlugin` | [世界检查器](inspector.md)。 |
 | session_log | `SessionLogPlugin` | [会话日志](session_log.md)。 |
