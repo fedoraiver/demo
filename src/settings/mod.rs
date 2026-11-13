@@ -9,15 +9,15 @@ use bevy::prelude::*;
 
 pub use config::{
     AudioSettings, CameraSettings, DEFAULT_MOUSE_SENSITIVITY, GameSettings, MAX_AUDIO_VOLUME,
-    SettingsFile,
+    SETTINGS_APP_NAME, SettingsFile, validate_loaded_settings,
 };
 pub use draft::{SettingKey, SettingsDraft};
 pub use prototype::PrototypeConfig;
 
 /// 注册设置资源、原型参数反射与渲染限帧，不覆盖调用方已提供的配置或固定时间步。
-pub struct SettingsPlugin;
+pub struct GameSettingsPlugin;
 
-impl Plugin for SettingsPlugin {
+impl Plugin for GameSettingsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<GameSettings>()
             .init_resource::<SettingsFile>()
@@ -26,6 +26,9 @@ impl Plugin for SettingsPlugin {
         frame_pacing::register(app);
     }
 }
+
+#[cfg(test)]
+pub(crate) use config::read_settings;
 
 #[cfg(test)]
 mod tests;

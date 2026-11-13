@@ -40,6 +40,15 @@ mod test_support {
     use bevy::{input::InputPlugin, time::TimeUpdateStrategy, window::PrimaryWindow};
     use bevy_enhanced_input::prelude::EnhancedInputPlugin;
 
+    /// 设置插件使用真实用户目录，菜单夹具始终将可写目标隔离到仓库 tmp。
+    pub(super) fn test_settings_file() -> SettingsFile {
+        SettingsFile {
+            path: std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("tmp/ui-settings-tests")
+                .join(format!("{}.toml", uuid::Uuid::new_v4())),
+        }
+    }
+
     pub(super) fn menu_app() -> App {
         menu_app_with(|_| {})
     }
@@ -65,7 +74,7 @@ mod test_support {
         })
         .init_resource::<GameSettings>()
         .init_resource::<SettingsDraft>()
-        .init_resource::<SettingsFile>()
+        .insert_resource(test_settings_file())
         .init_resource::<MenuInputSource>()
         .add_message::<UiRequest>()
         .add_message::<SoundRequest>()
@@ -969,7 +978,7 @@ mod page_refresh_tests {
             app.insert_resource(theme)
                 .init_resource::<crate::settings::GameSettings>()
                 .init_resource::<SettingsDraft>()
-                .init_resource::<crate::settings::SettingsFile>()
+                .insert_resource(test_settings_file())
                 .init_resource::<crate::audio::AudioPreview>()
                 .add_message::<super::super::UiRequest>()
                 .add_message::<crate::audio::SoundRequest>()
@@ -1140,7 +1149,7 @@ mod page_refresh_tests {
         let folder = std::path::PathBuf::from("tmp/ui-scroll-edit-tests")
             .join(uuid::Uuid::new_v4().to_string());
         std::fs::create_dir_all(&folder).unwrap();
-        let saved = folder.join("settings.json");
+        let saved = folder.join("settings.toml");
         app.world_mut()
             .insert_resource(crate::settings::SettingsFile {
                 path: saved.clone(),
@@ -2290,7 +2299,7 @@ mod requests_tests {
         assert_eq!(app.world().resource::<AudioPreview>().settings, None);
         let directory = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tmp/ui-settings-tests");
         std::fs::create_dir_all(&directory).unwrap();
-        let path = directory.join(format!("{}.json", uuid::Uuid::new_v4()));
+        let path = directory.join(format!("{}.toml", uuid::Uuid::new_v4()));
         app.insert_resource(SettingsFile { path: path.clone() });
         request(&mut app, UiAction::OpenSettings);
         request(&mut app, UiAction::SelectTab(SettingsTab::Audio));
@@ -2313,7 +2322,10 @@ mod requests_tests {
         let committed = app.world().resource::<GameSettings>().audio;
         assert_eq!(committed.master_volume, 73);
         assert_eq!(committed.ui_volume, 49);
-        assert_eq!(GameSettings::load(&path).audio, committed);
+        assert_eq!(
+            crate::settings::read_settings(&path).unwrap().audio,
+            committed
+        );
         assert_eq!(
             app.world().resource::<AudioPreview>().settings,
             Some(committed)
@@ -2542,7 +2554,7 @@ mod requests_tests {
         let mut app = test_app();
         let path = PathBuf::from("tmp")
             .join("ui-settings-tests")
-            .join(format!("{}.json", uuid::Uuid::new_v4()));
+            .join(format!("{}.toml", uuid::Uuid::new_v4()));
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
         app.world_mut()
             .insert_resource(SettingsFile { path: path.clone() });
@@ -2560,7 +2572,10 @@ mod requests_tests {
         request(&mut app, UiAction::ApplySettings);
         assert_eq!(drain_sounds(&mut app), [SoundCue::MenuConfirm]);
         assert_eq!(app.world().resource::<GameSettings>().max_fps.get(), 90);
-        assert_eq!(GameSettings::load(&path).max_fps.get(), 90);
+        assert_eq!(
+            crate::settings::read_settings(&path).unwrap().max_fps.get(),
+            90
+        );
         std::fs::remove_file(&path).unwrap();
 
         // 保存目标是目录时产生真实 I/O 失败，界面保留草稿而运行设置保持原值。

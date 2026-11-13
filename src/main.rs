@@ -20,7 +20,7 @@ use item_interaction::ItemInteractionPlugin;
 use physics::GamePhysicsPlugin;
 use scene_assembly::SceneAssemblyPlugin;
 use session_log::SessionLogPlugin;
-use settings::{GameSettings, SettingsPlugin};
+use settings::{GameSettings, GameSettingsPlugin};
 use ui::GameUiPlugin;
 use window_policy::WindowPolicyPlugin;
 
@@ -61,14 +61,19 @@ fn main() -> AppExit {
             }),
     );
 
-    app.insert_resource(GameSettings::load(std::path::Path::new("settings.json")))
-        .insert_resource(Time::<Fixed>::from_hz(FIXED_SIMULATION_HZ))
+    app.register_type::<GameSettings>()
+        .add_plugins(bevy::settings::SettingsPlugin::new(
+            settings::SETTINGS_APP_NAME,
+        ));
+    settings::validate_loaded_settings(&mut app);
+
+    app.insert_resource(Time::<Fixed>::from_hz(FIXED_SIMULATION_HZ))
         .add_plugins((
             EnhancedInputPlugin,
             InspectorPlugin,
             WindowPolicyPlugin,
             GameFlowPlugin,
-            SettingsPlugin,
+            GameSettingsPlugin,
             GamePhysicsPlugin,
             CharacterPlugin,
             ItemInteractionPlugin,

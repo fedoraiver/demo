@@ -1,13 +1,15 @@
-//! 玩家配置的 JSON 边界、验证与原子替换；不覆盖读取失败的原文件。
+//! 原生设置组、完整输入校验与保存事务；不覆盖读取失败的原文件。
 
 use std::{
-    fs,
-    io::{self, Write},
+    fs, io,
     num::NonZeroU32,
     path::{Path, PathBuf},
 };
 
-use bevy::prelude::*;
+use bevy::{
+    prelude::*,
+    settings::{ReflectSettingsGroup, SaveSettingsSync, SettingsGroup, SettingsPlugin},
+};
 use serde::{Deserialize, Deserializer, Serialize, de::Error};
 
 /// 缺省配置采用的渲染帧率上限。
@@ -23,7 +25,9 @@ pub const DEFAULT_MOUSE_SENSITIVITY: f32 = 0.003;
 pub const MAX_AUDIO_VOLUME: u8 = 100;
 
 /// 全局玩家设置；非零类型保证帧率上限始终能够转换为等待间隔。
-#[derive(Resource, Clone, Debug, Deserialize, Serialize)]
+#[derive(Resource, Clone, Debug, PartialEq, Deserialize, Serialize, Reflect, SettingsGroup)]
+#[reflect(Resource, SettingsGroup, Default)]
+#[settings_group(group = "game")]
 #[serde(default, deny_unknown_fields)]
 pub struct GameSettings {
     /// 渲染循环每秒最多更新的次数，默认 60，配置值不得低于 60；不影响 `Time<Fixed>`。
@@ -46,9 +50,13 @@ impl Default for GameSettings {
 }
 
 /// 音频混音设置，缺省字段采用完整音量。
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, Reflect)]
+#[reflect(Serialize, Deserialize)]
+#[serde(default, deny_unknown_fields)]
 pub struct AudioSettings {
+    #[serde(deserialize_with = "deserialize_volume")]
     pub master_volume: u8,
+    #[serde(deserialize_with = "deserialize_volume")]
     pub ui_volume: u8,
 }
 
@@ -61,39 +69,9 @@ impl Default for AudioSettings {
     }
 }
 
-impl<'de> Deserialize<'de> for AudioSettings {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        // 兼容读取此前配置中的 sfx_volume，其他未知音频字段仍报错。
-        #[derive(Deserialize)]
-        #[serde(deny_unknown_fields)]
-        struct StoredAudioSettings {
-            #[serde(
-                default = "default_audio_volume",
-                deserialize_with = "deserialize_volume"
-            )]
-            master_volume: u8,
-            #[serde(
-                default = "default_audio_volume",
-                deserialize_with = "deserialize_volume"
-            )]
-            ui_volume: u8,
-            #[serde(default, rename = "sfx_volume")]
-            _legacy_sfx_volume: Option<serde::de::IgnoredAny>,
-        }
-
-        let stored = StoredAudioSettings::deserialize(deserializer)?;
-        Ok(Self {
-            master_volume: stored.master_volume,
-            ui_volume: stored.ui_volume,
-        })
-    }
-}
-
-/// 自由视角配置；旧配置缺少本节或字段时使用默认值。
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+/// 自由视角配置；省略节或字段时使用默认值。
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize, Reflect)]
+#[reflect(Serialize, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct CameraSettings {
     /// 每像素对应的旋转弧度，必须是有限的正数。
@@ -112,6 +90,9 @@ impl Default for CameraSettings {
     }
 }
 
+/// 原生设置存储使用的应用标识；各 worktree 共享同一玩家配置。
+pub const SETTINGS_APP_NAME: &str = "io.github.fedoraiver.demo";
+
 /// 设置文件的保存位置；测试可覆盖该资源而不触及玩家的真实配置。
 #[derive(Resource, Debug)]
 pub struct SettingsFile {
@@ -121,17 +102,16 @@ pub struct SettingsFile {
 impl Default for SettingsFile {
     fn default() -> Self {
         Self {
-            path: PathBuf::from("settings.json"),
+            path: bevy::platform::dirs::preferences_dir()
+                .unwrap_or_else(|| PathBuf::from("tmp/unavailable-preferences"))
+                .join(SETTINGS_APP_NAME)
+                .join("settings.toml"),
         }
     }
 }
 
 fn default_max_fps() -> NonZeroU32 {
     NonZeroU32::new(DEFAULT_FPS_LIMIT).unwrap()
-}
-
-fn default_audio_volume() -> u8 {
-    MAX_AUDIO_VOLUME
 }
 
 fn deserialize_volume<'de, D>(deserializer: D) -> Result<u8, D::Error>
@@ -194,92 +174,133 @@ impl GameSettings {
         Ok(())
     }
 
-    /// 读取 JSON 设置；缺失或读取、解析失败时记录原因并使用默认值，不覆盖原文件。
-    pub fn load(path: &Path) -> Self {
-        let settings = match read_settings(path) {
-            Ok(settings) => settings,
-            Err(error) if error.kind() == io::ErrorKind::NotFound => {
-                info!(
-                    target: "demo::settings",
-                    path = %path.display(),
-                    reason = "settings_file_missing",
-                    "Using default game settings"
-                );
-                Self::default()
-            }
-            Err(error) => {
-                warn!(
-                    target: "demo::settings",
-                    operation = "load_settings",
-                    path = %path.display(),
-                    %error,
-                    fallback_max_fps = Self::default().max_fps.get(),
-                    fallback_camera_mouse_sensitivity = CameraSettings::default().mouse_sensitivity,
-                    fallback_camera_invert_y = CameraSettings::default().invert_y,
-                    fallback_audio_master_volume = AudioSettings::default().master_volume,
-                    fallback_audio_ui_volume = AudioSettings::default().ui_volume,
-                    reason = "settings_load_failed",
-                    "Failed to load game settings; using defaults"
-                );
-                Self::default()
-            }
-        };
-        info!(
-            target: "demo::settings",
-            path = %path.display(),
-            max_fps = settings.max_fps.get(),
-            camera_mouse_sensitivity = settings.camera.mouse_sensitivity,
-            camera_invert_y = settings.camera.invert_y,
-            audio_master_volume = settings.audio.master_volume,
-            audio_ui_volume = settings.audio.ui_volume,
-            "Game settings initialized"
-        );
-        settings
-    }
-
-    /// 校验并保存完整 JSON；替换成功前不修改原文件，失败时返回原始 I/O 错误。
+    /// 使用原生设置插件保存并回读校验，成功替换目标后才允许调用方应用草稿。
     pub fn save(&self, path: &Path) -> io::Result<()> {
         self.validate()?;
-        let mut contents = serde_json::to_vec_pretty(self)
-            .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
-        contents.push(b'\n');
-
-        // 临时产物统一写入工作目录根 tmp；跨文件系统的 rename 失败时保留原配置。
-        let staging_directory = Path::new("tmp").join("settings-save");
-        fs::create_dir_all(&staging_directory)?;
-        let staging_path = staging_directory.join(format!("{}.json", uuid::Uuid::new_v4()));
-        let saved = (|| -> io::Result<()> {
-            let mut file = fs::File::create_new(&staging_path)?;
-            file.write_all(&contents)?;
-            file.sync_all()?;
-            // Windows 替换前关闭临时文件句柄；rename 不先删除旧文件，错误时原文件仍完整。
-            drop(file);
+        let parent = path
+            .parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+            .unwrap_or(Path::new("."));
+        fs::create_dir_all(parent)?;
+        // 原生同步保存不返回结果，因此隔离资源与文件，回读成功后才提交。
+        // 事务文件必须与用户配置同卷；仓库内测试目标仍全部位于根 tmp。
+        let staging_directory = parent.join(format!(".settings-save-{}", uuid::Uuid::new_v4()));
+        fs::create_dir(&staging_directory)?;
+        let result = (|| -> io::Result<()> {
+            let mut storage = native_settings_app(&staging_directory)?;
+            storage.insert_resource(self.clone());
+            SaveSettingsSync::Always.apply(storage.world_mut());
+            let staging_path = staging_directory.join("settings.toml");
+            if read_settings(&staging_path)? != *self {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    "saved settings did not match the draft",
+                ));
+            }
+            // 原生插件已关闭句柄，刷新后在同一文件系统内原子替换；不先删除旧文件。
+            fs::OpenOptions::new()
+                .write(true)
+                .open(&staging_path)?
+                .sync_all()?;
             fs::rename(&staging_path, path)
         })();
-        if let Err(error) = saved {
-            if let Err(cleanup_error) = fs::remove_file(&staging_path)
-                && cleanup_error.kind() != io::ErrorKind::NotFound
+        // 只删除本次独占目录中两个固定的原生产物，不递归清理其他配置。
+        for name in ["settings.toml", "settings.toml.new"] {
+            let file = staging_directory.join(name);
+            if let Err(error) = fs::remove_file(&file)
+                && error.kind() != io::ErrorKind::NotFound
             {
-                warn!(target: "demo::settings", operation = "remove_settings_staging_file",
-                    path = %staging_path.display(), error = %cleanup_error,
+                warn!(target: "demo::settings", path = %file.display(), %error,
                     reason = "settings_staging_cleanup_failed", "Failed to remove settings staging file");
             }
-            warn!(target: "demo::settings", operation = "save_settings", path = %path.display(),
-                %error, reason = "settings_save_failed", "Failed to save game settings");
-            return Err(error);
         }
-        info!(target: "demo::settings", path = %path.display(), max_fps = self.max_fps.get(),
-            camera_mouse_sensitivity = self.camera.mouse_sensitivity,
-            camera_invert_y = self.camera.invert_y, reason = "settings_saved",
-            audio_master_volume = self.audio.master_volume,
-            audio_ui_volume = self.audio.ui_volume,
-            "Game settings saved");
-        Ok(())
+        if let Err(error) = fs::remove_dir(&staging_directory) {
+            warn!(target: "demo::settings", path = %staging_directory.display(), %error,
+                reason = "settings_staging_cleanup_failed", "Failed to remove settings staging directory");
+        }
+        match result {
+            Ok(()) => {
+                info!(target: "demo::settings", path = %path.display(), max_fps = self.max_fps.get(),
+                    camera_mouse_sensitivity = self.camera.mouse_sensitivity,
+                    camera_invert_y = self.camera.invert_y,
+                    audio_master_volume = self.audio.master_volume, audio_ui_volume = self.audio.ui_volume,
+                    reason = "settings_saved", "Game settings saved");
+                Ok(())
+            }
+            Err(error) => {
+                warn!(target: "demo::settings", operation = "save_settings", path = %path.display(),
+                    %error, reason = "settings_save_failed", "Failed to save game settings");
+                Err(error)
+            }
+        }
     }
 }
 
-pub(super) fn read_settings(path: &Path) -> io::Result<GameSettings> {
-    let contents = fs::read_to_string(path)?;
-    serde_json::from_str(&contents)
+/// 原生插件只公开应用名；0.20 的存储通过 preferences_dir.join(app_name) 解析。
+/// 绝对路径让独立保存事务与无窗口测试使用指定目录，不修改进程环境或主世界。
+pub(super) fn native_settings_app(directory: &Path) -> io::Result<App> {
+    let directory = std::path::absolute(directory)?;
+    let directory = directory.to_str().ok_or_else(|| {
+        io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "settings directory is not UTF-8",
+        )
+    })?;
+    let mut app = App::new();
+    app.register_type::<GameSettings>()
+        .add_plugins(SettingsPlugin::new(directory));
+    Ok(app)
+}
+
+#[derive(Default, Deserialize)]
+#[serde(default, deny_unknown_fields)]
+struct StoredSettings {
+    game: GameSettings,
+}
+
+pub(crate) fn read_settings(path: &Path) -> io::Result<GameSettings> {
+    parse_settings(&fs::read_to_string(path)?)
+}
+
+pub(super) fn parse_settings(contents: &str) -> io::Result<GameSettings> {
+    toml::from_str::<StoredSettings>(contents)
+        .map(|stored| stored.game)
         .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))
+}
+
+/// 原生加载后补充完整输入校验；缺失或无效文件采用默认值。
+pub fn validate_loaded_settings(app: &mut App) {
+    validate_loaded_settings_from(app, SettingsFile::default());
+}
+
+pub(super) fn validate_loaded_settings_from(app: &mut App, file: SettingsFile) {
+    let path = &file.path;
+    let settings = match read_settings(path) {
+        Ok(expected) => {
+            // 原生加载按字段容错；项目要求整个文件有效且不能丢失自定义值。
+            if app.world().get_resource::<GameSettings>() == Some(&expected) {
+                expected
+            } else {
+                warn!(target: "demo::settings", path = %path.display(), reason = "native_settings_mismatch",
+                    "Native settings did not match the validated file; using defaults");
+                GameSettings::default()
+            }
+        }
+        Err(error) if error.kind() == io::ErrorKind::NotFound => {
+            info!(target: "demo::settings", path = %path.display(), reason = "settings_file_missing",
+                "Using default game settings");
+            GameSettings::default()
+        }
+        Err(error) => {
+            warn!(target: "demo::settings", operation = "load_settings", path = %path.display(), %error,
+                reason = "settings_load_failed", fallback_max_fps = DEFAULT_FPS_LIMIT,
+                "Failed to load game settings; using defaults");
+            GameSettings::default()
+        }
+    };
+    info!(target: "demo::settings", path = %path.display(), max_fps = settings.max_fps.get(),
+        camera_mouse_sensitivity = settings.camera.mouse_sensitivity, camera_invert_y = settings.camera.invert_y,
+        audio_master_volume = settings.audio.master_volume, audio_ui_volume = settings.audio.ui_volume,
+        "Game settings initialized");
+    app.insert_resource(settings).insert_resource(file);
 }

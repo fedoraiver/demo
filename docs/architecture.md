@@ -16,7 +16,7 @@
 | [scene_assembly/](../src/scene_assembly/mod.rs) | `SceneAssemblyPlugin` | 装配程序生成的平地、物理玩家与可搬方块。 |
 | [ui/](../src/ui/mod.rs) | `GameUiPlugin` | 管理页面生命周期、菜单输入、控件、音量编辑与纯色背景。 |
 | [audio/](../src/audio/mod.rs) | `GameAudioPlugin` | 提供音效消息契约，管理 Kira 播放、混音与设备输出。 |
-| [settings/](../src/settings/mod.rs) | `SettingsPlugin` | 管理设置持久化、草稿、共享原型参数与渲染限帧。 |
+| [settings/](../src/settings/mod.rs) | `GameSettingsPlugin` | 管理设置持久化、草稿、共享原型参数与渲染限帧。 |
 | [inspector/](../src/inspector/mod.rs) | `InspectorPlugin` | 安装 Egui 和世界检查器，直接反射 ECS 世界。 |
 | [session_log/](../src/session_log/mod.rs) | `SessionLogPlugin` | 在其他插件构建前安装统一日志，管理后台输出与退出刷新。 |
 | [window_policy/](../src/window_policy/mod.rs) | `WindowPolicyPlugin` | 管理原生窗口约束、窗口线程策略安装与清理。 |
@@ -63,9 +63,11 @@ UI 控件与主菜单背景通过 `bsn!`、`bsn_list!` 和返回 `impl Scene` �
 
 ## 设置草稿与持久化
 
-保存设置前校验与序列化完整 `GameSettings`，然后在根 `tmp/settings-save/` 写入唯一临时文件、同步并关闭句柄，再用 `rename` 替换目标文件。替换失败时保留原文件并清理临时产物；临时文件与设置及会话日志各自管理。菜单步进范围不收紧 JSON 的有效范围，打开设置保留有效自定义值，实际调整相应字段后才进入菜单范围。
+`GameSettings` 派生原生 `SettingsGroup` 与反射元数据。`main` 在功能插件之前显式注册类型并安装 `bevy::settings::SettingsPlugin`，加载后整体校验原始 TOML，拒绝原生按字段容错造成的不完整配置；配置格式与默认值见 [设置](usage.md#设置)。`GameSettingsPlugin` 管理草稿契约、原型参数与限帧。
 
-音量的 `SetVolume` 只更新草稿，`FinishVolumeEdit` 在释放且数值改变时汇总反馈。读取边界专门忽略旧配置的 `audio.sfx_volume`，当前运行资源与保存文件包含总音量和 UI 音量。其他未知字段仍报错。字段、默认值、步进与缺省兼容见 [设置](usage.md#设置)。
+保存先校验完整 `GameSettings`，由独立最小 `App` 内的原生插件与 `SaveSettingsSync` 写出 TOML。原生保存命令不返回 I/O 结果，因此事务在目标配置目录内创建唯一子目录，回读确认内容后刷新文件并以 `rename` 替换目标；成功后 UI 才更新已应用值。子目录与目标同卷，避免工作目录和用户配置目录跨卷导致替换失败；失败保留原文件并清理本次事务文件。独立存储实例不更新主应用资源或注册表，草稿和失败重试不受原生保存计数影响。菜单步进范围不收紧配置的有效范围，打开设置保留有效自定义值，实际调整相应字段后才进入菜单范围。
+
+音量的 `SetVolume` 只更新草稿，`FinishVolumeEdit` 在释放且数值改变时汇总反馈。当前运行资源与保存文件包含总音量和 UI 音量，读取边界拒绝未知字段。字段、默认值、步进与缺省兼容见 [设置](usage.md#设置)。
 
 ## 原生窗口策略
 
@@ -173,7 +175,7 @@ Avian 在默认固定调度中处理重力、速度积分与碰撞。接地通�
 
 运动与尺寸参数以 [PrototypeConfig](../src/settings/prototype.rs) 的定义和默认值为准；固定步中在 `PrototypeConfig` 变化时将重力同步到物理资源，检查器编辑只影响当前会话。
 
-渲染限帧与固定 60 Hz 模拟分别管理。`SettingsPlugin` 将 `WinitSettings` 的前台与后台模式统一设为 `UpdateMode::Reactive`，以 `1 / max_fps` 为近似更新间隔，关闭设备、用户与窗口事件触发的提前更新；输入缓冲到下一次更新。计时、等待和超时处理由 Bevy 原生窗口循环负责，启动与生命周期切换可强制更新，不保证任意相邻帧的严格最小间隔。`AutoNoVsync` 独立控制呈现方式，仍可能被平台回退。
+渲染限帧与固定 60 Hz 模拟分别管理。`GameSettingsPlugin` 将 `WinitSettings` 的前台与后台模式统一设为 `UpdateMode::Reactive`，以 `1 / max_fps` 为近似更新间隔，关闭设备、用户与窗口事件触发的提前更新；输入缓冲到下一次更新。计时、等待和超时处理由 Bevy 原生窗口循环负责，启动与生命周期切换可强制更新，不保证任意相邻帧的严格最小间隔。`AutoNoVsync` 独立控制呈现方式，仍可能被平台回退。
 
 ## 持有关系与生命周期
 

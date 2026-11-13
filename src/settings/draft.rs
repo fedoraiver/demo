@@ -5,7 +5,7 @@ use std::{io, num::NonZeroU32};
 
 use super::{AudioSettings, CameraSettings, GameSettings, MAX_AUDIO_VOLUME};
 
-// 菜单步进与范围只作用于实际编辑的字段，不参与 JSON 持久化校验。
+// 菜单步进与范围只作用于实际编辑的字段，不参与持久化校验。
 const MENU_MOUSE_SENSITIVITY_STEP: f32 = 0.0005;
 const MENU_MOUSE_SENSITIVITY_MIN: f32 = 0.0005;
 const MENU_MOUSE_SENSITIVITY_MAX: f32 = 0.02;
