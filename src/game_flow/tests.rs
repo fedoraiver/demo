@@ -119,7 +119,7 @@ mod initialization_tests {
     use crate::{
         character::CharacterPlugin, game_flow::AppState, inspector::InspectorPlugin,
         item_interaction::ItemInteractionPlugin, physics::GamePhysicsPlugin,
-        settings::PrototypeConfig, settings::SettingsPlugin,
+        settings::GameSettingsPlugin, settings::PrototypeConfig,
     };
 
     #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -172,7 +172,7 @@ mod initialization_tests {
             app.add_plugins((GamePhysicsPlugin, CharacterPlugin, ItemInteractionPlugin));
         }
         if omitted != Some(Feature::Settings) {
-            app.add_plugins(SettingsPlugin);
+            app.add_plugins(GameSettingsPlugin);
         }
         if omitted != Some(Feature::Inspector) {
             app.add_plugins(InspectorPlugin);
