@@ -14,8 +14,20 @@ const DEFAULT_FPS_LIMIT: u32 = 60;
 /// 配置支持的最低渲染帧率上限。
 const MIN_FPS_LIMIT: u32 = 60;
 
-/// 默认每像素旋转弧度，也是菜单灵敏度百分比的显示基准。
+/// 默认每像素旋转弧度，也是菜单灵敏度倍率 1.00 的基准。
 pub const DEFAULT_MOUSE_SENSITIVITY: f32 = 0.003;
+
+/// 灵敏度倍率上限，菜单、草稿与持久化边界共用。
+pub const MAX_MOUSE_SENSITIVITY_MULTIPLIER: f32 = 10.0;
+
+/// 倍率交互每单位的离散步数，滑条、方向步进和草稿规范化共用。
+pub const MOUSE_SENSITIVITY_STEPS_PER_UNIT: u16 = 100;
+
+/// 倍率交互的最小步长。
+pub const MOUSE_SENSITIVITY_STEP: f32 = 1.0 / MOUSE_SENSITIVITY_STEPS_PER_UNIT as f32;
+
+/// 相机灵敏度上限，单位为弧度／像素。
+pub const MAX_MOUSE_SENSITIVITY: f32 = DEFAULT_MOUSE_SENSITIVITY * MAX_MOUSE_SENSITIVITY_MULTIPLIER;
 
 /// 音量整数百分比上限，默认值、校验、菜单和混音共用此边界。
 pub const MAX_AUDIO_VOLUME: u8 = 100;
@@ -139,7 +151,7 @@ fn volume_or_default(setting: &str, value: Option<i64>) -> u8 {
 #[reflect(Serialize, Deserialize)]
 #[serde(try_from = "CameraSettingsInput")]
 pub struct CameraSettings {
-    /// 每像素对应的旋转弧度，必须是有限的正数。
+    /// 每像素对应的旋转弧度，0 表示停止鼠标转向。
     pub mouse_sensitivity: f32,
     /// 是否反转鼠标纵向移动对应的俯仰方向。
     pub invert_y: bool,
@@ -184,5 +196,5 @@ impl TryFrom<CameraSettingsInput> for CameraSettings {
 }
 
 pub(super) fn is_valid_mouse_sensitivity(value: f32) -> bool {
-    value.is_finite() && value > 0.0
+    (0.0..=MAX_MOUSE_SENSITIVITY).contains(&value)
 }
