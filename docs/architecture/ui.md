@@ -4,7 +4,7 @@
 
 ## 菜单状态与请求
 
-`MenuState` 管理页面、分类、返回来源与提示；`MenuFocus` 保存可操作按钮序号，`MenuInputSource` 区分鼠标与导航来源。设置和帮助切换页面，不改变其主菜单或暂停来源。`SettingsDraft` 与已应用的 `GameSettings` 分离；切换分类保留草稿，成功保存后才替换已应用值。保存与返回规则见 [设置](../player-guide.md#设置)。
+`MenuState` 管理页面、分类、返回来源与提示；`MenuFocus` 保存可操作按钮序号，`MenuInputSource` 区分鼠标与导航来源。设置和帮助切换页面，不改变其主菜单或暂停来源。`SettingsDraft` 在分类间保留，`Apply` 校验通过后才替换运行中的 `GameSettings`。保存与返回规则见[设置](../player-guide.md#设置)。
 
 菜单控制者的高优先级 `MenuContext` 使用 `require_reset`；动作与绑定通过 BSN `Actions<Context>` 和 `Bindings` 声明，随控制者一起清理。键盘、手柄与原生 `PointerPress` 主键消息均产生 `UiRequest`。按钮使用 `bevy::ui_widgets::Button`，`Hovered` 表达悬停，`Pressed` 与项目 `PrimaryPress` 区分原生任意键按压和主键来源；原生键盘 `Activate` 不进入请求，避免与 Enhanced Input 重复。集中入口每帧接受一项语义请求，连续音量采样合并，返回优先于同帧采样，最终数值与释放反馈一并处理。
 
@@ -20,7 +20,7 @@ UI 控件与主菜单背景通过 `bsn!`、`bsn_list!` 和返回 `impl Scene` �
 
 `rebuild_page` 仅在页面、分类、返回来源或视口结构变化时替换 `MenuRoot`。焦点、设置值和成功／失败提示原位更新，保留按钮、音量滑条和滚动实体身份。内容缩短时只夹取越界的 `ScrollPosition`；离页再进入或切换分类才初始化新页面。
 
-主菜单、暂停与帮助是固定内容区，没有 `MenuScroll`。设置仅右侧面板的标题、字段、说明和保存提示滚动；分类、底部操作和页脚固定。滚轮及焦点滚入只作用于该内容区。
+主菜单、暂停与帮助是固定内容区，没有 `MenuScroll`。设置仅右侧面板的标题、字段、说明和操作提示滚动；分类、底部操作和页脚固定。滚轮及焦点滚入只作用于该内容区。
 
 视口与 `Scrollbar` 轨道是同一容器的兄弟，轨道通过 `Scrolls / ScrolledBy` 关系关联目标，`ScrollbarThumb` 直接属于轨道。原生 `Scrollbar.target` 由关系适配层同步，仅用于 Bevy 控件接口；改绑或解绑时同步原生控件并清理拖动。原生 `ScrollbarPlugin` 管理比例、拖动、轨道分页及指针清理，控件不进入菜单导航。项目在 `PostUpdate` 的 UI `Layout` 后、可见性传播前同步显隐、拾取、高亮与有效范围；无溢出时归零并隐藏，离页或失效拖动同步清理。右侧预留空间不随显隐改变，避免内容折行反复切换。
 

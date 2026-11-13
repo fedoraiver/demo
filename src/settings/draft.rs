@@ -1,11 +1,14 @@
 //! 草稿保留合法自定义值，只有实际编辑字段时采用菜单步进范围。
 
 use bevy::prelude::*;
-use std::{io, num::NonZeroU32};
+use std::io;
 
-use super::{AudioSettings, CameraSettings, GameSettings, MAX_AUDIO_VOLUME};
+use super::{
+    AudioSettings, CameraSettings, GameSettings, MAX_AUDIO_VOLUME,
+    config::{FpsLimit, is_valid_mouse_sensitivity},
+};
 
-// 菜单步进与范围只作用于实际编辑的字段，不参与 JSON 持久化校验。
+// 菜单步进与范围只作用于实际编辑的字段，不参与持久化校验。
 const MENU_MOUSE_SENSITIVITY_STEP: f32 = 0.0005;
 const MENU_MOUSE_SENSITIVITY_MIN: f32 = 0.0005;
 const MENU_MOUSE_SENSITIVITY_MAX: f32 = 0.02;
@@ -21,7 +24,7 @@ pub enum SettingKey {
     UiVolume,
 }
 
-/// 菜单独立编辑的草稿，音量供临时预览，应用成功后替换已保存设置。
+/// 菜单独立编辑的草稿，音量供临时预览，确认应用后替换生效设置。
 #[derive(Resource, Clone, Debug, PartialEq)]
 pub struct SettingsDraft {
     pub max_fps: u32,
@@ -49,19 +52,29 @@ impl SettingsDraft {
 
     /// 在应用边界校验草稿；文件允许的有效范围不受菜单步进范围限制。
     pub fn to_settings(&self) -> io::Result<GameSettings> {
-        let max_fps = NonZeroU32::new(self.max_fps).ok_or_else(|| {
+        let max_fps = FpsLimit::new(self.max_fps).ok_or_else(|| {
             io::Error::new(io::ErrorKind::InvalidInput, "max_fps must be at least 60")
         })?;
-        let settings = GameSettings {
+        if !is_valid_mouse_sensitivity(self.mouse_sensitivity) {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "camera mouse_sensitivity must be finite and greater than zero",
+            ));
+        }
+        if self.audio.master_volume > MAX_AUDIO_VOLUME || self.audio.ui_volume > MAX_AUDIO_VOLUME {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "audio volume must be between 0 and 100",
+            ));
+        }
+        Ok(GameSettings {
             max_fps,
             camera: CameraSettings {
                 mouse_sensitivity: self.mouse_sensitivity,
                 invert_y: self.invert_y,
             },
             audio: self.audio,
-        };
-        settings.validate()?;
-        Ok(settings)
+        })
     }
 
     /// 返回可调整音量的百分比，其他设置字段没有音量值。

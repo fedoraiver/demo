@@ -19,7 +19,7 @@ use bevy::{picking::hover::Hovered, prelude::*, ui_widgets::Button};
 
 use crate::{
     audio::{AudioPreview, SoundRequest},
-    settings::{SettingKey, SettingsDraft, SettingsFile},
+    settings::{SettingKey, SettingsDraft},
 };
 
 /// 当前菜单页面；设置和帮助不改变游戏会话的生命周期。
@@ -127,7 +127,6 @@ pub(crate) fn register_menu(app: &mut App) {
     lifecycle::register(app);
     app.init_resource::<MenuInputSource>()
         .init_resource::<SettingsDraft>()
-        .init_resource::<SettingsFile>()
         .init_resource::<AudioPreview>()
         .add_message::<UiRequest>()
         .add_message::<SoundRequest>()

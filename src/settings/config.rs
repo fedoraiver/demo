@@ -1,19 +1,17 @@
-//! 玩家配置的 JSON 边界、验证与原子替换；不覆盖读取失败的原文件。
+//! 原生设置组和数值范围转换。
 
-use std::{
-    fs,
-    io::{self, Write},
-    num::NonZeroU32,
-    path::{Path, PathBuf},
+use std::{convert::Infallible, num::NonZeroU32};
+
+use bevy::{
+    prelude::*,
+    settings::{ReflectSettingsGroup, SettingsGroup},
 };
-
-use bevy::prelude::*;
-use serde::{Deserialize, Deserializer, Serialize, de::Error};
+use serde::{Deserialize, Serialize};
 
 /// 缺省配置采用的渲染帧率上限。
-const DEFAULT_FPS_LIMIT: u32 = 60;
+const DEFAULT_FPS_LIMIT: NonZeroU32 = NonZeroU32::new(60).unwrap();
 
-/// 配置支持的最低渲染帧率上限；不限制固定模拟频率。
+/// 配置支持的最低渲染帧率上限。
 const MIN_FPS_LIMIT: u32 = 60;
 
 /// 默认每像素旋转弧度，也是菜单灵敏度百分比的显示基准。
@@ -22,31 +20,77 @@ pub const DEFAULT_MOUSE_SENSITIVITY: f32 = 0.003;
 /// 音量整数百分比上限，默认值、校验、菜单和混音共用此边界。
 pub const MAX_AUDIO_VOLUME: u8 = 100;
 
-/// 全局玩家设置；非零类型保证帧率上限始终能够转换为等待间隔。
-#[derive(Resource, Clone, Debug, Deserialize, Serialize)]
-#[serde(default, deny_unknown_fields)]
+/// 原生设置存储使用的应用标识，各 worktree 共享同一玩家配置。
+pub const SETTINGS_APP_NAME: &str = "io.github.fedoraiver.demo";
+
+/// 渲染帧率上限。Bevy 逐字段加载设置，通过此类型调用 Serde 并保留 TOML 整数格式。
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, Reflect)]
+#[reflect(opaque, Serialize, Deserialize)]
+#[serde(try_from = "i64", into = "u32")]
+pub struct FpsLimit {
+    value: NonZeroU32,
+}
+
+impl FpsLimit {
+    /// 草稿必须提供受支持的帧率上限。
+    pub fn new(value: u32) -> Option<Self> {
+        NonZeroU32::new(value)
+            .filter(|value| value.get() >= MIN_FPS_LIMIT)
+            .map(|value| Self { value })
+    }
+
+    /// 返回每秒最多更新的次数。
+    pub fn get(self) -> u32 {
+        self.value.get()
+    }
+}
+
+impl Default for FpsLimit {
+    fn default() -> Self {
+        Self {
+            value: DEFAULT_FPS_LIMIT,
+        }
+    }
+}
+
+impl TryFrom<i64> for FpsLimit {
+    type Error = Infallible;
+
+    fn try_from(value: i64) -> Result<Self, Self::Error> {
+        Ok(u32::try_from(value)
+            .ok()
+            .and_then(Self::new)
+            .unwrap_or_else(|| {
+                warn!(target: "demo::settings", setting = "max_fps", value,
+                    default = DEFAULT_FPS_LIMIT.get(), "Invalid setting value; using default");
+                Self::default()
+            }))
+    }
+}
+
+impl From<FpsLimit> for u32 {
+    fn from(limit: FpsLimit) -> Self {
+        limit.get()
+    }
+}
+
+/// 全局玩家设置，由 Bevy 原生插件加载与保存。
+#[derive(Resource, Clone, Debug, Default, PartialEq, Reflect, SettingsGroup)]
+#[reflect(Resource, SettingsGroup, Default)]
+#[settings_group(group = "game")]
 pub struct GameSettings {
-    /// 渲染循环每秒最多更新的次数，默认 60，配置值不得低于 60；不影响 `Time<Fixed>`。
-    #[serde(deserialize_with = "deserialize_max_fps")]
-    pub max_fps: NonZeroU32,
+    /// 渲染循环每秒最多更新的次数，不影响 `Time<Fixed>`。
+    pub max_fps: FpsLimit,
     /// 自由视角的鼠标灵敏度与纵轴方向。
     pub camera: CameraSettings,
     /// 音频总音量及已接入的分类音量，均为整数百分比。
     pub audio: AudioSettings,
 }
 
-impl Default for GameSettings {
-    fn default() -> Self {
-        Self {
-            max_fps: default_max_fps(),
-            camera: CameraSettings::default(),
-            audio: AudioSettings::default(),
-        }
-    }
-}
-
 /// 音频混音设置，缺省字段采用完整音量。
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, Reflect)]
+#[reflect(Serialize, Deserialize)]
+#[serde(try_from = "AudioSettingsInput")]
 pub struct AudioSettings {
     pub master_volume: u8,
     pub ui_volume: u8,
@@ -61,43 +105,43 @@ impl Default for AudioSettings {
     }
 }
 
-impl<'de> Deserialize<'de> for AudioSettings {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        // 兼容读取此前配置中的 sfx_volume，其他未知音频字段仍报错。
-        #[derive(Deserialize)]
-        #[serde(deny_unknown_fields)]
-        struct StoredAudioSettings {
-            #[serde(
-                default = "default_audio_volume",
-                deserialize_with = "deserialize_volume"
-            )]
-            master_volume: u8,
-            #[serde(
-                default = "default_audio_volume",
-                deserialize_with = "deserialize_volume"
-            )]
-            ui_volume: u8,
-            #[serde(default, rename = "sfx_volume")]
-            _legacy_sfx_volume: Option<serde::de::IgnoredAny>,
-        }
+#[derive(Deserialize)]
+struct AudioSettingsInput {
+    master_volume: Option<i64>,
+    ui_volume: Option<i64>,
+}
 
-        let stored = StoredAudioSettings::deserialize(deserializer)?;
+impl TryFrom<AudioSettingsInput> for AudioSettings {
+    type Error = Infallible;
+
+    fn try_from(input: AudioSettingsInput) -> Result<Self, Self::Error> {
         Ok(Self {
-            master_volume: stored.master_volume,
-            ui_volume: stored.ui_volume,
+            master_volume: volume_or_default("audio.master_volume", input.master_volume),
+            ui_volume: volume_or_default("audio.ui_volume", input.ui_volume),
         })
     }
 }
 
-/// 自由视角配置；旧配置缺少本节或字段时使用默认值。
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
-#[serde(default, deny_unknown_fields)]
+fn volume_or_default(setting: &str, value: Option<i64>) -> u8 {
+    let Some(value) = value else {
+        return MAX_AUDIO_VOLUME;
+    };
+    u8::try_from(value)
+        .ok()
+        .filter(|&value| value <= MAX_AUDIO_VOLUME)
+        .unwrap_or_else(|| {
+            warn!(target: "demo::settings", setting, value,
+                default = MAX_AUDIO_VOLUME, "Invalid setting value; using default");
+            MAX_AUDIO_VOLUME
+        })
+}
+
+/// 自由视角配置，省略节或字段时使用默认值。
+#[derive(Debug, Clone, Copy, PartialEq, Deserialize, Serialize, Reflect)]
+#[reflect(Serialize, Deserialize)]
+#[serde(try_from = "CameraSettingsInput")]
 pub struct CameraSettings {
     /// 每像素对应的旋转弧度，必须是有限的正数。
-    #[serde(deserialize_with = "deserialize_mouse_sensitivity")]
     pub mouse_sensitivity: f32,
     /// 是否反转鼠标纵向移动对应的俯仰方向。
     pub invert_y: bool,
@@ -112,174 +156,35 @@ impl Default for CameraSettings {
     }
 }
 
-/// 设置文件的保存位置；测试可覆盖该资源而不触及玩家的真实配置。
-#[derive(Resource, Debug)]
-pub struct SettingsFile {
-    pub path: PathBuf,
+#[derive(Deserialize)]
+struct CameraSettingsInput {
+    mouse_sensitivity: Option<f64>,
+    #[serde(default)]
+    invert_y: bool,
 }
 
-impl Default for SettingsFile {
-    fn default() -> Self {
-        Self {
-            path: PathBuf::from("settings.json"),
-        }
-    }
-}
+impl TryFrom<CameraSettingsInput> for CameraSettings {
+    type Error = Infallible;
 
-fn default_max_fps() -> NonZeroU32 {
-    NonZeroU32::new(DEFAULT_FPS_LIMIT).unwrap()
-}
-
-fn default_audio_volume() -> u8 {
-    MAX_AUDIO_VOLUME
-}
-
-fn deserialize_volume<'de, D>(deserializer: D) -> Result<u8, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let value = u8::deserialize(deserializer)?;
-    if value > MAX_AUDIO_VOLUME {
-        return Err(D::Error::custom("audio volume must be between 0 and 100"));
-    }
-    Ok(value)
-}
-
-fn deserialize_max_fps<'de, D>(deserializer: D) -> Result<NonZeroU32, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let value = NonZeroU32::deserialize(deserializer)?;
-    // 在加载边界检查下限，避免低于支持范围的配置进入限帧系统。
-    if value.get() < MIN_FPS_LIMIT {
-        return Err(D::Error::custom("max_fps must be at least 60"));
-    }
-    Ok(value)
-}
-
-fn deserialize_mouse_sensitivity<'de, D>(deserializer: D) -> Result<f32, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let value = f32::deserialize(deserializer)?;
-    // 在加载边界拒绝无效角速度，避免非有限值进入 Transform 的旋转计算。
-    if !value.is_finite() || value <= 0.0 {
-        return Err(D::Error::custom(
-            "camera mouse_sensitivity must be finite and greater than zero",
-        ));
-    }
-    Ok(value)
-}
-
-impl GameSettings {
-    pub(super) fn validate(&self) -> io::Result<()> {
-        if self.max_fps.get() < MIN_FPS_LIMIT {
-            return Err(io::Error::new(
-                io::ErrorKind::InvalidInput,
-                "max_fps must be at least 60",
-            ));
-        }
-        if !self.camera.mouse_sensitivity.is_finite() || self.camera.mouse_sensitivity <= 0.0 {
-            return Err(io::Error::new(
-                io::ErrorKind::InvalidInput,
-                "camera mouse_sensitivity must be finite and greater than zero",
-            ));
-        }
-        if self.audio.master_volume > MAX_AUDIO_VOLUME || self.audio.ui_volume > MAX_AUDIO_VOLUME {
-            return Err(io::Error::new(
-                io::ErrorKind::InvalidInput,
-                "audio volume must be between 0 and 100",
-            ));
-        }
-        Ok(())
-    }
-
-    /// 读取 JSON 设置；缺失或读取、解析失败时记录原因并使用默认值，不覆盖原文件。
-    pub fn load(path: &Path) -> Self {
-        let settings = match read_settings(path) {
-            Ok(settings) => settings,
-            Err(error) if error.kind() == io::ErrorKind::NotFound => {
-                info!(
-                    target: "demo::settings",
-                    path = %path.display(),
-                    reason = "settings_file_missing",
-                    "Using default game settings"
-                );
-                Self::default()
-            }
-            Err(error) => {
-                warn!(
-                    target: "demo::settings",
-                    operation = "load_settings",
-                    path = %path.display(),
-                    %error,
-                    fallback_max_fps = Self::default().max_fps.get(),
-                    fallback_camera_mouse_sensitivity = CameraSettings::default().mouse_sensitivity,
-                    fallback_camera_invert_y = CameraSettings::default().invert_y,
-                    fallback_audio_master_volume = AudioSettings::default().master_volume,
-                    fallback_audio_ui_volume = AudioSettings::default().ui_volume,
-                    reason = "settings_load_failed",
-                    "Failed to load game settings; using defaults"
-                );
-                Self::default()
-            }
+    fn try_from(input: CameraSettingsInput) -> Result<Self, Self::Error> {
+        let value = input
+            .mouse_sensitivity
+            .unwrap_or(f64::from(DEFAULT_MOUSE_SENSITIVITY));
+        let sensitivity = value as f32;
+        let mouse_sensitivity = if is_valid_mouse_sensitivity(sensitivity) {
+            sensitivity
+        } else {
+            warn!(target: "demo::settings", setting = "camera.mouse_sensitivity", value,
+                default = DEFAULT_MOUSE_SENSITIVITY, "Invalid setting value; using default");
+            DEFAULT_MOUSE_SENSITIVITY
         };
-        info!(
-            target: "demo::settings",
-            path = %path.display(),
-            max_fps = settings.max_fps.get(),
-            camera_mouse_sensitivity = settings.camera.mouse_sensitivity,
-            camera_invert_y = settings.camera.invert_y,
-            audio_master_volume = settings.audio.master_volume,
-            audio_ui_volume = settings.audio.ui_volume,
-            "Game settings initialized"
-        );
-        settings
-    }
-
-    /// 校验并保存完整 JSON；替换成功前不修改原文件，失败时返回原始 I/O 错误。
-    pub fn save(&self, path: &Path) -> io::Result<()> {
-        self.validate()?;
-        let mut contents = serde_json::to_vec_pretty(self)
-            .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
-        contents.push(b'\n');
-
-        // 临时产物统一写入工作目录根 tmp；跨文件系统的 rename 失败时保留原配置。
-        let staging_directory = Path::new("tmp").join("settings-save");
-        fs::create_dir_all(&staging_directory)?;
-        let staging_path = staging_directory.join(format!("{}.json", uuid::Uuid::new_v4()));
-        let saved = (|| -> io::Result<()> {
-            let mut file = fs::File::create_new(&staging_path)?;
-            file.write_all(&contents)?;
-            file.sync_all()?;
-            // Windows 替换前关闭临时文件句柄；rename 不先删除旧文件，错误时原文件仍完整。
-            drop(file);
-            fs::rename(&staging_path, path)
-        })();
-        if let Err(error) = saved {
-            if let Err(cleanup_error) = fs::remove_file(&staging_path)
-                && cleanup_error.kind() != io::ErrorKind::NotFound
-            {
-                warn!(target: "demo::settings", operation = "remove_settings_staging_file",
-                    path = %staging_path.display(), error = %cleanup_error,
-                    reason = "settings_staging_cleanup_failed", "Failed to remove settings staging file");
-            }
-            warn!(target: "demo::settings", operation = "save_settings", path = %path.display(),
-                %error, reason = "settings_save_failed", "Failed to save game settings");
-            return Err(error);
-        }
-        info!(target: "demo::settings", path = %path.display(), max_fps = self.max_fps.get(),
-            camera_mouse_sensitivity = self.camera.mouse_sensitivity,
-            camera_invert_y = self.camera.invert_y, reason = "settings_saved",
-            audio_master_volume = self.audio.master_volume,
-            audio_ui_volume = self.audio.ui_volume,
-            "Game settings saved");
-        Ok(())
+        Ok(Self {
+            mouse_sensitivity,
+            invert_y: input.invert_y,
+        })
     }
 }
 
-pub(super) fn read_settings(path: &Path) -> io::Result<GameSettings> {
-    let contents = fs::read_to_string(path)?;
-    serde_json::from_str(&contents)
-        .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))
+pub(super) fn is_valid_mouse_sensitivity(value: f32) -> bool {
+    value.is_finite() && value > 0.0
 }
