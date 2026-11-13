@@ -4,7 +4,7 @@ use super::{theme::*, widgets::*, *};
 use bevy::{
     input::InputSystems,
     input_focus::{InputFocus, InputFocusSystems, tab_navigation::TabIndex},
-    text::{EditableText, FontSourceTemplate, TextCursorStyle, TextEditChange},
+    text::{EditableText, FontSourceTemplate, TextCursorStyle, TextEdit, TextEditChange},
     ui_widgets::{SelectAllOnFocus, TextInput},
 };
 use bevy_enhanced_input::prelude::EnhancedInputSystems;
@@ -122,9 +122,10 @@ fn sync_text(
     }
     for mut text in &mut inputs {
         if text.value().to_string() != draft.mouse_sensitivity_percent {
-            // 恢复默认只替换现有编辑缓冲，不重建控件或保留尚未执行的旧编辑。
-            *text = EditableText::new(&draft.mouse_sensitivity_percent);
-            text.max_characters = Some(64);
+            // 保留编辑器字体与缩放；clear 同时取消旧编辑和粘贴，避免其在 PostUpdate 覆盖默认值。
+            text.clear();
+            text.editor_mut().set_text(&draft.mouse_sensitivity_percent);
+            text.queue_edit(TextEdit::TextEnd(false));
         }
     }
 }
