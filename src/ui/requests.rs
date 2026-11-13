@@ -10,6 +10,7 @@ use bevy::{
     input_focus::{FocusCause, InputFocus},
     prelude::*,
     settings::SaveSettingsSync,
+    text::EditableText,
 };
 use bevy_enhanced_input::prelude::EnhancedInputSystems;
 
@@ -17,7 +18,9 @@ pub(super) fn register(app: &mut App) {
     // 动作应用后、状态切换及固定循环前消费，暂停在当帧生效。
     app.add_systems(
         PreUpdate,
-        handle_requests.after(EnhancedInputSystems::Trigger),
+        handle_requests
+            .after(EnhancedInputSystems::Trigger)
+            .after(super::sensitivity::apply_pending_input),
     );
 }
 
@@ -42,14 +45,19 @@ fn handle_requests(
     mut sounds: MessageWriter<SoundRequest>,
     mut volume_edit: Local<Option<(SettingKey, u8)>>,
     mut input_focus: ResMut<InputFocus>,
-    sensitivity_inputs: Query<Entity, With<super::sensitivity::SensitivityInput>>,
+    sensitivity_inputs: Query<(Entity, &super::sensitivity::SensitivityInput, &EditableText)>,
+    mut sensitivity_slider_edit: Local<Option<String>>,
 ) {
     let mut actions = requests.read().map(|request| request.action);
     let action = actions.next();
     // 同一拖动帧可同时包含最后坐标与释放；键盘操作优先于上一帧排队的拖动，避免吞掉 Esc。
     let mut finished_volume = false;
+    let mut finished_sensitivity = false;
     let action = action.map(|action| match action {
-        UiAction::SetVolume(..) | UiAction::FinishVolumeEdit => {
+        UiAction::SetVolume(..)
+        | UiAction::FinishVolumeEdit
+        | UiAction::SetSensitivity(_)
+        | UiAction::FinishSensitivitySlider => {
             let mut selected = action;
             for next in actions {
                 match next {
@@ -61,6 +69,12 @@ fn handle_requests(
                         }
                     }
                     UiAction::FinishVolumeEdit => finished_volume = true,
+                    UiAction::SetSensitivity(value) => {
+                        if matches!(selected, UiAction::SetSensitivity(_)) {
+                            selected = UiAction::SetSensitivity(value);
+                        }
+                    }
+                    UiAction::FinishSensitivitySlider => finished_sensitivity = true,
                     // 滑条上的 Enter 只是无效 Adjust，不应打断正在编辑的初值。
                     UiAction::Adjust(_, 0) => {}
                     action => {
@@ -121,6 +135,13 @@ fn handle_requests(
             if menu.tab == tab {
                 return;
             }
+            if menu.tab == SettingsTab::Controls
+                && sensitivity_inputs.iter().any(|(entity, input, _)| {
+                    input.was_focused || input_focus.get() == Some(entity)
+                })
+            {
+                draft.normalize_sensitivity();
+            }
             menu.tab = tab;
             menu.status = None;
             focus.index = match tab {
@@ -146,14 +167,55 @@ fn handle_requests(
         UiAction::EditSensitivity
             if menu.page == MenuPage::Settings && menu.tab == SettingsTab::Controls =>
         {
-            if let Ok(entity) = sensitivity_inputs.single()
+            if let Ok((entity, _, _)) = sensitivity_inputs.single()
                 && input_focus.get() != Some(entity)
             {
                 input_focus.set(entity, FocusCause::Navigated);
             }
         }
         UiAction::FinishSensitivityEdit if menu.page == MenuPage::Settings => {
+            if sensitivity_inputs
+                .iter()
+                .any(|(_, _, text)| text.is_composing() || text.pending_paste.is_some())
+            {
+                return;
+            }
+            if !draft.normalize_sensitivity() {
+                menu.status = Some(super::sensitivity::INPUT_ERROR.into());
+                return;
+            }
             input_focus.clear();
+        }
+        UiAction::SetSensitivity(step)
+            if menu.page == MenuPage::Settings && menu.tab == SettingsTab::Controls =>
+        {
+            sensitivity_slider_edit.get_or_insert_with(|| draft.mouse_sensitivity_text.clone());
+            if draft.set_sensitivity_multiplier(
+                f32::from(step) / f32::from(crate::settings::MOUSE_SENSITIVITY_STEPS_PER_UNIT),
+            ) {
+                menu.status = None;
+            }
+            if !finished_sensitivity {
+                return;
+            }
+            let Some(initial) = sensitivity_slider_edit.take() else {
+                return;
+            };
+            if initial == draft.mouse_sensitivity_text {
+                return;
+            }
+            info!(target: "demo::settings", multiplier = draft.sensitivity_multiplier(), reason = "sensitivity_drag_finished", "Mouse sensitivity draft changed");
+        }
+        UiAction::FinishSensitivitySlider
+            if menu.page == MenuPage::Settings && menu.tab == SettingsTab::Controls =>
+        {
+            let Some(initial) = sensitivity_slider_edit.take() else {
+                return;
+            };
+            if initial == draft.mouse_sensitivity_text {
+                return;
+            }
+            info!(target: "demo::settings", multiplier = draft.sensitivity_multiplier(), reason = "sensitivity_drag_finished", "Mouse sensitivity draft changed");
         }
         UiAction::SetVolume(key, value)
             if menu.page == MenuPage::Settings && menu.tab == SettingsTab::Audio =>
@@ -200,30 +262,55 @@ fn handle_requests(
             *draft = SettingsDraft::default();
             menu.status = Some("Defaults restored. Choose Apply to save.".into());
         }
-        UiAction::ApplySettings if menu.page == MenuPage::Settings => match draft.to_settings() {
-            Ok(updated) => {
-                info!(target: "demo::settings",
+        UiAction::ApplySettings if menu.page == MenuPage::Settings => {
+            if sensitivity_inputs
+                .iter()
+                .any(|(_, _, text)| text.is_composing() || text.pending_paste.is_some())
+            {
+                menu.status = Some("Finish the current text input before applying.".into());
+                return;
+            }
+            if sensitivity_inputs
+                .iter()
+                .any(|(entity, input, _)| input.was_focused || input_focus.get() == Some(entity))
+            {
+                draft.normalize_sensitivity();
+            }
+            match draft.to_settings() {
+                Ok(updated) => {
+                    info!(target: "demo::settings",
                         max_fps_before = settings.max_fps.get(), max_fps_after = updated.max_fps.get(),
                         sensitivity_before = settings.camera.mouse_sensitivity, sensitivity_after = updated.camera.mouse_sensitivity,
                         invert_y_before = settings.camera.invert_y, invert_y_after = updated.camera.invert_y,
                         master_volume_before = settings.audio.master_volume, master_volume_after = updated.audio.master_volume,
                         ui_volume_before = settings.audio.ui_volume, ui_volume_after = updated.audio.ui_volume,
                         reason = "settings_apply", "Game settings applied");
-                *settings = updated;
-                commands.queue(SaveSettingsSync::Always);
-                menu.status = Some("Settings applied.".into());
+                    *settings = updated;
+                    commands.queue(SaveSettingsSync::Always);
+                    menu.status = Some("Settings applied.".into());
+                }
+                Err(error) => {
+                    warn!(target: "demo::settings", %error, reason = "invalid_settings_input", "Settings input validation failed");
+                    if draft.sensitivity_multiplier().is_none() {
+                        menu.status = Some(super::sensitivity::INPUT_ERROR.into());
+                        return;
+                    }
+                    menu.status = Some(format!("Could not apply settings. {error}"));
+                    cue = SoundCue::MenuCancel;
+                }
             }
-            Err(error) => {
-                warn!(target: "demo::settings", %error, reason = "invalid_settings_input", "Settings input validation failed");
-                menu.status = Some(format!("Could not apply settings. {error}"));
-                cue = SoundCue::MenuCancel;
-            }
-        },
+        }
         _ => return,
     }
     if !matches!(action, UiAction::SetVolume(..) | UiAction::FinishVolumeEdit) {
         // 只在其他操作真正被接受后结束旧手势，无效确认或边界调整不破坏初值。
         *volume_edit = None;
+    }
+    if !matches!(
+        action,
+        UiAction::SetSensitivity(_) | UiAction::FinishSensitivitySlider
+    ) {
+        *sensitivity_slider_edit = None;
     }
     // 只对本帧真正消费并接受的语义请求反馈，鼠标与确认键并存也只产生一次。
     if let Ok(source) = controllers.single() {

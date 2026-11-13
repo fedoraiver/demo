@@ -125,7 +125,11 @@ pub(super) fn pointer_interaction(
                 clicked = Some(entity);
                 *source = MenuInputSource::Pointer;
                 focus.index = button.index;
-                if !matches!(button.action, UiAction::Adjust(_, 0)) {
+                // 原生 PointerFocus 已给数字框聚焦；不重复排队，以免吞掉紧接着的 Enter。
+                if !matches!(
+                    button.action,
+                    UiAction::Adjust(_, 0) | UiAction::EditSensitivity
+                ) {
                     requests.write(UiRequest {
                         action: button.action,
                     });
