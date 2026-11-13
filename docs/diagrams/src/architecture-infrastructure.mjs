@@ -3,7 +3,7 @@ export const INFRASTRUCTURE_FEATURES = Object.freeze([
   Object.freeze({ id: 'infrastructure', label: 'Bevy 引擎', identifier: 'Bevy', viewPrefix: 'infrastructure' }),
   Object.freeze({ id: 'avian', label: 'Avian', identifier: 'Avian / Transform Interpolation', viewPrefix: 'third-party-avian', section: 'third_party' }),
   Object.freeze({ id: 'enhanced_input', label: 'Enhanced Input', identifier: 'Enhanced Input', viewPrefix: 'third-party-enhanced-input', section: 'third_party' }),
-  Object.freeze({ id: 'kira', label: 'Kira', identifier: 'Kira', viewPrefix: 'third-party-kira', section: 'third_party' }),
+  Object.freeze({ id: 'seedling', label: 'Seedling', identifier: 'Seedling / Firewheel', viewPrefix: 'third-party-seedling', section: 'third_party' }),
   Object.freeze({ id: 'egui', label: 'Egui / Inspector', identifier: 'Egui / World Inspector', viewPrefix: 'third-party-egui', section: 'third_party' }),
 ]);
 
@@ -13,7 +13,7 @@ const entryDeclarations = new Map([
   ['infrastructure', [['bevy_internal', 'bevy_internal::default_plugins::DefaultPlugins', 'PluginGroup']]],
   ['avian', [['avian3d', 'avian3d::PhysicsPlugins', 'PluginGroup']]],
   ['enhanced_input', [['bevy_enhanced_input', 'bevy_enhanced_input::EnhancedInputPlugin', 'Plugin']]],
-  ['kira', [['bevy_kira_audio', 'bevy_kira_audio::AudioPlugin', 'Plugin']]],
+  ['seedling', [['bevy_seedling', 'bevy_seedling::SeedlingPlugins', 'PluginGroup']]],
   ['egui', [['bevy_egui', 'bevy_egui::EguiPlugin', 'Plugin'], ['bevy_inspector_egui', 'bevy_inspector_egui::quick::WorldInspectorPlugin', 'Plugin', 'bevy-inspector-egui']]],
 ]);
 

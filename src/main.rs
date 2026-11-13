@@ -53,7 +53,7 @@ fn main() -> AppExit {
         DefaultPlugins
             .build()
             .disable::<LogPlugin>()
-            // 音频设备输出统一由 Kira 管理。
+            // 音频设备输出统一由 Seedling 管理。
             .disable::<bevy::audio::AudioPlugin>()
             .set(WindowPlugin {
                 primary_window: Some(window_policy::primary_window()),

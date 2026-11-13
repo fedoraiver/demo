@@ -43,11 +43,15 @@ python -B scripts/audio_pipeline.py import-sources --acquired-date YYYY-MM-DD
 
 日期填写实际取得日期。重用已取得的包时添加 `--use-cache` 并保留原日期。完整包暂存在根 `tmp/audio/downloads/`，正式来源证据写入 `assets/audio/sources/`。导入后执行清单生成、技术检查和快照刷新。
 
+## 后端依赖
+
+当前 Bevy 0.20 所需的 Seedling 与 Firewheel 兼容实现尚未发布，依赖来自 [Seedling 兼容分支](https://github.com/eswartz/bevy_seedling-fork/tree/migrate-to-bevy-0.20) 与 [Firewheel 兼容分支](https://github.com/eswartz/Firewheel-fork/tree/bevy-0.20)。`Cargo.toml` 用完整 `rev` 固定两者，`Cargo.lock` 固定全部解析结果；更新时需重新核对上游差异、Bevy 版本与音频无窗口回归。
+
 ## 接入与验收
 
-声音生产端按[事件合同](../assets/audio/events.md)发送 `SoundRequest`，由 `GameAudioPlugin` 使用 `bevy_kira_audio` 管理加载、播放、混音与设备输出。当前菜单事件通过 `UiTrack` 播放，使用真实时间控制冷却，排队实例计入并发限制。未加载或静音的请求立即消费。
+声音生产端按[事件合同](../assets/audio/events.md)发送 `SoundRequest`，由 `GameAudioPlugin` 使用 `bevy_seedling` 管理加载、播放、混音与设备输出。当前菜单事件通过 `UiPool` 采样池播放，使用真实时间控制冷却，排队实例计入并发限制。未加载或静音的请求立即消费。
 
-当前 UI 声音的有效增益为默认基准、素材清单音量、Master Volume 与 UI Volume 的乘积。设置页通过 `AudioPreview` 即时预览，应用成功后保存，返回时采用最近成功应用的设置。正在播放与排队实例都按当前混音同步音量。
+当前 UI 声音的有效增益为默认基准、素材清单音量、Master Volume 与 UI Volume 的乘积。设置页通过 `AudioPreview` 即时预览，应用成功后保存，返回时采用最近成功应用的设置。正在播放与排队实例都通过池总线响应当前混音，素材的独立倍率保留在 `SamplePlayer` 中。
 
 新增素材时，在 `generation.json` 声明素材分类、来源、事件映射与播放策略，生成清单并补齐来源证据。将声音接入运行时事件时，同步更新 `SoundCue`、事件类别及清单映射，由所属功能在事件被接受后发送请求，并按所需声音类别接入播放通道、混音与生命周期行为。当前接入范围见[事件表](../assets/audio/events.md)，相关实现检查见[音频无窗口验证](testing/README.md#音频无窗口验证)。
 

@@ -12,15 +12,24 @@ import { pathsForRepository, repositoryRoot } from '../src/paths.mjs';
 import { testDocument } from './test-dom.mjs';
 
 const captured = JSON.parse(fs.readFileSync(new URL('./fixtures/compiler-plugin-menu.json', import.meta.url), 'utf8'));
-const registryFor = () => Object.fromEntries(structuredClone(captured.objects).map(object => [object.id, object]));
+// 历史编译器快照保留原始来源；当前音频提供方使用显式合成声明检验选择器。
+const registryFor = () => {
+  const objects = structuredClone(captured.objects).filter(object => object.typeIdentity?.crateName !== 'bevy_kira_audio');
+  objects.push({
+    id: 'synthetic-seedling-plugins', name: 'SeedlingPlugins', fullName: 'bevy_seedling::SeedlingPlugins', kind: 'PluginGroup',
+    typeIdentity: { crateName: 'bevy_seedling', defPath: 'bevy_seedling::SeedlingPlugins', package: { name: 'bevy_seedling' }, roles: ['PluginGroup'] },
+  });
+  return Object.fromEntries(objects.map(object => [object.id, object]));
+};
 
-test('captured compiler declarations select five infrastructure entries and six real Plugin objects', () => {
+test('compiler fixture with synthetic Seedling declaration selects five infrastructure entries and six Plugin objects', () => {
   const registry = registryFor(), before = structuredClone(registry), infrastructure = projectInfrastructureFeatures(registry, { requireComplete: true });
-  assert.deepEqual(infrastructure.map(entry => entry.id), ['infrastructure', 'avian', 'enhanced_input', 'kira', 'egui']);
+  assert.deepEqual(infrastructure.map(entry => entry.id), ['infrastructure', 'avian', 'enhanced_input', 'seedling', 'egui']);
   assert.deepEqual(infrastructure.map(entry => registry[entry.overviewNode].typeIdentity.defPath), [
     'bevy_internal::default_plugins::DefaultPlugins', 'avian3d::PhysicsPlugins', 'bevy_enhanced_input::EnhancedInputPlugin',
-    'bevy_kira_audio::AudioPlugin', 'bevy_egui::EguiPlugin',
+    'bevy_seedling::SeedlingPlugins', 'bevy_egui::EguiPlugin',
   ]);
+  assert.ok(Object.values(registry).every(object => object.typeIdentity?.crateName !== 'bevy_kira_audio'));
   const menu = projectPluginMenu(captured.features, registry, infrastructure);
   assert.equal(menu.project.length, 14); assert.equal(menu.infrastructure.length, 6);
   assert.deepEqual(menu.infrastructure.slice(-2).map(entry => registry[entry.overviewNode].typeIdentity.defPath), ['bevy_egui::EguiPlugin', 'bevy_inspector_egui::quick::WorldInspectorPlugin']);
@@ -29,20 +38,20 @@ test('captured compiler declarations select five infrastructure entries and six 
 });
 
 test('native selectors reject missing or ambiguous identities and never fall back to a display name', () => {
-  const registry = registryFor(), kira = projectInfrastructureFeatures(registry).find(entry => entry.id === 'kira').overviewNode;
-  const original = structuredClone(registry[kira]);
-  registry[kira].typeIdentity.defPath = 'bevy_audio::AudioPlugin';
-  assert.throws(() => projectInfrastructureFeatures(registry, { requireComplete: true }), /Missing.*bevy_kira_audio::AudioPlugin/);
-  registry[kira] = original; registry['distinct-type-instance'] = { ...original, id: 'distinct-type-instance' };
-  assert.throws(() => projectInfrastructureFeatures(registry), /Ambiguous.*bevy_kira_audio::AudioPlugin/);
+  const registry = registryFor(), seedling = projectInfrastructureFeatures(registry).find(entry => entry.id === 'seedling').overviewNode;
+  const original = structuredClone(registry[seedling]);
+  registry[seedling].typeIdentity.defPath = 'bevy_audio::AudioPlugin';
+  assert.throws(() => projectInfrastructureFeatures(registry, { requireComplete: true }), /Missing.*bevy_seedling::SeedlingPlugins/);
+  registry[seedling] = original; registry['distinct-type-instance'] = { ...original, id: 'distinct-type-instance' };
+  assert.throws(() => projectInfrastructureFeatures(registry), /Ambiguous.*bevy_seedling::SeedlingPlugins/);
   delete registry['distinct-type-instance'];
-  registry[kira].name = '显示名称可以变化'; registry[kira].fullName = '其他显示名称'; registry[kira].typeIdentity.local = true;
-  assert.equal(projectInfrastructureFeatures(registry).find(entry => entry.id === 'kira').overviewNode, kira);
-  const dependencyFeature = { id: 'dependency-as-feature', label: '单元内声明', overviewNode: kira };
+  registry[seedling].name = '显示名称可以变化'; registry[seedling].fullName = '其他显示名称'; registry[seedling].typeIdentity.local = true;
+  assert.equal(projectInfrastructureFeatures(registry).find(entry => entry.id === 'seedling').overviewNode, seedling);
+  const dependencyFeature = { id: 'dependency-as-feature', label: '单元内声明', overviewNode: seedling };
   assert.throws(() => projectPluginMenu([dependencyFeature], registry), /Invalid project Plugin feature/, 'unit-local does not mean project-owned');
 });
 
-test('captured model produces the same valid runtime targets and HTML options while unlisted plugins remain searchable', t => {
+test('fixture model produces valid runtime targets and HTML options while unlisted plugins remain searchable', t => {
   const registry = registryFor(), model = { schemaVersion: 2, features: captured.features, objects: Object.values(registry), relations: [] };
   const catalog = createCompilerObjectCatalog(model, registry), infrastructureFeatures = projectInfrastructureFeatures(registry, { requireComplete: true });
   const data = { schemaVersion: 6, model, registry, infrastructureFeatures, objects: catalog.objects, objectAliases: {},

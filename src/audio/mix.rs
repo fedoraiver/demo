@@ -1,9 +1,9 @@
-//! 有效混音及排队、已播放实例的增益同步。
+//! 有效混音与 UI 采样池的增益同步。
 
-use super::{AudioPreview, MASTER_GAIN, playback::SoundBank};
+use super::{AudioPreview, MASTER_GAIN, UiPool};
 use crate::settings::{AudioSettings, GameSettings, MAX_AUDIO_VOLUME};
 use bevy::prelude::*;
-use bevy_kira_audio::{AudioInstance, AudioTween, prelude::Decibels};
+use bevy_seedling::prelude::{SamplerPool, Volume, VolumeNode};
 
 /// 音频输出的有效混音源，离开设置页后采用最近成功应用的配置。
 #[derive(Resource, Clone, Copy, Debug, PartialEq, Eq, Default)]
@@ -21,13 +21,12 @@ impl AudioMix {
     }
 }
 
-/// Kira 的 SILENCE 有明确静音语义，避免把 log10(0) 产生的非有限值传给后端。
-pub(super) fn volume_decibels(gain: f64, asset_volume: f64) -> Decibels {
-    let volume = gain * asset_volume;
-    if volume <= 0.0 {
-        Decibels::SILENCE
+/// Firewheel 的 Linear 使用响度曲线；振幅倍率转为分贝，保持现有混音的乘积语义。
+pub(super) fn amplitude_volume(gain: f64) -> Volume {
+    if gain <= 0.0 {
+        Volume::SILENT
     } else {
-        Decibels((20.0 * volume.log10()) as f32)
+        Volume::Decibels((20.0 * gain.log10()) as f32)
     }
 }
 
@@ -62,24 +61,15 @@ pub(super) fn sync_audio_mix(
     }
 }
 
-pub(super) fn sync_voice_volumes(
+pub(super) fn sync_pool_volume(
     mix: Res<AudioMix>,
-    mut bank: ResMut<SoundBank>,
-    mut instances: ResMut<Assets<AudioInstance>>,
+    mut pools: Query<&mut VolumeNode, With<SamplerPool<UiPool>>>,
 ) {
-    // Kira 的通道 set_volume 会覆盖每个实例的绝对音量，不能保持素材间响度。
-    // 因此按通道混音和素材清单音量同步，覆盖正在播放和刚就绪实例。
-    let SoundBank { sounds, voices, .. } = &mut *bank;
-    for voice in voices {
-        let Some(sound) = sounds.get(&voice.cue) else {
-            continue;
-        };
-        let volume = volume_decibels(mix.gain(), sound.policy.volume);
-        if voice.applied_volume != Some(volume)
-            && let Some(mut instance) = instances.get_mut(voice.handle.id())
-        {
-            instance.set_decibels(volume, AudioTween::linear(std::time::Duration::ZERO));
-            voice.applied_volume = Some(volume);
+    // 素材倍率保留在 SamplePlayer，池总线只应用当前混音，排队与播放中声音共用。
+    let volume = amplitude_volume(mix.gain());
+    for mut pool in &mut pools {
+        if pool.volume != volume {
+            pool.volume = volume;
         }
     }
 }

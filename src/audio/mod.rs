@@ -5,13 +5,21 @@ mod messages;
 mod mix;
 mod playback;
 
-use bevy::prelude::*;
-use bevy_kira_audio::{AudioApp, AudioPlugin as KiraAudioPlugin, AudioSystemSet};
+use bevy::{
+    ecs::error::{BevyError, ErrorContext, match_severity},
+    prelude::*,
+};
+use bevy_seedling::{
+    SeedlingPlugins, SeedlingSystems, context::SampleRate, node::DiffRate,
+    platform::cpal::StartStreamError, prelude::PoolLabel,
+};
 
 use crate::settings::AudioSettings;
 pub(crate) use messages::{SoundCue, SoundRequest};
-use mix::{AudioMix, sync_audio_mix, sync_voice_volumes};
-use playback::{SoundBank, log_load_failures, play_requests, preload_sounds, stop_on_exit};
+use mix::{AudioMix, sync_audio_mix, sync_pool_volume};
+use playback::{
+    SoundBank, log_load_failures, play_requests, preload_sounds, register_exit, spawn_ui_pool,
+};
 
 const MANIFEST: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
@@ -35,39 +43,56 @@ pub(crate) enum AudioSystems {
 }
 
 /// 当前菜单反馈使用的 UI 输出通道。
-#[derive(Resource)]
-struct UiTrack;
+#[derive(PoolLabel, Default, Debug, Clone, PartialEq, Eq, Hash)]
+struct UiPool;
 
-/// 安装 Kira 输出与音频生命周期；无设备测试直接使用内部纯数据夹具。
+/// 安装 Seedling 输出与音频生命周期；无设备测试只装配采样与混音数据。
 pub(crate) struct GameAudioPlugin;
 
 impl Plugin for GameAudioPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(KiraAudioPlugin)
-            .add_audio_channel::<UiTrack>()
+        app.add_plugins(SeedlingPlugins)
             .init_resource::<SoundBank>()
             .init_resource::<AudioMix>()
             .init_resource::<AudioPreview>()
             .add_message::<SoundRequest>()
-            .add_systems(Startup, preload_sounds)
+            .add_systems(Startup, (spawn_ui_pool, preload_sounds))
             .configure_sets(Update, (AudioSystems::Mix, AudioSystems::Playback).chain())
             .add_systems(
                 Update,
-                (log_load_failures, sync_audio_mix, sync_voice_volumes)
+                (log_load_failures, sync_audio_mix, sync_pool_volume)
                     .chain()
                     .in_set(AudioSystems::Mix),
             )
-            .add_systems(
-                Update,
-                (play_requests, stop_on_exit)
-                    .chain()
-                    .in_set(AudioSystems::Playback),
-            )
-            // 排队句柄在 Kira 的 PostUpdate 中生成，创建后立即补齐当前增益。
-            .add_systems(
-                PostUpdate,
-                sync_voice_volumes.after(AudioSystemSet::PlayTypedChannels),
-            );
+            .add_systems(Update, play_requests.in_set(AudioSystems::Playback));
+        register_exit(app);
+        configure_output_lifecycle(app);
+    }
+}
+
+fn configure_output_lifecycle(app: &mut App) {
+    // 菜单混音与退出停止在本帧刷新，不受后端默认的 10ms 参数同步间隔限制。
+    app.insert_resource(DiffRate(std::time::Duration::ZERO));
+    // Seedling 将设备启动失败交给 Bevy；仅此错误降为可继续运行，其余沿用默认策略。
+    app.set_error_handler(handle_audio_error).configure_sets(
+        Last,
+        (
+            SeedlingSystems::Acquire,
+            SeedlingSystems::Connect,
+            SeedlingSystems::Pool,
+            SeedlingSystems::Queue,
+            SeedlingSystems::Flush,
+        )
+            .run_if(resource_exists::<SampleRate>),
+    );
+}
+
+fn handle_audio_error(error: BevyError, context: ErrorContext) {
+    if error.downcast_ref::<StartStreamError>().is_some() {
+        error!(target: "demo::audio", operation = "start_audio_output", %error, %context,
+            reason = "audio_device_unavailable", "Audio output unavailable; game continues");
+    } else {
+        match_severity(error, context);
     }
 }
 
