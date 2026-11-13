@@ -5,6 +5,7 @@ use super::{
     playback::{LoadedSound, Voice, allow_request},
 };
 use crate::settings::GameSettings;
+use bevy::{app::TaskPoolPlugin, scene::ScenePlugin};
 use bevy_seedling::{
     firewheel::SymphoniumAudioF32,
     prelude::{AudioSample, SamplePlayer, SamplerPool, Volume, VolumeNode},
@@ -181,19 +182,25 @@ fn queued_requests_obey_limits_without_audio_device() {
 
 fn queued_test_app() -> App {
     let mut app = App::new();
-    app.init_resource::<Time<Real>>()
-        .init_resource::<Assets<AudioSample>>()
-        .init_resource::<GameSettings>()
-        .init_resource::<AudioMix>()
-        .init_resource::<AudioPreview>()
-        .init_resource::<SoundBank>()
-        .add_message::<SoundRequest>()
-        .add_message::<AppExit>()
-        .add_systems(Startup, spawn_ui_pool)
-        .add_systems(
-            Update,
-            (sync_audio_mix, sync_pool_volume, play_requests).chain(),
-        );
+    // BSN 装配依赖资产与场景服务；保留手动真实时间，不安装设备、窗口或渲染插件。
+    app.add_plugins((
+        TaskPoolPlugin::default(),
+        AssetPlugin::default(),
+        ScenePlugin,
+    ))
+    .init_resource::<Time<Real>>()
+    .init_resource::<Assets<AudioSample>>()
+    .init_resource::<GameSettings>()
+    .init_resource::<AudioMix>()
+    .init_resource::<AudioPreview>()
+    .init_resource::<SoundBank>()
+    .add_message::<SoundRequest>()
+    .add_message::<AppExit>()
+    .add_systems(Startup, spawn_ui_pool)
+    .add_systems(
+        Update,
+        (sync_audio_mix, sync_pool_volume, play_requests).chain(),
+    );
     register_exit(&mut app);
     let manifest = Manifest::parse(MANIFEST).unwrap();
     for cue in SoundCue::ALL {
