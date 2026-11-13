@@ -7,6 +7,8 @@ mod pages;
 mod pointer;
 mod requests;
 mod scroll;
+mod sensitivity;
+mod slider;
 mod style;
 
 #[cfg(test)]
@@ -81,6 +83,10 @@ pub enum UiAction {
     RestoreDefaults,
     SelectTab(SettingsTab),
     Adjust(SettingKey, i8),
+    EditSensitivity,
+    FinishSensitivityEdit,
+    SetSensitivity(u16),
+    FinishSensitivitySlider,
     /// 滑条拖动只更新草稿，释放时统一反馈，避免每像素都播放确认音。
     SetVolume(SettingKey, u8),
     FinishVolumeEdit,
@@ -142,5 +148,7 @@ pub(crate) fn register_menu(app: &mut App) {
     pages::register(app);
     style::register(app);
     scroll::register(app);
+    slider::register(app);
     volume::register(app);
+    sensitivity::register(app);
 }

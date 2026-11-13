@@ -1099,7 +1099,7 @@ mod pose_tests {
             mouse_motion(&mut app, Vec2::new(50.0, 0.0));
             app.update();
             let yaw = app.world().get::<FirstPersonCamera>(camera).unwrap().yaw;
-            assert!((yaw - (-0.45_f32).rem_euclid(TAU)).abs() < 0.00001);
+            assert!((yaw - (-0.5625_f32).rem_euclid(TAU)).abs() < 0.00001);
             // 一帧无固定步时，Observer 更新的角度和持续移动轴都保留至模拟消费。
             app.world_mut()
                 .get_mut::<CharacterIntent>(character)
@@ -1182,7 +1182,8 @@ mod pose_tests {
             app.world_mut()
                 .trigger(fire(first_controller, Vec2::new(0.0, 10.0)));
             assert!(
-                (app.world().get::<FirstPersonCamera>(first).unwrap().pitch - (pitch - 0.03)).abs()
+                (app.world().get::<FirstPersonCamera>(first).unwrap().pitch - (pitch - 0.0375))
+                    .abs()
                     < 0.00001
             );
             app.world_mut()
@@ -1349,6 +1350,59 @@ mod pose_tests {
         }
 
         #[test]
+        fn first_person_mouse_sensitivity_minimum_unit_default_and_maximum_scale_turns() {
+            use crate::settings::{
+                DEFAULT_MOUSE_SENSITIVITY, MAX_MOUSE_SENSITIVITY, MIN_MOUSE_SENSITIVITY,
+                MOUSE_SENSITIVITY_PER_UNIT,
+            };
+
+            let (mut app, _, _, camera, _) = test_app();
+            let initial_angles = Vec2::new(0.4, 0.1);
+            let mut turns = [Vec2::ZERO; 4];
+            for (index, sensitivity) in [
+                MIN_MOUSE_SENSITIVITY,
+                MOUSE_SENSITIVITY_PER_UNIT,
+                DEFAULT_MOUSE_SENSITIVITY,
+                MAX_MOUSE_SENSITIVITY,
+            ]
+            .into_iter()
+            .enumerate()
+            {
+                {
+                    let mut settings = app.world_mut().resource_mut::<GameSettings>();
+                    settings.camera.mouse_sensitivity = sensitivity;
+                    settings.camera.invert_y = false;
+                }
+                {
+                    let mut view = app
+                        .world_mut()
+                        .get_mut::<FirstPersonCamera>(camera)
+                        .unwrap();
+                    view.yaw = initial_angles.x;
+                    view.pitch = initial_angles.y;
+                    view.pending_yaw_delta = 0.0;
+                }
+                // 捕获首帧已由夹具完成；每次从远离限位的同一姿态开始，先同步无输入姿态。
+                app.update();
+                let fixed_time = app.world().resource::<Time<Fixed>>().elapsed();
+                let state = app.world().get::<MouseLookState>(camera).unwrap();
+                assert!(state.active && !state.skip_motion);
+
+                mouse_motion(&mut app, Vec2::new(-2.0, 3.0));
+                app.update();
+                let view = app.world().get::<FirstPersonCamera>(camera).unwrap();
+                turns[index] = Vec2::new(view.yaw, view.pitch) - initial_angles;
+                assert_eq!(app.world().resource::<Time<Fixed>>().elapsed(), fixed_time);
+            }
+
+            assert!(turns[0].abs_diff_eq(Vec2::new(0.000015, 0.0000225), 0.0000001));
+            assert!(turns[1].abs_diff_eq(Vec2::new(0.0015, 0.00225), 0.000001));
+            assert!(turns[2].abs_diff_eq(Vec2::new(0.0075, 0.01125), 0.000001));
+            assert!(turns[3].abs_diff_eq(turns[1] * 10.0, 0.000001));
+            assert!(turns[3].abs_diff_eq(turns[2] * 2.0, 0.000001));
+        }
+
+        #[test]
         fn hidden_character_visuals_recover_when_camera_binding_becomes_invalid() {
             for removed in [
                 "camera",
@@ -1423,7 +1477,7 @@ mod pose_tests {
                 let world = app.world();
                 let simulated = world.resource::<Time<Fixed>>().elapsed() - fixed_before;
                 let view = world.get::<FirstPersonCamera>(camera).unwrap();
-                assert!((view.yaw - (-0.3_f32).rem_euclid(TAU)).abs() < 0.00001);
+                assert!((view.yaw - (-0.375_f32).rem_euclid(TAU)).abs() < 0.00001);
                 let transform = world.get::<Transform>(character).unwrap();
                 let position = world.get::<Position>(character).unwrap().0;
                 let direction = Quat::from_rotation_y(view.yaw) * Vec3::NEG_Z;
@@ -1474,7 +1528,7 @@ mod pose_tests {
                 rotations.push(app.world().get::<FirstPersonCamera>(camera).unwrap().yaw);
             }
             assert!((rotations[0] - rotations[1]).abs() < 0.0001);
-            assert!((rotations[0] - (-0.6_f32).rem_euclid(TAU)).abs() < 0.0001);
+            assert!((rotations[0] - (-0.75_f32).rem_euclid(TAU)).abs() < 0.0001);
         }
 
         #[test]

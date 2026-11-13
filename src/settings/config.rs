@@ -18,8 +18,35 @@ const DEFAULT_FPS_LIMIT: u32 = 60;
 /// 配置支持的最低渲染帧率上限；不限制固定模拟频率。
 const MIN_FPS_LIMIT: u32 = 60;
 
-/// 默认每像素旋转弧度，也是菜单灵敏度百分比的显示基准。
-pub const DEFAULT_MOUSE_SENSITIVITY: f32 = 0.003;
+/// 界面灵敏度每单位对应的弧度／像素，独立于默认手感。
+pub const MOUSE_SENSITIVITY_PER_UNIT: f32 = 0.00075;
+
+/// 界面单位数下限；f64 保留原始十进制文本的严格边界。
+pub const MIN_MOUSE_SENSITIVITY_UNITS: f64 = 0.01;
+
+/// 默认显示的灵敏度单位数。
+pub const DEFAULT_MOUSE_SENSITIVITY_UNITS: f32 = 5.0;
+
+/// 默认每像素旋转弧度。
+pub const DEFAULT_MOUSE_SENSITIVITY: f32 =
+    DEFAULT_MOUSE_SENSITIVITY_UNITS * MOUSE_SENSITIVITY_PER_UNIT;
+
+/// 灵敏度倍率上限，菜单、草稿与持久化边界共用。
+pub const MAX_MOUSE_SENSITIVITY_MULTIPLIER: f32 = 10.0;
+
+/// 倍率交互每单位的离散步数，滑条、方向步进和草稿规范化共用。
+pub const MOUSE_SENSITIVITY_STEPS_PER_UNIT: u16 = 100;
+
+/// 倍率交互的最小步长。
+pub const MOUSE_SENSITIVITY_STEP: f32 = 1.0 / MOUSE_SENSITIVITY_STEPS_PER_UNIT as f32;
+
+/// 相机灵敏度下限，单位为弧度／像素。
+pub const MIN_MOUSE_SENSITIVITY: f32 =
+    MIN_MOUSE_SENSITIVITY_UNITS as f32 * MOUSE_SENSITIVITY_PER_UNIT;
+
+/// 相机灵敏度上限，单位为弧度／像素。
+pub const MAX_MOUSE_SENSITIVITY: f32 =
+    MOUSE_SENSITIVITY_PER_UNIT * MAX_MOUSE_SENSITIVITY_MULTIPLIER;
 
 /// 音量整数百分比上限，默认值、校验、菜单和混音共用此边界。
 pub const MAX_AUDIO_VOLUME: u8 = 100;
@@ -74,7 +101,7 @@ impl Default for AudioSettings {
 #[reflect(Serialize, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct CameraSettings {
-    /// 每像素对应的旋转弧度，必须是有限的正数。
+    /// 每像素对应的旋转弧度，必须在有限的最小、最大灵敏度范围内。
     #[serde(deserialize_with = "deserialize_mouse_sensitivity")]
     pub mouse_sensitivity: f32,
     /// 是否反转鼠标纵向移动对应的俯仰方向。
@@ -142,11 +169,11 @@ where
     D: Deserializer<'de>,
 {
     let value = f32::deserialize(deserializer)?;
-    // 在加载边界拒绝无效角速度，避免非有限值进入 Transform 的旋转计算。
-    if !value.is_finite() || value <= 0.0 {
-        return Err(D::Error::custom(
-            "camera mouse_sensitivity must be finite and greater than zero",
-        ));
+    // 加载边界与保存校验采用同一实际角速度范围。
+    if !value.is_finite() || !(MIN_MOUSE_SENSITIVITY..=MAX_MOUSE_SENSITIVITY).contains(&value) {
+        return Err(D::Error::custom(format!(
+            "camera mouse_sensitivity must be finite and between {MIN_MOUSE_SENSITIVITY} and {MAX_MOUSE_SENSITIVITY}",
+        )));
     }
     Ok(value)
 }
@@ -159,10 +186,15 @@ impl GameSettings {
                 "max_fps must be at least 60",
             ));
         }
-        if !self.camera.mouse_sensitivity.is_finite() || self.camera.mouse_sensitivity <= 0.0 {
+        if !self.camera.mouse_sensitivity.is_finite()
+            || !(MIN_MOUSE_SENSITIVITY..=MAX_MOUSE_SENSITIVITY)
+                .contains(&self.camera.mouse_sensitivity)
+        {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidInput,
-                "camera mouse_sensitivity must be finite and greater than zero",
+                format!(
+                    "camera mouse_sensitivity must be finite and between {MIN_MOUSE_SENSITIVITY} and {MAX_MOUSE_SENSITIVITY}"
+                ),
             ));
         }
         if self.audio.master_volume > MAX_AUDIO_VOLUME || self.audio.ui_volume > MAX_AUDIO_VOLUME {
