@@ -4,7 +4,7 @@
 
 ## Actions 构建与发布
 
-相关源码、分析工具、图包或工作流变更触发面向 `master` 的 PR 构建。PR 只检查；推送到 `master` 且成功后发布 [GitHub Pages](https://fedoraiver.github.io/demo/)。也可从 Actions 的 `ECS architecture` 手动运行；非 `master` 分支只构建，`master` 可发布。仓库 Pages 的构建来源须选择 GitHub Actions，部署环境使用 `github-pages`。
+相关源码、分析工具、图包或工作流变更推送到 `master` 时触发构建，成功后发布 [GitHub Pages](https://fedoraiver.github.io/demo/)；PR 不触发。也可从 Actions 的 `ECS architecture` 手动运行，只有选择 `master` 才构建和发布，其他分支跳过构建与发布任务。仓库 Pages 的构建来源须选择 GitHub Actions，部署环境使用 `github-pages`。
 
 发布图表示原生 Linux 目标在导出时的注册结构，不代表 Windows、macOS、其他设备能力或随后动态注册的 Schedule。源码提交、目标及构建 ID 保存在启动数据和清单中，用于校验同轮资源。部署 job 只在同轮完整检查及静态包校验成功后运行，使用 Pages 写权限和 OIDC；构建 job 只有仓库读取权限。
 
@@ -14,9 +14,9 @@ Puppeteer 浏览器来自图包锁定依赖，工作流显式设置 `MERMAID_CHR
 
 Rust 编译和对象绘图的初始并发均为 `2`，关闭开发／测试调试信息，构建限时 `240` 分钟。缓存仅保留 Cargo/npm 下载、锁定浏览器和仍须逐图核验的几何候选，不保存 Cargo 编译物或绕过事实校验。几何缓存恢复步骤成功后，即使本轮后续失败也保存已生成候选，恢复时仍逐图按当前输入和检查规则验证。内存、磁盘或时间不足时运行失败，保留可获得的日志与资源摘要，不自动改用付费或自托管 runner，也不缩减事实或放宽校验。
 
-同一 PR／分支的新运行取消旧构建；Pages 部署单独串行，开始前再次核对 `master` 当前提交，旧构建只留审计、不覆盖新提交。构建记录进程峰值内存和每 `15` 秒磁盘样本。完整审计输出、编译事实及执行日志作为 Actions artifact 保存 `3` 天，静态 Pages artifact 同样保存 `3` 天。历史失败、中断或未知退出不能作为本轮成功依据。
+工作流按分支分组，同一分支的新运行取消旧构建；Pages 部署单独串行，开始前再次核对 `master` 当前提交，旧构建只留审计、不覆盖新提交。构建记录进程峰值内存和每 `15` 秒磁盘样本。完整审计输出、编译事实及执行日志作为 Actions artifact 保存 `3` 天，静态 Pages artifact 同样保存 `3` 天。历史失败、中断或未知退出不能作为本轮成功依据。
 
-发布 job 使用同一已校验产物进行有界部署重试；部署成功后，独立的自动 HTTP 校验核对实际资源来源与完整性，并对传播延迟进行有界重试。校验失败则任务失败；可获得的证据写入 `tmp/ecs-architecture/deployment/verification.json`，并作为部署证据 artifact 保留供排查。此 HTTP 校验不是浏览器验收。发布 job 通过成功构建的输出获取 Pages 产物名称与发布证明的产物 ID。`Re-run failed jobs` 复用该构建的产物，不依赖发布 job 当前的重跑次数；产物超过保留期后需重新构建。新配置仅作用于使用该配置创建的运行，旧运行重跑仍沿用原提交的工作流。
+发布 job 使用同一已校验产物进行有界部署重试；部署成功后，独立的自动 HTTP 校验核对实际资源来源与完整性，并对传播延迟进行有界重试。校验失败则任务失败；可获得的证据写入 `tmp/ecs-architecture/deployment/verification.json`，并作为部署证据 artifact 保留供排查。此 HTTP 校验不是浏览器验收。发布 job 通过成功构建的输出获取 Pages 产物名称与发布证明的产物 ID。`Re-run failed jobs` 复用该构建的产物，不依赖发布 job 当前的重跑次数；产物超过保留期后需重新构建。工作流限制以所选分支内的配置为准，旧分支需同步配置；旧运行重跑仍沿用原提交的工作流。
 
 ## 本地执行与恢复
 

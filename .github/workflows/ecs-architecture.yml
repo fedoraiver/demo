@@ -1,25 +1,6 @@
 name: ECS architecture
 
 on:
-  pull_request:
-    branches: [master]
-    paths:
-      - 'src/**'
-      - 'tools/rustc-analysis/**'
-      - '.github/scripts/**'
-      - 'assets/**'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
-      - 'build.rs'
-      - 'rust-toolchain.toml'
-      - '.cargo/**'
-      - '.gitattributes'
-      - 'docs/diagrams/**'
-      - '.github/workflows/ecs-architecture.yml'
-      - '.github/actions/setup-rust-checks/**'
-      - 'tools/check-*/Cargo.toml'
-      - 'tools/check-*/Cargo.lock'
-      - '!**/*.md'
   push:
     branches: [master]
     paths:
@@ -49,12 +30,13 @@ defaults:
     shell: bash
 
 concurrency:
-  group: ecs-architecture-${{ github.event.pull_request.number || github.ref }}
+  group: ecs-architecture-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
     name: Linux architecture and static package
+    if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     timeout-minutes: 240
     # 单独重跑发布时，GitHub 保留成功构建的输出，继续使用原产物。

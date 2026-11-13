@@ -52,7 +52,7 @@ cargo test --locked
 
 在 PR 的 Checks 或仓库 Actions 页面查看逐步日志、结果摘要和运行结束时的磁盘余量。云端检查不替代其他平台验证、按变更范围选择的无窗口测试或用户实机验收；单次运行结果记录在对应 Issue 或 PR。
 
-[ECS 架构工作流](../../.github/workflows/ecs-architecture.yml)对相关 PR 构建和检查 Linux 快照，对 `master` 发布及手动运行遵循[维护指南](../diagrams/maintenance.md#actions-构建与发布)。编译器事实、真实导出、完整生成校验与 Node 回归通过后，才打包并校验 Pages 静态文件。免费标准 runner 资源不足时保留失败证据，不自动切换付费或自托管机器。
+[ECS 架构工作流](../../.github/workflows/ecs-architecture.yml)仅在 `master` 构建和检查 Linux 快照，触发与发布规则见[维护指南](../diagrams/maintenance.md#actions-构建与发布)。编译器事实、真实导出、完整生成校验与 Node 回归通过后，才打包并校验 Pages 静态文件。免费标准 runner 资源不足时保留失败证据，不自动切换付费或自托管机器。
 
 ## 单字段结构体约束
 
