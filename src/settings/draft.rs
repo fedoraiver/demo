@@ -5,6 +5,7 @@ use std::{io, num::NonZeroU32};
 
 use super::{
     AudioSettings, CameraSettings, DEFAULT_MOUSE_SENSITIVITY, GameSettings, MAX_AUDIO_VOLUME,
+    MAX_MOUSE_SENSITIVITY_MULTIPLIER, MOUSE_SENSITIVITY_STEP, MOUSE_SENSITIVITY_STEPS_PER_UNIT,
 };
 
 // 菜单步进只作用于离散调整字段，不参与持久化校验。
@@ -14,6 +15,7 @@ const VOLUME_STEP: i16 = 5;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SettingKey {
     FrameRate,
+    MouseSensitivity,
     InvertY,
     MasterVolume,
     UiVolume,
@@ -23,8 +25,10 @@ pub enum SettingKey {
 #[derive(Resource, Clone, Debug, PartialEq)]
 pub struct SettingsDraft {
     pub max_fps: u32,
-    /// 原始百分比文本保留空值与未完成编辑，不能在应用时悄悄使用上一个合法数值。
-    pub mouse_sensitivity_percent: String,
+    /// 原始倍率文本保留空值与未完成编辑，不能在应用时悄悄使用上一个合法数值。
+    pub mouse_sensitivity_text: String,
+    /// 未主动编辑时保留原始角速度，避免两位显示精度反向改写已有配置。
+    pub(super) original_mouse_sensitivity: Option<f32>,
     pub invert_y: bool,
     pub audio: AudioSettings,
 }
@@ -36,29 +40,28 @@ impl Default for SettingsDraft {
 }
 
 impl SettingsDraft {
-    /// 原样复制设置，打开菜单时保留文件中的有效自定义值。
+    /// 两位倍率仅用于显示；未主动编辑灵敏度时保留原始角速度。
     pub fn from_settings(settings: &GameSettings) -> Self {
         Self {
             max_fps: settings.max_fps.get(),
-            mouse_sensitivity_percent: sensitivity_percentage(settings.camera.mouse_sensitivity),
+            mouse_sensitivity_text: sensitivity_text(settings.camera.mouse_sensitivity),
+            original_mouse_sensitivity: Some(settings.camera.mouse_sensitivity),
             invert_y: settings.camera.invert_y,
             audio: settings.audio,
         }
     }
 
-    /// 在应用边界校验草稿；文件允许的有效范围不受菜单步进范围限制。
+    /// 统一校验草稿；未编辑的灵敏度保留原值，主动编辑后按 0.01 倍率转换为角速度。
     pub fn to_settings(&self) -> io::Result<GameSettings> {
-        let percent = self
-            .mouse_sensitivity_percent
-            .trim()
-            .parse::<f64>()
-            .map_err(|_| {
-                io::Error::new(
-                    io::ErrorKind::InvalidInput,
-                    "Mouse sensitivity must be a finite positive percentage.",
-                )
-            })?;
-        let sensitivity = (percent / 100.0 * f64::from(DEFAULT_MOUSE_SENSITIVITY)) as f32;
+        let multiplier = self.sensitivity_multiplier().ok_or_else(|| {
+            io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "Mouse sensitivity multiplier must be finite and between 0 and 10.",
+            )
+        })?;
+        let sensitivity = self
+            .unedited_sensitivity()
+            .unwrap_or(multiplier * DEFAULT_MOUSE_SENSITIVITY);
         let max_fps = NonZeroU32::new(self.max_fps).ok_or_else(|| {
             io::Error::new(io::ErrorKind::InvalidInput, "max_fps must be at least 60")
         })?;
@@ -72,6 +75,52 @@ impl SettingsDraft {
         };
         settings.validate()?;
         Ok(settings)
+    }
+
+    /// 校验原始输入后返回 0.01 精度的倍率；未完成、非有限或越界文本不产生数值。
+    pub fn sensitivity_multiplier(&self) -> Option<f32> {
+        let value = self.mouse_sensitivity_text.trim().parse::<f64>().ok()?;
+        quantized_sensitivity_multiplier(value)
+    }
+
+    /// 原生输入值实际变化时放弃原值基准，保留尚未完成的原始文本。
+    pub fn set_sensitivity_text(&mut self, text: String) -> bool {
+        if self.mouse_sensitivity_text == text {
+            return false;
+        }
+        self.original_mouse_sensitivity = None;
+        self.mouse_sensitivity_text = text;
+        true
+    }
+
+    /// 滑条与方向步进共用倍率写入；无效输入不改变草稿，合法数值规范为两位小数。
+    pub fn set_sensitivity_multiplier(&mut self, value: f32) -> bool {
+        let Some(value) = quantized_sensitivity_multiplier(f64::from(value)) else {
+            return false;
+        };
+        let text = format!("{value:.2}");
+        let changed = self.mouse_sensitivity_text != text
+            || self
+                .unedited_sensitivity()
+                .is_some_and(|original| original != value * DEFAULT_MOUSE_SENSITIVITY);
+        self.original_mouse_sensitivity = None;
+        self.mouse_sensitivity_text = text;
+        changed
+    }
+
+    /// 提交或失焦时只规范合法文本；返回是否合法，而不是是否发生文本变化。
+    pub fn normalize_sensitivity(&mut self) -> bool {
+        let Some(value) = self.sensitivity_multiplier() else {
+            return false;
+        };
+        self.set_sensitivity_multiplier(value);
+        true
+    }
+
+    /// 文本仍是原值的显示形式时，才能继续复用未编辑的精确角速度。
+    fn unedited_sensitivity(&self) -> Option<f32> {
+        self.original_mouse_sensitivity
+            .filter(|original| self.mouse_sensitivity_text == sensitivity_text(*original))
     }
 
     /// 返回可调整音量的百分比，其他设置字段没有音量值。
@@ -116,6 +165,15 @@ impl SettingsDraft {
                         .unwrap_or(OPTIONS[0]);
                 }
             }
+            SettingKey::MouseSensitivity => {
+                if direction != 0 {
+                    let value = self.sensitivity_multiplier().unwrap_or(1.0)
+                        + MOUSE_SENSITIVITY_STEP * f32::from(direction.signum());
+                    self.set_sensitivity_multiplier(
+                        value.clamp(0.0, MAX_MOUSE_SENSITIVITY_MULTIPLIER),
+                    );
+                }
+            }
             SettingKey::InvertY => self.invert_y = !self.invert_y,
             key @ (SettingKey::MasterVolume | SettingKey::UiVolume) => {
                 let value = i16::from(self.volume(key).unwrap())
@@ -126,16 +184,17 @@ impl SettingsDraft {
     }
 }
 
-/// 优先显示能往返回同一 f32 的短小数，避免重开页面后暴露浮点换算尾数。
-fn sensitivity_percentage(sensitivity: f32) -> String {
-    let percent = f64::from(sensitivity) / f64::from(DEFAULT_MOUSE_SENSITIVITY) * 100.0;
-    for precision in 0..=8 {
-        let text = format!("{percent:.precision$}");
-        let restored =
-            (text.parse::<f64>().unwrap() / 100.0 * f64::from(DEFAULT_MOUSE_SENSITIVITY)) as f32;
-        if restored == sensitivity {
-            return text;
-        }
+/// 先判定原数值是否越界再量化；整数步同时将负零规范为正零。
+fn quantized_sensitivity_multiplier(value: f64) -> Option<f32> {
+    if !value.is_finite() || !(0.0..=f64::from(MAX_MOUSE_SENSITIVITY_MULTIPLIER)).contains(&value) {
+        return None;
     }
-    percent.to_string()
+    let steps = (value * f64::from(MOUSE_SENSITIVITY_STEPS_PER_UNIT)).round() as u16;
+    Some(f32::from(steps) / f32::from(MOUSE_SENSITIVITY_STEPS_PER_UNIT))
+}
+
+fn sensitivity_text(sensitivity: f32) -> String {
+    let multiplier = sensitivity / DEFAULT_MOUSE_SENSITIVITY;
+    let multiplier = if multiplier == 0.0 { 0.0 } else { multiplier };
+    format!("{multiplier:.2}")
 }

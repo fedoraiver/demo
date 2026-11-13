@@ -28,9 +28,17 @@ fn native_toml_defaults_partial_fields_and_custom_values() {
         ("[game]\nmax_fps = 75", 75, 0.003, false, 100, 100),
         ("[game.camera]\ninvert_y = true", 60, 0.003, true, 100, 100),
         (
-            "[game.camera]\nmouse_sensitivity = 0.031234567",
+            "[game.camera]\nmouse_sensitivity = 0.0",
             60,
-            0.031234567,
+            0.0,
+            false,
+            100,
+            100,
+        ),
+        (
+            "[game.camera]\nmouse_sensitivity = 0.01234567",
+            60,
+            0.01234567,
             false,
             100,
             100,
@@ -68,7 +76,7 @@ fn invalid_native_file_falls_back_as_a_whole_without_overwriting() {
         "[game]\nunknown = true",
         "[other]\nenabled = true",
         "[game.camera]\nsensitivity = 0.003",
-        "[game.camera]\nmouse_sensitivity = 0",
+        "[game.camera]\nmouse_sensitivity = 0.0301",
         "[game.camera]\nmouse_sensitivity = -0.003",
         "[game.camera]\nmouse_sensitivity = nan",
         "[game.camera]\nmouse_sensitivity = inf",
@@ -97,13 +105,13 @@ fn save_creates_and_replaces_complete_native_settings() {
     GameSettings::default().save(&path).unwrap();
     let expected = SettingsDraft {
         max_fps: 165,
-        mouse_sensitivity_percent: (0.031234567_f64 / f64::from(DEFAULT_MOUSE_SENSITIVITY) * 100.0)
-            .to_string(),
+        mouse_sensitivity_text: "1.23".into(),
         invert_y: true,
         audio: AudioSettings {
             master_volume: 73,
             ui_volume: 31,
         },
+        ..default()
     }
     .to_settings()
     .unwrap();
@@ -128,7 +136,13 @@ fn invalid_settings_cannot_replace_existing_file() {
         io::ErrorKind::InvalidInput
     );
     invalid.max_fps = NonZeroU32::new(60).unwrap();
-    for sensitivity in [0.0, -0.003, f32::NAN, f32::INFINITY, f32::NEG_INFINITY] {
+    for sensitivity in [
+        MAX_MOUSE_SENSITIVITY + 0.0001,
+        -0.003,
+        f32::NAN,
+        f32::INFINITY,
+        f32::NEG_INFINITY,
+    ] {
         invalid.camera.mouse_sensitivity = sensitivity;
         assert_eq!(
             invalid.save(&path).unwrap_err().kind(),
@@ -177,13 +191,13 @@ fn real_native_plugin_loads_custom_and_partial_groups_and_rejects_invalid_file()
     let path = directory.join("settings.toml");
     let expected = SettingsDraft {
         max_fps: 75,
-        mouse_sensitivity_percent: (0.031234567_f64 / f64::from(DEFAULT_MOUSE_SENSITIVITY) * 100.0)
-            .to_string(),
+        mouse_sensitivity_text: "1.23".into(),
         invert_y: true,
         audio: AudioSettings {
             master_volume: 73,
             ui_volume: 31,
         },
+        ..default()
     }
     .to_settings()
     .unwrap();
@@ -193,6 +207,9 @@ fn real_native_plugin_loads_custom_and_partial_groups_and_rejects_invalid_file()
         String::new(),
         "[game]\nmax_fps = 120".into(),
         "[game.camera]\ninvert_y = true".into(),
+        "[game.camera]\nmouse_sensitivity = 0.0".into(),
+        format!("[game.camera]\nmouse_sensitivity = {MAX_MOUSE_SENSITIVITY}"),
+        "[game.camera]\nmouse_sensitivity = 0.0301".into(),
         "[game.audio]\nui_volume = 31".into(),
         "[game]\nmax_fps = 59".into(),
     ] {
@@ -221,29 +238,57 @@ fn real_native_plugin_loads_custom_and_partial_groups_and_rejects_invalid_file()
 }
 
 #[test]
-fn draft_preserves_custom_values_until_their_field_is_adjusted() {
-    let custom: GameSettings = super::config::parse_settings(
-        "[game]\nmax_fps = 75\n[game.camera]\nmouse_sensitivity = 0.03",
-    )
-    .unwrap();
+fn draft_preserves_unedited_sensitivity_precision_while_other_fields_change() {
+    let custom =
+        parse_settings("[game]\nmax_fps = 75\n[game.camera]\nmouse_sensitivity = 0.0037407")
+            .unwrap();
     let mut draft = SettingsDraft::from_settings(&custom);
-    let converted = draft.to_settings().unwrap();
-    assert_eq!(converted.max_fps.get(), 75);
-    assert_eq!(converted.camera.mouse_sensitivity, 0.03);
+    assert_eq!(draft.mouse_sensitivity_text, "1.25");
+    assert_eq!(draft.to_settings().unwrap(), custom);
+    assert!(!draft.set_sensitivity_text(draft.mouse_sensitivity_text.clone()));
+    draft.adjust(SettingKey::MouseSensitivity, 0);
+    assert_eq!(
+        draft.to_settings().unwrap().camera.mouse_sensitivity,
+        0.0037407
+    );
     draft.adjust(SettingKey::InvertY, 0);
     assert!(draft.invert_y);
-    assert_eq!(draft.max_fps, 75);
-    assert_eq!(draft.to_settings().unwrap().camera.mouse_sensitivity, 0.03);
-    draft.adjust(SettingKey::FrameRate, 0);
-    assert_eq!(draft.max_fps, 75);
-    assert_eq!(draft.to_settings().unwrap().camera.mouse_sensitivity, 0.03);
-
+    assert_eq!(
+        draft.to_settings().unwrap().camera.mouse_sensitivity,
+        0.0037407
+    );
     draft.adjust(SettingKey::FrameRate, 1);
     assert_eq!(draft.max_fps, 90);
-    draft.adjust(SettingKey::FrameRate, -1);
-    assert_eq!(draft.max_fps, 60);
-    draft.adjust(SettingKey::InvertY, -1);
-    assert!(!draft.invert_y);
+    assert_eq!(
+        draft.to_settings().unwrap().camera.mouse_sensitivity,
+        0.0037407
+    );
+    draft.adjust(SettingKey::MasterVolume, -1);
+    assert_eq!(draft.audio.master_volume, 95);
+    draft.set_volume(SettingKey::UiVolume, 73);
+    assert_eq!(
+        draft.to_settings().unwrap().camera.mouse_sensitivity,
+        0.0037407
+    );
+    assert!(draft.normalize_sensitivity());
+    assert_eq!(draft.mouse_sensitivity_text, "1.25");
+    assert_eq!(
+        draft.to_settings().unwrap().camera.mouse_sensitivity,
+        1.25 * DEFAULT_MOUSE_SENSITIVITY
+    );
+
+    let mut draft = SettingsDraft::from_settings(&custom);
+    assert!(draft.set_sensitivity_multiplier(1.25));
+    assert_eq!(
+        draft.to_settings().unwrap().camera.mouse_sensitivity,
+        1.25 * DEFAULT_MOUSE_SENSITIVITY
+    );
+    draft.adjust(SettingKey::MouseSensitivity, 1);
+    assert_eq!(draft.mouse_sensitivity_text, "1.26");
+    assert_eq!(
+        draft.to_settings().unwrap().camera.mouse_sensitivity,
+        1.26 * DEFAULT_MOUSE_SENSITIVITY
+    );
 }
 
 #[test]
@@ -268,6 +313,7 @@ fn ui_audio_draft_adjustments_preserve_values_and_clamp_only_edited_fields() {
     let mut draft = SettingsDraft::from_settings(&custom);
     assert_eq!(draft.to_settings().unwrap().audio, custom.audio);
     assert_eq!(draft.volume(SettingKey::FrameRate), None);
+    assert_eq!(draft.volume(SettingKey::MouseSensitivity), None);
     assert!(!draft.set_volume(SettingKey::FrameRate, 20));
     draft.adjust(SettingKey::MasterVolume, 0);
     assert_eq!(draft.audio, custom.audio);
@@ -355,37 +401,106 @@ fn changing_render_limit_preserves_fixed_simulation_timestep() {
 }
 
 #[test]
-fn sensitivity_percentage_preserves_custom_values_and_validates_input() {
-    for sensitivity in [
-        f32::from_bits(1),
-        f32::MIN_POSITIVE,
-        0.00001234567,
-        0.003,
-        0.0041,
-        0.03,
-        1000.0,
-        f32::MAX,
+fn sensitivity_multiplier_validates_raw_text_before_quantizing_and_normalizing() {
+    let mut draft = SettingsDraft::default();
+    for (input, expected, normalized) in [
+        ("0", 0.0, "0.00"),
+        ("-0", 0.0, "0.00"),
+        ("10", 10.0, "10.00"),
+        ("1.23", 1.23, "1.23"),
+        ("1.234", 1.23, "1.23"),
+        ("1.236", 1.24, "1.24"),
+        (" 2.5 ", 2.5, "2.50"),
+        ("1e-2", 0.01, "0.01"),
     ] {
+        draft.set_sensitivity_text(input.into());
+        assert_eq!(draft.mouse_sensitivity_text, input);
+        assert_eq!(draft.sensitivity_multiplier(), Some(expected), "{input}");
+        assert_eq!(
+            draft.to_settings().unwrap().camera.mouse_sensitivity,
+            expected * DEFAULT_MOUSE_SENSITIVITY
+        );
+        assert!(draft.normalize_sensitivity());
+        assert_eq!(draft.mouse_sensitivity_text, normalized);
+        assert!(draft.normalize_sensitivity());
+        assert!(!draft.set_sensitivity_multiplier(expected));
+    }
+    for invalid in [
+        "",
+        ".",
+        "-",
+        "1e",
+        "-0.001",
+        "10.001",
+        "10.0000001",
+        "NaN",
+        "inf",
+        "-inf",
+        "1e100",
+        "1.2.3",
+    ] {
+        draft.set_sensitivity_text(invalid.into());
+        assert_eq!(draft.sensitivity_multiplier(), None, "{invalid}");
+        assert!(!draft.normalize_sensitivity(), "{invalid}");
+        assert_eq!(draft.mouse_sensitivity_text, invalid);
+        assert_eq!(
+            draft.to_settings().unwrap_err().kind(),
+            io::ErrorKind::InvalidInput
+        );
+    }
+    draft.set_sensitivity_multiplier(1.23);
+    for invalid in [-0.01, 10.001, f32::NAN, f32::INFINITY, f32::NEG_INFINITY] {
+        assert!(!draft.set_sensitivity_multiplier(invalid));
+        assert_eq!(draft.mouse_sensitivity_text, "1.23");
+    }
+}
+
+#[test]
+fn sensitivity_step_clamps_to_limits_and_replaces_invalid_text_from_default() {
+    let mut draft = SettingsDraft::default();
+    draft.set_sensitivity_multiplier(0.0);
+    draft.adjust(SettingKey::MouseSensitivity, -1);
+    assert_eq!(draft.mouse_sensitivity_text, "0.00");
+    draft.adjust(SettingKey::MouseSensitivity, 1);
+    assert_eq!(draft.mouse_sensitivity_text, "0.01");
+    draft.set_sensitivity_multiplier(10.0);
+    draft.adjust(SettingKey::MouseSensitivity, 1);
+    assert_eq!(draft.mouse_sensitivity_text, "10.00");
+    draft.adjust(SettingKey::MouseSensitivity, -1);
+    assert_eq!(draft.mouse_sensitivity_text, "9.99");
+    draft.set_sensitivity_text("1e".into());
+    draft.adjust(SettingKey::MouseSensitivity, 0);
+    assert_eq!(draft.mouse_sensitivity_text, "1e");
+    draft.adjust(SettingKey::MouseSensitivity, 1);
+    assert_eq!(draft.mouse_sensitivity_text, "1.01");
+}
+
+#[test]
+fn native_sensitivity_zero_and_maximum_round_trip_and_custom_precision_is_preserved() {
+    let path = settings_test_path();
+    for sensitivity in [0.0, -0.0, MAX_MOUSE_SENSITIVITY, 0.0037407] {
         let mut settings = GameSettings::default();
         settings.camera.mouse_sensitivity = sensitivity;
+        settings.save(&path).unwrap();
+        assert_eq!(read_settings(&path).unwrap(), settings);
+        let saved = fs::read_to_string(&path).unwrap();
+        let table: toml::Value = toml::from_str(&saved).unwrap();
+        assert_eq!(
+            table["game"]["camera"]["mouse_sensitivity"]
+                .as_float()
+                .unwrap() as f32,
+            sensitivity
+        );
         let draft = SettingsDraft::from_settings(&settings);
         assert_eq!(
             draft.to_settings().unwrap().camera.mouse_sensitivity,
             sensitivity
         );
+        if sensitivity == 0.0 {
+            assert_eq!(draft.mouse_sensitivity_text, "0.00");
+        } else if sensitivity == MAX_MOUSE_SENSITIVITY {
+            assert_eq!(draft.mouse_sensitivity_text, "10.00");
+        }
     }
-    let mut draft = SettingsDraft::default();
-    for invalid in ["", ".", "-1", "0", "NaN", "inf", "1e100", "1e-100", "1.2.3"] {
-        draft.mouse_sensitivity_percent = invalid.into();
-        assert!(draft.to_settings().is_err(), "{invalid}");
-    }
-    for (input, expected) in [("123.45", 0.0037035), ("1000", 0.03), ("1e2", 0.003)] {
-        draft.mouse_sensitivity_percent = input.into();
-        assert!((draft.to_settings().unwrap().camera.mouse_sensitivity - expected).abs() < 1e-8);
-    }
-    draft.mouse_sensitivity_percent = "123.45".into();
-    assert_eq!(
-        SettingsDraft::from_settings(&draft.to_settings().unwrap()).mouse_sensitivity_percent,
-        "123.45"
-    );
+    fs::remove_file(path).unwrap();
 }

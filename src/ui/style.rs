@@ -74,6 +74,7 @@ pub(super) fn style_buttons(
 pub(super) fn setting_value(draft: &SettingsDraft, key: SettingKey) -> String {
     match key {
         SettingKey::FrameRate => format!("{} FPS", draft.max_fps),
+        SettingKey::MouseSensitivity => draft.mouse_sensitivity_text.clone(),
         SettingKey::InvertY => if draft.invert_y { "On" } else { "Off" }.into(),
         // 音量控件由 volume 模块更新，此处仍保持枚举格式匹配完整。
         key @ (SettingKey::MasterVolume | SettingKey::UiVolume) => {

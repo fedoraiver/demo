@@ -1349,6 +1349,53 @@ mod pose_tests {
         }
 
         #[test]
+        fn first_person_mouse_sensitivity_zero_stops_and_maximum_scales_turns() {
+            use crate::settings::{DEFAULT_MOUSE_SENSITIVITY, MAX_MOUSE_SENSITIVITY};
+
+            let (mut app, _, _, camera, _) = test_app();
+            let initial_angles = Vec2::new(0.4, 0.1);
+            let mut turns = [Vec2::ZERO; 3];
+            for (index, sensitivity) in [0.0, DEFAULT_MOUSE_SENSITIVITY, MAX_MOUSE_SENSITIVITY]
+                .into_iter()
+                .enumerate()
+            {
+                {
+                    let mut settings = app.world_mut().resource_mut::<GameSettings>();
+                    settings.camera.mouse_sensitivity = sensitivity;
+                    settings.camera.invert_y = false;
+                }
+                {
+                    let mut view = app
+                        .world_mut()
+                        .get_mut::<FirstPersonCamera>(camera)
+                        .unwrap();
+                    view.yaw = initial_angles.x;
+                    view.pitch = initial_angles.y;
+                    view.pending_yaw_delta = 0.0;
+                }
+                // 捕获首帧已由夹具完成；每次从远离限位的同一姿态开始，先同步无输入姿态。
+                app.update();
+                let before = *app.world().get::<Transform>(camera).unwrap();
+                let fixed_time = app.world().resource::<Time<Fixed>>().elapsed();
+                let state = app.world().get::<MouseLookState>(camera).unwrap();
+                assert!(state.active && !state.skip_motion);
+
+                mouse_motion(&mut app, Vec2::new(-2.0, 3.0));
+                app.update();
+                let view = app.world().get::<FirstPersonCamera>(camera).unwrap();
+                turns[index] = Vec2::new(view.yaw, view.pitch) - initial_angles;
+                assert_eq!(app.world().resource::<Time<Fixed>>().elapsed(), fixed_time);
+                if sensitivity == 0.0 {
+                    assert_eq!(turns[index], Vec2::ZERO);
+                    assert_eq!(*app.world().get::<Transform>(camera).unwrap(), before);
+                }
+            }
+
+            assert!(turns[1].abs_diff_eq(Vec2::new(0.006, 0.009), 0.000001));
+            assert!(turns[2].abs_diff_eq(turns[1] * 10.0, 0.000001));
+        }
+
+        #[test]
         fn hidden_character_visuals_recover_when_camera_binding_becomes_invalid() {
             for removed in [
                 "camera",

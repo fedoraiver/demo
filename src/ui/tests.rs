@@ -1062,7 +1062,7 @@ mod page_refresh_tests {
         };
         let mut app = live_settings_app();
         request_action(&mut app, UiAction::SelectTab(SettingsTab::Controls));
-        app.world_mut().resource_mut::<MenuFocus>().index = 4;
+        app.world_mut().resource_mut::<MenuFocus>().index = 5;
         request_action(&mut app, UiAction::EditSensitivity);
         let input = sensitivity_input(&mut app);
         app.update();
@@ -1075,25 +1075,33 @@ mod page_refresh_tests {
         sensitivity_key(
             &mut app,
             KeyCode::Digit1,
-            Key::Character("123.45".into()),
-            Some("123.45"),
+            Key::Character("1.234".into()),
+            Some("1.234"),
         );
         assert_eq!(
             app.world()
                 .resource::<SettingsDraft>()
-                .mouse_sensitivity_percent,
-            "123.45"
+                .mouse_sensitivity_text,
+            "1.234"
         );
         for (code, key) in [
             (KeyCode::ArrowLeft, Key::ArrowLeft),
             (KeyCode::ArrowDown, Key::ArrowDown),
         ] {
             sensitivity_key(&mut app, code, key, None);
-            assert_eq!(app.world().resource::<MenuFocus>().index, 4);
+            assert_eq!(app.world().resource::<MenuFocus>().index, 5);
             assert_eq!(app.world().resource::<InputFocus>().get(), Some(input));
         }
         sensitivity_key(&mut app, KeyCode::Enter, Key::Enter, None);
         assert_ne!(app.world().resource::<InputFocus>().get(), Some(input));
+        assert_eq!(
+            app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .value()
+                .to_string(),
+            "1.23"
+        );
         assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Settings);
         assert_eq!(
             app.world()
@@ -1112,10 +1120,91 @@ mod page_refresh_tests {
     }
 
     #[test]
+    fn sensitivity_enter_waits_for_native_ime_commit() {
+        use bevy::{
+            input::keyboard::Key, input_focus::InputFocus, text::EditableText, window::Ime,
+        };
+
+        let mut app = live_settings_app();
+        request_action(&mut app, UiAction::SelectTab(SettingsTab::Controls));
+        request_action(&mut app, UiAction::EditSensitivity);
+        replace_sensitivity(&mut app, "2.");
+        app.update();
+        let input = sensitivity_input(&mut app);
+        let window = app
+            .world_mut()
+            .query_filtered::<Entity, With<PrimaryWindow>>()
+            .single(app.world())
+            .unwrap();
+        app.world_mut().write_message(Ime::Preedit {
+            window,
+            value: "00".into(),
+            cursor: Some((2, 2)),
+        });
+        app.update();
+        assert!(
+            app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .is_composing()
+        );
+
+        // 第一次 Enter 属于原生组合输入，不能提交旧草稿或中断尚未到达的 Commit。
+        sensitivity_key(&mut app, KeyCode::Enter, Key::Enter, None);
+        assert_eq!(app.world().resource::<InputFocus>().get(), Some(input));
+        assert!(
+            app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .is_composing()
+        );
+        assert_ne!(
+            app.world().resource::<MenuState>().status.as_deref(),
+            Some(super::super::sensitivity::INPUT_ERROR)
+        );
+        app.world_mut().write_message(Ime::Commit {
+            window,
+            value: "00".into(),
+        });
+        app.update();
+        assert!(
+            !app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .is_composing()
+        );
+        assert_eq!(
+            app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .value()
+                .to_string(),
+            "2.00"
+        );
+        sensitivity_key(&mut app, KeyCode::Enter, Key::Enter, None);
+        assert_ne!(app.world().resource::<InputFocus>().get(), Some(input));
+        assert_eq!(
+            app.world()
+                .resource::<SettingsDraft>()
+                .mouse_sensitivity_text,
+            "2.00"
+        );
+        assert_eq!(
+            app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .value()
+                .to_string(),
+            "2.00"
+        );
+    }
+
+    #[test]
     fn sensitivity_native_paste_applies_without_enter_and_invalid_text_survives_tabs() {
         use crate::settings::GameSettings;
         use bevy::{
             clipboard::ClipboardRead,
+            input_focus::InputFocus,
             text::{EditableText, TextEdit},
         };
         let mut app = live_settings_app();
@@ -1136,20 +1225,20 @@ mod page_refresh_tests {
         app.world_mut()
             .get_mut::<EditableText>(input)
             .unwrap()
-            .pending_paste = Some(ClipboardRead::Ready(Ok("123.45".into())));
+            .pending_paste = Some(ClipboardRead::Ready(Ok("1.234".into())));
         app.update();
         assert_eq!(
             app.world()
                 .resource::<SettingsDraft>()
-                .mouse_sensitivity_percent,
-            "123.45"
+                .mouse_sensitivity_text,
+            "1.234"
         );
         request_action(&mut app, UiAction::ApplySettings);
         let committed = crate::settings::read_settings(&path)
             .unwrap()
             .camera
             .mouse_sensitivity;
-        assert!((committed - 0.0037035).abs() < 1e-8);
+        assert!((committed - 0.00369).abs() < 1e-8);
         let saved = std::fs::read_to_string(&path).unwrap();
         replace_sensitivity(&mut app, "1e");
         request_action(&mut app, UiAction::SelectTab(SettingsTab::Graphics));
@@ -1168,7 +1257,7 @@ mod page_refresh_tests {
                 .status
                 .as_ref()
                 .unwrap()
-                .starts_with("Enter a finite positive")
+                .starts_with("Enter a mouse sensitivity")
         );
         request_action(&mut app, UiAction::SelectTab(SettingsTab::Controls));
         let input = sensitivity_input(&mut app);
@@ -1180,6 +1269,9 @@ mod page_refresh_tests {
                 .to_string(),
             "1e"
         );
+        replace_sensitivity(&mut app, "2.00");
+        request_action(&mut app, UiAction::EditSensitivity);
+        assert_eq!(app.world().resource::<InputFocus>().get(), Some(input));
         let paste = ClipboardRead::<String>::Pending(default());
         let ClipboardRead::Pending(completion) = &paste else {
             unreachable!()
@@ -1190,6 +1282,22 @@ mod page_refresh_tests {
             text.pending_paste = Some(paste);
             text.queue_edit(TextEdit::Insert("9".into()));
         }
+        request_action(&mut app, UiAction::ApplySettings);
+        let apply_preserved = std::fs::read_to_string(&path).unwrap() == saved;
+        request_action(&mut app, UiAction::FinishSensitivityEdit);
+        let finish_focus_preserved = app.world().resource::<InputFocus>().get() == Some(input);
+        app.world_mut().resource_mut::<InputFocus>().clear();
+        app.update();
+        let paste_after_blur_preserved = app
+            .world()
+            .get::<EditableText>(input)
+            .unwrap()
+            .pending_paste
+            .is_some();
+        assert!(
+            apply_preserved && finish_focus_preserved && paste_after_blur_preserved,
+            "apply_preserved={apply_preserved}, finish_focus_preserved={finish_focus_preserved}, paste_after_blur_preserved={paste_after_blur_preserved}"
+        );
         request_action(&mut app, UiAction::RestoreDefaults);
         // 恢复默认后才完成旧读取，不能让旧粘贴或排队编辑在下一帧恢复。
         *completion.lock().unwrap() = Some(Ok("999".into()));
@@ -1200,7 +1308,7 @@ mod page_refresh_tests {
                 .unwrap()
                 .value()
                 .to_string(),
-            "100"
+            "1.00"
         );
         let node = app.world().get::<ComputedNode>(input).unwrap();
         let glyphs = app.world().get::<TextLayoutInfo>(input).unwrap();
@@ -1217,8 +1325,8 @@ mod page_refresh_tests {
         assert_eq!(
             app.world()
                 .resource::<SettingsDraft>()
-                .mouse_sensitivity_percent,
-            "100"
+                .mouse_sensitivity_text,
+            "1.00"
         );
         assert_eq!(
             app.world()
@@ -1242,7 +1350,7 @@ mod page_refresh_tests {
 
     #[test]
     fn sensitivity_editable_text_has_measured_glyphs_at_supported_viewports() {
-        use bevy::text::EditableText;
+        use bevy::text::{EditableText, TextEdit};
         for size in [
             UVec2::new(960, 540),
             UVec2::new(1280, 720),
@@ -1257,21 +1365,274 @@ mod page_refresh_tests {
                 },
             );
             let input = sensitivity_input(&mut app);
-            let node = app.world().get::<ComputedNode>(input).unwrap();
-            let glyphs = app.world().get::<TextLayoutInfo>(input).unwrap();
-            assert!(node.size().x > 0.0 && node.size().y > 0.0);
-            assert!(!glyphs.glyphs.is_empty());
-            assert!(glyphs.size.x > 0.0 && glyphs.size.y > 0.0);
-            assert!(glyphs.size.x <= node.size().x);
+            let slider = sensitivity_slider(&mut app);
+            for value in ["0.00", "1.23", "10.00"] {
+                let mut text = app.world_mut().get_mut::<EditableText>(input).unwrap();
+                text.queue_edit(TextEdit::SelectAll);
+                text.queue_edit(TextEdit::Insert(value.into()));
+                app.update();
+                let node = app.world().get::<ComputedNode>(input).unwrap();
+                let glyphs = app.world().get::<TextLayoutInfo>(input).unwrap();
+                assert!(node.size().x > 0.0 && node.size().y > 0.0);
+                assert!(!glyphs.glyphs.is_empty() && glyphs.size.x > 0.0 && glyphs.size.y > 0.0);
+                assert!(glyphs.size.x <= node.size().x && glyphs.size.y <= node.size().y);
+                let input_rect =
+                    node_rect(node, app.world().get::<UiGlobalTransform>(input).unwrap());
+                let slider_rect = node_rect(
+                    app.world().get::<ComputedNode>(slider).unwrap(),
+                    app.world().get::<UiGlobalTransform>(slider).unwrap(),
+                );
+                assert!(slider_rect.max.x < input_rect.min.x);
+                assert!(
+                    (slider_rect.center().y - input_rect.center().y).abs() <= 1.0,
+                    "viewport={size:?}, value={value}, slider={slider_rect:?}, input={input_rect:?}"
+                );
+                assert!(input_rect.max.x <= size.x as f32 && slider_rect.min.x >= 0.0);
+                assert_eq!(
+                    app.world().get::<ChildOf>(slider).unwrap().parent(),
+                    app.world().get::<ChildOf>(input).unwrap().parent()
+                );
+                assert_eq!(
+                    app.world()
+                        .get::<EditableText>(input)
+                        .unwrap()
+                        .value()
+                        .to_string(),
+                    value
+                );
+            }
+        }
+    }
+
+    fn sensitivity_slider(app: &mut App) -> Entity {
+        app.world_mut()
+            .query::<(Entity, &super::super::slider::SettingsSlider)>()
+            .iter(app.world())
+            .find_map(|(entity, slider)| {
+                (slider.key == SettingKey::MouseSensitivity).then_some(entity)
+            })
+            .unwrap()
+    }
+
+    fn sensitivity_fill(app: &App, slider: Entity) -> (Entity, Entity) {
+        let track = app.world().get::<Children>(slider).unwrap()[0];
+        let fill = app.world().get::<Children>(track).unwrap()[0];
+        (track, fill)
+    }
+
+    #[test]
+    fn sensitivity_slider_and_text_update_real_geometry_in_the_same_frame() {
+        use bevy::{
+            input_focus::InputFocus,
+            text::{EditableText, TextEdit},
+        };
+        let mut app = live_settings_app();
+        request_action(&mut app, UiAction::SelectTab(SettingsTab::Controls));
+        let input = sensitivity_input(&mut app);
+        let slider = sensitivity_slider(&mut app);
+        for (step, text) in [(0, "0.00"), (123, "1.23"), (1000, "10.00")] {
+            request_action(&mut app, UiAction::SetSensitivity(step));
             assert_eq!(
                 app.world()
                     .get::<EditableText>(input)
                     .unwrap()
                     .value()
                     .to_string(),
-                "100"
+                text
             );
+            let (track, fill) = sensitivity_fill(&app, slider);
+            // Taffy 对实际节点的两侧分别按物理像素取整，最大保留 1px 几何误差。
+            let expected =
+                app.world().get::<ComputedNode>(track).unwrap().size().x * f32::from(step) / 1000.0;
+            assert!(
+                (app.world().get::<ComputedNode>(fill).unwrap().size().x - expected).abs() <= 1.0,
+                "step={step}, track={:?}, fill={:?}, expected={expected}",
+                app.world().get::<ComputedNode>(track).unwrap().size(),
+                app.world().get::<ComputedNode>(fill).unwrap().size()
+            );
+            request_action(&mut app, UiAction::FinishSensitivitySlider);
         }
+        request_action(&mut app, UiAction::EditSensitivity);
+        replace_sensitivity(&mut app, "4.567");
+        let (track, fill) = sensitivity_fill(&app, slider);
+        let expected = app.world().get::<ComputedNode>(track).unwrap().size().x * 0.457;
+        assert!((app.world().get::<ComputedNode>(fill).unwrap().size().x - expected).abs() <= 1.0);
+        assert_eq!(
+            app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .value()
+                .to_string(),
+            "4.567"
+        );
+        app.world_mut().resource_mut::<InputFocus>().clear();
+        app.update();
+        assert_eq!(
+            app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .value()
+                .to_string(),
+            "4.57"
+        );
+        request_action(&mut app, UiAction::EditSensitivity);
+        let mut editor = app.world_mut().get_mut::<EditableText>(input).unwrap();
+        editor.queue_edit(TextEdit::SelectAll);
+        editor.queue_edit(TextEdit::Insert("2.00".into()));
+        // 最后一次原生编辑与Enter请求处在同帧，不能保存旧值或吞掉最后字符。
+        request_action(&mut app, UiAction::FinishSensitivityEdit);
+        assert_eq!(
+            app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .value()
+                .to_string(),
+            "2.00"
+        );
+        assert_ne!(app.world().resource::<InputFocus>().get(), Some(input));
+        assert_eq!(
+            app.world()
+                .resource::<SettingsDraft>()
+                .sensitivity_multiplier(),
+            Some(2.0)
+        );
+    }
+
+    #[test]
+    fn sensitivity_pointer_focus_then_same_frame_character_and_enter_use_native_input() {
+        use bevy::{
+            camera::NormalizedRenderTarget,
+            input::{
+                ButtonState,
+                keyboard::{Key, KeyboardInput},
+            },
+            input_focus::InputFocus,
+            picking::{
+                backend::HitData,
+                pointer::{Location, PointerId},
+            },
+            text::{EditableText, TextEdit},
+            window::WindowRef,
+        };
+        let mut app = live_settings_app();
+        request_action(&mut app, UiAction::SelectTab(SettingsTab::Controls));
+        let input = sensitivity_input(&mut app);
+        let window = app
+            .world_mut()
+            .query_filtered::<Entity, With<PrimaryWindow>>()
+            .single(app.world())
+            .unwrap();
+        let pointer = Pointer::new(
+            PointerId::Mouse,
+            Location {
+                target: NormalizedRenderTarget::Window(
+                    WindowRef::Entity(window).normalize(Some(window)).unwrap(),
+                ),
+                position: app
+                    .world()
+                    .get::<UiGlobalTransform>(input)
+                    .unwrap()
+                    .affine()
+                    .translation,
+            },
+        );
+        let press = PointerPress {
+            entity: input,
+            pointer,
+            button: PointerButton::Primary,
+            hit: HitData::new(Entity::PLACEHOLDER, 0.0, None, None),
+            count: 1,
+        };
+        app.world_mut().trigger(press.clone());
+        app.world_mut().write_message(press);
+        app.update();
+        assert_eq!(app.world().resource::<InputFocus>().get(), Some(input));
+        app.world_mut()
+            .get_mut::<EditableText>(input)
+            .unwrap()
+            .queue_edit(TextEdit::SelectAll);
+        for (key_code, logical_key, text) in [
+            (
+                KeyCode::Digit3,
+                Key::Character("3".into()),
+                Some("3".into()),
+            ),
+            (KeyCode::Enter, Key::Enter, None),
+        ] {
+            app.world_mut().write_message(KeyboardInput {
+                key_code,
+                logical_key,
+                state: ButtonState::Pressed,
+                text,
+                repeat: false,
+                window,
+            });
+        }
+        app.update();
+        assert_eq!(
+            app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .value()
+                .to_string(),
+            "3.00"
+        );
+        assert_ne!(app.world().resource::<InputFocus>().get(), Some(input));
+        assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Settings);
+        for (key_code, logical_key) in [
+            (KeyCode::Digit3, Key::Character("3".into())),
+            (KeyCode::Enter, Key::Enter),
+        ] {
+            app.world_mut().write_message(KeyboardInput {
+                key_code,
+                logical_key,
+                state: ButtonState::Released,
+                text: None,
+                repeat: false,
+                window,
+            });
+        }
+        app.update();
+    }
+
+    #[test]
+    fn sensitivity_unedited_native_precision_survives_other_settings_and_apply() {
+        use crate::settings::GameSettings;
+        let mut app = live_settings_app();
+        let mut settings = GameSettings::default();
+        settings.camera.mouse_sensitivity = 0.0037407;
+        app.insert_resource(settings.clone());
+        request_action(&mut app, UiAction::Back);
+        request_action(&mut app, UiAction::OpenSettings);
+        request_action(&mut app, UiAction::SelectTab(SettingsTab::Controls));
+        let input = sensitivity_input(&mut app);
+        assert_eq!(
+            app.world()
+                .get::<bevy::text::EditableText>(input)
+                .unwrap()
+                .value()
+                .to_string(),
+            "1.25"
+        );
+        request_action(&mut app, UiAction::Adjust(SettingKey::InvertY, 1));
+        request_action(&mut app, UiAction::ApplySettings);
+        assert_eq!(
+            app.world()
+                .resource::<GameSettings>()
+                .camera
+                .mouse_sensitivity,
+            settings.camera.mouse_sensitivity
+        );
+        request_action(&mut app, UiAction::EditSensitivity);
+        request_action(&mut app, UiAction::FinishSensitivityEdit);
+        request_action(&mut app, UiAction::ApplySettings);
+        assert_eq!(
+            app.world()
+                .resource::<GameSettings>()
+                .camera
+                .mouse_sensitivity,
+            1.25 * crate::settings::DEFAULT_MOUSE_SENSITIVITY
+        );
     }
 
     fn request_action(app: &mut App, action: UiAction) {
@@ -1518,7 +1879,7 @@ mod page_refresh_tests {
 
     #[test]
     fn volume_updates_preserve_scrolled_panel_slider_and_navigation_focus() {
-        use crate::ui::volume::VolumeSlider;
+        use crate::ui::slider::SettingsSlider;
 
         let mut app = live_settings_app();
         request_action(&mut app, UiAction::SelectTab(SettingsTab::Audio));
@@ -1531,14 +1892,14 @@ mod page_refresh_tests {
         let identity = settings_identity(&mut app);
         let slider = app
             .world_mut()
-            .query::<(Entity, &VolumeSlider)>()
+            .query::<(Entity, &SettingsSlider)>()
             .iter(app.world())
             .find_map(|(entity, slider)| (slider.key == SettingKey::MasterVolume).then_some(entity))
             .unwrap();
         let old_offset = app.world().get::<ScrollPosition>(area).unwrap().y;
         request_action(&mut app, UiAction::SetVolume(SettingKey::MasterVolume, 37));
         assert_panel_preserved(&mut app, &identity, area, old_offset);
-        assert!(app.world().get::<VolumeSlider>(slider).is_some());
+        assert!(app.world().get::<SettingsSlider>(slider).is_some());
         assert_eq!(app.world().resource::<MenuFocus>().index, 5);
         let group = app.world().get::<ChildOf>(slider).unwrap().parent();
         let world = app.world_mut();
@@ -1555,7 +1916,7 @@ mod page_refresh_tests {
         let old_offset = app.world().get::<ScrollPosition>(area).unwrap().y;
         request_action(&mut app, UiAction::RestoreDefaults);
         assert_panel_preserved(&mut app, &identity, area, old_offset);
-        assert!(app.world().get::<VolumeSlider>(slider).is_some());
+        assert!(app.world().get::<SettingsSlider>(slider).is_some());
         assert_eq!(
             app.world().resource::<SettingsDraft>().audio.master_volume,
             100
@@ -1707,15 +2068,16 @@ mod page_structure_tests {
             true,
         ));
         assert_eq!(
-            &controls[4..7],
+            &controls[4..8],
             &[
+                UiAction::Adjust(SettingKey::MouseSensitivity, 0),
                 UiAction::EditSensitivity,
                 UiAction::Adjust(SettingKey::InvertY, -1),
                 UiAction::Adjust(SettingKey::InvertY, 1)
             ]
         );
         assert_eq!(
-            &controls[7..],
+            &controls[8..],
             &[
                 UiAction::RestoreDefaults,
                 UiAction::ApplySettings,
@@ -1783,6 +2145,7 @@ mod page_structure_tests {
             .add_message::<super::super::UiRequest>()
             .configure_sets(Update, (UiSystems::Build, UiSystems::Style).chain());
         register(&mut app);
+        super::super::slider::register(&mut app);
         super::super::volume::register(&mut app);
         super::super::style::register(&mut app);
         app.finish();
@@ -1795,7 +2158,7 @@ mod page_structure_tests {
             .unwrap();
         let slider = app
             .world_mut()
-            .query::<(Entity, &super::super::volume::VolumeSlider)>()
+            .query::<(Entity, &super::super::slider::SettingsSlider)>()
             .iter(app.world())
             .find_map(|(entity, slider)| (slider.key == SettingKey::MasterVolume).then_some(entity))
             .unwrap();
@@ -1807,7 +2170,7 @@ mod page_structure_tests {
         assert!(app.world().get::<MenuRoot>(root).is_some());
         assert!(
             app.world()
-                .get::<super::super::volume::VolumeSlider>(slider)
+                .get::<super::super::slider::SettingsSlider>(slider)
                 .is_some()
         );
         assert_eq!(app.world().resource::<MenuFocus>().index, 5);
@@ -3396,17 +3759,21 @@ mod scroll_tests {
     }
 }
 
-mod volume_tests {
+mod slider_tests {
     use super::test_support::pointer_press;
     use super::*;
-    use crate::ui::volume::*;
+    use crate::ui::slider::*;
     use bevy::{picking::hover::Hovered, ui::Pressed, ui_widgets::Button};
 
-    fn pointer_app() -> (App, Entity, Entity) {
+    fn pointer_app(key: SettingKey) -> (App, Entity, Entity) {
         let mut app = App::new();
         app.insert_resource(MenuState {
             page: MenuPage::Settings,
-            tab: SettingsTab::Audio,
+            tab: if key == SettingKey::MouseSensitivity {
+                SettingsTab::Controls
+            } else {
+                SettingsTab::Audio
+            },
             ..default()
         })
         .init_resource::<MenuFocus>()
@@ -3414,6 +3781,7 @@ mod volume_tests {
         .init_resource::<ButtonInput<MouseButton>>()
         .add_message::<PointerPress>()
         .add_message::<UiRequest>()
+        .add_message::<bevy::picking::pointer::PointerInput>()
         .add_systems(Update, sample_slider_pointer);
         let window = app
             .world_mut()
@@ -3423,11 +3791,9 @@ mod volume_tests {
             .world_mut()
             .spawn((
                 Button,
-                VolumeSlider {
-                    key: SettingKey::MasterVolume,
-                },
+                SettingsSlider { key },
                 MenuButton {
-                    action: UiAction::Adjust(SettingKey::MasterVolume, 0),
+                    action: UiAction::Adjust(key, 0),
                     index: 5,
                 },
                 Pressed,
@@ -3460,7 +3826,7 @@ mod volume_tests {
 
     #[test]
     fn pointer_drag_keeps_capture_outside_slider_and_finishes_once() {
-        let (mut app, window, slider) = pointer_app();
+        let (mut app, window, slider) = pointer_app(SettingKey::MasterVolume);
         cursor(&mut app, window, Some(Vec2::new(151.0, 200.0)));
         app.world_mut()
             .resource_mut::<ButtonInput<MouseButton>>()
@@ -3520,7 +3886,7 @@ mod volume_tests {
     #[test]
     fn pointer_leaving_window_or_losing_focus_finishes_capture() {
         for leave_window in [true, false] {
-            let (mut app, window, slider) = pointer_app();
+            let (mut app, window, slider) = pointer_app(SettingKey::MasterVolume);
             cursor(&mut app, window, Some(Vec2::new(200.0, 200.0)));
             app.world_mut()
                 .resource_mut::<ButtonInput<MouseButton>>()
@@ -3546,7 +3912,7 @@ mod volume_tests {
     #[test]
     fn destroyed_slider_or_window_finishes_existing_capture() {
         for remove_window in [true, false] {
-            let (mut app, window, slider) = pointer_app();
+            let (mut app, window, slider) = pointer_app(SettingKey::MasterVolume);
             cursor(&mut app, window, Some(Vec2::new(200.0, 200.0)));
             app.world_mut()
                 .resource_mut::<ButtonInput<MouseButton>>()
@@ -3568,7 +3934,7 @@ mod volume_tests {
 
     #[test]
     fn pointer_uses_physical_coordinates_and_never_starts_on_old_pressed_tree() {
-        let (mut app, window, slider) = pointer_app();
+        let (mut app, window, slider) = pointer_app(SettingKey::MasterVolume);
         app.world_mut()
             .get_mut::<Window>(window)
             .unwrap()
@@ -3603,6 +3969,67 @@ mod volume_tests {
             "Changing tabs must drop the old capture"
         );
     }
+    #[test]
+    fn sensitivity_slider_samples_endpoints_and_cancels_without_replaying_old_messages() {
+        use bevy::{
+            camera::NormalizedRenderTarget,
+            picking::pointer::{Location, PointerAction, PointerId, PointerInput},
+            window::WindowRef,
+        };
+        let (mut app, window, slider) = pointer_app(SettingKey::MouseSensitivity);
+        cursor(&mut app, window, Some(Vec2::new(151.0, 200.0)));
+        app.world_mut()
+            .resource_mut::<ButtonInput<MouseButton>>()
+            .press(MouseButton::Left);
+        pointer_press(app.world_mut(), slider, PointerButton::Primary);
+        app.update();
+        assert_eq!(requests(&mut app), [UiAction::SetSensitivity(250)]);
+        cursor(&mut app, window, Some(Vec2::new(53.0, 200.0)));
+        app.update();
+        assert_eq!(requests(&mut app), [UiAction::SetSensitivity(0)]);
+        cursor(&mut app, window, Some(Vec2::new(350.0, 200.0)));
+        app.world_mut()
+            .resource_mut::<ButtonInput<MouseButton>>()
+            .release(MouseButton::Left);
+        app.update();
+        assert_eq!(
+            requests(&mut app),
+            [
+                UiAction::SetSensitivity(1000),
+                UiAction::FinishSensitivitySlider
+            ]
+        );
+        app.world_mut()
+            .resource_mut::<ButtonInput<MouseButton>>()
+            .press(MouseButton::Left);
+        pointer_press(app.world_mut(), slider, PointerButton::Primary);
+        app.update();
+        requests(&mut app);
+        let location = Location {
+            target: NormalizedRenderTarget::Window(
+                WindowRef::Entity(window).normalize(Some(window)).unwrap(),
+            ),
+            position: Vec2::ZERO,
+        };
+        for _ in 0..2 {
+            app.world_mut().write_message(PointerInput::new(
+                PointerId::Mouse,
+                location.clone(),
+                PointerAction::Cancel,
+            ));
+        }
+        app.update();
+        assert_eq!(requests(&mut app), [UiAction::FinishSensitivitySlider]);
+        cursor(&mut app, window, Some(Vec2::new(200.0, 200.0)));
+        pointer_press(app.world_mut(), slider, PointerButton::Primary);
+        app.update();
+        assert_eq!(requests(&mut app), [UiAction::SetSensitivity(500)]);
+        app.world_mut().get_mut::<Window>(window).unwrap().focused = false;
+        app.update();
+        assert_eq!(requests(&mut app), [UiAction::FinishSensitivitySlider]);
+        app.update();
+        assert!(requests(&mut app).is_empty());
+    }
 }
 
 mod widgets_tests {
@@ -3614,7 +4041,7 @@ mod widgets_tests {
     fn slider_visual_children_pass_real_ui_picking_to_the_parent_button() {
         use super::super::{
             MenuFocus, MenuInputSource, MenuPage, MenuState, SettingsTab, UiRequest,
-            volume::VolumeSlider,
+            slider::SettingsSlider,
         };
         use crate::settings::SettingsDraft;
         use bevy::{
@@ -3647,6 +4074,7 @@ mod widgets_tests {
                 ..default()
             })
             .add_message::<UiRequest>();
+        super::super::slider::register(&mut app);
         super::super::volume::register(&mut app);
         let window = app
             .world_mut()
@@ -3709,7 +4137,7 @@ mod widgets_tests {
         }
         let slider = app
             .world_mut()
-            .query_filtered::<Entity, With<VolumeSlider>>()
+            .query_filtered::<Entity, With<SettingsSlider>>()
             .single(app.world())
             .unwrap();
         let track = app.world().get::<Children>(slider).unwrap()[0];
@@ -3900,6 +4328,10 @@ mod widgets_tests {
 
     /// 真实 Picking 与原生 Button 的最小无窗口组合，不安装菜单请求消费器。
     fn native_pointer_app(slider: bool) -> (App, Entity, Entity) {
+        native_pointer_app_with_key(slider, SettingKey::MasterVolume)
+    }
+
+    fn native_pointer_app_with_key(slider: bool, key: SettingKey) -> (App, Entity, Entity) {
         use super::super::{
             MenuFocus, MenuInputSource, MenuPage, MenuState, SettingsTab, UiSystems,
         };
@@ -3926,7 +4358,11 @@ mod widgets_tests {
             .init_resource::<SettingsDraft>()
             .insert_resource(MenuState {
                 page: MenuPage::Settings,
-                tab: SettingsTab::Audio,
+                tab: if key == SettingKey::MouseSensitivity {
+                    SettingsTab::Controls
+                } else {
+                    SettingsTab::Audio
+                },
                 ..default()
             })
             .add_message::<super::super::UiRequest>()
@@ -3940,6 +4376,7 @@ mod widgets_tests {
                 super::super::style::style_buttons.in_set(UiSystems::Style),
             );
         super::super::pointer::register(&mut app);
+        super::super::slider::register(&mut app);
         super::super::volume::register(&mut app);
         let window = app
             .world_mut()
@@ -3960,7 +4397,15 @@ mod widgets_tests {
             body: default(),
             scale: 1.0,
         };
-        let root = if slider {
+        let root = if slider && key == SettingKey::MouseSensitivity {
+            app.world_mut()
+                .spawn_scene(super::super::sensitivity::sensitivity_row(
+                    &theme,
+                    &SettingsDraft::default(),
+                ))
+                .unwrap()
+                .id()
+        } else if slider {
             app.world_mut()
                 .spawn_scene(super::super::volume::volume_row(
                     &theme,
@@ -4004,7 +4449,7 @@ mod widgets_tests {
         }
         let target = if slider {
             app.world_mut()
-                .query_filtered::<Entity, With<super::super::volume::VolumeSlider>>()
+                .query_filtered::<Entity, With<super::super::slider::SettingsSlider>>()
                 .single(app.world())
                 .unwrap()
         } else {
@@ -4138,42 +4583,51 @@ mod widgets_tests {
     #[test]
     fn native_slider_samples_and_finishes_a_press_and_release_in_one_frame() {
         use bevy::picking::pointer::PointerAction;
-        let (mut app, window, target) = native_pointer_app(true);
-        let position = app
-            .world()
-            .get::<UiGlobalTransform>(target)
-            .unwrap()
-            .affine()
-            .translation;
-        app.world_mut()
-            .resource_mut::<ButtonInput<MouseButton>>()
-            .press(MouseButton::Left);
-        app.world_mut()
-            .resource_mut::<ButtonInput<MouseButton>>()
-            .release(MouseButton::Left);
-        native_input(
-            &mut app,
-            window,
-            position,
-            PointerAction::Press(PointerButton::Primary),
-        );
-        native_input(
-            &mut app,
-            window,
-            position,
-            PointerAction::Release(PointerButton::Primary),
-        );
-        app.update();
-        assert!(!app.world().entity(target).contains::<Pressed>());
-        assert_eq!(
-            native_requests(&mut app),
-            [
-                UiAction::SetVolume(SettingKey::MasterVolume, 50),
-                UiAction::FinishVolumeEdit
-            ]
-        );
-        app.update();
-        assert!(native_requests(&mut app).is_empty());
+        for key in [SettingKey::MasterVolume, SettingKey::MouseSensitivity] {
+            let (mut app, window, target) = native_pointer_app_with_key(true, key);
+            let position = app
+                .world()
+                .get::<UiGlobalTransform>(target)
+                .unwrap()
+                .affine()
+                .translation;
+            app.world_mut()
+                .resource_mut::<ButtonInput<MouseButton>>()
+                .press(MouseButton::Left);
+            app.world_mut()
+                .resource_mut::<ButtonInput<MouseButton>>()
+                .release(MouseButton::Left);
+            native_input(
+                &mut app,
+                window,
+                position,
+                PointerAction::Press(PointerButton::Primary),
+            );
+            native_input(
+                &mut app,
+                window,
+                position,
+                PointerAction::Release(PointerButton::Primary),
+            );
+            app.update();
+            assert!(!app.world().entity(target).contains::<Pressed>());
+            assert_eq!(
+                native_requests(&mut app),
+                if key == SettingKey::MouseSensitivity {
+                    vec![
+                        UiAction::SetSensitivity(500),
+                        UiAction::FinishSensitivitySlider,
+                    ]
+                } else {
+                    vec![
+                        UiAction::SetVolume(SettingKey::MasterVolume, 50),
+                        UiAction::FinishVolumeEdit,
+                    ]
+                }
+            );
+            app.update();
+            assert!(native_requests(&mut app).is_empty());
+        }
     }
 
     #[test]

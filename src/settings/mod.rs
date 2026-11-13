@@ -7,8 +7,11 @@ mod prototype;
 
 use bevy::prelude::*;
 
+#[cfg(test)]
+pub(crate) use config::MAX_MOUSE_SENSITIVITY;
 pub use config::{
     AudioSettings, CameraSettings, DEFAULT_MOUSE_SENSITIVITY, GameSettings, MAX_AUDIO_VOLUME,
+    MAX_MOUSE_SENSITIVITY_MULTIPLIER, MOUSE_SENSITIVITY_STEP, MOUSE_SENSITIVITY_STEPS_PER_UNIT,
     SETTINGS_APP_NAME, SettingsFile, validate_loaded_settings,
 };
 pub use draft::{SettingKey, SettingsDraft};
