@@ -1180,13 +1180,44 @@ mod page_refresh_tests {
                 .to_string(),
             "1e"
         );
+        let paste = ClipboardRead::<String>::Pending(default());
+        let ClipboardRead::Pending(completion) = &paste else {
+            unreachable!()
+        };
+        let completion = completion.clone();
+        {
+            let mut text = app.world_mut().get_mut::<EditableText>(input).unwrap();
+            text.pending_paste = Some(paste);
+            text.queue_edit(TextEdit::Insert("9".into()));
+        }
         request_action(&mut app, UiAction::RestoreDefaults);
+        // 恢复默认后才完成旧读取，不能让旧粘贴或排队编辑在下一帧恢复。
+        *completion.lock().unwrap() = Some(Ok("999".into()));
+        app.update();
         assert_eq!(
             app.world()
                 .get::<EditableText>(input)
                 .unwrap()
                 .value()
                 .to_string(),
+            "100"
+        );
+        let node = app.world().get::<ComputedNode>(input).unwrap();
+        let glyphs = app.world().get::<TextLayoutInfo>(input).unwrap();
+        assert!(!glyphs.glyphs.is_empty());
+        assert!(glyphs.size.x > 0.0 && glyphs.size.y > 0.0);
+        assert!(glyphs.size.x <= node.size().x && glyphs.size.y <= node.size().y);
+        assert!(
+            app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .pending_paste
+                .is_none()
+        );
+        assert_eq!(
+            app.world()
+                .resource::<SettingsDraft>()
+                .mouse_sensitivity_percent,
             "100"
         );
         assert_eq!(
