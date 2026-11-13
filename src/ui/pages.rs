@@ -325,7 +325,7 @@ pub(super) fn settings_page(
     let (category, next_index) = match state.tab {
         SettingsTab::Graphics => ("GRAPHICS", 6),
         SettingsTab::Audio => ("AUDIO", 10),
-        SettingsTab::Controls => ("CONTROLS", 8),
+        SettingsTab::Controls => ("CONTROLS", 7),
         SettingsTab::Accessibility => ("ACCESSIBILITY", 4),
     };
     let rows: Box<dyn Scene> = match state.tab {
@@ -368,10 +368,9 @@ pub(super) fn settings_page(
             Name("Controls settings rows")
             column(13.0 * scale)
             Children [
-                @setting_row(theme, "Mouse Sensitivity", setting_value(draft, SettingKey::MouseSensitivity), SettingKey::MouseSensitivity, 4,
-                    "Adjust how far the first-person camera turns when you move the mouse. 100% is the default sensitivity.")
+                @super::sensitivity::sensitivity_row(theme, draft)
                 --
-                @setting_row(theme, "Invert Camera Y", setting_value(draft, SettingKey::InvertY), SettingKey::InvertY, 6,
+                @setting_row(theme, "Invert Camera Y", setting_value(draft, SettingKey::InvertY), SettingKey::InvertY, 5,
                     "Reverse vertical mouse movement. When enabled, moving the mouse upward tilts the camera downward.")
                 --
                 @placeholder_row(theme, "Rebind Keys", false)
