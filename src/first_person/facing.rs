@@ -5,7 +5,7 @@ use super::*;
 /// 在固定模拟前及逐帧持握目标同步前设置水平朝向，站立、横移和后退时也跟随视角。
 pub(super) fn sync_character_facing(
     mut commands: Commands,
-    controllers: Query<(&ControlsCharacter, &ControlsCamera), With<GameplayContext>>,
+    controllers: Query<ControllerTargets, With<GameplayContext>>,
     mut cameras: Query<&mut FirstPersonCamera>,
     mut characters: Query<(&mut Transform, &Position, Option<&HoldingItems>), With<Character>>,
     items: Query<(
@@ -17,7 +17,9 @@ pub(super) fn sync_character_facing(
     names: Query<&Name>,
     collision: CarryRotationQuery,
 ) {
-    for (controlled_character, controlled_camera) in &controllers {
+    for controller in &controllers {
+        let controlled_character = controller.character;
+        let controlled_camera = controller.camera;
         let Ok(mut view) = cameras.get_mut(controlled_camera.camera) else {
             continue;
         };

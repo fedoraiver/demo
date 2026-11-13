@@ -4,6 +4,7 @@ mod body;
 mod components;
 mod lifecycle;
 mod motion;
+mod queries;
 #[cfg(test)]
 mod tests;
 
