@@ -1,4 +1,4 @@
-//! 模型消费真实身份而非显示名；夹具只模拟编译器和装配边界的数据。
+//! 模型消费真实身份而非显示名；fixture 只模拟编译器和装配边界的数据。
 use super::*;
 use std::sync::atomic::{AtomicU64, Ordering};
 

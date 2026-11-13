@@ -294,7 +294,7 @@ fn add_thin_wall_after_high_speed_step(
     assert!(((start - before).dot(direction) - 4.0).abs() < 0.01);
     let rotation = app.world().get::<Rotation>(character).unwrap().0;
     let wall_position = start + direction * 2.0 + Vec3::Y;
-    // 纯物理夹具不注册 BSN 所依赖的资产服务，使用 Bundle 隔离扫掠与薄墙接触。
+    // 纯物理 fixture 不注册 BSN 所依赖的资产服务，使用 Bundle 隔离扫掠与薄墙接触。
     app.world_mut().spawn((
         Name::new("CCD regression thin wall"),
         body,
@@ -370,7 +370,7 @@ fn character_ccd_blocks_high_speed_velocity_and_impulses_at_different_yaws() {
         }
     }
 
-    // 1mm 推测接触不能阻挡每步 4m 的位移；同一夹具禁用 CCD 后必须穿墙。
+    // 1mm 推测接触不能阻挡每步 4m 的位移；同一 fixture 禁用 CCD 后必须穿墙。
     let (mut app, character, direction) = thin_wall_ccd_app(0.0);
     app.world_mut()
         .entity_mut(character)

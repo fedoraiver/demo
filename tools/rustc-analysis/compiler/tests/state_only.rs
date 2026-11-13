@@ -1,4 +1,4 @@
-//! 未选中单元保存完整输入证明，只有选中范围产生规则结果；本夹具不执行产物。
+//! 未选中单元保存完整输入证明，只有选中范围产生规则结果；本 fixture 不执行产物。
 use analysis_contract::{ANALYSIS_SCHEMA_VERSION, Request, Rule, UnitReport, normalized};
 use std::{
     collections::BTreeSet,

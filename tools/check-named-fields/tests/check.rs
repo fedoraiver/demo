@@ -1,4 +1,4 @@
-//! 通过真实 Cargo 编译检查当前配置的结构体；不执行夹具程序。
+//! 通过真实 Cargo 编译检查当前配置的结构体；不执行 fixture 程序。
 use check_named_fields::{
     report::Report,
     runner::{self, Options},

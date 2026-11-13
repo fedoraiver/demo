@@ -53,7 +53,7 @@ impl Plugin for GameFlowPlugin {
     }
 }
 
-/// 只配置执行依赖；无窗口夹具可复用，而不创建应用状态或安装其他插件。
+/// 只配置执行依赖；无窗口 fixture 可复用，而不创建应用状态或安装其他插件。
 pub(crate) fn configure_feature_order(app: &mut App) {
     use crate::{audio::AudioSystems, ui::UiSystems};
     app.configure_sets(

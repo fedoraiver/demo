@@ -20,7 +20,7 @@
 
 ## 重现与检查
 
-正常构建直接使用仓库中的音频文件。清单生成需要 Python 标准库，技术检查还需要本机 `ffmpeg` 与 `ffprobe`。管线回归还使用本机 Node.js 检查试听页的分类、路径与播放状态。试听用例在离线数据夹具中执行。从仓库根目录执行下列命令。
+正常构建直接使用仓库中的音频文件。清单生成需要 Python 标准库，技术检查还需要本机 `ffmpeg` 与 `ffprobe`。管线回归还使用本机 Node.js 检查试听页的分类、路径与播放状态。试听用例在离线数据 fixture 中执行。从仓库根目录执行下列命令。
 
 ```powershell
 python -B scripts/audio_pipeline.py generate

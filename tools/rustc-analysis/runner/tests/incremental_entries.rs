@@ -1,4 +1,4 @@
-//! 通过三个公开入口验证真实 Cargo 冷/热复用；子进程隔离环境输入，夹具只执行专用导出。
+//! 通过三个公开入口验证真实 Cargo 冷/热复用；子进程隔离环境输入，fixture 只执行专用导出。
 use rustc_analysis::{Options, check_entity_names, check_named_fields, extract, normalized};
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
@@ -19,7 +19,7 @@ static HOST_TEST_LOCK: Mutex<()> = Mutex::new(());
 static NEXT_FIXTURE: AtomicU64 = AtomicU64::new(0);
 
 fn host_test_guard() -> MutexGuard<'static, ()> {
-    // 锁只负责让独立夹具排队；前一断言失败不能遮蔽后续测试自己的结果。
+    // 锁只负责让独立 fixture 排队；前一断言失败不能遮蔽后续测试自己的结果。
     HOST_TEST_LOCK
         .lock()
         .unwrap_or_else(|error| error.into_inner())

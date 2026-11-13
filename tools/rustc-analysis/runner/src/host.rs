@@ -1544,7 +1544,7 @@ pub fn check_named_fields(options: &Options) -> Result<named_fields::Report> {
     Ok(report)
 }
 
-/// 实体规则只编译生产 lib/bin，夹具和游戏程序均不执行。
+/// 实体规则只编译生产 lib/bin，fixture 和游戏程序均不执行。
 pub fn check_entity_names(options: &Options) -> Result<entity_names::Report> {
     let host = Host::new(options, Rule::EntityNames)?;
     let _lock = AnalysisLock::acquire(host.target_dir.parent().context("Missing cache parent")?)?;

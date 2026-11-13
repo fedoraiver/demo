@@ -28,7 +28,7 @@ Each fact has one complete home. Elsewhere, summarize briefly and link there. Th
 | [audio.md](audio.md) | Sound authoring, integration, and usage contracts | Duplicated source manifests, attribution records, or unrelated gameplay decisions |
 | [diagrams/](diagrams/README.md) | Generated architecture views and their maintenance workflow | Hand-edited generated outputs or independent copies of source contracts |
 | [domain.md](domain.md), [issue-tracker.md](issue-tracker.md), and [triage-labels.md](triage-labels.md) | Issue-tracker, label, and domain-reading conventions | Task progress or a second copy of domain architecture |
-| [Agent Notes](../.agents/notes/README.md) | Durable decisions, motivation, alternatives, consequences, and verification requirements | Complete runtime references or task journals |
+| [Agent Notes](notes/README.md) | Durable decisions, motivation, alternatives, consequences, and verification requirements | Complete runtime references or task journals |
 | [postmortem/](postmortem/README.md) | Incident evidence, failure mechanisms, missed safeguards, and prevention | Feature proposals or the current runtime specification |
 | Skills (`.agents/skills/`) | Reusable workflows and specialized execution guidance | Product contracts or duplicated architecture |
 | Issues and PRs | Requirements discussion, task progress, investigation evidence, and individual validation results | The only copy of reusable guidance or durable decisions |

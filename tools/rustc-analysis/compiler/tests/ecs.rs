@@ -1,4 +1,4 @@
-//! 直接编译合成 API，检验类型与调用事实；夹具函数从不执行。
+//! 直接编译合成 API，检验类型与调用事实；fixture 函数从不执行。
 #![feature(rustc_private)]
 extern crate rustc_driver;
 extern crate rustc_interface;

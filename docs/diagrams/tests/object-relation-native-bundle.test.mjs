@@ -16,7 +16,7 @@ const chromium = process.env.MERMAID_CHROMIUM_PATH || [process.env.ProgramFiles,
   .find(candidate => fs.existsSync(candidate));
 const repository = fileURLToPath(new URL('../../../', import.meta.url));
 
-// 静态夹具来自真实对象目录；此测试只编译空白文档中的 SVG，不访问正式查看器或 generated。
+// 静态 fixture 来自真实对象目录；此测试只编译空白文档中的 SVG，不访问正式查看器或 generated。
 test('the shipped object relation bundle compiles described, reverse and long-generic relations without visible labels offline', { skip: !chromium, timeout: 180000 }, async t => {
   const captured = JSON.parse(fs.readFileSync(new URL('./fixtures/object-relations-native.json', import.meta.url), 'utf8'));
   const generic = JSON.parse(fs.readFileSync(new URL('./fixtures/object-relations.json', import.meta.url), 'utf8'));

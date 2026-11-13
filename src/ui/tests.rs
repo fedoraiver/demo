@@ -9,7 +9,7 @@ use super::{
 use bevy::window::PrimaryWindow;
 
 mod test_support {
-    //! 真实菜单和字体布局的无窗口夹具，不安装窗口后端、渲染器或音频设备。
+    //! 真实菜单和字体布局的无窗口 fixture，不安装窗口后端、渲染器或音频设备。
 
     use super::{pages::page_scene, *};
     use crate::{

@@ -8,7 +8,7 @@
 
 发布图表示原生 Linux 目标在导出时的注册结构，不代表 Windows、macOS、其他设备能力或随后动态注册的 Schedule。源码提交、目标及构建 ID 保存在启动数据和清单中，用于校验同轮资源。部署 job 只在同轮完整检查及静态包校验成功后运行，使用 Pages 写权限和 OIDC；构建 job 只有仓库读取权限。
 
-构建采用免费标准 `ubuntu-latest` runner、Node 24、仓库固定 nightly 和锁定依赖。自动触发按工作流中的路径过滤，纯 Markdown 文档修改不构建或发布；手动运行不受路径过滤限制。Xvfb 提供虚拟显示，Mesa Lavapipe 提供软件 Vulkan；专用导出仍完整装配插件，但不执行 Startup、游戏循环或渲染线程。无音频设备时的实际初始化结果记录在会话日志中，不通过删插件或测试夹具替代真实导出。
+构建采用免费标准 `ubuntu-latest` runner、Node 24、仓库固定 nightly 和锁定依赖。自动触发按工作流中的路径过滤，纯 Markdown 文档修改不构建或发布；手动运行不受路径过滤限制。Xvfb 提供虚拟显示，Mesa Lavapipe 提供软件 Vulkan；专用导出仍完整装配插件，但不执行 Startup、游戏循环或渲染线程。无音频设备时的实际初始化结果记录在会话日志中，不通过删插件或测试 fixture 替代真实导出。
 
 Puppeteer 浏览器来自图包锁定依赖，工作流显式设置 `MERMAID_CHROMIUM_PATH` 并启动检查。`package.json` 的 `allowScripts` 只批准锁定版本的 esbuild 与 Puppeteer 安装脚本，版本升级时同步复核；CI 显式启用 Chrome 下载，并跳过 headless-shell 和 Firefox，覆盖本地默认不下载浏览器的配置。`npm ci --foreground-scripts` 保留安装日志，随后 `npm exec --yes=false -- puppeteer browsers install chrome` 使用已安装的锁定 CLI 明确完成下载；下载失败直接停止，不以 postinstall 的退出结果推定浏览器存在。中文字体安装后，实际字体文件 SHA-256 和 fontconfig 版本生成 `MERMAID_RENDER_CONTEXT`；该值和浏览器字节身份共同参与图形缓存指纹。原生 Node 回归必须使用该浏览器，不能把缺少浏览器导致的跳过当作通过。
 
@@ -58,7 +58,7 @@ npm run serve --prefix docs/diagrams -- --directory tmp/ecs-architecture/pages
 
 ## 可选视觉诊断
 
-自动更新与发布不包含 SVG 目测、正式页面浏览器验收或 VS Code 协议验收。这些项目不构成发布 gate，也不需要为默认跳过取得额外确认。隔离静态夹具的浏览器、文字、几何及交互自动回归仍属于完整 Node 检查。
+自动更新与发布不包含 SVG 目测、正式页面浏览器验收或 VS Code 协议验收。这些项目不构成发布 gate，也不需要为默认跳过取得额外确认。隔离静态 fixture 的浏览器、文字、几何及交互自动回归仍属于完整 Node 检查。
 
 用户明确要求视觉诊断时，可复用统一入口的 `visual plan/render/record/bind/report`。计划冻结当前清单及文件哈希；渲染保存预览和必要的原尺寸分块，截图本身不产生通过结论。只有实际观察后才记录 `passed`／`failed`、`reviewer: { "id": "检查者" }`、`actualInspection: true`、带时区的 `checkedAt`、具体 `notes`、`observedWith` 和完整 `images` 路径及哈希。检查者可以是人或工具，不要求指定 AI 模型。
 
@@ -71,4 +71,4 @@ npm run maintain --prefix docs/diagrams -- visual report --plan <plan.json>
 
 默认覆盖全部缺少有效观察的图；只有用户明确限定范围时使用 `--sample N --seed TEXT --scope TEXT`，可用 `--force-object ID` 或 `--force-view ID` 固定对象。证据索引默认保存在主检出 `tmp/ecs-architecture/visual-checks/index-v2.json`，不隐式迁移旧索引。`visual bind --commit COMMIT` 只适用于目标提交实际含有完全匹配产物的历史版本；当前不提交生成文件，日常维护无需绑定。
 
-正式页面或外部编辑器访问被策略拒绝后，停止该目标验收，不换端口、协议、浏览器或编译夹具绕过。自动检查与实际观察分别记录；具体检查项见[验证参考](../testing/README.md#架构图视觉检查)。
+正式页面或外部编辑器访问被策略拒绝后，停止该目标验收，不换端口、协议、浏览器或编译 fixture 绕过。自动检查与实际观察分别记录；具体检查项见[验证参考](../testing/README.md#架构图视觉检查)。

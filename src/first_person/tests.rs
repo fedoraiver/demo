@@ -717,7 +717,7 @@ mod pose_tests {
 
     fn end_test_inspector_pass(mut contexts: Query<&mut EguiContext, With<PrimaryEguiContext>>) {
         let mut output = contexts.single_mut().unwrap().get_mut().end_pass();
-        // 无窗口夹具只验证输入与内存布局，不上传纹理；egui 要求显式清空未应用的更新。
+        // 无窗口 fixture 只验证输入与内存布局，不上传纹理；egui 要求显式清空未应用的更新。
         output.textures_delta.clear();
     }
 

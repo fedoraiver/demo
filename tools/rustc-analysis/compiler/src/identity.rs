@@ -76,7 +76,7 @@ impl<'tcx> Identities<'tcx> {
         } else if candidates.len() == 1 {
             candidates[0].clone()
         } else if self.origins.is_empty() && krate == LOCAL_CRATE {
-            // extract() 的合成编译器夹具没有 Cargo；真实 driver 始终传入精确来源。
+            // extract() 的合成编译器 fixture 没有 Cargo；真实 driver 始终传入精确来源。
             serde_json::json!({"standalone":self.tcx.crate_name(krate).as_str()}).to_string()
         } else if filename
             .as_ref()

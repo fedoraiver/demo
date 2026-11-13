@@ -249,7 +249,7 @@ test('native Mermaid initialization accepts more than 500 recorded edges includi
   const browser = await puppeteer.launch({ executablePath: chromium, headless: true, userDataDir: fs.mkdtempSync(path.join(temporary, 'edge-limit-')) });
   try {
     const registry = Object.fromEntries(Array.from({ length: 501 }, (_, index) => ['limit-' + index,
-      { id: 'limit-' + index, kind: 'System', feature: 'fixture', name: 'Step_' + index, description: '执行当前夹具步骤。' }]));
+      { id: 'limit-' + index, kind: 'System', feature: 'fixture', name: 'Step_' + index, description: '执行当前 fixture 步骤。' }]));
     const ids = Object.keys(registry), graph = { nodes: ids.map(id => ({ id, role: 'internal' })),
       links: ids.slice(1).map((to, index) => ({ id: 'order-' + index, from: ids[index], to, kind: 'order' })) };
     const view = renderGraphView({ id: 'native-edge-limit', aspect: 'object', objectId: ids[0], centerNodeId: ids[0], feature: 'fixture',
@@ -274,7 +274,7 @@ test('native Mermaid accepts a valid source above 200000 characters while retain
       long: { id: 'long', kind: 'Resource', feature: 'fixture', name, description: '保留超过默认长度的有效源码和完整节点文字。' },
     };
     const view = renderGraphView({ id: 'native-text-limit', aspect: 'object', objectId: 'long', centerNodeId: 'long', feature: 'fixture',
-      label: '完整源码', summary: '长源码夹具。' }, { nodes: [{ id: 'long', role: 'internal' }], links: [] }, registry, [{ id: 'fixture', label: '示例' }]);
+      label: '完整源码', summary: '长源码 fixture。' }, { nodes: [{ id: 'long', role: 'internal' }], links: [] }, registry, [{ id: 'fixture', label: '示例' }]);
     const candidate = { ...view, mermaid: view.mermaid + '  %% Valid source padding 0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZ\n'.repeat(4000) };
     assert.ok(candidate.mermaid.length > 200000);
     const result = await compileNativeView(browser, candidate, registry);

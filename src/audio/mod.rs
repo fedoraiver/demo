@@ -38,7 +38,7 @@ pub(crate) enum AudioSystems {
 #[derive(Resource)]
 struct UiTrack;
 
-/// 安装 Kira 输出与音频生命周期；无设备测试直接使用内部纯数据夹具。
+/// 安装 Kira 输出与音频生命周期；无设备测试直接使用内部纯数据 fixture。
 pub(crate) struct GameAudioPlugin;
 
 impl Plugin for GameAudioPlugin {

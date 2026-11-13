@@ -122,7 +122,7 @@ impl Plugin for GameUiPlugin {
     }
 }
 
-/// 注册菜单的真实状态、输入、页面和视觉行为，供无窗口集成夹具复用。
+/// 注册菜单的真实状态、输入、页面和视觉行为，供无窗口集成 fixture 复用。
 pub(crate) fn register_menu(app: &mut App) {
     lifecycle::register(app);
     app.init_resource::<MenuInputSource>()

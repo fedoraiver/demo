@@ -21,7 +21,7 @@ Agent 可阅读代码、检查格式和编译，并执行最小 `App` / `World` 
 | 仅修改普通文档                               | 检查内容是否准确、职责是否重复、相对链接与引用是否有效。不需要执行游戏或 Rust 检查。                                                                                                                                                          |
 | 修改架构图清单、关系、布局、生成器或生成产物 | 按 [架构图维护](../diagrams/maintenance.md) 生成并校验最终产物，运行相关 Node.js 无窗口回归；SVG 视觉验证仅在用户明确要求时按[检查范围](#架构图视觉检查)执行，自动检查与实际观察分别记录。                                                    |
 | 修改架构图或源码页的 VS Code 入口            | 按 [架构图源码定位验证](#架构图源码定位验证) 执行 URI、根目录配置及生成页交互的无窗口回归；实际浏览器与 VS Code 协议验收按[停用范围](#架构图视觉检查)不再执行。                                                                               |
-| 修改架构图维护执行器或 CI 配置               | 运行 `docs/diagrams/tests/` 中相关维护回归，核对统一入口、依赖解析、工作区与复用失效边界；涉及 SVG 栅格化时使用隔离静态夹具。未修改生成器、模型、布局或正式产物时，不要求专用导出、重建产物或图形验收；栅格化截图仍为待检，不计实际目测通过。 |
+| 修改架构图维护执行器或 CI 配置               | 运行 `docs/diagrams/tests/` 中相关维护回归，核对统一入口、依赖解析、工作区与复用失效边界；涉及 SVG 栅格化时使用隔离静态 fixture。未修改生成器、模型、布局或正式产物时，不要求专用导出、重建产物或图形验收；栅格化截图仍为待检，不计实际目测通过。 |
 | 修改 Rust 代码                               | 阅读相关实现，运行 `cargo fmt --all -- --check` 和 `cargo check --locked`。                                                                                                                                                                   |
 | 修改行为                                     | 在 Rust 检查之外，增加或运行有针对性的无窗口测试，验证相关组件变化、查询过滤、消息或调度结果；运行或视觉效果交给用户手动验收。                                                                                                                |
 
@@ -58,7 +58,7 @@ cargo test --locked
 
 GitHub Actions 通过[统一分析脚本](../../.github/scripts/rustc-analysis.sh)执行具名字段检查。它使用[共享编译器工具](../../tools/rustc-analysis/Cargo.toml)，执行工具格式、共享工具与规则回归，再检查项目全部 Cargo 目标和共享工具自身。规则回归入口保留在[兼容测试包](../../tools/check-named-fields/Cargo.toml)，其 CLI、报告和 driver 委托统一实现。
 
-`--target`、`--features` 和 `--all-features` 只选择根项目的编译配置；嵌套工具使用独立请求，不继承这些选项。未显式指定平台时遵循各自 Cargo 配置，features 默认启用各自默认集合；嵌套工具的依赖先行顺序见[维护缓存](../diagrams/README.md#生成与校验命令)。分析脚本通过自身路径选择检出，在独立 Bash 进程中设置缓存及工具链库路径。工具产物位于根 `tmp/rustc-analysis/`，Cargo 分析缓存和逐次报告位于短目录 `tmp/ra/`，回归夹具也只写入根 `tmp/`。工具链与组件见[开发规范](../development.md#技术栈与版本)。
+`--target`、`--features` 和 `--all-features` 只选择根项目的编译配置；嵌套工具使用独立请求，不继承这些选项。未显式指定平台时遵循各自 Cargo 配置，features 默认启用各自默认集合；嵌套工具的依赖先行顺序见[维护缓存](../diagrams/README.md#生成与校验命令)。分析脚本通过自身路径选择检出，在独立 Bash 进程中设置缓存及工具链库路径。工具产物位于根 `tmp/rustc-analysis/`，Cargo 分析缓存和逐次报告位于短目录 `tmp/ra/`，回归 fixture 也只写入根 `tmp/`。工具链与组件见[开发规范](../development.md#技术栈与版本)。
 
 规则通过 Cargo wrapper 接入 `cargo check --all-targets`，在 `after_expansion` 检查完成条件编译与宏展开的 AST。启用的生产、测试、示例、基准和构建脚本目标均参与；第三方宏在被检查 crate 生成的类型也参与，依赖 crate 的内部类型不参与。未启用分支和未加载文件不计入范围；模块、宏或 `include!` 引入的类型按真实展开结果检查。
 
@@ -68,7 +68,7 @@ GitHub Actions 通过[统一分析脚本](../../.github/scripts/rustc-analysis.s
 
 ## 实体命名检查
 
-实体命名约束见[开发规范](../development.md#entity实体只表示身份)。GitHub Actions 的[统一分析脚本](../../.github/scripts/rustc-analysis.sh)使用共享 rustc 宿主的真实类型、宏来源和 MIR，检查项目生产 lib／bin 创建时的组件与 BSN 组合；创建后补名不满足规则。测试夹具、第三方内部实体和导入资产内部节点不计入规则范围。
+实体命名约束见[开发规范](../development.md#entity实体只表示身份)。GitHub Actions 的[统一分析脚本](../../.github/scripts/rustc-analysis.sh)使用共享 rustc 宿主的真实类型、宏来源和 MIR，检查项目生产 lib／bin 创建时的组件与 BSN 组合；创建后补名不满足规则。测试 fixture、第三方内部实体和导入资产内部节点不计入规则范围。
 
 入口执行共享工具与[实体规则回归包](../../tools/check-entity-names/Cargo.toml)的检查，再以选定配置检查生产源码。`--target`、`--features` 和 `--all-features` 的选择与具名字段检查一致，跨目标检查需要对应 Rust 标准库。Cargo 准备构建脚本和过程宏，不执行被检查程序。
 
@@ -121,7 +121,7 @@ cargo test --locked physics::tests
 
 ## 菜单、设置与资产的无窗口验证
 
-菜单回归只使用最小 `App / World`、必要的状态／输入插件和 BSN 实体树，不安装窗口后端或渲染器。UI 夹具显式安装第三方 `EnhancedInputPlugin`，通过与 `GameUiPlugin` 共用的普通注册函数安装菜单生命周期、真实输入与页面，不依赖 `FirstPersonPlugin`。跨功能夹具显式安装所需项目 Plugin；需要状态时安装 `GameFlowPlugin` 并进入运行状态，没有应用状态时复用 `game_flow::configure_feature_order`，不补跑系统代替实际调度。应覆盖：
+菜单回归只使用最小 `App / World`、必要的状态／输入插件和 BSN 实体树，不安装窗口后端或渲染器。UI fixture 显式安装第三方 `EnhancedInputPlugin`，通过与 `GameUiPlugin` 共用的普通注册函数安装菜单生命周期、真实输入与页面，不依赖 `FirstPersonPlugin`。跨功能 fixture 显式安装所需项目 Plugin；需要状态时安装 `GameFlowPlugin` 并进入运行状态，没有应用状态时复用 `game_flow::configure_feature_order`，不补跑系统代替实际调度。应覆盖：
 
 - 页面只暴露可用的 `MenuButton` 动作，导航序号连续；`Continue`、`Multiplayer` 和所有 `Coming Soon` 设置不进入焦点或业务动作列表。
 - 菜单动作使用真实 Enhanced Input 绑定，长按确认／返回不重复执行；鼠标和键盘请求进入同一消费入口，页面切换后旧请求不穿透。
@@ -189,7 +189,7 @@ Windows MSVC 的启动依赖还需检查最终链接产物：[build.rs](../../bu
 
 架构维护通过 Linux [统一分析脚本](../../.github/scripts/rustc-analysis.sh)完成事实提取与模型装配；维护入口及执行环境见[维护指南](../diagrams/maintenance.md#本地执行与恢复)。
 
-提取夹具覆盖同名类型、别名、重导出、关联类型、类型与常量实参、宏／`include!`、条件编译及源码定位；访问和操作夹具区分容器同名方法、存在过滤、可变借用与实际修改，并覆盖 helper、闭包、Commands、主／子世界和明确缺口。装配夹具覆盖 Bundle、BSN、required components、子实体及可确认的生命周期。测试依据源码与新契约，不使用旧扫描器产物作为答案。
+提取 fixture 覆盖同名类型、别名、重导出、关联类型、类型与常量实参、宏／`include!`、条件编译及源码定位；访问和操作 fixture 区分容器同名方法、存在过滤、可变借用与实际修改，并覆盖 helper、闭包、Commands、主／子世界和明确缺口。装配 fixture 覆盖 Bundle、BSN、required components、子实体及可确认的生命周期。测试依据源码与新契约，不使用旧扫描器产物作为答案。
 
 运行时绑定覆盖重复注册、不同泛型、闭包、组合系统、自定义名称、匿名集合和跨应用同名 Schedule。声明、类型实例、实体模板和每次注册分别检查身份，不以名字或行号合并；编译器事实与快照来自匹配构建，缺少必要绑定不得通过。
 
@@ -220,9 +220,9 @@ cargo check --locked --features debugdump
 cargo test --locked --features debugdump inspector::
 ```
 
-最小夹具检查系统、SystemSet 及依赖边进入 DOT 与结构化快照，原生键和真实类型关联一致；主应用与子应用同名 Schedule 保持独立；状态值、泛型及特殊字符标签不破坏文件身份；导出不执行 Startup 或调度系统；参数、调度初始化及文件写入失败不报告成功。子应用需覆盖真实 `Extract` 参数初始化，核实其访问原主世界，并在成功、构图失败及初始化 panic 后恢复原 `WorldId`、实体和资源；不能用空 `MainWorld` 代替真实上下文。夹具不安装完整窗口、渲染或音频设施，也不调用真实应用导出命令。
+最小 fixture 检查系统、SystemSet 及依赖边进入 DOT 与结构化快照，原生键和真实类型关联一致；主应用与子应用同名 Schedule 保持独立；状态值、泛型及特殊字符标签不破坏文件身份；导出不执行 Startup 或调度系统；参数、调度初始化及文件写入失败不报告成功。子应用需覆盖真实 `Extract` 参数初始化，核实其访问原主世界，并在成功、构图失败及初始化 panic 后恢复原 `WorldId`、实体和资源；不能用空 `MainWorld` 代替真实上下文。fixture 不安装完整窗口、渲染或音频设施，也不调用真实应用导出命令。
 
-执行专用完整导出时，确认不出现游戏窗口、不进入 Startup，主应用、物理调度及渲染子应用按实际注册进入清单；成功返回零，可返回的错误以非零退出并完成会话日志收尾，初始化 panic 记录异常且不发布清单。插件装配期间可能访问 GPU、音频设备及资产，不以没有窗口推断无设备依赖。导出成功后，再检查清单、编译器事实和运行时快照的构建关联、源码指纹、DOT 哈希、Graphviz 渲染及最终 HTML；缺少真实导出时只报告已通过的代码检查，不能用夹具产物交付。
+执行专用完整导出时，确认不出现游戏窗口、不进入 Startup，主应用、物理调度及渲染子应用按实际注册进入清单；成功返回零，可返回的错误以非零退出并完成会话日志收尾，初始化 panic 记录异常且不发布清单。插件装配期间可能访问 GPU、音频设备及资产，不以没有窗口推断无设备依赖。导出成功后，再检查清单、编译器事实和运行时快照的构建关联、源码指纹、DOT 哈希、Graphviz 渲染及最终 HTML；缺少真实导出时只报告已通过的代码检查，不能用 fixture 产物交付。
 
 ## 调度筛选与页面回归
 

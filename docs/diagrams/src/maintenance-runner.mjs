@@ -190,7 +190,7 @@ function acquireLock(root, runId) {
   return () => { if (JSON.parse(fs.readFileSync(filename, 'utf8')).token === token) fs.unlinkSync(filename); };
 }
 
-/** pipeline 仅供小型真实子进程夹具注入；正式命令始终使用上述串行流水线。 */
+/** pipeline 仅供小型真实子进程 fixture 注入；正式命令始终使用上述串行流水线。 */
 export async function runMaintenance({ workspace, resume, debugdumpDirectory, pipeline } = {}) {
   workspace = requireWorkspace(workspace);
   if (!pipeline && workspace !== sourceRoot) throw new Error('Run the maintenance entry point from the selected workspace; build/check module roots must match --workspace');
