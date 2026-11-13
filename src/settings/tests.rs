@@ -96,7 +96,7 @@ fn invalid_reflected_values_warn_and_only_replace_the_affected_field() {
             );
         }
 
-        for invalid_sensitivity in [-1.0, 0.0301, 1e39] {
+        for invalid_sensitivity in [-1.0, -0.0, 0.0, 0.00000749, 0.0076, 1e39] {
             let camera: CameraSettings = deserialize_field(
                 &types,
                 json!({ "mouse_sensitivity": invalid_sensitivity, "invert_y": true }),
@@ -195,7 +195,7 @@ fn draft_preserves_unedited_sensitivity_precision_while_other_fields_change() {
         ..default()
     };
     let mut draft = SettingsDraft::from_settings(&custom);
-    assert_eq!(draft.mouse_sensitivity_text, "1.25");
+    assert_eq!(draft.mouse_sensitivity_text, "4.99");
     assert_eq!(draft.to_settings().unwrap(), custom);
     assert!(!draft.set_sensitivity_text(draft.mouse_sensitivity_text.clone()));
     draft.adjust(SettingKey::MouseSensitivity, 0);
@@ -223,23 +223,31 @@ fn draft_preserves_unedited_sensitivity_precision_while_other_fields_change() {
         0.0037407
     );
     assert!(draft.normalize_sensitivity());
-    assert_eq!(draft.mouse_sensitivity_text, "1.25");
+    assert_eq!(draft.mouse_sensitivity_text, "4.99");
     assert_eq!(
         draft.to_settings().unwrap().camera.mouse_sensitivity,
-        1.25 * DEFAULT_MOUSE_SENSITIVITY
+        0.0037407
     );
 
     let mut draft = SettingsDraft::from_settings(&custom);
     assert!(draft.set_sensitivity_multiplier(1.25));
     assert_eq!(
         draft.to_settings().unwrap().camera.mouse_sensitivity,
-        1.25 * DEFAULT_MOUSE_SENSITIVITY
+        1.25 * MOUSE_SENSITIVITY_PER_UNIT
     );
     draft.adjust(SettingKey::MouseSensitivity, 1);
     assert_eq!(draft.mouse_sensitivity_text, "1.26");
     assert_eq!(
         draft.to_settings().unwrap().camera.mouse_sensitivity,
-        1.26 * DEFAULT_MOUSE_SENSITIVITY
+        1.26 * MOUSE_SENSITIVITY_PER_UNIT
+    );
+    let mut below_minimum = custom;
+    below_minimum.camera.mouse_sensitivity = MIN_MOUSE_SENSITIVITY * 0.9;
+    let draft = SettingsDraft::from_settings(&below_minimum);
+    assert_eq!(draft.mouse_sensitivity_text, "0.01");
+    assert_eq!(
+        draft.to_settings().unwrap_err().kind(),
+        io::ErrorKind::InvalidInput
     );
 }
 
@@ -363,10 +371,15 @@ mod frame_pacing {
 #[test]
 fn sensitivity_multiplier_validates_raw_text_before_quantizing_and_normalizing() {
     let mut draft = SettingsDraft::default();
+    assert_eq!(draft.mouse_sensitivity_text, "5.00");
+    assert_eq!(MOUSE_SENSITIVITY_PER_UNIT, 0.003 * 0.25);
+    assert!((draft.to_settings().unwrap().camera.mouse_sensitivity - 0.00375).abs() < 1e-9);
+    assert!((MAX_MOUSE_SENSITIVITY - 0.0075).abs() < 1e-9);
     for (input, expected, normalized) in [
-        ("0", 0.0, "0.00"),
-        ("-0", 0.0, "0.00"),
+        ("0.01", 0.01, "0.01"),
         ("10", 10.0, "10.00"),
+        ("1", 1.0, "1.00"),
+        ("5", 5.0, "5.00"),
         ("1.23", 1.23, "1.23"),
         ("1.234", 1.23, "1.23"),
         ("1.236", 1.24, "1.24"),
@@ -378,7 +391,7 @@ fn sensitivity_multiplier_validates_raw_text_before_quantizing_and_normalizing()
         assert_eq!(draft.sensitivity_multiplier(), Some(expected), "{input}");
         assert_eq!(
             draft.to_settings().unwrap().camera.mouse_sensitivity,
-            expected * DEFAULT_MOUSE_SENSITIVITY
+            expected * MOUSE_SENSITIVITY_PER_UNIT
         );
         assert!(draft.normalize_sensitivity());
         assert_eq!(draft.mouse_sensitivity_text, normalized);
@@ -391,6 +404,12 @@ fn sensitivity_multiplier_validates_raw_text_before_quantizing_and_normalizing()
         "-",
         "1e",
         "-0.001",
+        "0",
+        "-0",
+        "-0.0",
+        "0.001",
+        "0.009",
+        "0.0099999999",
         "10.001",
         "10.0000001",
         "NaN",
@@ -409,7 +428,16 @@ fn sensitivity_multiplier_validates_raw_text_before_quantizing_and_normalizing()
         );
     }
     draft.set_sensitivity_multiplier(1.23);
-    for invalid in [-0.01, 10.001, f32::NAN, f32::INFINITY, f32::NEG_INFINITY] {
+    for invalid in [
+        0.0,
+        -0.0,
+        0.009,
+        -0.01,
+        10.001,
+        f32::NAN,
+        f32::INFINITY,
+        f32::NEG_INFINITY,
+    ] {
         assert!(!draft.set_sensitivity_multiplier(invalid));
         assert_eq!(draft.mouse_sensitivity_text, "1.23");
     }
@@ -418,11 +446,11 @@ fn sensitivity_multiplier_validates_raw_text_before_quantizing_and_normalizing()
 #[test]
 fn sensitivity_step_clamps_to_limits_and_replaces_invalid_text_from_default() {
     let mut draft = SettingsDraft::default();
-    draft.set_sensitivity_multiplier(0.0);
+    assert!(draft.set_sensitivity_multiplier(MIN_MOUSE_SENSITIVITY_UNITS as f32));
     draft.adjust(SettingKey::MouseSensitivity, -1);
-    assert_eq!(draft.mouse_sensitivity_text, "0.00");
-    draft.adjust(SettingKey::MouseSensitivity, 1);
     assert_eq!(draft.mouse_sensitivity_text, "0.01");
+    draft.adjust(SettingKey::MouseSensitivity, 1);
+    assert_eq!(draft.mouse_sensitivity_text, "0.02");
     draft.set_sensitivity_multiplier(10.0);
     draft.adjust(SettingKey::MouseSensitivity, 1);
     assert_eq!(draft.mouse_sensitivity_text, "10.00");
@@ -432,13 +460,19 @@ fn sensitivity_step_clamps_to_limits_and_replaces_invalid_text_from_default() {
     draft.adjust(SettingKey::MouseSensitivity, 0);
     assert_eq!(draft.mouse_sensitivity_text, "1e");
     draft.adjust(SettingKey::MouseSensitivity, 1);
-    assert_eq!(draft.mouse_sensitivity_text, "1.01");
+    assert_eq!(draft.mouse_sensitivity_text, "5.01");
 }
 
 #[test]
-fn native_sensitivity_zero_and_maximum_round_trip_and_custom_precision_is_preserved() {
+fn reflected_sensitivity_round_trip_preserves_bounds_and_custom_precision() {
     let types = settings_types();
-    for sensitivity in [0.0, -0.0, MAX_MOUSE_SENSITIVITY, 0.0037407] {
+    for (sensitivity, display) in [
+        (MIN_MOUSE_SENSITIVITY, "0.01"),
+        (MOUSE_SENSITIVITY_PER_UNIT, "1.00"),
+        (DEFAULT_MOUSE_SENSITIVITY, "5.00"),
+        (MAX_MOUSE_SENSITIVITY, "10.00"),
+        (0.0037407, "4.99"),
+    ] {
         let mut settings = GameSettings::default();
         settings.camera.mouse_sensitivity = sensitivity;
         let saved =
@@ -453,10 +487,6 @@ fn native_sensitivity_zero_and_maximum_round_trip_and_custom_precision_is_preser
             draft.to_settings().unwrap().camera.mouse_sensitivity,
             sensitivity
         );
-        if sensitivity == 0.0 {
-            assert_eq!(draft.mouse_sensitivity_text, "0.00");
-        } else if sensitivity == MAX_MOUSE_SENSITIVITY {
-            assert_eq!(draft.mouse_sensitivity_text, "10.00");
-        }
+        assert_eq!(draft.mouse_sensitivity_text, display);
     }
 }

@@ -8,6 +8,8 @@
 
 `Apply` 校验草稿后更新运行中的 `GameSettings`，再提交 `SaveSettingsSync::Always`。Bevy 同步保存并记录写入错误。音量的 `SetVolume` 只更新草稿，`FinishVolumeEdit` 在释放且数值改变时汇总反馈。配置路径、默认值和菜单步进见[设置](../player-guide.md#设置)。
 
+灵敏度草稿保存原始输入文本和未修改时的角速度。切换分类保留未完成文本，应用其他字段时沿用未修改的角速度。有效的新值按 `0.01` 单位量化后换算为配置中的弧度/像素。
+
 ## 渲染限帧
 
 渲染限帧与[固定模拟](game_flow.md#时钟与运行条件)分别管理。应用先安装默认插件，再在有 `RenderApp` 时安装 `bevy_framepace` 的 `FramepacePlugin`。前台和后台均使用 Winit 连续更新模式，由插件在原生渲染清理阶段控制帧间等待。呈现方式仍由 `AutoNoVsync` 请求，平台可采用回退方式。
