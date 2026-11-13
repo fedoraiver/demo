@@ -6,7 +6,11 @@ use crate::{
     game_flow::AppState,
     settings::{GameSettings, SettingsDraft},
 };
-use bevy::{prelude::*, settings::SaveSettingsSync};
+use bevy::{
+    input_focus::{FocusCause, InputFocus},
+    prelude::*,
+    settings::SaveSettingsSync,
+};
 use bevy_enhanced_input::prelude::EnhancedInputSystems;
 
 pub(super) fn register(app: &mut App) {
@@ -37,6 +41,8 @@ fn handle_requests(
     controllers: Query<Entity, With<MenuContext>>,
     mut sounds: MessageWriter<SoundRequest>,
     mut volume_edit: Local<Option<(SettingKey, u8)>>,
+    mut input_focus: ResMut<InputFocus>,
+    sensitivity_inputs: Query<Entity, With<super::sensitivity::SensitivityInput>>,
 ) {
     let mut actions = requests.read().map(|request| request.action);
     let action = actions.next();
@@ -136,6 +142,18 @@ fn handle_requests(
                     "Audio volume preview changed");
             }
             menu.status = None;
+        }
+        UiAction::EditSensitivity
+            if menu.page == MenuPage::Settings && menu.tab == SettingsTab::Controls =>
+        {
+            if let Ok(entity) = sensitivity_inputs.single()
+                && input_focus.get() != Some(entity)
+            {
+                input_focus.set(entity, FocusCause::Navigated);
+            }
+        }
+        UiAction::FinishSensitivityEdit if menu.page == MenuPage::Settings => {
+            input_focus.clear();
         }
         UiAction::SetVolume(key, value)
             if menu.page == MenuPage::Settings && menu.tab == SettingsTab::Audio =>
