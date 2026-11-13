@@ -1,7 +1,7 @@
-//! 灵敏度倍率的原生数字输入与失焦提交；滑条复用设置公共捕获路径。
+//! 灵敏度数值的原生数字输入与失焦提交；滑条复用设置公共捕获路径。
 
 use super::{slider::slider_control, theme::*, widgets::*, *};
-use crate::settings::MAX_MOUSE_SENSITIVITY_MULTIPLIER;
+use crate::settings::{DEFAULT_MOUSE_SENSITIVITY_UNITS, MAX_MOUSE_SENSITIVITY_MULTIPLIER};
 use bevy::{
     clipboard::Clipboard,
     text::{FontCx, LayoutCx},
@@ -31,7 +31,7 @@ pub(super) struct SensitivityEditing {
     pub active: bool,
 }
 
-pub(super) const INPUT_ERROR: &str = "Enter a mouse sensitivity from 0.00 to 10.00.";
+pub(super) const INPUT_ERROR: &str = "Enter a mouse sensitivity from 0.01 to 10.00.";
 
 pub(super) fn register(app: &mut App) {
     app.init_resource::<InputFocus>()
@@ -65,10 +65,13 @@ pub(super) fn sensitivity_row(theme: &UiTheme, draft: &SettingsDraft) -> impl Sc
     editable.max_characters = Some(64);
     let details = SettingDescription {
         title: "Mouse Sensitivity",
-        body: "Drag the slider or type a value from 0.00 to 10.00. 1.00 is the default; 0.00 stops mouse look. Enter finishes editing; Apply saves your changes. Esc discards unapplied settings.",
+        body: "Drag the slider or type a value from 0.01 to 10.00. 5.00 is the default. Enter finishes editing; Apply saves your changes. Esc discards unapplied settings.",
     };
-    let fill =
-        draft.sensitivity_multiplier().unwrap_or(1.0) / MAX_MOUSE_SENSITIVITY_MULTIPLIER * 100.0;
+    let fill = draft
+        .sensitivity_multiplier()
+        .unwrap_or(DEFAULT_MOUSE_SENSITIVITY_UNITS)
+        / MAX_MOUSE_SENSITIVITY_MULTIPLIER
+        * 100.0;
     bsn! {
         Name("Setting row: Mouse Sensitivity")
         column(gap)

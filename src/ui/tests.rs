@@ -1108,7 +1108,7 @@ mod page_refresh_tests {
                 .resource::<crate::settings::GameSettings>()
                 .camera
                 .mouse_sensitivity,
-            0.003
+            crate::settings::DEFAULT_MOUSE_SENSITIVITY
         );
         request_action(&mut app, UiAction::EditSensitivity);
         sensitivity_key(&mut app, KeyCode::Escape, Key::Escape, None);
@@ -1238,7 +1238,7 @@ mod page_refresh_tests {
             .unwrap()
             .camera
             .mouse_sensitivity;
-        assert!((committed - 0.00369).abs() < 1e-8);
+        assert!((committed - 0.0009225).abs() < 1e-9);
         let saved = std::fs::read_to_string(&path).unwrap();
         replace_sensitivity(&mut app, "1e");
         request_action(&mut app, UiAction::SelectTab(SettingsTab::Graphics));
@@ -1308,7 +1308,7 @@ mod page_refresh_tests {
                 .unwrap()
                 .value()
                 .to_string(),
-            "1.00"
+            "5.00"
         );
         let node = app.world().get::<ComputedNode>(input).unwrap();
         let glyphs = app.world().get::<TextLayoutInfo>(input).unwrap();
@@ -1326,7 +1326,7 @@ mod page_refresh_tests {
             app.world()
                 .resource::<SettingsDraft>()
                 .mouse_sensitivity_text,
-            "1.00"
+            "5.00"
         );
         assert_eq!(
             app.world()
@@ -1366,7 +1366,7 @@ mod page_refresh_tests {
             );
             let input = sensitivity_input(&mut app);
             let slider = sensitivity_slider(&mut app);
-            for value in ["0.00", "1.23", "10.00"] {
+            for value in ["0.01", "1.23", "10.00"] {
                 let mut text = app.world_mut().get_mut::<EditableText>(input).unwrap();
                 text.queue_edit(TextEdit::SelectAll);
                 text.queue_edit(TextEdit::Insert(value.into()));
@@ -1430,7 +1430,18 @@ mod page_refresh_tests {
         request_action(&mut app, UiAction::SelectTab(SettingsTab::Controls));
         let input = sensitivity_input(&mut app);
         let slider = sensitivity_slider(&mut app);
-        for (step, text) in [(0, "0.00"), (123, "1.23"), (1000, "10.00")] {
+        assert_eq!(
+            app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .value()
+                .to_string(),
+            "5.00"
+        );
+        let (track, fill) = sensitivity_fill(&app, slider);
+        let expected = app.world().get::<ComputedNode>(track).unwrap().size().x * 0.5;
+        assert!((app.world().get::<ComputedNode>(fill).unwrap().size().x - expected).abs() <= 1.0);
+        for (step, text) in [(1, "0.01"), (123, "1.23"), (1000, "10.00")] {
             request_action(&mut app, UiAction::SetSensitivity(step));
             assert_eq!(
                 app.world()
@@ -1612,7 +1623,7 @@ mod page_refresh_tests {
                 .unwrap()
                 .value()
                 .to_string(),
-            "1.25"
+            "4.99"
         );
         request_action(&mut app, UiAction::Adjust(SettingKey::InvertY, 1));
         request_action(&mut app, UiAction::ApplySettings);
@@ -1631,7 +1642,7 @@ mod page_refresh_tests {
                 .resource::<GameSettings>()
                 .camera
                 .mouse_sensitivity,
-            1.25 * crate::settings::DEFAULT_MOUSE_SENSITIVITY
+            4.99 * crate::settings::MOUSE_SENSITIVITY_PER_UNIT
         );
     }
 
@@ -3986,7 +3997,7 @@ mod slider_tests {
         assert_eq!(requests(&mut app), [UiAction::SetSensitivity(250)]);
         cursor(&mut app, window, Some(Vec2::new(53.0, 200.0)));
         app.update();
-        assert_eq!(requests(&mut app), [UiAction::SetSensitivity(0)]);
+        assert_eq!(requests(&mut app), [UiAction::SetSensitivity(1)]);
         cursor(&mut app, window, Some(Vec2::new(350.0, 200.0)));
         app.world_mut()
             .resource_mut::<ButtonInput<MouseButton>>()
@@ -4583,14 +4594,22 @@ mod widgets_tests {
     #[test]
     fn native_slider_samples_and_finishes_a_press_and_release_in_one_frame() {
         use bevy::picking::pointer::PointerAction;
-        for key in [SettingKey::MasterVolume, SettingKey::MouseSensitivity] {
+        for (key, at_left) in [
+            (SettingKey::MasterVolume, false),
+            (SettingKey::MasterVolume, true),
+            (SettingKey::MouseSensitivity, false),
+            (SettingKey::MouseSensitivity, true),
+        ] {
             let (mut app, window, target) = native_pointer_app_with_key(true, key);
-            let position = app
+            let mut position = app
                 .world()
                 .get::<UiGlobalTransform>(target)
                 .unwrap()
                 .affine()
                 .translation;
+            if at_left {
+                position.x -= app.world().get::<ComputedNode>(target).unwrap().size().x / 2.0 - 1.0;
+            }
             app.world_mut()
                 .resource_mut::<ButtonInput<MouseButton>>()
                 .press(MouseButton::Left);
@@ -4615,12 +4634,12 @@ mod widgets_tests {
                 native_requests(&mut app),
                 if key == SettingKey::MouseSensitivity {
                     vec![
-                        UiAction::SetSensitivity(500),
+                        UiAction::SetSensitivity(if at_left { 1 } else { 500 }),
                         UiAction::FinishSensitivitySlider,
                     ]
                 } else {
                     vec![
-                        UiAction::SetVolume(SettingKey::MasterVolume, 50),
+                        UiAction::SetVolume(SettingKey::MasterVolume, if at_left { 0 } else { 50 }),
                         UiAction::FinishVolumeEdit,
                     ]
                 }

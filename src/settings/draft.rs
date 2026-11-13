@@ -4,8 +4,9 @@ use bevy::prelude::*;
 use std::{io, num::NonZeroU32};
 
 use super::{
-    AudioSettings, CameraSettings, DEFAULT_MOUSE_SENSITIVITY, GameSettings, MAX_AUDIO_VOLUME,
-    MAX_MOUSE_SENSITIVITY_MULTIPLIER, MOUSE_SENSITIVITY_STEP, MOUSE_SENSITIVITY_STEPS_PER_UNIT,
+    AudioSettings, CameraSettings, DEFAULT_MOUSE_SENSITIVITY_UNITS, GameSettings, MAX_AUDIO_VOLUME,
+    MAX_MOUSE_SENSITIVITY_MULTIPLIER, MIN_MOUSE_SENSITIVITY_UNITS, MOUSE_SENSITIVITY_PER_UNIT,
+    MOUSE_SENSITIVITY_STEP, MOUSE_SENSITIVITY_STEPS_PER_UNIT,
 };
 
 // 菜单步进只作用于离散调整字段，不参与持久化校验。
@@ -56,12 +57,12 @@ impl SettingsDraft {
         let multiplier = self.sensitivity_multiplier().ok_or_else(|| {
             io::Error::new(
                 io::ErrorKind::InvalidInput,
-                "Mouse sensitivity multiplier must be finite and between 0 and 10.",
+                "Mouse sensitivity multiplier must be finite and between 0.01 and 10.",
             )
         })?;
         let sensitivity = self
             .unedited_sensitivity()
-            .unwrap_or(multiplier * DEFAULT_MOUSE_SENSITIVITY);
+            .unwrap_or(multiplier * MOUSE_SENSITIVITY_PER_UNIT);
         let max_fps = NonZeroU32::new(self.max_fps).ok_or_else(|| {
             io::Error::new(io::ErrorKind::InvalidInput, "max_fps must be at least 60")
         })?;
@@ -80,7 +81,13 @@ impl SettingsDraft {
     /// 校验原始输入后返回 0.01 精度的倍率；未完成、非有限或越界文本不产生数值。
     pub fn sensitivity_multiplier(&self) -> Option<f32> {
         let value = self.mouse_sensitivity_text.trim().parse::<f64>().ok()?;
-        quantized_sensitivity_multiplier(value)
+        if !value.is_finite()
+            || !(MIN_MOUSE_SENSITIVITY_UNITS..=f64::from(MAX_MOUSE_SENSITIVITY_MULTIPLIER))
+                .contains(&value)
+        {
+            return None;
+        }
+        Some(quantized_sensitivity_multiplier(value))
     }
 
     /// 原生输入值实际变化时放弃原值基准，保留尚未完成的原始文本。
@@ -95,14 +102,18 @@ impl SettingsDraft {
 
     /// 滑条与方向步进共用倍率写入；无效输入不改变草稿，合法数值规范为两位小数。
     pub fn set_sensitivity_multiplier(&mut self, value: f32) -> bool {
-        let Some(value) = quantized_sensitivity_multiplier(f64::from(value)) else {
+        if !value.is_finite()
+            || !(MIN_MOUSE_SENSITIVITY_UNITS as f32..=MAX_MOUSE_SENSITIVITY_MULTIPLIER)
+                .contains(&value)
+        {
             return false;
-        };
+        }
+        let value = quantized_sensitivity_multiplier(f64::from(value));
         let text = format!("{value:.2}");
         let changed = self.mouse_sensitivity_text != text
             || self
                 .unedited_sensitivity()
-                .is_some_and(|original| original != value * DEFAULT_MOUSE_SENSITIVITY);
+                .is_some_and(|original| original != value * MOUSE_SENSITIVITY_PER_UNIT);
         self.original_mouse_sensitivity = None;
         self.mouse_sensitivity_text = text;
         changed
@@ -167,11 +178,14 @@ impl SettingsDraft {
             }
             SettingKey::MouseSensitivity => {
                 if direction != 0 {
-                    let value = self.sensitivity_multiplier().unwrap_or(1.0)
+                    let value = self
+                        .sensitivity_multiplier()
+                        .unwrap_or(DEFAULT_MOUSE_SENSITIVITY_UNITS)
                         + MOUSE_SENSITIVITY_STEP * f32::from(direction.signum());
-                    self.set_sensitivity_multiplier(
-                        value.clamp(0.0, MAX_MOUSE_SENSITIVITY_MULTIPLIER),
-                    );
+                    self.set_sensitivity_multiplier(value.clamp(
+                        MIN_MOUSE_SENSITIVITY_UNITS as f32,
+                        MAX_MOUSE_SENSITIVITY_MULTIPLIER,
+                    ));
                 }
             }
             SettingKey::InvertY => self.invert_y = !self.invert_y,
@@ -184,17 +198,14 @@ impl SettingsDraft {
     }
 }
 
-/// 先判定原数值是否越界再量化；整数步同时将负零规范为正零。
-fn quantized_sensitivity_multiplier(value: f64) -> Option<f32> {
-    if !value.is_finite() || !(0.0..=f64::from(MAX_MOUSE_SENSITIVITY_MULTIPLIER)).contains(&value) {
-        return None;
-    }
+/// 调用方按输入数值类型校验边界后，再量化为交互步数。
+fn quantized_sensitivity_multiplier(value: f64) -> f32 {
     let steps = (value * f64::from(MOUSE_SENSITIVITY_STEPS_PER_UNIT)).round() as u16;
-    Some(f32::from(steps) / f32::from(MOUSE_SENSITIVITY_STEPS_PER_UNIT))
+    f32::from(steps) / f32::from(MOUSE_SENSITIVITY_STEPS_PER_UNIT)
 }
 
 fn sensitivity_text(sensitivity: f32) -> String {
-    let multiplier = sensitivity / DEFAULT_MOUSE_SENSITIVITY;
+    let multiplier = sensitivity / MOUSE_SENSITIVITY_PER_UNIT;
     let multiplier = if multiplier == 0.0 { 0.0 } else { multiplier };
     format!("{multiplier:.2}")
 }
