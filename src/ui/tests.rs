@@ -118,10 +118,19 @@ mod test_support {
             AssetPlugin::default(),
             ScenePlugin,
             TextPlugin,
+            InputPlugin,
+            bevy::input_focus::InputFocusPlugin,
+            bevy::input_focus::InputDispatchPlugin,
+            bevy::input_focus::pointer_focus::PointerFocusPlugin,
+            bevy::ui_widgets::TextInputPlugin,
             ScrollbarPlugin,
             HierarchyPropagatePlugin::<ComputedUiTargetCamera>::new(PostUpdate),
             HierarchyPropagatePlugin::<ComputedUiRenderTargetInfo>::new(PostUpdate),
         ))
+        .register_required_components::<bevy::text::EditableText, bevy::ui::widget::EditableTextContentSizeState>()
+        .add_message::<bevy::window::Ime>()
+        .add_message::<PointerRelease>()
+        .init_resource::<bevy::picking::events::PointerState>()
         .init_asset::<Image>()
         .init_resource::<UiScale>()
         .init_resource::<UiSurface>()
@@ -132,7 +141,11 @@ mod test_support {
                 measure_text_system
                     .after(load_font_assets_into_font_collection)
                     .after(detect_text_needs_rerender),
+                bevy::ui::widget::update_editable_text_content_size,
+                bevy::ui::widget::update_editable_text_styles,
                 ui_layout_system.in_set(bevy::ui::UiSystems::Layout),
+                bevy::ui::widget::sync_editable_text_viewports.before(bevy::text::EditableTextSystems),
+                bevy::ui::widget::update_editable_text_layout.after(bevy::text::EditableTextSystems),
                 text_system.before(AssetEventSystems),
             )
                 .chain(),
@@ -969,7 +982,6 @@ mod page_refresh_tests {
         let size = UVec2::new(960, 540);
         let mut app = crate::ui::tests::test_support::layout_app_with(size, |app| {
             app.add_plugins((
-                bevy::input::InputPlugin,
                 bevy_enhanced_input::prelude::EnhancedInputPlugin,
                 StatesPlugin,
                 crate::game_flow::GameFlowPlugin,
@@ -998,6 +1010,237 @@ mod page_refresh_tests {
         }
         request_action(&mut app, UiAction::OpenSettings);
         app
+    }
+
+    fn sensitivity_input(app: &mut App) -> Entity {
+        app.world_mut()
+            .query_filtered::<Entity, With<super::super::sensitivity::SensitivityInput>>()
+            .single(app.world())
+            .unwrap()
+    }
+
+    fn sensitivity_key(
+        app: &mut App,
+        code: KeyCode,
+        key: bevy::input::keyboard::Key,
+        text: Option<&str>,
+    ) {
+        use bevy::input::{ButtonState, keyboard::KeyboardInput};
+        let window = app
+            .world_mut()
+            .query_filtered::<Entity, With<PrimaryWindow>>()
+            .single(app.world())
+            .unwrap();
+        for state in [ButtonState::Pressed, ButtonState::Released] {
+            app.world_mut().write_message(KeyboardInput {
+                key_code: code,
+                logical_key: key.clone(),
+                state,
+                text: text.map(Into::into),
+                repeat: false,
+                window,
+            });
+            app.update();
+        }
+    }
+
+    fn replace_sensitivity(app: &mut App, value: &str) {
+        use bevy::text::{EditableText, TextEdit};
+        let entity = sensitivity_input(app);
+        let mut input = app.world_mut().get_mut::<EditableText>(entity).unwrap();
+        input.queue_edit(TextEdit::SelectAll);
+        input.queue_edit(TextEdit::Insert(value.into()));
+        app.update();
+    }
+
+    #[test]
+    fn sensitivity_native_keyboard_owns_arrows_enter_and_escape() {
+        use bevy::{
+            input::keyboard::Key,
+            input_focus::InputFocus,
+            text::{EditableText, TextEdit},
+        };
+        let mut app = live_settings_app();
+        request_action(&mut app, UiAction::SelectTab(SettingsTab::Controls));
+        app.world_mut().resource_mut::<MenuFocus>().index = 4;
+        request_action(&mut app, UiAction::EditSensitivity);
+        let input = sensitivity_input(&mut app);
+        app.update();
+        assert_eq!(app.world().resource::<InputFocus>().get(), Some(input));
+        app.world_mut()
+            .get_mut::<EditableText>(input)
+            .unwrap()
+            .queue_edit(TextEdit::SelectAll);
+        app.update();
+        sensitivity_key(
+            &mut app,
+            KeyCode::Digit1,
+            Key::Character("123.45".into()),
+            Some("123.45"),
+        );
+        assert_eq!(
+            app.world()
+                .resource::<SettingsDraft>()
+                .mouse_sensitivity_percent,
+            "123.45"
+        );
+        for (code, key) in [
+            (KeyCode::ArrowLeft, Key::ArrowLeft),
+            (KeyCode::ArrowDown, Key::ArrowDown),
+        ] {
+            sensitivity_key(&mut app, code, key, None);
+            assert_eq!(app.world().resource::<MenuFocus>().index, 4);
+            assert_eq!(app.world().resource::<InputFocus>().get(), Some(input));
+        }
+        sensitivity_key(&mut app, KeyCode::Enter, Key::Enter, None);
+        assert_ne!(app.world().resource::<InputFocus>().get(), Some(input));
+        assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Settings);
+        assert_eq!(
+            app.world()
+                .resource::<crate::settings::GameSettings>()
+                .camera
+                .mouse_sensitivity,
+            0.003
+        );
+        request_action(&mut app, UiAction::EditSensitivity);
+        sensitivity_key(&mut app, KeyCode::Escape, Key::Escape, None);
+        assert_eq!(app.world().resource::<MenuState>().page, MenuPage::Main);
+        assert_eq!(
+            app.world().resource::<SettingsDraft>(),
+            &SettingsDraft::default()
+        );
+    }
+
+    #[test]
+    fn sensitivity_native_paste_applies_without_enter_and_invalid_text_survives_tabs() {
+        use crate::settings::GameSettings;
+        use bevy::{
+            clipboard::ClipboardRead,
+            text::{EditableText, TextEdit},
+        };
+        let mut app = live_settings_app();
+        let directory =
+            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tmp/ui-settings-tests");
+        std::fs::create_dir_all(&directory).unwrap();
+        let path = directory.join(format!("{}.toml", uuid::Uuid::new_v4()));
+        app.insert_resource(SettingsFile { path: path.clone() });
+        request_action(&mut app, UiAction::SelectTab(SettingsTab::Controls));
+        request_action(&mut app, UiAction::EditSensitivity);
+        let input = sensitivity_input(&mut app);
+        app.world_mut()
+            .get_mut::<EditableText>(input)
+            .unwrap()
+            .queue_edit(TextEdit::SelectAll);
+        app.update();
+        // 注入已完成的剪贴板读取，让原生粘贴处理执行，同时不读写用户的系统剪贴板。
+        app.world_mut()
+            .get_mut::<EditableText>(input)
+            .unwrap()
+            .pending_paste = Some(ClipboardRead::Ready(Ok("123.45".into())));
+        app.update();
+        assert_eq!(
+            app.world()
+                .resource::<SettingsDraft>()
+                .mouse_sensitivity_percent,
+            "123.45"
+        );
+        request_action(&mut app, UiAction::ApplySettings);
+        let committed = crate::settings::read_settings(&path)
+            .unwrap()
+            .camera
+            .mouse_sensitivity;
+        assert!((committed - 0.0037035).abs() < 1e-8);
+        let saved = std::fs::read_to_string(&path).unwrap();
+        replace_sensitivity(&mut app, "1e");
+        request_action(&mut app, UiAction::SelectTab(SettingsTab::Graphics));
+        request_action(&mut app, UiAction::ApplySettings);
+        assert_eq!(std::fs::read_to_string(&path).unwrap(), saved);
+        assert_eq!(
+            app.world()
+                .resource::<GameSettings>()
+                .camera
+                .mouse_sensitivity,
+            committed
+        );
+        assert!(
+            app.world()
+                .resource::<MenuState>()
+                .status
+                .as_ref()
+                .unwrap()
+                .starts_with("Enter a finite positive")
+        );
+        request_action(&mut app, UiAction::SelectTab(SettingsTab::Controls));
+        let input = sensitivity_input(&mut app);
+        assert_eq!(
+            app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .value()
+                .to_string(),
+            "1e"
+        );
+        request_action(&mut app, UiAction::RestoreDefaults);
+        assert_eq!(
+            app.world()
+                .get::<EditableText>(input)
+                .unwrap()
+                .value()
+                .to_string(),
+            "100"
+        );
+        assert_eq!(
+            app.world()
+                .resource::<GameSettings>()
+                .camera
+                .mouse_sensitivity,
+            committed
+        );
+        request_action(&mut app, UiAction::Back);
+        assert_eq!(
+            app.world()
+                .resource::<SettingsDraft>()
+                .to_settings()
+                .unwrap()
+                .camera
+                .mouse_sensitivity,
+            committed
+        );
+        std::fs::remove_file(path).unwrap();
+    }
+
+    #[test]
+    fn sensitivity_editable_text_has_measured_glyphs_at_supported_viewports() {
+        use bevy::text::EditableText;
+        for size in [
+            UVec2::new(960, 540),
+            UVec2::new(1280, 720),
+            UVec2::new(1920, 1080),
+        ] {
+            let mut app = page_layout_app_with_state(
+                size,
+                &MenuState {
+                    page: MenuPage::Settings,
+                    tab: SettingsTab::Controls,
+                    ..default()
+                },
+            );
+            let input = sensitivity_input(&mut app);
+            let node = app.world().get::<ComputedNode>(input).unwrap();
+            let glyphs = app.world().get::<TextLayoutInfo>(input).unwrap();
+            assert!(node.size().x > 0.0 && node.size().y > 0.0);
+            assert!(!glyphs.glyphs.is_empty());
+            assert!(glyphs.size.x > 0.0 && glyphs.size.y > 0.0);
+            assert!(glyphs.size.x <= node.size().x);
+            assert_eq!(
+                app.world()
+                    .get::<EditableText>(input)
+                    .unwrap()
+                    .value()
+                    .to_string(),
+                "100"
+            );
+        }
     }
 
     fn request_action(app: &mut App, action: UiAction) {
@@ -1220,10 +1463,7 @@ mod page_refresh_tests {
         assert_eq!(app.world().get::<ScrollPosition>(new_area).unwrap().y, 0.0);
         let (area, _) = scroll_settings_for_edit(&mut app);
         let identity = settings_identity(&mut app);
-        for (key, expected) in [
-            (SettingKey::MouseSensitivity, "117%"),
-            (SettingKey::InvertY, "On"),
-        ] {
+        for (key, expected) in [(SettingKey::InvertY, "On")] {
             let offset = app.world().get::<ScrollPosition>(area).unwrap().y;
             request_action(&mut app, UiAction::Adjust(key, 1));
             assert_eq!(setting_text(&mut app, key), expected);
@@ -1436,16 +1676,15 @@ mod page_structure_tests {
             true,
         ));
         assert_eq!(
-            &controls[4..8],
+            &controls[4..7],
             &[
-                UiAction::Adjust(SettingKey::MouseSensitivity, -1),
-                UiAction::Adjust(SettingKey::MouseSensitivity, 1),
+                UiAction::EditSensitivity,
                 UiAction::Adjust(SettingKey::InvertY, -1),
                 UiAction::Adjust(SettingKey::InvertY, 1)
             ]
         );
         assert_eq!(
-            &controls[8..],
+            &controls[7..],
             &[
                 UiAction::RestoreDefaults,
                 UiAction::ApplySettings,

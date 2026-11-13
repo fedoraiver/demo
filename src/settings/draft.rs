@@ -1,21 +1,19 @@
-//! 草稿保留合法自定义值，只有实际编辑字段时采用菜单步进范围。
+//! 草稿保留自定义值与输入文本，在应用边界统一校验。
 
 use bevy::prelude::*;
 use std::{io, num::NonZeroU32};
 
-use super::{AudioSettings, CameraSettings, GameSettings, MAX_AUDIO_VOLUME};
+use super::{
+    AudioSettings, CameraSettings, DEFAULT_MOUSE_SENSITIVITY, GameSettings, MAX_AUDIO_VOLUME,
+};
 
-// 菜单步进与范围只作用于实际编辑的字段，不参与持久化校验。
-const MENU_MOUSE_SENSITIVITY_STEP: f32 = 0.0005;
-const MENU_MOUSE_SENSITIVITY_MIN: f32 = 0.0005;
-const MENU_MOUSE_SENSITIVITY_MAX: f32 = 0.02;
+// 菜单步进只作用于离散调整字段，不参与持久化校验。
 const VOLUME_STEP: i16 = 5;
 
 /// 设置草稿中的可修改字段。
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SettingKey {
     FrameRate,
-    MouseSensitivity,
     InvertY,
     MasterVolume,
     UiVolume,
@@ -25,7 +23,8 @@ pub enum SettingKey {
 #[derive(Resource, Clone, Debug, PartialEq)]
 pub struct SettingsDraft {
     pub max_fps: u32,
-    pub mouse_sensitivity: f32,
+    /// 原始百分比文本保留空值与未完成编辑，不能在应用时悄悄使用上一个合法数值。
+    pub mouse_sensitivity_percent: String,
     pub invert_y: bool,
     pub audio: AudioSettings,
 }
@@ -41,7 +40,7 @@ impl SettingsDraft {
     pub fn from_settings(settings: &GameSettings) -> Self {
         Self {
             max_fps: settings.max_fps.get(),
-            mouse_sensitivity: settings.camera.mouse_sensitivity,
+            mouse_sensitivity_percent: sensitivity_percentage(settings.camera.mouse_sensitivity),
             invert_y: settings.camera.invert_y,
             audio: settings.audio,
         }
@@ -49,13 +48,24 @@ impl SettingsDraft {
 
     /// 在应用边界校验草稿；文件允许的有效范围不受菜单步进范围限制。
     pub fn to_settings(&self) -> io::Result<GameSettings> {
+        let percent = self
+            .mouse_sensitivity_percent
+            .trim()
+            .parse::<f64>()
+            .map_err(|_| {
+                io::Error::new(
+                    io::ErrorKind::InvalidInput,
+                    "Mouse sensitivity must be a finite positive percentage.",
+                )
+            })?;
+        let sensitivity = (percent / 100.0 * f64::from(DEFAULT_MOUSE_SENSITIVITY)) as f32;
         let max_fps = NonZeroU32::new(self.max_fps).ok_or_else(|| {
             io::Error::new(io::ErrorKind::InvalidInput, "max_fps must be at least 60")
         })?;
         let settings = GameSettings {
             max_fps,
             camera: CameraSettings {
-                mouse_sensitivity: self.mouse_sensitivity,
+                mouse_sensitivity: sensitivity,
                 invert_y: self.invert_y,
             },
             audio: self.audio,
@@ -106,13 +116,6 @@ impl SettingsDraft {
                         .unwrap_or(OPTIONS[0]);
                 }
             }
-            SettingKey::MouseSensitivity => {
-                if direction != 0 {
-                    self.mouse_sensitivity = (self.mouse_sensitivity
-                        + MENU_MOUSE_SENSITIVITY_STEP * f32::from(direction.signum()))
-                    .clamp(MENU_MOUSE_SENSITIVITY_MIN, MENU_MOUSE_SENSITIVITY_MAX);
-                }
-            }
             SettingKey::InvertY => self.invert_y = !self.invert_y,
             key @ (SettingKey::MasterVolume | SettingKey::UiVolume) => {
                 let value = i16::from(self.volume(key).unwrap())
@@ -121,4 +124,18 @@ impl SettingsDraft {
             }
         }
     }
+}
+
+/// 优先显示能往返回同一 f32 的短小数，避免重开页面后暴露浮点换算尾数。
+fn sensitivity_percentage(sensitivity: f32) -> String {
+    let percent = f64::from(sensitivity) / f64::from(DEFAULT_MOUSE_SENSITIVITY) * 100.0;
+    for precision in 0..=8 {
+        let text = format!("{percent:.precision$}");
+        let restored =
+            (text.parse::<f64>().unwrap() / 100.0 * f64::from(DEFAULT_MOUSE_SENSITIVITY)) as f32;
+        if restored == sensitivity {
+            return text;
+        }
+    }
+    percent.to_string()
 }

@@ -6,6 +6,7 @@ use crate::{
     game_flow::AppState,
     settings::{GameSettings, SettingsDraft, SettingsFile},
 };
+use bevy::input_focus::{FocusCause, InputFocus};
 use bevy::prelude::*;
 use bevy_enhanced_input::prelude::EnhancedInputSystems;
 
@@ -37,6 +38,8 @@ fn handle_requests(
     controllers: Query<Entity, With<MenuContext>>,
     mut sounds: MessageWriter<SoundRequest>,
     mut volume_edit: Local<Option<(SettingKey, u8)>>,
+    mut input_focus: ResMut<InputFocus>,
+    sensitivity_inputs: Query<Entity, With<super::sensitivity::SensitivityInput>>,
 ) {
     let mut actions = requests.read().map(|request| request.action);
     let action = actions.next();
@@ -137,6 +140,18 @@ fn handle_requests(
             }
             menu.status = None;
         }
+        UiAction::EditSensitivity
+            if menu.page == MenuPage::Settings && menu.tab == SettingsTab::Controls =>
+        {
+            if let Ok(entity) = sensitivity_inputs.single()
+                && input_focus.get() != Some(entity)
+            {
+                input_focus.set(entity, FocusCause::Navigated);
+            }
+        }
+        UiAction::FinishSensitivityEdit if menu.page == MenuPage::Settings => {
+            input_focus.clear();
+        }
         UiAction::SetVolume(key, value)
             if menu.page == MenuPage::Settings && menu.tab == SettingsTab::Audio =>
         {
@@ -183,10 +198,18 @@ fn handle_requests(
             menu.status = Some("Defaults restored. Choose Apply to save.".into());
         }
         UiAction::ApplySettings if menu.page == MenuPage::Settings => {
-            match draft
-                .to_settings()
-                .and_then(|updated| updated.save(&path.path).map(|()| updated))
-            {
+            let updated = match draft.to_settings() {
+                Ok(updated) => updated,
+                Err(error) => {
+                    warn!(target: "demo::settings", %error, reason = "invalid_settings_input", "Settings input validation failed");
+                    menu.status = Some(
+                        "Enter a finite positive mouse sensitivity percentage before applying."
+                            .into(),
+                    );
+                    return;
+                }
+            };
+            match updated.save(&path.path).map(|()| updated) {
                 Ok(updated) => {
                     info!(target: "demo::settings", path = %path.path.display(),
                         max_fps_before = settings.max_fps.get(), max_fps_after = updated.max_fps.get(),

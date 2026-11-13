@@ -177,11 +177,16 @@ fn step_focus(
 fn previous(
     _event: On<Fire<PreviousAction>>,
     menu: Res<MenuState>,
+    editing: Res<super::sensitivity::SensitivityEditing>,
     mut focus: ResMut<MenuFocus>,
     mut source: ResMut<MenuInputSource>,
     buttons: Query<(Entity, &MenuButton)>,
     mut sounds: MessageWriter<SoundRequest>,
 ) {
+    if editing.active {
+        return;
+    }
+
     if let Some(entity) = step_focus(&menu, &mut focus, &mut source, &buttons, -1) {
         sounds.write(SoundRequest::new(SoundCue::MenuHover, entity));
     }
@@ -190,11 +195,16 @@ fn previous(
 fn next(
     _event: On<Fire<NextAction>>,
     menu: Res<MenuState>,
+    editing: Res<super::sensitivity::SensitivityEditing>,
     mut focus: ResMut<MenuFocus>,
     mut source: ResMut<MenuInputSource>,
     buttons: Query<(Entity, &MenuButton)>,
     mut sounds: MessageWriter<SoundRequest>,
 ) {
+    if editing.active {
+        return;
+    }
+
     if let Some(entity) = step_focus(&menu, &mut focus, &mut source, &buttons, 1) {
         sounds.write(SoundRequest::new(SoundCue::MenuHover, entity));
     }
@@ -222,11 +232,16 @@ fn adjust_focused(
 fn left(
     _event: On<Fire<LeftAction>>,
     menu: Res<MenuState>,
+    editing: Res<super::sensitivity::SensitivityEditing>,
     focus: Res<MenuFocus>,
     mut source: ResMut<MenuInputSource>,
     buttons: Query<&MenuButton>,
     mut requests: MessageWriter<UiRequest>,
 ) {
+    if editing.active {
+        return;
+    }
+
     if menu.page != MenuPage::Hidden {
         *source = MenuInputSource::Navigation;
     }
@@ -236,11 +251,16 @@ fn left(
 fn right(
     _event: On<Fire<RightAction>>,
     menu: Res<MenuState>,
+    editing: Res<super::sensitivity::SensitivityEditing>,
     focus: Res<MenuFocus>,
     mut source: ResMut<MenuInputSource>,
     buttons: Query<&MenuButton>,
     mut requests: MessageWriter<UiRequest>,
 ) {
+    if editing.active {
+        return;
+    }
+
     if menu.page != MenuPage::Hidden {
         *source = MenuInputSource::Navigation;
     }
@@ -250,11 +270,19 @@ fn right(
 fn confirm(
     _event: On<Fire<ConfirmAction>>,
     menu: Res<MenuState>,
+    editing: Res<super::sensitivity::SensitivityEditing>,
     focus: Res<MenuFocus>,
     mut source: ResMut<MenuInputSource>,
     buttons: Query<&MenuButton>,
     mut requests: MessageWriter<UiRequest>,
 ) {
+    if editing.active {
+        requests.write(UiRequest {
+            action: UiAction::FinishSensitivityEdit,
+        });
+        return;
+    }
+
     if menu.page != MenuPage::Hidden
         && let Some(button) = buttons.iter().find(|button| button.index == focus.index)
     {
