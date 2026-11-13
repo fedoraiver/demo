@@ -15,7 +15,7 @@
 | [physics/](../src/physics/mod.rs) | `GamePhysicsPlugin` | 安装 Avian，提供共享碰撞层，同步重力并记录碰撞。 |
 | [scene_assembly/](../src/scene_assembly/mod.rs) | `SceneAssemblyPlugin` | 装配程序生成的平地、物理玩家与可搬方块。 |
 | [ui/](../src/ui/mod.rs) | `GameUiPlugin` | 管理页面生命周期、菜单输入、控件、音量编辑与纯色背景。 |
-| [audio/](../src/audio/mod.rs) | `GameAudioPlugin` | 提供音效消息契约，管理 Kira 播放、混音与设备输出。 |
+| [audio/](../src/audio/mod.rs) | `GameAudioPlugin` | 提供音效消息契约，管理 Seedling 播放、混音与设备输出。 |
 | [settings/](../src/settings/mod.rs) | `SettingsPlugin` | 管理设置持久化、草稿、共享原型参数与渲染限帧。 |
 | [inspector/](../src/inspector/mod.rs) | `InspectorPlugin` | 安装 Egui 和世界检查器，直接反射 ECS 世界。 |
 | [session_log/](../src/session_log/mod.rs) | `SessionLogPlugin` | 在其他插件构建前安装统一日志，管理后台输出与退出刷新。 |
@@ -152,8 +152,8 @@ F3 在游戏控制与检查器操作之间切换，检查器在两种模式下�
 | `FixedLast` | Avian 记录本固定步的插值端点，供渲染帧呈现使用。 |
 | `RunFixedMainLoop` 固定循环之后 | `PresentationSystems` 在 `TransformEasingSystems::Ease` 之后、`UpdateEasingTick` 之前依次连接 `Facing → HeldPhysics → HeldPresentation → Camera → Visibility`。第一人称与物品插件分别注册自己的系统，依次同步角色朝向、持箱物理姿态、本帧箱体与 `HeldTarget`、镜头和人物可见性。 |
 | `Update` | UI 重建、指针请求与样式更新按 [BSN 页面](#bsn-页面与菜单背景) 的局部依赖执行，Style 发布音量预览后依次执行 Audio Mix 与 Playback。 |
-| `PostUpdate` | 传播变换，驱动 Egui 检查器，并在布局后同步设置滚动条，Kira 排队播放后补同步实例增益。 |
-| `Last` | 将本帧已应用的 `max_fps` 同步到 `WinitSettings`，由原生窗口循环调度后续更新。 |
+| `PostUpdate` | 传播变换，驱动 Egui 检查器，并在布局后同步设置滚动条。 |
+| `Last` | 窗口退出消息产生后清理声音，再由 Seedling 同步采样池、混音和播放事件；设置功能将本帧已应用的 `max_fps` 同步到 `WinitSettings`，与音频没有额外顺序依赖。 |
 
 相机与玩法的固定步顺序由显式依赖表达；跨阶段数据流依赖 Bevy 默认主调度，`PreUpdate` 结束时应用动作命令，完成状态转换后进入固定循环。玩法模拟和相机姿态同步只在 `Running` 执行。一次渲染帧可以没有固定步，也可以有多个固定步，因此输入 Observer 不直接积分角色位置。
 
@@ -201,9 +201,9 @@ Avian 在默认固定调度中处理重力、速度积分与碰撞。接地通�
 
 `SoundRequest` 连接声音事件与播放端。当前 UI 发送 `MenuHover / MenuConfirm / MenuCancel`。真实焦点变化产生悬停反馈，集中请求入口只对已接受的语义操作发送确认或返回反馈。音量拖动期间合并采样，在释放且数值改变时汇总确认。
 
-`GameAudioPlugin` 安装 Kira，管理音频加载、播放、混音与设备输出。当前菜单声音通过 `UiTrack` 接入。Mix 处理加载错误、选择有效混音并同步实例增益，Playback 消费请求并处理退出。跨功能顺序为 `UiSystems::Style → AudioSystems::Mix → AudioSystems::Playback`，当前菜单事件的冷却使用 `Time<Real>`，暂停期间仍能反馈。
+`GameAudioPlugin` 安装 Seedling，管理音频加载、播放、混音与设备输出。菜单声音通过固定大小的 `UiPool` 采样池接入，排队及播放中的声音以独立实体表达，完成后由 Seedling 销毁。Mix 处理加载错误、选择有效混音并同步池总线增益，Playback 消费请求。退出清理在 `Last` 的 `OnAppExitSystems` 响应窗口退出消息，销毁声音并在 Seedling Pool 前提交命令；参数同步间隔为零，停止事件可在同帧 Queue／Flush 中送往输出线程。跨功能顺序为 `UiSystems::Style → AudioSystems::Mix → AudioSystems::Playback`，当前菜单事件的冷却使用 `Time<Real>`，暂停期间仍能反馈。
 
-UI 在 Style 阶段发布 `AudioPreview.settings`，设置页分类切换保留预览，离页时清空。音频功能读取预览及 `GameSettings.audio`，当前 UI 通道将总音量、UI 音量与素材基准相乘后写入实例。零增益使用 `Decibels::SILENCE`，静音请求不占冷却与并发，恢复后不补播。主入口禁用 Bevy 内建音频，设备输出统一由 Kira 管理。
+UI 在 Style 阶段发布 `AudioPreview.settings`，设置页分类切换保留预览，离页时清空。音频功能读取预览及 `GameSettings.audio`，UI 采样池将总音量、UI 音量与默认基准相乘，素材清单音量保留在各 `SamplePlayer` 中。振幅倍率显式换算为分贝，零值精确静音，排队与播放中的声音共同响应预览。静音请求不占冷却与并发，恢复后不补播。主入口禁用 Bevy 内建音频，设备输出统一由 Seedling 管理。设备启动失败只记录错误并继续游戏；尚无 `SampleRate` 时不运行音频节点、分配与刷新阶段，其他系统错误沿用 Bevy 默认策略。
 
 新增素材、事件与通道的接入要求，以及制作、来源与检查入口见 [音频管线](audio.md)，无窗口检查见 [音频验证](testing/README.md#音频无窗口验证)。
 

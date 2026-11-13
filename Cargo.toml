@@ -14,11 +14,20 @@ bevy = "0.20.0"
 bevy_mod_debugdump = { version = "=0.17.0", default-features = false, optional = true }
 bevy-inspector-egui = { version = "0.38.0", features = ["highlight_changes"] }
 bevy_enhanced_input = "0.27.0"
-bevy_kira_audio = { version = "=0.27.1", default-features = false, features = ["ogg", "wav"] }
+# Bevy 0.20 的兼容实现固定到已审阅提交；发布兼容版后可移回 crates.io。
+bevy_seedling = { git = "https://github.com/eswartz/bevy_seedling-fork.git", rev = "56e710c04b818189ae064c918150e1ed7a4d44be", default-features = false, features = ["cpal", "ogg", "wav", "reflect", "entity_names"] }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 sha2 = { version = "0.10.9", optional = true }
 uuid = { version = "1.26.1", features = ["v4"] }
+
+[patch.crates-io]
+# Seedling 的 Bevy 0.20 分支依赖尚未发布的 Firewheel 0.15。
+firewheel = { git = "https://github.com/eswartz/Firewheel-fork.git", rev = "0d0e2e33df126a9dc91d815db4c632c8bffa72c1" }
+
+[dev-dependencies]
+# 与 Seedling 资源加载器使用同一解码器，无窗口验证正式素材。
+symphonium = { version = "0.13.0", default-features = false, features = ["ogg", "vorbis", "wav", "pcm"] }
 
 # 原生窗口约束只在对应桌面平台编译。
 [target.'cfg(any(target_os = "macos", target_os = "windows"))'.dependencies]
