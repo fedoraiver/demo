@@ -3,6 +3,7 @@
 #[cfg(test)]
 use super::rotation_motion::rotation_motion;
 use super::{
+    queries::RotationObstacle,
     rotation_motion::{pivot_motion, pose_motion},
     rotation_sweep::path_hits,
 };
@@ -17,19 +18,7 @@ use bevy::{ecs::system::SystemParam, prelude::*};
 #[derive(SystemParam)]
 pub(crate) struct CarryRotationQuery<'w, 's> {
     spatial: SpatialQuery<'w, 's>,
-    obstacles: Query<
-        'w,
-        's,
-        (
-            &'static Position,
-            &'static Rotation,
-            &'static Collider,
-            Option<&'static CollisionLayers>,
-            Option<&'static ColliderOf>,
-            Has<Sensor>,
-        ),
-        Without<ColliderDisabled>,
-    >,
+    obstacles: Query<'w, 's, RotationObstacle, Without<ColliderDisabled>>,
 }
 
 impl CarryRotationQuery<'_, '_> {
@@ -147,25 +136,26 @@ impl CarryRotationQuery<'_, '_> {
                 if blocker.is_some() {
                     return false;
                 }
-                let Ok((position, rotation, obstacle, layers, owner, sensor)) =
-                    self.obstacles.get(entity)
-                else {
+                let Ok(obstacle) = self.obstacles.get(entity) else {
                     // 禁用的业务碰撞根不能参与，即使这一刻空间索引仍保留旧候选。
                     return true;
                 };
                 // ColliderOf 不依赖 ChildOf；必须排除持有者整套碰撞体，避免箱体撞到自己。
-                if sensor
+                if obstacle.sensor
                     || excluded.contains(&entity)
-                    || owner.is_some_and(|owner| excluded.contains(&owner.body))
-                    || !held_collision_layers().interacts_with(layers.copied().unwrap_or_default())
+                    || obstacle
+                        .owner
+                        .is_some_and(|owner| excluded.contains(&owner.body))
+                    || !held_collision_layers()
+                        .interacts_with(obstacle.layers.copied().unwrap_or_default())
                 {
                     return true;
                 }
                 if path_hits(
                     motion,
                     collider,
-                    obstacle,
-                    Pose::from_parts(position.0, rotation.0),
+                    obstacle.collider,
+                    Pose::from_parts(obstacle.pose.position.0, obstacle.pose.rotation.0),
                 ) {
                     blocker = Some(entity);
                 }

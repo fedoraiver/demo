@@ -10,12 +10,7 @@ pub(super) fn sync_mouse_capture(
     mut focus_events: MessageReader<WindowFocused>,
     mut windows: Query<(Entity, &Window, &mut CursorOptions), With<PrimaryWindow>>,
     controllers: Query<
-        (
-            Entity,
-            &ControlsCharacter,
-            &ControlsCamera,
-            &ContextActivity<GameplayContext>,
-        ),
+        (Entity, ControllerTargets, &ContextActivity<GameplayContext>),
         With<GameplayContext>,
     >,
     characters: Query<(), With<Character>>,
@@ -36,7 +31,7 @@ pub(super) fn sync_mouse_capture(
             state.active = false;
             state.skip_motion = true;
         }
-        for (controller, _, _, activity) in &controllers {
+        for (controller, _, activity) in &controllers {
             if **activity {
                 commands
                     .entity(controller)
@@ -54,11 +49,9 @@ pub(super) fn sync_mouse_capture(
     let mut any_active = false;
     for (camera, view, mut state) in &mut cameras {
         let available = characters.contains(view.target)
-            && controllers
-                .iter()
-                .any(|(_, character, controlled_camera, _)| {
-                    character.character == view.target && controlled_camera.camera == camera
-                });
+            && controllers.iter().any(|(_, targets, _)| {
+                targets.character.character == view.target && targets.camera.camera == camera
+            });
         if !available && (!state.initialized || state.target_available) {
             warn!(target: "demo::camera", ?camera, character = ?view.target,
                 before = "available", after = "unavailable", reason = "camera_binding_unavailable",
@@ -119,15 +112,17 @@ pub(super) fn sync_mouse_capture(
             input.events.push(egui::Event::PointerGone);
         }
     }
-    for (controller, character, controlled_camera, activity) in &controllers {
+    for (controller, targets, activity) in &controllers {
         let after = cameras
-            .get(controlled_camera.camera)
-            .is_ok_and(|(_, view, state)| view.target == character.character && state.active);
+            .get(targets.camera.camera)
+            .is_ok_and(|(_, view, state)| {
+                view.target == targets.character.character && state.active
+            });
         if **activity != after {
             commands
                 .entity(controller)
                 .insert(ContextActivity::<GameplayContext>::new(after));
-            info!(target: "demo::input", ?controller, character = ?character.character,
+            info!(target: "demo::input", ?controller, character = ?targets.character.character,
                 before = **activity, after, reason = if after { "gameplay_input_resumed" }
                     else if !window.focused || lost_focus { "window_focus_lost" }
                     else if !running { "menu_open" }

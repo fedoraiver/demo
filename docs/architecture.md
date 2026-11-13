@@ -98,7 +98,7 @@ F3 在游戏控制与检查器操作之间切换，检查器在两种模式下�
 - **相机实体**通过 `FirstPersonCamera` 保存控制目标与观察姿态，`MouseLookState` 保存捕获状态；跟随系统根据人物本帧插值位置计算眼位，并把位置与朝向写入 `Transform`。
 - **共享资源**保存跨系统配置、菜单状态与音量预览；帧率设置的已应用值和连续数据日志采样使用各系统的 `Local`。
 
-灰盒方块的网格、材质和物理身体位于同一业务根。第一人称功能仍通过 `CharacterVisual` 识别需要隐藏的角色视觉子树，持有关系与视觉父子关系相互独立。`Forces` 是 `QueryData`，`SpatialQuery / CarryRotationQuery` 是 `SystemParam`，几何辅助值不作为 ECS 组件或独立系统。
+灰盒方块的网格、材质和物理身体位于同一业务根。第一人称功能仍通过 `CharacterVisual` 识别需要隐藏的角色视觉子树，持有关系与视觉父子关系相互独立。控制者目标、角色运动、拾取与持物同步使用各功能的具名 `QueryData`，系统保留各自的过滤条件和读写权限；释放路径复用身体数据的只读视图。Avian 的 `Forces` 作为运动查询的嵌套 `QueryData`，`SpatialQuery / CarryRotationQuery` 仍是 `SystemParam`，几何辅助值不作为 ECS 组件或独立系统。
 
 ## BSN 场景装配
 

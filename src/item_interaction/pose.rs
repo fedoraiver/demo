@@ -1,7 +1,9 @@
 //! 共享同一局部挂接姿态，分别同步真实物理坐标与当前渲染帧的插值呈现。
 
 use super::{
-    CarryGrip, HeldAttachment, HeldBy, HeldCollider, HeldTarget, Pickable, attachment::world_pose,
+    HeldCollider, Pickable,
+    attachment::world_pose,
+    queries::{HeldColliderPose, HeldPhysics, HeldPresentation, HolderPhysics},
 };
 use crate::{character::Character, settings::PrototypeConfig};
 use avian3d::prelude::*;
@@ -9,75 +11,42 @@ use bevy::{ecs::relationship::Relationship, prelude::*};
 
 /// 同步组合体内箱子的真实世界姿态和速度，不依赖人物是否具有视觉 Children。
 pub(super) fn sync_held_physics(
-    holders: Query<
-        (
-            &Position,
-            &Rotation,
-            &LinearVelocity,
-            &AngularVelocity,
-            &ComputedCenterOfMass,
-        ),
-        (With<Character>, Without<Pickable>),
-    >,
-    mut items: Query<
-        (
-            &HeldBy,
-            &HeldAttachment,
-            &mut Position,
-            &mut Rotation,
-            &mut LinearVelocity,
-            &mut AngularVelocity,
-            &mut Transform,
-        ),
-        (With<Pickable>, Without<Character>),
-    >,
+    holders: Query<HolderPhysics, (With<Character>, Without<Pickable>)>,
+    mut items: Query<HeldPhysics, (With<Pickable>, Without<Character>)>,
     mut proxies: Query<
-        (
-            &mut ColliderTransform,
-            &mut Position,
-            &mut Rotation,
-            &mut Transform,
-        ),
+        HeldColliderPose,
         (With<HeldCollider>, Without<Pickable>, Without<Character>),
     >,
 ) {
-    for (
-        held_by,
-        attachment,
-        mut position,
-        mut rotation,
-        mut velocity,
-        mut angular,
-        mut transform,
-    ) in &mut items
-    {
-        if attachment.pending {
+    for mut item in &mut items {
+        if item.attachment.pending {
             continue;
         }
-        let Ok((holder_position, holder_rotation, holder_velocity, holder_angular, center)) =
-            holders.get(held_by.get())
-        else {
+        let Ok(holder) = holders.get(item.held_by.get()) else {
             continue;
         };
         let pose = world_pose(
-            Transform::from_translation(holder_position.0).with_rotation(holder_rotation.0),
-            attachment.local_pose,
+            Transform::from_translation(holder.pose.position.0)
+                .with_rotation(holder.pose.rotation.0),
+            item.attachment.local_pose,
         );
         // 无 ChildOf 的代理偏移由本系统唯一维护，真实碰撞和独立模型根读取同一局部姿态。
-        if let Ok((mut local, mut proxy_position, mut proxy_rotation, mut proxy_transform)) =
-            proxies.get_mut(attachment.collider)
-        {
-            *local = ColliderTransform::from(attachment.local_pose);
-            proxy_position.0 = pose.translation;
-            proxy_rotation.0 = pose.rotation;
-            *proxy_transform = pose;
+        if let Ok(mut proxy) = proxies.get_mut(item.attachment.collider) {
+            *proxy.local = ColliderTransform::from(item.attachment.local_pose);
+            proxy.position.0 = pose.translation;
+            proxy.rotation.0 = pose.rotation;
+            *proxy.transform = pose;
         }
-        position.0 = pose.translation;
-        rotation.0 = pose.rotation;
-        let world_center = holder_position.0 + holder_rotation.0 * center.0;
-        velocity.0 = holder_velocity.0 + holder_angular.0.cross(pose.translation - world_center);
-        angular.0 = holder_angular.0;
-        *transform = pose;
+        item.body.position.0 = pose.translation;
+        item.body.rotation.0 = pose.rotation;
+        let world_center = holder.pose.position.0 + holder.pose.rotation.0 * holder.center.0;
+        item.body.velocity.0 = holder.velocity.0
+            + holder
+                .angular_velocity
+                .0
+                .cross(pose.translation - world_center);
+        item.body.angular_velocity.0 = holder.angular_velocity.0;
+        *item.body.transform = pose;
     }
 }
 
@@ -85,28 +54,19 @@ pub(super) fn sync_held_physics(
 pub(super) fn sync_held_presentation(
     config: Res<PrototypeConfig>,
     holders: Query<&Transform, (With<Character>, Without<Pickable>)>,
-    mut items: Query<
-        (
-            &HeldBy,
-            Option<&HeldAttachment>,
-            Option<&CarryGrip>,
-            &mut HeldTarget,
-            &mut Transform,
-        ),
-        (With<Pickable>, Without<Character>),
-    >,
+    mut items: Query<HeldPresentation, (With<Pickable>, Without<Character>)>,
 ) {
-    for (held_by, attachment, grip, mut target, mut transform) in &mut items {
-        let Ok(holder) = holders.get(held_by.get()) else {
+    for mut item in &mut items {
+        let Ok(holder) = holders.get(item.held_by.get()) else {
             continue;
         };
-        target.translation = holder.translation
-            + holder.rotation * grip.map_or(config.hold_offset, |grip| grip.offset);
-        target.rotation = holder.rotation;
-        if let Some(attachment) = attachment
+        item.target.translation = holder.translation
+            + holder.rotation * item.grip.map_or(config.hold_offset, |grip| grip.offset);
+        item.target.rotation = holder.rotation;
+        if let Some(attachment) = item.attachment
             && !attachment.pending
         {
-            *transform = world_pose(*holder, attachment.local_pose);
+            *item.transform = world_pose(*holder, attachment.local_pose);
         }
     }
 }

@@ -1,10 +1,11 @@
 //! 消费一次性交互意图，以视线和本批次预留选择物品；释放保留真实位姿和速度。
 
-use super::{HeldBy, HeldTarget, HoldingItems, Pickable, begin_attachment, release_item};
-use crate::{
-    character::{Character, CharacterIntent},
-    settings::PrototypeConfig,
+use super::{
+    HeldBy, HeldTarget, Pickable, begin_attachment,
+    queries::{BodyKinematicsReadOnly, FreePickable, InteractingCharacter},
+    release_item,
 };
+use crate::{character::Character, settings::PrototypeConfig};
 use avian3d::prelude::*;
 use bevy::{ecs::relationship::RelationshipTarget, prelude::*};
 use std::collections::HashSet;
@@ -15,129 +16,95 @@ pub(super) fn handle_interaction(
     config: Res<PrototypeConfig>,
     spatial_query: SpatialQuery,
     mut reserved: Local<HashSet<Entity>>,
-    mut characters: Query<
-        (
-            Entity,
-            &Position,
-            &Rotation,
-            &Transform,
-            &mut CharacterIntent,
-            Option<&HoldingItems>,
-        ),
-        (With<Character>, Without<Pickable>),
-    >,
-    pickables: Query<
-        (
-            Entity,
-            &Position,
-            &Rotation,
-            &Transform,
-            &RigidBody,
-            Has<NoTranslationEasing>,
-            Has<NoRotationEasing>,
-            Has<ColliderDisabled>,
-        ),
-        (With<Pickable>, Without<HeldBy>, Without<Character>),
-    >,
-    held_items: Query<
-        (
-            &Position,
-            &Rotation,
-            &Transform,
-            &LinearVelocity,
-            &AngularVelocity,
-        ),
-        (With<Pickable>, With<HeldBy>, Without<Character>),
-    >,
+    mut characters: Query<InteractingCharacter, (With<Character>, Without<Pickable>)>,
+    pickables: Query<FreePickable, (With<Pickable>, Without<HeldBy>, Without<Character>)>,
+    held_items: Query<BodyKinematicsReadOnly, (With<Pickable>, With<HeldBy>, Without<Character>)>,
 ) {
     reserved.clear();
-    for (character, position, rotation, transform, mut intent, holding) in &mut characters {
-        if !std::mem::take(&mut intent.interact_pending) {
+    for mut character in &mut characters {
+        if !std::mem::take(&mut character.intent.interact_pending) {
             continue;
         }
-        if let Some(item) = holding.and_then(|items| items.iter().next()) {
-            if let Ok((item_position, item_rotation, item_transform, velocity, angular_velocity)) =
-                held_items.get(item)
-            {
+        if let Some(item) = character.holding.and_then(|items| items.iter().next()) {
+            if let Ok(body) = held_items.get(item) {
                 release_item(
                     &mut commands,
                     item,
                     Transform {
-                        translation: item_position.0,
-                        rotation: item_rotation.0,
-                        scale: item_transform.scale,
+                        translation: body.position.0,
+                        rotation: body.rotation.0,
+                        scale: body.transform.scale,
                     },
-                    velocity.0,
-                    angular_velocity.0,
+                    body.velocity.0,
+                    body.angular_velocity.0,
                     "interact_action_release",
                 );
             }
             continue;
         }
-        let origin = position.0 + Vec3::Y * config.hold_offset.y;
+        let origin = character.pose.position.0 + Vec3::Y * config.hold_offset.y;
         let nearest = pickables
             .iter()
-            .filter(|(item, ..)| !reserved.contains(item))
-            .filter_map(|(item, item_position, ..)| {
-                let distance = position.0.distance_squared(item_position.0);
+            .filter(|item| !reserved.contains(&item.entity))
+            .filter_map(|item| {
+                let distance = character
+                    .pose
+                    .position
+                    .0
+                    .distance_squared(item.pose.position.0);
                 if distance > config.pickup_radius.powi(2) {
                     return None;
                 }
                 // 碰撞世界也约束拾取视线，不能隔着墙抓取箱子。
-                let offset = item_position.0 - origin;
+                let offset = item.pose.position.0 - origin;
                 if let Ok(direction) = Dir3::new(offset)
                     && let Some(hit) = spatial_query.cast_ray(
                         origin,
                         direction,
                         offset.length(),
                         true,
-                        &SpatialQueryFilter::from_excluded_entities([character]),
+                        &SpatialQueryFilter::from_excluded_entities([character.entity]),
                     )
-                    && hit.entity != item
+                    && hit.entity != item.entity
                 {
                     return None;
                 }
-                Some((item, distance))
+                Some((item.entity, distance))
             })
             .min_by(|(_, a), (_, b)| a.total_cmp(b));
         if let Some((item, distance_squared)) = nearest {
             // 同批次延迟命令尚未应用，预留集合防止两个角色同时占用一件物体。
             reserved.insert(item);
             commands.entity(item).insert((
-                HeldBy { holder: character },
+                HeldBy {
+                    holder: character.entity,
+                },
                 HeldTarget {
-                    translation: position.0 + transform.rotation * config.hold_offset,
-                    rotation: transform.rotation,
+                    translation: character.pose.position.0
+                        + character.transform.rotation * config.hold_offset,
+                    rotation: character.transform.rotation,
                 },
             ));
-            let (
-                _,
-                item_position,
-                item_rotation,
-                item_transform,
-                body,
-                translation_paused,
-                rotation_paused,
-                collider_disabled,
-            ) = pickables
+            let pickable = pickables
                 .get(item)
                 .expect("Selected carryable must remain in the interaction query");
             begin_attachment(
                 &mut commands,
                 item,
-                Transform::from_translation(position.0).with_rotation(rotation.0),
+                Transform::from_translation(character.pose.position.0)
+                    .with_rotation(character.pose.rotation.0),
                 Transform {
-                    translation: item_position.0,
-                    rotation: item_rotation.0,
-                    scale: item_transform.scale,
+                    translation: pickable.pose.position.0,
+                    rotation: pickable.pose.rotation.0,
+                    scale: pickable.transform.scale,
                 },
-                *body,
-                translation_paused,
-                rotation_paused,
-                collider_disabled,
+                *pickable.rigid_body,
+                pickable.translation_paused,
+                pickable.rotation_paused,
+                pickable.collider_disabled,
             );
             info!(target: "demo::gameplay",
-                ?character,
+                character = ?character.entity,
                 ?item,
                 before = "free",
                 after = "held",
@@ -147,7 +114,7 @@ pub(super) fn handle_interaction(
             );
         } else {
             info!(target: "demo::gameplay",
-                ?character,
+                character = ?character.entity,
                 reason = "no_visible_pickable_in_range",
                 "No pickable item in range"
             );

@@ -6,6 +6,7 @@ mod components;
 mod interaction;
 mod lifecycle;
 mod pose;
+mod queries;
 mod rotation_motion;
 mod rotation_query;
 mod rotation_sweep;

@@ -57,22 +57,20 @@ pub(super) fn follow_first_person_camera(
 
 /// 第一人称只隐藏自身视觉子树，保留业务根与独立物品。
 pub(super) fn sync_character_visibility(
-    controllers: Query<(&ControlsCharacter, &ControlsCamera), With<GameplayContext>>,
+    controllers: Query<ControllerTargets, With<GameplayContext>>,
     cameras: Query<&FirstPersonCamera>,
     characters: Query<(), With<Character>>,
     mut visuals: Query<(Entity, &ChildOf, &mut Visibility), With<CharacterVisual>>,
 ) {
     for (visual, parent, mut visibility) in &mut visuals {
         let character = parent.parent();
-        let hide_visual = controllers
-            .iter()
-            .any(|(controlled_character, controlled_camera)| {
-                characters.contains(character)
-                    && controlled_character.character == character
-                    && cameras
-                        .get(controlled_camera.camera)
-                        .is_ok_and(|view| view.target == character)
-            });
+        let hide_visual = controllers.iter().any(|controller| {
+            characters.contains(character)
+                && controller.character.character == character
+                && cameras
+                    .get(controller.camera.camera)
+                    .is_ok_and(|view| view.target == character)
+        });
         let after = if hide_visual {
             Visibility::Hidden
         } else {

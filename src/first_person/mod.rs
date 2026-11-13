@@ -26,6 +26,7 @@ mod actions;
 mod camera;
 mod capture;
 mod facing;
+mod queries;
 
 pub(crate) use actions::{GameplayContext, spawn_keyboard_controller};
 use actions::{
@@ -35,6 +36,7 @@ use actions::{
 use camera::{follow_first_person_camera, on_camera_look, sync_character_visibility};
 use capture::sync_mouse_capture;
 use facing::sync_character_facing;
+use queries::ControllerTargets;
 
 const EYE_HEIGHT_M: f32 = 1.65;
 const PITCH_LIMIT_DEGREES: f32 = 85.0;

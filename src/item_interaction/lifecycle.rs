@@ -3,6 +3,7 @@
 use super::{
     HeldAttachment, HeldBy, HeldCollider, HeldTarget, HoldingItems, Pickable,
     components::{CarryBaseMass, ResumeInterpolation},
+    queries::BodyKinematicsReadOnly,
 };
 use crate::{character::Character, physics::item_collision_layers};
 use avian3d::prelude::*;
@@ -119,20 +120,9 @@ pub(super) fn cleanup_orphaned_colliders(
 pub(super) fn release_orphaned_items(
     mut commands: Commands,
     holders: Query<(), With<Character>>,
-    items: Query<
-        (
-            Entity,
-            Option<&HeldBy>,
-            &Position,
-            &Rotation,
-            &Transform,
-            &LinearVelocity,
-            &AngularVelocity,
-        ),
-        With<HeldTarget>,
-    >,
+    items: Query<(Entity, Option<&HeldBy>, BodyKinematicsReadOnly), With<HeldTarget>>,
 ) {
-    for (item, held_by, position, rotation, transform, velocity, angular) in &items {
+    for (item, held_by, body) in &items {
         let reason = match held_by {
             Some(held_by) if holders.contains(held_by.get()) => continue,
             Some(_) => "holder_missing",
@@ -141,11 +131,11 @@ pub(super) fn release_orphaned_items(
         release_item(
             &mut commands,
             item,
-            Transform::from_translation(position.0)
-                .with_rotation(rotation.0)
-                .with_scale(transform.scale),
-            velocity.0,
-            angular.0,
+            Transform::from_translation(body.position.0)
+                .with_rotation(body.rotation.0)
+                .with_scale(body.transform.scale),
+            body.velocity.0,
+            body.angular_velocity.0,
             reason,
         );
     }
