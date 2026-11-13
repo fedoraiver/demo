@@ -10,12 +10,13 @@ use bevy::{prelude::*, settings::SettingsPlugin};
 use bevy_framepace::{FramepaceSettings, Limiter};
 use config::{FpsLimit, SETTINGS_APP_NAME};
 
-#[cfg(test)]
-pub(crate) use config::MAX_MOUSE_SENSITIVITY;
 pub use config::{
-    AudioSettings, CameraSettings, DEFAULT_MOUSE_SENSITIVITY, GameSettings, MAX_AUDIO_VOLUME,
-    MAX_MOUSE_SENSITIVITY_MULTIPLIER, MOUSE_SENSITIVITY_STEP, MOUSE_SENSITIVITY_STEPS_PER_UNIT,
+    AudioSettings, CameraSettings, DEFAULT_MOUSE_SENSITIVITY_UNITS, GameSettings, MAX_AUDIO_VOLUME,
+    MAX_MOUSE_SENSITIVITY_MULTIPLIER, MIN_MOUSE_SENSITIVITY_UNITS, MOUSE_SENSITIVITY_PER_UNIT,
+    MOUSE_SENSITIVITY_STEP, MOUSE_SENSITIVITY_STEPS_PER_UNIT,
 };
+#[cfg(test)]
+pub(crate) use config::{DEFAULT_MOUSE_SENSITIVITY, MAX_MOUSE_SENSITIVITY, MIN_MOUSE_SENSITIVITY};
 pub use draft::{SettingKey, SettingsDraft};
 pub use prototype::PrototypeConfig;
 

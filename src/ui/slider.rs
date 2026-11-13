@@ -2,8 +2,8 @@
 
 use super::{theme::*, widgets::*, *};
 use crate::settings::{
-    MAX_AUDIO_VOLUME, MAX_MOUSE_SENSITIVITY_MULTIPLIER, MOUSE_SENSITIVITY_STEPS_PER_UNIT,
-    SettingsDraft,
+    MAX_AUDIO_VOLUME, MAX_MOUSE_SENSITIVITY_MULTIPLIER, MIN_MOUSE_SENSITIVITY_UNITS,
+    MOUSE_SENSITIVITY_STEPS_PER_UNIT, SettingsDraft,
 };
 use bevy::{
     picking::pointer::{PointerAction, PointerId, PointerInput},
@@ -81,6 +81,13 @@ fn max_step(key: SettingKey) -> u16 {
         u16::from(MAX_AUDIO_VOLUME)
     }
 }
+fn min_step(key: SettingKey) -> u16 {
+    if key == SettingKey::MouseSensitivity {
+        (MIN_MOUSE_SENSITIVITY_UNITS * f64::from(MOUSE_SENSITIVITY_STEPS_PER_UNIT)).round() as u16
+    } else {
+        0
+    }
+}
 fn set_action(key: SettingKey, step: u16) -> UiAction {
     if key == SettingKey::MouseSensitivity {
         UiAction::SetSensitivity(step)
@@ -152,6 +159,7 @@ fn step_at_pointer(
     node: &ComputedNode,
     transform: &UiGlobalTransform,
     cursor: Vec2,
+    min_step: u16,
     max_step: u16,
 ) -> Option<u16> {
     let track_width = node.size().x
@@ -165,7 +173,11 @@ fn step_at_pointer(
     let local = transform.try_inverse()?.transform_point2(cursor);
     let offset = local.x + node.size().x / 2.0 - node.padding.min_inset.x - node.border.min_inset.x;
     let limit = f32::from(max_step);
-    Some((offset / track_width * limit).round().clamp(0.0, limit) as u16)
+    Some(
+        (offset / track_width * limit)
+            .round()
+            .clamp(f32::from(min_step), limit) as u16,
+    )
 }
 
 /// Enhanced Input 负责菜单语义动作，但无法表示 UI 命中后的局部绝对横坐标。
@@ -274,7 +286,13 @@ pub(super) fn sample_slider_pointer(
     };
     if window.focused
         && let Some(cursor) = window.physical_cursor_position()
-        && let Some(value) = step_at_pointer(node, transform, cursor, max_step(slider.key))
+        && let Some(value) = step_at_pointer(
+            node,
+            transform,
+            cursor,
+            min_step(slider.key),
+            max_step(slider.key),
+        )
         && active.last_value != Some(value)
     {
         requests.write(UiRequest {
