@@ -45,7 +45,6 @@ pub(crate) struct HeldTarget {
 /// 实际碰撞形状相对组合刚体的姿态；箱实体不成为人物的 ChildOf，避免异常销毁时连带消失。
 #[derive(Component, Clone, Copy)]
 pub(crate) struct HeldAttachment {
-    pub(crate) collider: Entity,
     pub(crate) local_pose: Transform,
     pub(super) pending: bool,
     pub(super) free_body: RigidBody,
@@ -55,11 +54,30 @@ pub(crate) struct HeldAttachment {
     pub(super) blocked_seconds: f32,
 }
 
-/// 无视觉碰撞代理对应的物品身份；代理随组合体清理，业务根始终独立。
+/// 碰撞代理到独立业务物品的关系；改绑由 Bevy 同步唯一反向代理。
 #[derive(Component)]
+#[relationship(relationship_target = ItemCollider)]
 pub(crate) struct HeldCollider {
     pub(crate) item: Entity,
 }
+
+/// 每个物品最多关联一个代理；不级联销毁，代理按物理卸载顺序显式清理。
+#[derive(Component)]
+#[relationship_target(relationship = HeldCollider)]
+pub(crate) struct ItemCollider {
+    collider: Entity,
+}
+
+impl ItemCollider {
+    pub(crate) fn get(&self) -> Option<Entity> {
+        use bevy::ecs::relationship::RelationshipTarget;
+        self.iter().next()
+    }
+}
+
+/// 关系端点消失后仍保留代理身份，供孤儿碰撞与空间索引清理识别。
+#[derive(Component)]
+pub(crate) struct HeldCollisionProxy;
 
 /// 独立箱根不属于人物的 Children，显式保存原质量供挂接和解除时恢复。
 #[derive(Component)]

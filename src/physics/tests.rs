@@ -191,9 +191,9 @@ fn simultaneous_pickups_reserve_nearest_box_and_use_available_alternative() {
         assert!(app.world().get::<RigidBody>(item).is_none());
         let proxy = app
             .world()
-            .get::<crate::item_interaction::HeldAttachment>(item)
-            .unwrap()
-            .collider;
+            .get::<crate::item_interaction::ItemCollider>(item)
+            .and_then(crate::item_interaction::ItemCollider::get)
+            .unwrap();
         assert_eq!(
             app.world().get::<ColliderOf>(proxy).unwrap().body,
             app.world().get::<HeldBy>(item).unwrap().get()

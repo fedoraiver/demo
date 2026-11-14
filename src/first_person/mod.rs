@@ -47,19 +47,45 @@ pub(crate) struct PlayerId {
 }
 
 /// 控制者当前关联的角色，设备和角色状态分别保存。
-#[derive(Component, Reflect)]
-#[reflect(Component)]
+#[derive(Component)]
+#[relationship(relationship_target = CharacterControllers)]
 pub(crate) struct ControlsCharacter {
-    #[entities]
     pub character: Entity,
 }
 
+/// Bevy 自动维护的角色控制者集合，业务代码只读取。
+#[derive(Component)]
+#[relationship_target(relationship = ControlsCharacter)]
+pub(crate) struct CharacterControllers {
+    controllers: Vec<Entity>,
+}
+
 /// 控制者当前关联的第一人称相机。
-#[derive(Component, Reflect)]
-#[reflect(Component)]
+#[derive(Component)]
+#[relationship(relationship_target = CameraControllers)]
 pub(crate) struct ControlsCamera {
-    #[entities]
     pub camera: Entity,
+}
+
+/// Bevy 自动维护的相机控制者集合，业务代码只读取。
+#[derive(Component)]
+#[relationship_target(relationship = ControlsCamera)]
+pub(crate) struct CameraControllers {
+    controllers: Vec<Entity>,
+}
+
+/// 相机跟随的角色，与可编辑的观察状态分别保存。
+#[derive(Component)]
+#[relationship(relationship_target = CharacterCameras)]
+pub(crate) struct CameraTarget {
+    pub character: Entity,
+}
+
+/// Bevy 自动维护的角色相机集合，不随角色销毁相机实体。
+#[derive(Component)]
+#[relationship_target(relationship = CameraTarget)]
+pub(crate) struct CharacterCameras {
+    cameras: Vec<Entity>,
 }
 
 /// 相机仅隐藏受控角色的视觉子树。
@@ -71,8 +97,6 @@ pub(crate) struct CharacterVisual;
 #[derive(Component, Reflect)]
 #[reflect(Component)]
 pub(crate) struct FirstPersonCamera {
-    #[entities]
-    pub(crate) target: Entity,
     yaw: f32,
     #[reflect(ignore)]
     pending_yaw_delta: f32,
@@ -80,18 +104,19 @@ pub(crate) struct FirstPersonCamera {
     eye_height: f32,
 }
 
-impl FirstPersonCamera {
+impl Default for FirstPersonCamera {
     /// 初始平视，眼位相对角色脚底保持固定高度。
-    pub(crate) fn new(target: Entity) -> Self {
+    fn default() -> Self {
         Self {
-            target,
             yaw: 0.0,
             pending_yaw_delta: 0.0,
             pitch: 0.0,
             eye_height: EYE_HEIGHT_M,
         }
     }
+}
 
+impl FirstPersonCamera {
     /// 根据角色世界位置派生镜头姿态。
     pub(crate) fn transform(&self, target_position: Vec3) -> Transform {
         Transform::from_translation(target_position + Vec3::Y * self.eye_height)
@@ -123,8 +148,6 @@ impl Plugin for FirstPersonPlugin {
         register_input_actions(app);
         app.init_resource::<GameSettings>()
             .register_type::<PlayerId>()
-            .register_type::<ControlsCharacter>()
-            .register_type::<ControlsCamera>()
             .register_type::<CharacterVisual>()
             .register_type::<FirstPersonCamera>()
             .add_message::<WindowFocused>()

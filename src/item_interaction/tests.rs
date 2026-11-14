@@ -15,7 +15,7 @@ mod attachment_tests {
         settings::PrototypeConfig,
     };
     use avian3d::prelude::*;
-    use bevy::time::TimeUpdateStrategy;
+    use bevy::{ecs::relationship::Relationship, time::TimeUpdateStrategy};
 
     fn app() -> App {
         let mut app = App::new();
@@ -86,18 +86,17 @@ mod attachment_tests {
         }
         app.add_observer(
             |event: On<Add<HeldAttachment>>,
-             attachments: Query<&HeldAttachment>,
+             attachments: Query<(&HeldAttachment, &ItemCollider)>,
              names: Query<&Name>,
              mut commands: Commands| {
-                let attachment = attachments.get(event.entity).unwrap();
+                let (attachment, item_collider) = attachments.get(event.entity).unwrap();
+                let proxy = item_collider.get().unwrap();
                 assert!(attachment.pending);
                 assert_eq!(
-                    names.get(attachment.collider).unwrap().as_str(),
+                    names.get(proxy).unwrap().as_str(),
                     "Held item collision proxy"
                 );
-                commands.insert_resource(ReservedProxy {
-                    entity: attachment.collider,
-                });
+                commands.insert_resource(ReservedProxy { entity: proxy });
             },
         );
         let (holder, item) = actors(&mut app);
@@ -111,7 +110,11 @@ mod attachment_tests {
             "Pickup skipped its alignment path"
         );
         assert!(app.world().get::<RigidBody>(item).is_none());
-        let proxy = app.world().get::<HeldAttachment>(item).unwrap().collider;
+        let proxy = app
+            .world()
+            .get::<ItemCollider>(item)
+            .and_then(ItemCollider::get)
+            .unwrap();
         assert_eq!(app.world().resource::<ReservedProxy>().entity, proxy);
         assert_eq!(
             app.world().get::<Name>(proxy).unwrap().as_str(),
@@ -185,7 +188,11 @@ mod attachment_tests {
             steps(&mut app, 30);
             pick_up(&mut app, holder);
             steps(&mut app, 60);
-            let proxy = app.world().get::<HeldAttachment>(item).unwrap().collider;
+            let proxy = app
+                .world()
+                .get::<ItemCollider>(item)
+                .and_then(ItemCollider::get)
+                .unwrap();
             if despawn_holder {
                 app.world_mut().despawn(holder);
             } else {
@@ -219,7 +226,11 @@ mod attachment_tests {
         pick_up(&mut app, holder);
         steps(&mut app, 60);
         assert_eq!(app.world().get::<Mass>(holder).unwrap().0, 78.0);
-        let proxy = app.world().get::<HeldAttachment>(item).unwrap().collider;
+        let proxy = app
+            .world()
+            .get::<ItemCollider>(item)
+            .and_then(ItemCollider::get)
+            .unwrap();
         app.world_mut().despawn(item);
         app.update();
         let world = app.world();
@@ -239,6 +250,167 @@ mod attachment_tests {
     }
 
     #[test]
+    fn collision_relation_rebinding_updates_both_endpoints_and_replaces_the_previous_proxy() {
+        let mut world = World::new();
+        let first_item = world.spawn_empty().id();
+        let second_item = world.spawn_empty().id();
+        let first_proxy = world
+            .spawn((HeldCollisionProxy, HeldCollider { item: first_item }))
+            .id();
+        assert_eq!(
+            world.get::<ItemCollider>(first_item).unwrap().get(),
+            Some(first_proxy)
+        );
+
+        world
+            .entity_mut(first_proxy)
+            .insert(HeldCollider { item: second_item });
+        assert!(world.get::<ItemCollider>(first_item).is_none());
+        assert_eq!(
+            world.get::<ItemCollider>(second_item).unwrap().get(),
+            Some(first_proxy)
+        );
+
+        let second_proxy = world
+            .spawn((HeldCollisionProxy, HeldCollider { item: second_item }))
+            .id();
+        assert!(world.get::<HeldCollider>(first_proxy).is_none());
+        assert!(world.get::<HeldCollisionProxy>(first_proxy).is_some());
+        assert_eq!(
+            world.get::<ItemCollider>(second_item).unwrap().get(),
+            Some(second_proxy)
+        );
+        assert_eq!(
+            world.get::<HeldCollider>(second_proxy).unwrap().get(),
+            second_item
+        );
+    }
+
+    #[test]
+    fn collision_relation_endpoint_destruction_never_despawns_the_other_endpoint() {
+        for despawn_item in [false, true] {
+            let mut world = World::new();
+            let item = world.spawn_empty().id();
+            let proxy = world
+                .spawn((HeldCollisionProxy, HeldCollider { item }))
+                .id();
+            world.despawn(if despawn_item { item } else { proxy });
+            if despawn_item {
+                assert!(world.get_entity(proxy).is_ok());
+                assert!(world.get::<HeldCollider>(proxy).is_none());
+                assert!(world.get::<HeldCollisionProxy>(proxy).is_some());
+            } else {
+                assert!(world.get_entity(item).is_ok());
+                assert!(world.get::<ItemCollider>(item).is_none());
+            }
+        }
+    }
+
+    #[test]
+    fn lost_or_detached_proxy_restores_the_box_and_cleans_the_physics_inventory() {
+        for failure in [
+            "proxy_despawned",
+            "source_removed",
+            "target_removed",
+            "source_rebound",
+            "proxy_replaced",
+        ] {
+            let mut app = app();
+            let (holder, item) = actors(&mut app);
+            steps(&mut app, 30);
+            pick_up(&mut app, holder);
+            let proxy = app
+                .world()
+                .get::<ItemCollider>(item)
+                .and_then(ItemCollider::get)
+                .unwrap();
+            let other_item = app.world_mut().spawn(Item).id();
+            let replacement = match failure {
+                "proxy_despawned" => {
+                    app.world_mut().despawn(proxy);
+                    None
+                }
+                "source_removed" => {
+                    app.world_mut().entity_mut(proxy).remove::<HeldCollider>();
+                    None
+                }
+                "target_removed" => {
+                    app.world_mut().entity_mut(item).remove::<ItemCollider>();
+                    None
+                }
+                "source_rebound" => {
+                    app.world_mut()
+                        .entity_mut(proxy)
+                        .insert(HeldCollider { item: other_item });
+                    None
+                }
+                "proxy_replaced" => Some(
+                    app.world_mut()
+                        .spawn((HeldCollisionProxy, HeldCollider { item }))
+                        .id(),
+                ),
+                _ => unreachable!(),
+            };
+            app.update();
+            let world = app.world();
+            assert!(world.get_entity(item).is_ok(), "{failure}");
+            assert!(world.get_entity(other_item).is_ok(), "{failure}");
+            assert!(world.get_entity(proxy).is_err(), "{failure}");
+            assert!(
+                replacement.is_none_or(|replacement| world.get_entity(replacement).is_err()),
+                "{failure}"
+            );
+            assert!(world.get::<HeldAttachment>(item).is_none(), "{failure}");
+            assert!(world.get::<HeldBy>(item).is_none(), "{failure}");
+            assert!(world.get::<ItemCollider>(item).is_none(), "{failure}");
+            assert!(world.get::<ItemCollider>(other_item).is_none(), "{failure}");
+            assert_eq!(
+                world.get::<RigidBody>(item),
+                Some(&RigidBody::Dynamic),
+                "{failure}"
+            );
+            assert_eq!(
+                world.get::<ColliderOf>(item).unwrap().body,
+                item,
+                "{failure}"
+            );
+            assert_eq!(world.get::<Mass>(holder).unwrap().0, 75.0, "{failure}");
+            assert!(
+                !world
+                    .get::<RigidBodyColliders>(holder)
+                    .unwrap()
+                    .iter()
+                    .any(|entity| entity == proxy),
+                "{failure}"
+            );
+        }
+    }
+
+    #[test]
+    fn proxy_removed_before_attachment_finishes_restores_the_independent_box() {
+        let mut app = app();
+        app.add_observer(
+            |event: On<Add<HeldAttachment>>,
+             colliders: Query<&ItemCollider>,
+             mut commands: Commands| {
+                let proxy = colliders.get(event.entity).unwrap().get().unwrap();
+                commands.entity(proxy).despawn();
+            },
+        );
+        let (holder, item) = actors(&mut app);
+        steps(&mut app, 30);
+        pick_up(&mut app, holder);
+        assert!(app.world().get::<HeldAttachment>(item).is_none());
+        assert!(app.world().get::<HeldBy>(item).is_none());
+        assert!(app.world().get::<ItemCollider>(item).is_none());
+        assert_eq!(
+            app.world().get::<RigidBody>(item),
+            Some(&RigidBody::Dynamic)
+        );
+        assert_eq!(app.world().get::<Mass>(holder).unwrap().0, 75.0);
+    }
+
+    #[test]
     fn scaled_collider_and_preexisting_pause_and_disable_flags_survive_carrying() {
         for collider_disabled in [false, true] {
             let mut app = app();
@@ -254,7 +426,11 @@ mod attachment_tests {
             }
             pick_up(&mut app, holder);
             steps(&mut app, 60);
-            let proxy = app.world().get::<HeldAttachment>(item).unwrap().collider;
+            let proxy = app
+                .world()
+                .get::<ItemCollider>(item)
+                .and_then(ItemCollider::get)
+                .unwrap();
             assert!(
                 app.world()
                     .get::<Collider>(proxy)
@@ -308,12 +484,12 @@ mod frame_tests {
     use crate::{
         character::{Character, CharacterIntent, CharacterMotion, CharacterPlugin},
         first_person::{
-            ControlsCamera, FirstPersonCamera, FirstPersonPlugin, MouseLookState, PlayerId,
-            spawn_keyboard_controller,
+            CameraTarget, ControlsCamera, FirstPersonCamera, FirstPersonPlugin, MouseLookState,
+            PlayerId, spawn_keyboard_controller,
         },
         game_flow::configure_feature_order,
         item_interaction::{
-            CarryGrip, HeldAttachment, HeldBy, HeldTarget, Item, ItemInteractionPlugin, Pickable,
+            CarryGrip, HeldBy, HeldTarget, Item, ItemCollider, ItemInteractionPlugin, Pickable,
         },
         physics::{GamePhysicsPlugin, ground_body, world_collision_layers},
         settings::{GameSettings, PrototypeConfig},
@@ -454,11 +630,16 @@ mod frame_tests {
                 Transform::IDENTITY,
             ))
             .id();
-        let camera_state = FirstPersonCamera::new(character);
+        let camera_state = FirstPersonCamera::default();
         let camera_pose = camera_state.transform(Vec3::ZERO);
         let camera = app
             .world_mut()
-            .spawn((camera_state, MouseLookState::default(), camera_pose))
+            .spawn((
+                camera_state,
+                CameraTarget { character },
+                MouseLookState::default(),
+                camera_pose,
+            ))
             .id();
         let mut commands = app.world_mut().commands();
         let controller = spawn_keyboard_controller(&mut commands, PlayerId { id: 1 }, character);
@@ -551,7 +732,10 @@ mod frame_tests {
             assert!((item.rotation * axis).abs_diff_eq(character.rotation * axis, 0.0001));
             assert!((visual.rotation * axis).abs_diff_eq(item.rotation * axis, 0.0001));
         }
-        let proxy = world.get::<HeldAttachment>(fixture.item).unwrap().collider;
+        let proxy = world
+            .get::<ItemCollider>(fixture.item)
+            .and_then(ItemCollider::get)
+            .unwrap();
         assert_eq!(
             world.get::<ColliderOf>(proxy).unwrap().body,
             fixture.character
@@ -620,9 +804,9 @@ mod frame_tests {
         let proxy = fixture
             .app
             .world()
-            .get::<HeldAttachment>(fixture.item)
-            .unwrap()
-            .collider;
+            .get::<ItemCollider>(fixture.item)
+            .and_then(ItemCollider::get)
+            .unwrap();
         interaction_key(&mut fixture.app, fixture.window, ButtonState::Pressed);
         fixture.app.update();
         let world = fixture.app.world();
@@ -720,9 +904,9 @@ mod frame_tests {
         let proxy = fixture
             .app
             .world()
-            .get::<HeldAttachment>(fixture.item)
-            .unwrap()
-            .collider;
+            .get::<ItemCollider>(fixture.item)
+            .and_then(ItemCollider::get)
+            .unwrap();
         fixture
             .app
             .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::ZERO));
@@ -791,7 +975,9 @@ mod interaction_tests {
     use crate::{
         character::{Character, CharacterIntent, CharacterMotion, CharacterPlugin},
         game_flow::configure_feature_order,
-        item_interaction::{CarryGrip, HeldBy, HeldTarget, Item, ItemInteractionPlugin, Pickable},
+        item_interaction::{
+            CarryGrip, HeldBy, HeldTarget, Item, ItemCollider, ItemInteractionPlugin, Pickable,
+        },
         physics::{GamePhysicsPlugin, ground_body, item_collision_layers, world_collision_layers},
         settings::PrototypeConfig,
     };
@@ -879,9 +1065,9 @@ mod interaction_tests {
             assert!(app.world().get::<RigidBody>(item).is_none());
             let proxy = app
                 .world()
-                .get::<crate::item_interaction::HeldAttachment>(item)
-                .unwrap()
-                .collider;
+                .get::<ItemCollider>(item)
+                .and_then(ItemCollider::get)
+                .unwrap();
             assert_eq!(
                 app.world().get::<ColliderOf>(proxy).unwrap().body,
                 character
@@ -932,9 +1118,9 @@ mod interaction_tests {
         assert!(app.world().get::<RigidBody>(item).is_none());
         let proxy = app
             .world()
-            .get::<crate::item_interaction::HeldAttachment>(item)
-            .unwrap()
-            .collider;
+            .get::<ItemCollider>(item)
+            .and_then(ItemCollider::get)
+            .unwrap();
         assert_eq!(
             app.world().get::<ColliderOf>(proxy).unwrap().body,
             character
@@ -1067,9 +1253,9 @@ mod interaction_tests {
         step(&mut app, 120);
         let proxy = app
             .world()
-            .get::<crate::item_interaction::HeldAttachment>(item)
-            .unwrap()
-            .collider;
+            .get::<ItemCollider>(item)
+            .and_then(ItemCollider::get)
+            .unwrap();
         let before = app.world().get::<Position>(character).unwrap().0;
         app.world_mut()
             .get_mut::<CharacterIntent>(character)

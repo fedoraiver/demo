@@ -7,7 +7,8 @@ use bevy_inspector_egui::bevy_egui::PrimaryEguiContext;
 use crate::{
     character::{Character, CharacterIntent, CharacterMotion, character_body},
     first_person::{
-        ControlsCamera, FirstPersonCamera, MouseLookState, PlayerId, spawn_keyboard_controller,
+        CameraTarget, ControlsCamera, FirstPersonCamera, MouseLookState, PlayerId,
+        spawn_keyboard_controller,
     },
     game_flow::AppState,
     item_interaction::{CarryGrip, Item, Pickable, item_body},
@@ -89,9 +90,9 @@ fn spawn_session(
         .entity(controller)
         .insert(DespawnOnEnter(AppState::MainMenu));
 
-    let first_person = FirstPersonCamera::new(character);
+    let first_person = FirstPersonCamera::default();
     let camera_transform = first_person.transform(player_position);
-    // 镜头运行状态不提供 BSN 克隆模板，结构声明后直接插入这两个组件。
+    // 镜头运行状态和目标关系不提供 BSN 克隆模板，结构声明后直接插入。
     let camera = commands
         .spawn_scene(bsn! {
             Name("First-person camera")
@@ -101,7 +102,11 @@ fn spawn_session(
             PrimaryEguiContext
             camera_transform
         })
-        .insert((first_person, MouseLookState::default()))
+        .insert((
+            first_person,
+            CameraTarget { character },
+            MouseLookState::default(),
+        ))
         .id();
     commands
         .entity(controller)

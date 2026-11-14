@@ -119,10 +119,8 @@ fn startup_spawns_complete_geometry_bodies_and_controller_without_external_asset
         .single(world)
         .unwrap();
     assert_eq!(controlled.character, character);
-    let camera = world
-        .get::<FirstPersonCamera>(controlled_camera.camera)
-        .unwrap();
-    assert_eq!(camera.target, character);
+    let target = world.get::<CameraTarget>(controlled_camera.camera).unwrap();
+    assert_eq!(target.character, character);
     assert!(
         world
             .get::<IsDefaultUiCamera>(controlled_camera.camera)

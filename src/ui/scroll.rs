@@ -3,6 +3,7 @@
 use super::{theme::*, *};
 use bevy::{
     camera::visibility::VisibilitySystems,
+    ecs::{lifecycle::HookContext, relationship::Relationship, world::DeferredWorld},
     input::mouse::MouseScrollUnit,
     picking::{Pickable, hover::Hovered},
     prelude::*,
@@ -28,6 +29,59 @@ pub(super) struct MenuScroll;
 #[derive(Component, Clone, Default)]
 pub(super) struct SettingsScrollbar {
     min_thumb_length: f32,
+}
+
+/// 轨道控制的滚动区域；原生 Scrollbar 的 target 仅作为此关系的接口适配。
+#[derive(Component)]
+#[relationship(relationship_target = ScrolledBy)]
+#[component(on_insert = insert_native_scrollbar, on_discard = clear_native_scrollbar)]
+pub(super) struct Scrolls {
+    pub target: Entity,
+}
+
+/// Bevy 维护的区域反向索引，轨道与区域保留各自的页面生命周期。
+#[derive(Component)]
+#[relationship_target(relationship = Scrolls)]
+pub(super) struct ScrolledBy {
+    scrollbars: Vec<Entity>,
+}
+
+fn insert_native_scrollbar(mut world: DeferredWorld, context: HookContext) {
+    let target = world.get::<Scrolls>(context.entity).unwrap().get();
+    let Some(style) = world.get::<SettingsScrollbar>(context.entity) else {
+        return;
+    };
+    let scrollbar = Scrollbar::new(target, ControlOrientation::Vertical, style.min_thumb_length);
+    world
+        .commands()
+        .entity(context.entity)
+        .try_insert(scrollbar);
+}
+
+/// 改绑或解绑先结束旧拖动，目标销毁也沿关系钩子进入同一清理。
+fn clear_native_scrollbar(mut world: DeferredWorld, context: HookContext) {
+    if let Some(mut visibility) = world.get_mut::<Visibility>(context.entity) {
+        *visibility = Visibility::Hidden;
+    }
+    if let Some(mut pickable) = world.get_mut::<Pickable>(context.entity) {
+        *pickable = Pickable::IGNORE;
+    }
+    let children = world
+        .get::<Children>(context.entity)
+        .map(|children| children.to_vec())
+        .unwrap_or_default();
+    for child in children {
+        if let Some(mut drag) = world.get_mut::<ScrollbarDragState>(child) {
+            drag.dragging = false;
+        }
+        if let Some(mut pickable) = world.get_mut::<Pickable>(child) {
+            *pickable = Pickable::IGNORE;
+        }
+    }
+    world
+        .commands()
+        .entity(context.entity)
+        .try_remove::<Scrollbar>();
 }
 
 /// 滑块无按钮动作或导航序号，拖拽生命周期由 Bevy 原生 ScrollbarPlugin 管理。
@@ -123,22 +177,18 @@ fn settings_scrollbar(theme: &UiTheme) -> impl Scene + use<> {
 
 fn bind_settings_scrollbars(
     mut commands: Commands,
-    tracks: Query<(Entity, &ChildOf, &SettingsScrollbar), Without<Scrollbar>>,
+    tracks: Query<(Entity, &ChildOf), (Added<SettingsScrollbar>, Without<Scrolls>)>,
     children: Query<&Children>,
     areas: Query<(), With<MenuScroll>>,
 ) {
-    for (entity, parent, style) in &tracks {
+    for (entity, parent) in &tracks {
         let Ok(siblings) = children.get(parent.parent()) else {
             continue;
         };
         let Some(target) = siblings.iter().find(|sibling| areas.contains(*sibling)) else {
             continue;
         };
-        commands.entity(entity).insert(Scrollbar::new(
-            target,
-            ControlOrientation::Vertical,
-            style.min_thumb_length,
-        ));
+        commands.entity(entity).insert(Scrolls { target });
     }
 }
 
@@ -147,7 +197,7 @@ fn sync_settings_scrollbars(
     source: Res<MenuInputSource>,
     mut areas: Query<(&ComputedNode, &mut ScrollPosition), With<MenuScroll>>,
     mut tracks: Query<
-        (&Scrollbar, &Children, &mut Visibility, &mut Pickable),
+        (&Scrolls, &Children, &mut Visibility, &mut Pickable),
         (With<SettingsScrollbar>, Without<SettingsScrollbarThumb>),
     >,
     mut thumbs: Query<
@@ -161,8 +211,8 @@ fn sync_settings_scrollbars(
     >,
 ) {
     let settings_active = state.is_none_or(|state| state.page == MenuPage::Settings);
-    for (scrollbar, children, mut visibility, mut pickable) in &mut tracks {
-        let Ok((node, mut position)) = areas.get_mut(scrollbar.target) else {
+    for (scrolls, children, mut visibility, mut pickable) in &mut tracks {
+        let Ok((node, mut position)) = areas.get_mut(scrolls.get()) else {
             continue;
         };
         let range = vertical_scroll_range(node);
@@ -187,7 +237,7 @@ fn sync_settings_scrollbars(
             *visibility = next_visibility;
             debug!(
                 target: "demo::ui::widgets",
-                scroll_area = ?scrollbar.target,
+                scroll_area = ?scrolls.get(),
                 visible = shown,
                 content_height = node.content_size().y * node.inverse_scale_factor(),
                 viewport_height = (node.size().y - node.scrollbar_size.y) * node.inverse_scale_factor(),
@@ -231,16 +281,16 @@ fn scrollbar_pointer_source(_: On<PointerPress>, mut source: ResMut<MenuInputSou
 fn scroll_over_settings_scrollbar(
     mut event: On<PointerScroll>,
     state: Option<Res<MenuState>>,
-    tracks: Query<&Scrollbar, With<SettingsScrollbar>>,
+    tracks: Query<&Scrolls, With<SettingsScrollbar>>,
     mut areas: Query<(&mut ScrollPosition, &ComputedNode), With<MenuScroll>>,
 ) {
     if state.is_some_and(|state| state.page != MenuPage::Settings) {
         return;
     }
-    let Ok(scrollbar) = tracks.get(event.entity) else {
+    let Ok(scrolls) = tracks.get(event.entity) else {
         return;
     };
-    let Ok((mut position, node)) = areas.get_mut(scrollbar.target) else {
+    let Ok((mut position, node)) = areas.get_mut(scrolls.get()) else {
         return;
     };
     position.y =

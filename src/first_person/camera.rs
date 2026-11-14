@@ -11,12 +11,12 @@ pub(super) fn on_camera_look(
     time: Res<Time>,
     mut next_log_at: Local<f64>,
     controllers: Query<&ControlsCamera, With<GameplayContext>>,
-    mut cameras: Query<(&mut FirstPersonCamera, &MouseLookState)>,
+    mut cameras: Query<(&mut FirstPersonCamera, &CameraTarget, &MouseLookState)>,
 ) {
     let Ok(controlled) = controllers.get(event.context) else {
         return;
     };
-    let Ok((mut view, state)) = cameras.get_mut(controlled.camera) else {
+    let Ok((mut view, target, state)) = cameras.get_mut(controlled.camera) else {
         return;
     };
     if !state.active || state.skip_motion {
@@ -35,7 +35,7 @@ pub(super) fn on_camera_look(
     view.apply_vertical_look(vertical);
     // 连续角度只采样调试日志，捕获和失效状态仍逐次记录。
     if time.elapsed_secs_f64() >= *next_log_at {
-        debug!(target: "demo::camera", camera = ?controlled.camera, character = ?view.target,
+        debug!(target: "demo::camera", camera = ?controlled.camera, character = ?target.character,
             controller = ?event.context, yaw_before = before_yaw, yaw_after = view.yaw,
             pitch_before = before_pitch, pitch_after = view.pitch,
             reason = "mouse_motion_sample", "Camera look angles changed");
@@ -46,10 +46,10 @@ pub(super) fn on_camera_look(
 /// 镜头使用本帧插值后的人物位置与观察角度；互斥过滤避免 Transform 查询读写冲突。
 pub(super) fn follow_first_person_camera(
     characters: Query<&Transform, With<Character>>,
-    mut cameras: Query<(&FirstPersonCamera, &mut Transform), Without<Character>>,
+    mut cameras: Query<(&FirstPersonCamera, &CameraTarget, &mut Transform), Without<Character>>,
 ) {
-    for (view, mut transform) in &mut cameras {
-        if let Ok(character) = characters.get(view.target) {
+    for (view, target, mut transform) in &mut cameras {
+        if let Ok(character) = characters.get(target.character) {
             *transform = view.transform(character.translation);
         }
     }
@@ -58,7 +58,7 @@ pub(super) fn follow_first_person_camera(
 /// 第一人称只隐藏自身视觉子树，保留业务根与独立物品。
 pub(super) fn sync_character_visibility(
     controllers: Query<(&ControlsCharacter, &ControlsCamera), With<GameplayContext>>,
-    cameras: Query<&FirstPersonCamera>,
+    cameras: Query<&CameraTarget, With<FirstPersonCamera>>,
     characters: Query<(), With<Character>>,
     mut visuals: Query<(Entity, &ChildOf, &mut Visibility), With<CharacterVisual>>,
 ) {
@@ -71,7 +71,7 @@ pub(super) fn sync_character_visibility(
                     && controlled_character.character == character
                     && cameras
                         .get(controlled_camera.camera)
-                        .is_ok_and(|view| view.target == character)
+                        .is_ok_and(|target| target.character == character)
             });
         let after = if hide_visual {
             Visibility::Hidden

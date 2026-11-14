@@ -140,7 +140,7 @@ fn ground_probe_respects_collision_layers_and_excludes_held_boxes() {
     // 单独重跑 ECS 探测确认代理身份同样不能充当地面，不推进装卸或物理积分。
     app.world_mut()
         .entity_mut(item)
-        .insert(crate::item_interaction::HeldCollider { item });
+        .insert(crate::item_interaction::HeldCollisionProxy);
     schedule.run(app.world_mut());
     assert!(
         !grounded(&app),
@@ -148,7 +148,7 @@ fn ground_probe_respects_collision_layers_and_excludes_held_boxes() {
     );
     app.world_mut()
         .entity_mut(item)
-        .remove::<crate::item_interaction::HeldCollider>();
+        .remove::<crate::item_interaction::HeldCollisionProxy>();
     schedule.run(app.world_mut());
     assert!(grounded(&app));
 }

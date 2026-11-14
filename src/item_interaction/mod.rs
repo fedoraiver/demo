@@ -13,7 +13,8 @@ mod triangle_plane;
 
 pub(crate) use body::item_body;
 pub(crate) use components::{
-    CarryGrip, HeldAttachment, HeldBy, HeldCollider, HeldTarget, HoldingItems, Item, Pickable,
+    CarryGrip, HeldAttachment, HeldBy, HeldCollider, HeldCollisionProxy, HeldTarget, HoldingItems,
+    Item, ItemCollider, Pickable,
 };
 pub(crate) use lifecycle::release_item;
 pub(crate) use rotation_query::CarryRotationQuery;

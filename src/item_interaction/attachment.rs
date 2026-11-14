@@ -1,8 +1,8 @@
 //! 保留拾取瞬间姿态，并沿连续碰撞查询允许的路径逐步对齐到握点。
 
 use super::{
-    CarryGrip, CarryRotationQuery, HeldAttachment, HeldBy, HeldCollider, Pickable,
-    components::CarryBaseMass, release_item,
+    CarryGrip, CarryRotationQuery, HeldAttachment, HeldBy, HeldCollider, HeldCollisionProxy,
+    ItemCollider, Pickable, components::CarryBaseMass, release_item,
 };
 use crate::{character::Character, settings::PrototypeConfig};
 use avian3d::prelude::*;
@@ -27,12 +27,15 @@ pub(super) fn begin_attachment(
     collider_was_disabled: bool,
 ) {
     let inverse = holder_pose.rotation.inverse();
-    let collider = commands.spawn(Name::new("Held item collision proxy")).id();
+    commands.spawn((
+        Name::new("Held item collision proxy"),
+        HeldCollisionProxy,
+        HeldCollider { item },
+    ));
     // 活动 ColliderOf 卸载时会迁移 BVH；先移出旧索引，避免恢复时重复注册同一碰撞实体。
     commands.entity(item).insert(ColliderDisabled);
     commands.entity(item).remove::<RigidBody>().insert((
         HeldAttachment {
-            collider,
             local_pose: Transform {
                 translation: inverse * (item_pose.translation - holder_pose.translation),
                 rotation: inverse * item_pose.rotation,
@@ -57,6 +60,7 @@ pub(super) fn finish_attachments(
         (
             Entity,
             &HeldBy,
+            &ItemCollider,
             &Mass,
             &Collider,
             &CollisionLayers,
@@ -68,12 +72,25 @@ pub(super) fn finish_attachments(
     >,
     holders: Query<(&Mass, Option<&CarryBaseMass>), With<Character>>,
 ) {
-    for (item, held_by, mass, collider, layers, friction, restitution, mut attachment) in &mut items
+    for (
+        item,
+        held_by,
+        item_collider,
+        mass,
+        collider,
+        layers,
+        friction,
+        restitution,
+        mut attachment,
+    ) in &mut items
     {
         if !attachment.pending {
             continue;
         }
         let holder = held_by.get();
+        let Some(proxy) = item_collider.get() else {
+            continue;
+        };
         let Ok((holder_mass, base_mass)) = holders.get(holder) else {
             continue;
         };
@@ -86,9 +103,8 @@ pub(super) fn finish_attachments(
         // RigidBodyColliders 的 linked_spawn 会销毁附属碰撞，因此使用代理保护独立业务箱。
         // 代理复制真实形状和表面配置，不含模型子树，也没有第二个 Dynamic。
         commands
-            .entity(attachment.collider)
+            .entity(proxy)
             .insert((
-                HeldCollider { item },
                 collider.clone(),
                 *layers,
                 *friction,
@@ -99,12 +115,10 @@ pub(super) fn finish_attachments(
             .insert(ColliderOf { body: holder })
             .insert(ColliderTransform::from(attachment.local_pose));
         if attachment.collider_was_disabled {
-            commands
-                .entity(attachment.collider)
-                .insert(ColliderDisabled);
+            commands.entity(proxy).insert(ColliderDisabled);
         }
         attachment.pending = false;
-        info!(target: "demo::carry", ?item, ?holder, collider = ?attachment.collider,
+        info!(target: "demo::carry", ?item, ?holder, collider = ?proxy,
             local_position = ?attachment.local_pose.translation,
             body_mass = holder_mass.0 + mass.0,
             reason = "carry_attachment_ready", "Carryable item attached to holder body");

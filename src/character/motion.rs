@@ -5,7 +5,7 @@ use bevy::prelude::*;
 
 use super::{Character, CharacterIntent, CharacterMotion};
 use crate::{
-    item_interaction::{HeldBy, HeldCollider},
+    item_interaction::{HeldBy, HeldCollisionProxy},
     settings::PrototypeConfig,
 };
 
@@ -22,7 +22,7 @@ pub(super) fn update_grounded(
     colliders: Query<(
         Option<&CollisionLayers>,
         Has<HeldBy>,
-        Has<HeldCollider>,
+        Has<HeldCollisionProxy>,
         Has<Sensor>,
     )>,
     mut characters: Query<

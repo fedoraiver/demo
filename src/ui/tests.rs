@@ -2677,6 +2677,7 @@ mod scroll_tests {
     use super::test_support::*;
     use super::*;
     use crate::ui::scroll::*;
+    use bevy::ecs::relationship::{Relationship, RelationshipTarget};
     use bevy::{
         camera::NormalizedRenderTarget,
         input::{mouse::MouseScrollUnit, touch::TouchPhase},
@@ -2743,15 +2744,102 @@ mod scroll_tests {
 
     fn scrollbar_entities(app: &mut App) -> (Entity, Entity, Entity) {
         let world = app.world_mut();
-        let (track, scrollbar, children) = world
-            .query_filtered::<(Entity, &Scrollbar, &Children), With<SettingsScrollbar>>()
+        let (track, scrolls, scrollbar, children) = world
+            .query_filtered::<(Entity, &Scrolls, &Scrollbar, &Children), With<SettingsScrollbar>>()
             .single(world)
             .unwrap();
+        assert_eq!(scrollbar.target, scrolls.get());
         let thumb = children
             .iter()
             .find(|entity| world.get::<ScrollbarThumb>(*entity).is_some())
             .unwrap();
-        (scrollbar.target, track, thumb)
+        (scrolls.get(), track, thumb)
+    }
+
+    fn scrollbar_relation_fixture(world: &mut World, target: Entity) -> (Entity, Entity) {
+        let track = world
+            .spawn((
+                SettingsScrollbar::default(),
+                Visibility::Inherited,
+                Pickable::default(),
+            ))
+            .id();
+        let thumb = world
+            .spawn((
+                ScrollbarThumb::default(),
+                Pickable::default(),
+                ChildOf(track),
+            ))
+            .id();
+        world.entity_mut(track).insert(Scrolls { target });
+        world.flush();
+        (track, thumb)
+    }
+
+    #[test]
+    fn settings_scrollbar_relation_retargets_widget_and_reverse_index() {
+        let mut world = World::new();
+        let original = world.spawn(MenuScroll).id();
+        let replacement = world.spawn(MenuScroll).id();
+        let (track, thumb) = scrollbar_relation_fixture(&mut world, original);
+        world.get_mut::<ScrollbarDragState>(thumb).unwrap().dragging = true;
+
+        world.entity_mut(track).insert(Scrolls {
+            target: replacement,
+        });
+        world.flush();
+
+        assert!(world.get::<ScrolledBy>(original).is_none());
+        assert_eq!(
+            world
+                .get::<ScrolledBy>(replacement)
+                .unwrap()
+                .iter()
+                .collect::<Vec<_>>(),
+            vec![track]
+        );
+        assert_eq!(world.get::<Scrollbar>(track).unwrap().target, replacement);
+        assert!(!world.get::<ScrollbarDragState>(thumb).unwrap().dragging);
+        assert!(world.get_entity(original).is_ok());
+        assert!(world.get_entity(thumb).is_ok());
+    }
+
+    #[test]
+    fn settings_scrollbar_relation_clears_widget_and_drag_when_unbound_or_target_despawns() {
+        for despawn_target in [false, true] {
+            let mut world = World::new();
+            let target = world.spawn(MenuScroll).id();
+            let (track, thumb) = scrollbar_relation_fixture(&mut world, target);
+            world.get_mut::<ScrollbarDragState>(thumb).unwrap().dragging = true;
+            if despawn_target {
+                world.despawn(target);
+            } else {
+                world.entity_mut(track).remove::<Scrolls>();
+            }
+            world.flush();
+
+            assert!(world.get_entity(track).is_ok());
+            assert!(world.get::<Scrolls>(track).is_none());
+            assert!(world.get::<Scrollbar>(track).is_none());
+            assert_eq!(*world.get::<Visibility>(track).unwrap(), Visibility::Hidden);
+            assert_eq!(*world.get::<Pickable>(track).unwrap(), Pickable::IGNORE);
+            assert_eq!(*world.get::<Pickable>(thumb).unwrap(), Pickable::IGNORE);
+            assert!(!world.get::<ScrollbarDragState>(thumb).unwrap().dragging);
+        }
+    }
+
+    #[test]
+    fn settings_scrollbar_track_despawn_removes_reverse_index_and_preserves_scroll_area() {
+        let mut world = World::new();
+        let target = world.spawn(MenuScroll).id();
+        let (track, thumb) = scrollbar_relation_fixture(&mut world, target);
+
+        world.despawn(track);
+        world.flush();
+
+        assert!(world.get_entity(target).is_ok());
+        assert!(world.get::<ScrolledBy>(target).is_none());
+        assert!(world.get_entity(thumb).is_err());
     }
 
     // 只向无窗口 World 注入 UI 事件，验证真正的 Bevy Observer，不模拟桌面输入。

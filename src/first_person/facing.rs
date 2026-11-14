@@ -6,7 +6,7 @@ use super::*;
 pub(super) fn sync_character_facing(
     mut commands: Commands,
     controllers: Query<(&ControlsCharacter, &ControlsCamera), With<GameplayContext>>,
-    mut cameras: Query<&mut FirstPersonCamera>,
+    mut cameras: Query<(&mut FirstPersonCamera, &CameraTarget)>,
     mut characters: Query<(&mut Transform, &Position, Option<&HoldingItems>), With<Character>>,
     items: Query<(
         &Collider,
@@ -18,10 +18,10 @@ pub(super) fn sync_character_facing(
     collision: CarryRotationQuery,
 ) {
     for (controlled_character, controlled_camera) in &controllers {
-        let Ok(mut view) = cameras.get_mut(controlled_camera.camera) else {
+        let Ok((mut view, target)) = cameras.get_mut(controlled_camera.camera) else {
             continue;
         };
-        if view.target != controlled_character.character {
+        if target.character != controlled_character.character {
             continue;
         }
         let Ok((mut transform, position, holding)) =

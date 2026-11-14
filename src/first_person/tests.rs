@@ -2,6 +2,146 @@
 
 use super::*;
 
+mod relationship_tests {
+    use super::*;
+    use bevy::ecs::relationship::RelationshipTarget;
+
+    #[test]
+    fn rebinding_controls_updates_reverse_links_and_routes_to_the_new_character() {
+        let mut app = App::new();
+        app.add_observer(record_movement);
+        let first = app
+            .world_mut()
+            .spawn((Character, CharacterIntent::default()))
+            .id();
+        let second = app
+            .world_mut()
+            .spawn((Character, CharacterIntent::default()))
+            .id();
+        let controller = app
+            .world_mut()
+            .spawn((GameplayContext, ControlsCharacter { character: first }))
+            .id();
+        let other_controller = app
+            .world_mut()
+            .spawn(ControlsCharacter { character: first })
+            .id();
+
+        app.world_mut()
+            .entity_mut(controller)
+            .insert(ControlsCharacter { character: second });
+        app.world_mut().trigger(Fire::<actions::MoveAction> {
+            context: controller,
+            action: Entity::PLACEHOLDER,
+            value: Vec2::X,
+            state: bevy_enhanced_input::prelude::TriggerState::Fired,
+            fired_secs: 0.0,
+            elapsed_secs: 0.0,
+        });
+
+        assert_eq!(
+            app.world().get::<CharacterIntent>(first).unwrap().movement,
+            Vec2::ZERO
+        );
+        assert_eq!(
+            app.world().get::<CharacterIntent>(second).unwrap().movement,
+            Vec2::X
+        );
+        assert_eq!(
+            app.world()
+                .get::<CharacterControllers>(first)
+                .unwrap()
+                .iter()
+                .collect::<Vec<_>>(),
+            vec![other_controller]
+        );
+        assert_eq!(
+            app.world()
+                .get::<CharacterControllers>(second)
+                .unwrap()
+                .iter()
+                .collect::<Vec<_>>(),
+            vec![controller]
+        );
+    }
+
+    #[test]
+    fn camera_rebinding_and_target_despawn_preserve_independent_entities() {
+        let mut world = World::new();
+        let first = world.spawn_empty().id();
+        let second = world.spawn_empty().id();
+        let first_camera = world
+            .spawn((
+                FirstPersonCamera::default(),
+                CameraTarget { character: first },
+            ))
+            .id();
+        let second_camera = world
+            .spawn((
+                FirstPersonCamera::default(),
+                CameraTarget { character: first },
+            ))
+            .id();
+        let controller = world
+            .spawn((
+                ControlsCharacter { character: second },
+                ControlsCamera {
+                    camera: first_camera,
+                },
+            ))
+            .id();
+
+        world.entity_mut(controller).insert(ControlsCamera {
+            camera: second_camera,
+        });
+        world
+            .entity_mut(second_camera)
+            .insert(CameraTarget { character: second });
+        assert!(
+            world
+                .get::<CameraControllers>(first_camera)
+                .is_none_or(RelationshipTarget::is_empty)
+        );
+        assert_eq!(
+            world
+                .get::<CameraControllers>(second_camera)
+                .unwrap()
+                .iter()
+                .collect::<Vec<_>>(),
+            vec![controller]
+        );
+        assert_eq!(
+            world
+                .get::<CharacterCameras>(first)
+                .unwrap()
+                .iter()
+                .collect::<Vec<_>>(),
+            vec![first_camera]
+        );
+        assert_eq!(
+            world
+                .get::<CharacterCameras>(second)
+                .unwrap()
+                .iter()
+                .collect::<Vec<_>>(),
+            vec![second_camera]
+        );
+
+        world.despawn(second);
+        assert!(world.get::<ControlsCharacter>(controller).is_none());
+        assert!(world.get::<CameraTarget>(second_camera).is_none());
+        assert!(world.get::<FirstPersonCamera>(second_camera).is_some());
+        assert_eq!(
+            world.get::<ControlsCamera>(controller).unwrap().camera,
+            second_camera
+        );
+        world.despawn(second_camera);
+        assert!(world.get::<ControlsCamera>(controller).is_none());
+        assert!(world.get_entity(controller).is_ok());
+        assert!(world.get::<FirstPersonCamera>(first_camera).is_some());
+    }
+}
+
 mod action_tests {
     use crate::item_interaction::item_body;
     use std::time::Duration;
@@ -328,9 +468,9 @@ mod action_tests {
         assert!(app.world().get::<RigidBody>(item).is_none());
         let proxy = app
             .world()
-            .get::<crate::item_interaction::HeldAttachment>(item)
-            .unwrap()
-            .collider;
+            .get::<crate::item_interaction::ItemCollider>(item)
+            .and_then(crate::item_interaction::ItemCollider::get)
+            .unwrap();
         assert_eq!(
             app.world().get::<ColliderOf>(proxy).unwrap().body,
             character
@@ -504,11 +644,16 @@ mod pose_tests {
                 Visibility::default(),
             ))
             .id();
-        let view = FirstPersonCamera::new(character);
+        let view = FirstPersonCamera::default();
         let transform = view.transform(Vec3::ZERO);
         let camera = app
             .world_mut()
-            .spawn((view, MouseLookState::default(), transform))
+            .spawn((
+                view,
+                CameraTarget { character },
+                MouseLookState::default(),
+                transform,
+            ))
             .id();
         let controller = {
             let mut commands = app.world_mut().commands();
@@ -1072,17 +1217,51 @@ mod pose_tests {
 
         #[test]
         fn missing_target_or_controller_releases_capture_and_keeps_camera_pose() {
-            for remove_target in [true, false] {
+            for removed in [
+                "target",
+                "controller",
+                "control_character",
+                "control_camera",
+                "camera_target",
+            ] {
                 let (mut app, window, character, camera, controller) = test_app();
                 let before = *app.world().get::<Transform>(camera).unwrap();
-                app.world_mut()
-                    .despawn(if remove_target { character } else { controller });
+                match removed {
+                    "target" => {
+                        app.world_mut().despawn(character);
+                    }
+                    "controller" => {
+                        app.world_mut().despawn(controller);
+                    }
+                    "control_character" => {
+                        app.world_mut()
+                            .entity_mut(controller)
+                            .remove::<ControlsCharacter>();
+                    }
+                    "control_camera" => {
+                        app.world_mut()
+                            .entity_mut(controller)
+                            .remove::<ControlsCamera>();
+                    }
+                    "camera_target" => {
+                        app.world_mut().entity_mut(camera).remove::<CameraTarget>();
+                    }
+                    _ => unreachable!(),
+                }
                 mouse_motion(&mut app, Vec2::ONE * 100.0);
                 // 捕获释放应在当前无固定步帧完成，不能补跑物理后再检查鼠标生命周期。
                 app.update();
                 assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
                 assert!(app.world().get::<CursorOptions>(window).unwrap().visible);
                 assert_eq!(*app.world().get::<Transform>(camera).unwrap(), before);
+                if removed != "controller" {
+                    assert!(
+                        !**app
+                            .world()
+                            .get::<ContextActivity<GameplayContext>>(controller)
+                            .unwrap()
+                    );
+                }
             }
         }
     }
@@ -1146,7 +1325,10 @@ mod pose_tests {
             let second = app
                 .world_mut()
                 .spawn((
-                    FirstPersonCamera::new(second_target),
+                    FirstPersonCamera::default(),
+                    CameraTarget {
+                        character: second_target,
+                    },
                     MouseLookState {
                         active: true,
                         initialized: true,
@@ -1379,10 +1561,7 @@ mod pose_tests {
                         app.world_mut().entity_mut(character).remove::<Character>();
                     }
                     "target_binding" => {
-                        app.world_mut()
-                            .get_mut::<FirstPersonCamera>(camera)
-                            .unwrap()
-                            .target = Entity::PLACEHOLDER;
+                        app.world_mut().entity_mut(camera).remove::<CameraTarget>();
                     }
                     _ => unreachable!(),
                 }
@@ -1486,14 +1665,20 @@ mod pose_tests {
                     .world_mut()
                     .spawn((Character, Transform::from_translation(position)))
                     .id();
-                app.world_mut()
-                    .spawn((FirstPersonCamera::new(target), Transform::default()));
+                app.world_mut().spawn((
+                    FirstPersonCamera::default(),
+                    CameraTarget { character: target },
+                    Transform::default(),
+                ));
             }
             app.update();
             let world = app.world_mut();
-            let mut query = world.query::<(&FirstPersonCamera, &Transform)>();
-            for (view, transform) in query.iter(world) {
-                let position = world.get::<Transform>(view.target).unwrap().translation;
+            let mut query = world.query::<(&CameraTarget, &Transform)>();
+            for (target, transform) in query.iter(world) {
+                let position = world
+                    .get::<Transform>(target.character)
+                    .unwrap()
+                    .translation;
                 assert!(
                     transform
                         .translation

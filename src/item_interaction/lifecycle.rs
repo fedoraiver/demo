@@ -1,7 +1,8 @@
 //! 统一卸载共享刚体和失效关系，恢复物品独立运动、碰撞与原有插值设置。
 
 use super::{
-    HeldAttachment, HeldBy, HeldCollider, HeldTarget, HoldingItems, Pickable,
+    HeldAttachment, HeldBy, HeldCollider, HeldCollisionProxy, HeldTarget, HoldingItems,
+    ItemCollider, Pickable,
     components::{CarryBaseMass, ResumeInterpolation},
 };
 use crate::{character::Character, physics::item_collision_layers};
@@ -26,18 +27,16 @@ pub(crate) fn release_item(
             return;
         };
         let attachment = item_ref.get::<HeldAttachment>().copied();
-        let holder = item_ref.get::<HeldBy>().map(Relationship::get).or_else(|| {
-            attachment.and_then(|attachment| {
-                world
-                    .get::<ColliderOf>(attachment.collider)
-                    .map(|of| of.body)
-            })
-        });
+        let proxy = item_ref.get::<ItemCollider>().and_then(ItemCollider::get);
+        let holder = item_ref
+            .get::<HeldBy>()
+            .map(Relationship::get)
+            .or_else(|| proxy.and_then(|proxy| world.get::<ColliderOf>(proxy).map(|of| of.body)));
         if attachment.is_none() && item_ref.get::<HeldTarget>().is_none() {
             return;
         }
-        if let Some(attachment) = attachment
-            && let Ok(mut proxy) = world.get_entity_mut(attachment.collider)
+        if let Some(proxy) = proxy
+            && let Ok(mut proxy) = world.get_entity_mut(proxy)
         {
             // 先从 BVH 移除再卸载归属，避免同一碰撞实体在两棵树重复登记。
             proxy.insert(ColliderDisabled).remove::<ColliderOf>();
@@ -46,7 +45,7 @@ pub(crate) fn release_item(
         let mut item_entity = world.entity_mut(item);
         item_entity.insert(ColliderDisabled);
         item_entity
-            .remove::<(HeldBy, HeldTarget, HeldAttachment, ColliderOf)>()
+            .remove::<(HeldBy, HeldTarget, HeldAttachment, ItemCollider, ColliderOf)>()
             .remove::<Sleeping>()
             .insert((
                 attachment.map_or(RigidBody::Dynamic, |attachment| attachment.free_body),
@@ -86,7 +85,7 @@ pub(crate) fn release_item(
 pub(super) fn prepare_holder_despawn(
     event: On<Despawn<Character>>,
     mut commands: Commands,
-    proxies: Query<(Entity, &ColliderOf), With<HeldCollider>>,
+    proxies: Query<(Entity, &ColliderOf), With<HeldCollisionProxy>>,
 ) {
     for (proxy, owner) in &proxies {
         if owner.body == event.entity {
@@ -98,14 +97,19 @@ pub(super) fn prepare_holder_despawn(
     }
 }
 
-/// 业务箱本身被销毁后清理代理，防止人物带着不可见的附属碰撞继续运动。
+/// 关系钩子可能先移除 HeldCollider，独立标记保证解绑与端点销毁后仍能清理代理。
 pub(super) fn cleanup_orphaned_colliders(
     mut commands: Commands,
-    items: Query<(), With<Pickable>>,
-    proxies: Query<(Entity, &HeldCollider)>,
+    items: Query<&ItemCollider, (With<HeldAttachment>, With<Pickable>)>,
+    proxies: Query<(Entity, Option<&HeldCollider>), With<HeldCollisionProxy>>,
 ) {
     for (proxy, item) in &proxies {
-        if !items.contains(item.item) {
+        let attached = item.is_some_and(|relation| {
+            items
+                .get(relation.get())
+                .is_ok_and(|collider| collider.get() == Some(proxy))
+        });
+        if !attached {
             commands
                 .entity(proxy)
                 .insert(ColliderDisabled)
@@ -123,18 +127,34 @@ pub(super) fn release_orphaned_items(
         (
             Entity,
             Option<&HeldBy>,
+            Option<&HeldAttachment>,
+            Option<&ItemCollider>,
             &Position,
             &Rotation,
             &Transform,
             &LinearVelocity,
             &AngularVelocity,
         ),
-        With<HeldTarget>,
+        Or<(With<HeldTarget>, With<HeldAttachment>)>,
     >,
+    proxies: Query<(&HeldCollider, Option<&ColliderOf>), With<HeldCollisionProxy>>,
 ) {
-    for (item, held_by, position, rotation, transform, velocity, angular) in &items {
+    for (item, held_by, attachment, collider, position, rotation, transform, velocity, angular) in
+        &items
+    {
         let reason = match held_by {
-            Some(held_by) if holders.contains(held_by.get()) => continue,
+            Some(held_by) if holders.contains(held_by.get()) => {
+                let proxy = collider
+                    .and_then(ItemCollider::get)
+                    .and_then(|proxy| proxies.get(proxy).ok());
+                if let (Some(attachment), Some((relation, body))) = (attachment, proxy)
+                    && relation.get() == item
+                    && (attachment.pending || body.is_some_and(|body| body.body == held_by.get()))
+                {
+                    continue;
+                }
+                "collision_proxy_missing_or_rebound"
+            }
             Some(_) => "holder_missing",
             None => "holding_relation_removed",
         };

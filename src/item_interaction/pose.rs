@@ -1,7 +1,8 @@
 //! 共享同一局部挂接姿态，分别同步真实物理坐标与当前渲染帧的插值呈现。
 
 use super::{
-    CarryGrip, HeldAttachment, HeldBy, HeldCollider, HeldTarget, Pickable, attachment::world_pose,
+    CarryGrip, HeldAttachment, HeldBy, HeldCollisionProxy, HeldTarget, ItemCollider, Pickable,
+    attachment::world_pose,
 };
 use crate::{character::Character, settings::PrototypeConfig};
 use avian3d::prelude::*;
@@ -23,6 +24,7 @@ pub(super) fn sync_held_physics(
         (
             &HeldBy,
             &HeldAttachment,
+            &ItemCollider,
             &mut Position,
             &mut Rotation,
             &mut LinearVelocity,
@@ -38,12 +40,17 @@ pub(super) fn sync_held_physics(
             &mut Rotation,
             &mut Transform,
         ),
-        (With<HeldCollider>, Without<Pickable>, Without<Character>),
+        (
+            With<HeldCollisionProxy>,
+            Without<Pickable>,
+            Without<Character>,
+        ),
     >,
 ) {
     for (
         held_by,
         attachment,
+        item_collider,
         mut position,
         mut rotation,
         mut velocity,
@@ -64,8 +71,10 @@ pub(super) fn sync_held_physics(
             attachment.local_pose,
         );
         // 无 ChildOf 的代理偏移由本系统唯一维护，真实碰撞和独立模型根读取同一局部姿态。
-        if let Ok((mut local, mut proxy_position, mut proxy_rotation, mut proxy_transform)) =
-            proxies.get_mut(attachment.collider)
+        if let Some((mut local, mut proxy_position, mut proxy_rotation, mut proxy_transform)) =
+            item_collider
+                .get()
+                .and_then(|proxy| proxies.get_mut(proxy).ok())
         {
             *local = ColliderTransform::from(attachment.local_pose);
             proxy_position.0 = pose.translation;
