@@ -252,14 +252,14 @@ test('不存在scope拒绝，不允许空候选strict绿灯；四千生成物只
   assert.throws(() => start(root, ['docs/diagrams/generated']), /范围没有/);
 });
 
-test('生成物和UI音频许可规则准确；未知audition保留；发现/实际检查数分开', async () => {
+test('生成物和UI音频许可规则准确；未知 HTML 保留；发现/实际检查数分开', async () => {
   const root = fixture({ 'README.md': '# Main\n', 'docs/diagrams/generated/example.html': '<a href="missing.md">generated</a>',
-    'assets/audio/audition.html': '<div id="audition">unknown origin</div>',
+    'assets/audio/example.html': '<div id="example">unknown origin</div>',
     'assets/audio/sources/kenney_interface-sounds-License.txt': 'License' });
   const session = start(root);
   const generated = session.baseline.documents.find(d => d.path === 'docs/diagrams/generated/example.html');
   assert.equal(generated.kind, 'generated'); assert.equal(generated.owner, 'docs/diagrams/README.md');
-  assert.equal(session.baseline.documents.find(d => d.path === 'assets/audio/audition.html').kind, 'unclassified');
+  assert.equal(session.baseline.documents.find(d => d.path === 'assets/audio/example.html').kind, 'unclassified');
   assert.equal(session.baseline.documents.filter(d => d.requiredReview === false).length, 2);
   const result = await check(root, session.baseline, deps);
   assert.equal(result.status, 'pass'); assert.equal(result.discoveredDocuments, 4); assert.equal(result.parsedDocuments, 2);

@@ -3,7 +3,7 @@
 ## 当前读取顺序
 
 1. 读取根 [Agent 开发指南](../AGENTS.md) 指定的必读工程规范。
-2. 读取 [当前架构](architecture.md)，定位任务涉及的模块和数据流，再核对相关源码；操作与配置见 [使用说明](usage.md)。
+2. 读取 [Bevy App 与项目模块](architecture/README.md)，从模块入口继续读取相关模块架构；涉及项目状态、时钟或跨功能顺序时读取 [应用流程](architecture/game_flow.md)，再核对源码。涉及资产维护时读取 [资产文档](assets/README.md)，操作与配置见 [玩家指南](player-guide.md)。
 3. 涉及玩法目标时读取 [游戏设计](game-design.md) 和相关 Issue，区分已确认设定、建议与待定事项，不从现有场景或资源推断玩法方向。
 4. 涉及设计决策时，按 [Agent Notes 约定](notes/README.md) 读取与任务相关的决策；讨论尚未实施的方案时，同时读取相关提案。
 5. 如果已有 `CONTEXT.md`、`CONTEXT-MAP.md` 或 ADR，按下方规则继续读取。

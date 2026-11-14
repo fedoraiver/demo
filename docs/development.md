@@ -1,14 +1,12 @@
 # 开发规范
 
-本文规定开发者与 Agent 必须遵守的 ECS、输入、UI、调度、注释和日志要求，并提供构建配置与调试入口。当前组成和数据流见 [架构说明](architecture.md)，检查选择与覆盖边界见 [验证参考](testing/README.md)。
+本文规定开发者与 Agent 必须遵守的 ECS、输入、UI、调度、注释和日志要求，并提供构建配置与调试入口。通用 App 机制与模块入口见 [Bevy App 与项目模块](architecture/README.md)，项目状态、时钟与公共调度契约见 [应用流程](architecture/game_flow.md)；检查选择与覆盖边界见 [验证参考](testing/README.md)。
 
 ## 技术栈与版本
 
-项目统一使用 [rust-toolchain.toml](../rust-toolchain.toml) 固定的 nightly；Rust edition、最低语言版本、依赖版本和构建参数以 [Cargo.toml](../Cargo.toml) 与 [Cargo.lock](../Cargo.lock) 为准。在仓库目录运行 rustup 管理的 Cargo 会选择该版本，工具链升级需同时验证[共享编译器分析工具](../tools/rustc-analysis/Cargo.toml)的架构事实提取和全部检查规则。
+项目统一使用 [rust-toolchain.toml](../rust-toolchain.toml) 固定的 nightly；Rust edition、最低语言版本、依赖版本和构建参数以 [Cargo.toml](../Cargo.toml) 与 [Cargo.lock](../Cargo.lock) 为准。在仓库目录运行 rustup 管理的 Cargo 会选择该版本，工具链升级需同时验证[共享编译器分析工具](../tools/rustc-analysis/Cargo.toml)的架构事实提取。
 
-固定工具链包含 `rustfmt`、`clippy`、`rust-src`、`rustc-dev` 和 `llvm-tools-preview`。架构事实提取、[实体命名检查](testing/README.md#实体命名检查)和[具名字段检查](testing/README.md#单字段结构体约束)共用一个 rustc 宿主，宿主必须匹配被调用的编译器提交。统一入口核验 ABI、准备动态库路径并隔离 Cargo 产物；编译器数据只在回调内使用，对外输出独立的分析契约。检查方法见[编译器事实与架构模型检查](testing/README.md#编译器事实与架构模型检查)。
-
-实体命名与具名字段检查由 [GitHub Actions](testing/README.md#github-actions) 执行，本地开发无须例行运行这两个工具。本地格式、编译和针对性无窗口测试要求见[验证参考](testing/README.md#按变更类型选择检查)。
+固定工具链包含 `rustfmt`、`clippy`、`rust-src`、`rustc-dev` 和 `llvm-tools-preview`。架构维护的环境与验证入口见[架构图维护](diagrams/maintenance.md#本地执行与恢复)。
 
 API 行为以对应版本的官方文档为准，示例必须匹配项目版本。
 
@@ -17,11 +15,8 @@ API 行为以对应版本的官方文档为准，示例必须匹配项目版本�
 ### Entity：实体只表示身份
 
 - 使用 Bevy 的 `Entity` 标识实体，通过组件组合表达其能力和状态。
-- 项目代码创建的运行时实体必须在初始组件或场景组合中提供非空 `Name`；测试 fixture、第三方内部实体和导入资产内部节点不受此项约束。静态检查入口见[实体命名检查](testing/README.md#实体命名检查)。
-- 实体之间的引用使用 `Entity` 或 Bevy 关系组件，不持有其他实体组件的长期引用。
-- 不建立包含全部状态与行为的 `GameObject` / `Actor` 对象层，不自行维护一套与 Bevy 重复的实体管理器。
-- 实体可能被销毁；读取保存的实体引用时，按业务需要处理实体不存在或组件缺失的情况。
-- 存档、网络协议等需要稳定标识时，使用独立的业务 ID，不把运行时 `Entity` 当作跨会话永久 ID。
+- 项目代码创建的运行时实体及其子实体必须在初始组件或场景组合中提供非空 `Name`；BSN 的 `#name` 和 required 组件提供的名称均可，创建后补名不满足要求。测试 fixture、第三方内部实体和导入资产内部节点不受此项约束。
+- 实体之间的引用只使用 Bevy 关系组件，由 Bevy 维护反向索引，不使用普通 `Entity` 字段保存跨实体关联，也不持有其他实体组件的长期引用。
 
 ### Component：组件承载实体数据
 
@@ -34,9 +29,8 @@ API 行为以对应版本的官方文档为准，示例必须匹配项目版本�
 ### Resource / Local：明确共享范围
 
 - 全局唯一、由多个系统共享的数据使用 `#[derive(Resource)]`，通过 `Res<T>` / `ResMut<T>` 访问。
-- 属于某个实体的数据放在组件中。确有需要的索引或缓存应明确维护与失效规则。
+- 属于某个实体的数据放在组件中。
 - 仅供单个系统保存的临时状态可使用 `Local<T>`。
-- 不用可变静态变量或自建全局单例绕过 Bevy 的数据访问与调度机制。
 
 ### System：系统实现行为
 
@@ -52,16 +46,8 @@ API 行为以对应版本的官方文档为准，示例必须匹配项目版本�
 - 新增或修改场景、UI 和其他实体层级装配时，尽量采用 BSN（Bevy Scene Notation）风格的声明式代码，清晰表达组件、初始数据和子实体关系。
 - 优先使用当前 Bevy 版本支持的 Rust 内嵌 `bsn!` 及可组合场景函数；按职责提取小型可复用结构，减少冗长、重复的逐实体装配代码。具体语法以项目依赖版本的官方文档为准。
 - 场景辅助函数只在复用、参数化或独立职责确实提高可读性时提取或保留，否则内联；一次性辅助函数也按这一标准判断。
-- BSN 用于声明结构与初始数据；运行时状态变化、输入、交互和逐帧更新继续通过 ECS 系统或 Observer 实现，保持装配与行为职责清晰。
-- 运行时动态构造、第三方 UI（如 Egui 工具面板）或当前 API 不适合 BSN 表达时，可以使用普通 `Commands` 或对应框架的原生 API，并在相关中文注释中简要说明设计原因。该优先级适用于本次涉及的新增或修改部分，存量代码按实际维护需要逐步调整。
-
-## 输入处理规范
-
-- 新增或修改输入处理时，优先使用项目已有的 `bevy_enhanced_input` 插件；先评估动作、绑定、上下文和动作事件能否表达需求，具体 API 使用项目依赖版本。
-- 能通过插件表达的玩家操作，应复用插件的动作与上下文机制，不另建一套键鼠到业务行为的映射。动作响应通过 ECS 组件、资源或显式调度与玩法协作。
-- 按控制上下文确定输入接收者，正确处理控制目标被销毁或缺少组件的情况。持续输入与一次性请求分别保存、消费，避免渲染帧与固定步数量不同导致丢失或重复执行。
-- 确因窗口焦点、鼠标捕获、设备生命周期或插件能力限制需要直接读取底层输入或窗口事件时，在相关中文注释中说明原因，并限制处理范围；同一输入不能经两条路径重复触发业务行为。
-- 输入处理顺序及命令可见性遵循下面的调度规范。有关当前动作路由和窗口捕获的实现，见 [当前架构](architecture.md)。
+- BSN 用于声明结构与初始数据；运行时状态变化、输入、交互和逐帧更新通过 ECS 系统或 Observer 实现，保持装配与行为职责清晰。
+- 运行时动态构造、第三方 UI（如 Egui 工具面板）或当前 API 不适合 BSN 表达时，可以使用普通 `Commands` 或对应框架的原生 API，并在相关中文注释中简要说明设计原因。
 
 ## UI 布局与高亮规范
 
@@ -91,7 +77,7 @@ API 行为以对应版本的官方文档为准，示例必须匹配项目版本�
 - 帮助编号等黄色装饰和 `Coming Soon` 占位不包含按钮动作、不进入导航列表，避免外观与可操作能力混淆。
 - 页面重建、鼠标处理与样式更新遵循现有 `Build → Pointer → Style` 顺序，应用旧树销毁和新树生成的延迟命令后再读取交互，防止旧按钮状态或请求影响新页面。
 
-相关实现入口为 [widgets.rs](../src/ui/widgets.rs)、[pages.rs](../src/ui/pages.rs)、[pointer.rs](../src/ui/pointer.rs) 和 [style.rs](../src/ui/style.rs)。具体检查方法见 [文字布局与高亮回归](testing/README.md#文字布局与高亮回归)；无窗口布局与状态测试不能替代用户对实际游戏窗口的视觉验收。
+相关实现入口为 [widgets.rs](../src/ui/widgets.rs)、[pages.rs](../src/ui/pages.rs)、[pointer.rs](../src/ui/pointer.rs) 和 [style.rs](../src/ui/style.rs)。具体检查方法见 [文字布局与高亮回归](testing/ui.md#文字布局与高亮回归)；无窗口布局与状态测试不能替代用户对实际游戏窗口的视觉验收。
 
 ## 调度、通信与生命周期
 
@@ -112,14 +98,14 @@ API 行为以对应版本的官方文档为准，示例必须匹配项目版本�
 - 固定步与逐帧复用的系统只执行幂等的姿态同步：相同源状态应得到相同姿态，不额外积分运动、消费请求或触发交互。需要最新朝向的固定模拟仍保留其同步步骤，逐帧同步不能替代模拟依赖。
 - 回归测试必须在实际 `app.update()` 返回后立即检查，不能先补跑固定步或姿态系统再断言。覆盖零固定步、多固定步及渲染频率高于固定频率的情况，同时检查业务根实体的 `Transform`、视觉子实体的 `GlobalTransform` 和解除关系后不再跟随的行为。
 
-当前同步顺序见 [调度与模拟边界](architecture.md#调度与模拟边界)；测试组织与防止假通过的要求见 [避免测试掩盖帧间错位](testing/README.md#避免测试掩盖帧间错位)。
+当前同步顺序见 [调度与模拟边界](architecture/game_flow.md#调度与模拟边界)；测试组织与防止假通过的要求见 [避免测试掩盖帧间错位](testing/item_interaction.md#避免测试掩盖帧间错位)。
 
 ## 代码组织与性能
 
 - 按功能目录组织代码，遵守根 [AGENTS.md](../AGENTS.md) 的单一 Plugin 入口约定；在目录内按职责拆分平铺实现文件，不按组件、系统、资源类型建立横跨功能的杂项目录。
-- `main.rs` 显式装配项目 Plugin 和第三方输入基础设施。功能 Plugin 封装本功能所需的数据初始化和行为注册，不隐式安装其他项目 Plugin；跨功能顺序使用公开调度集合。实际边界与共享契约见 [当前架构](architecture.md#模块职责)。
+- `main.rs` 显式装配项目 Plugin 和第三方输入基础设施。功能 Plugin 封装本功能所需的数据初始化和行为注册，不隐式安装其他项目 Plugin；跨功能顺序使用公开调度集合。模块边界见 [本项目模块](architecture/README.md#本项目模块)，共享调度契约见 [应用流程](architecture/game_flow.md#调度与模拟边界)。
 - 无需为小实现或测试预建目录；共用 fixture 保留为功能内的普通函数，不创建仅包装函数的额外 Plugin。
-- 项目 crate 在当前编译配置下实际产生的单字段结构体使用具名字段，避免通过 `.0` 访问含义不明确的数据；约束包括声明宏、过程宏、属性宏及派生宏生成的类型，也包括第三方宏在项目 crate 内生成的辅助类型，按宏展开后的最终字段形状判断。无字段标记结构体、多字段元组结构体、枚举变体及依赖 crate 内部类型不受此项限制，源码中的 lint 设置不能关闭此约束。自动检查见[单字段结构体约束](testing/README.md#单字段结构体约束)。
+- 项目 crate 在当前编译配置下实际产生的单字段结构体使用具名字段，避免通过 `.0` 访问含义不明确的数据；约束包括声明宏、过程宏、属性宏及派生宏生成的类型，也包括第三方宏在项目 crate 内生成的辅助类型，按宏展开后的最终字段形状判断。无字段标记结构体、多字段元组结构体、枚举变体及依赖 crate 内部类型不受此项限制，源码中的 lint 设置不能关闭此约束。
 - 优先批量查询处理实体，避免每帧全世界扫描、无必要的分配与克隆，以及频繁增删组件。
 - 在适合的场景使用 `Added<T>`、`Changed<T>`、条件执行或消息驱动减少重复工作；不能因此遗漏必要的连续更新。
 - 默认使用 Bevy 的存储与调度方式。只有测量表明确有需要时，才调整组件存储、并行迭代或缓存策略。
@@ -189,7 +175,7 @@ Windows 输出程序为 `target/release/demo.exe`。发布构建保留默认 pan
 
 `--locked` 确保使用提交的依赖锁定文件，需要变化时直接报错。构建参数以 Cargo 文件为准。发布包必须携带完整的 `assets/`。
 
-Windows MSVC 目标由根 [build.rs](../build.rs) 在链接时嵌入 `Microsoft.Windows.Common-Controls` v6 清单，覆盖开发、发布及测试程序。原生窗口策略按名称导入的 `GetWindowSubclass` 依赖该清单选择 v6 `comctl32.dll`；仅编译检查通过不能确认最终程序已携带清单，还需按 [验证指南](testing/README.md#windows-msvc-链接产物) 检查链接产物。构建脚本按目标平台与 ABI 判断，只向 Windows MSVC 传递清单链接参数，Windows GNU 与其他目标不使用这些参数。
+Windows MSVC 目标由根 [build.rs](../build.rs) 在链接时嵌入 `Microsoft.Windows.Common-Controls` v6 清单，覆盖开发、发布及测试程序。原生窗口策略按名称导入的 `GetWindowSubclass` 依赖该清单选择 v6 `comctl32.dll`；仅编译检查通过不能确认最终程序已携带清单，还需按 [验证指南](testing/window_policy.md#windows-msvc-链接产物) 检查链接产物。构建脚本按目标平台与 ABI 判断，只向 Windows MSVC 传递清单链接参数，Windows GNU 与其他目标不使用这些参数。
 
 使用支持 `build.build-dir` 的 Cargo 时，多个 worktree 可以共享编译中间产物，并保留各自 `target/` 中的最终程序。在各 worktree 被 Git 本地排除的 `.cargo/config.toml` 中，将 `[build] build-dir` 指向同一专用缓存目录，例如主检出的 `tmp/shared-crates/`；不要共享 `target-dir`，也不要提交机器专属路径。
 
@@ -197,11 +183,11 @@ Windows MSVC 目标由根 [build.rs](../build.rs) 在链接时嵌入 `Microsoft.
 
 构建和测试从对应 worktree 执行，用户启动游戏时也使用该工作目录，保证代码与资源一致。配置细节见 [Cargo 构建目录](https://doc.rust-lang.org/cargo/reference/config.html#buildbuild-dir)。
 
-构建检查由 Agent 执行，游戏启动与实机验收由用户完成。入口见 [运行方式](../README.md#运行)、[验证参考](testing/README.md) 和 [游戏手动验收](testing/game-acceptance.md)。
+构建检查由 Agent 执行，游戏启动与实机验收由用户完成。入口见 [运行方式](../README.md#运行)、[验证参考](testing/README.md) 和 [游戏手动验收](testing/README.md#验收测试)。
 
 ### 日志排查
 
-日志位置和文件命名见 [使用说明](usage.md#会话日志)。当前写入机制见 [架构说明](architecture.md)；出现问题时结合相应会话文件分析，保留原始日志。
+日志位置和文件命名见 [玩家指南](player-guide.md#会话日志)。当前写入机制见 [会话日志架构](architecture/session_log.md)；出现问题时结合相应会话文件分析，保留原始日志。
 
 当前视角角度和世界移动速度以 `debug` 级别记录，每个采样系统每 0.5 秒最多采样一次；鼠标捕获及实际移动输入的离散变化以默认 `info` 级别记录。用户可在自行启动前设置：
 
@@ -209,7 +195,7 @@ Windows MSVC 目标由根 [build.rs](../build.rs) 在链接时嵌入 `Microsoft.
 $env:RUST_LOG = "info,demo::camera=debug,demo::gameplay=debug"
 ```
 
-采样包含相关实体、变化前后值和原因。排查结束后可移除当前终端会话的覆盖：
+视角采样包含相关实体、变化前后角度和原因；速度采样包含角色实体、当前速度、接地状态和原因。排查结束后可移除当前终端会话的覆盖：
 
 ```powershell
 Remove-Item Env:RUST_LOG -ErrorAction SilentlyContinue
@@ -223,6 +209,6 @@ Remove-Item Env:RUST_LOG -ErrorAction SilentlyContinue
 
 ## 文档维护
 
-面向人类文档的分层、内容归属、写作和验证规则见 [文档规范](AGENTS.md)。理解当前机制所需的局部约束与实现解释仍放在架构说明中；长期决策动机、替代方案和取舍由 [Agent Notes](notes/README.md) 维护，事故复盘遵循 [postmortem 约定](postmortem/README.md)。这两类记录使用各自的独立规则。
+面向人类文档的分层、内容归属、写作和验证规则见 [文档规范](AGENTS.md)。理解当前机制所需的局部约束与实现解释仍放在架构说明中；开发设计、已完成工作、决策动机、替代方案和取舍由 [Agent Notes](notes/README.md) 维护，供开发者查阅。事故复盘遵循 [postmortem 约定](postmortem/README.md)。这两类记录使用各自的独立规则。
 
-架构图维护流程见 [架构图维护](diagrams/maintenance.md)；图有变更时须完成 [架构图视觉检查](testing/README.md#架构图视觉检查)。相关源码或工具变更由架构图 Actions 自动构建；本地不要求每次提交前重新生成。
+架构图维护流程见 [架构图维护](diagrams/maintenance.md)；图有变更时按 [验证范围](diagrams/testing.md#架构图视觉检查)选择检查，SVG 视觉验证仅在用户明确要求时执行。仅修改相关源码或工具时，不要求每次提交前重新生成。

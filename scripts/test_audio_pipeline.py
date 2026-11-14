@@ -4,8 +4,6 @@
 import hashlib
 import json
 import shutil
-import subprocess
-import sys
 import tempfile
 import unittest
 import zipfile
@@ -21,21 +19,6 @@ AUDIO = ROOT / "assets/audio"
 
 def read_json(path):
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def read_snapshot(path):
-    text = path.read_text(encoding="utf-8")
-    return json.loads(text.split("window.AUDIO_MANIFEST = ", 1)[1].removesuffix(";\n"))
-
-
-def build_snapshot(manifest_path):
-    snapshot_path = manifest_path.parent / "audition_data.js"
-    subprocess.run(
-        [sys.executable, "-B", str(ROOT / "scripts/build_audition_index.py"),
-         "--manifest", str(manifest_path), "--output", str(snapshot_path)],
-        check=True, capture_output=True, text=True,
-    )
-    return read_snapshot(snapshot_path)
 
 
 class AudioManifestTests(unittest.TestCase):
@@ -73,17 +56,12 @@ class AudioManifestTests(unittest.TestCase):
             audio_pipeline.generate(legacy_config)
         cls.manifest = read_json(output_audio / "audio_manifest.json")
 
-        cls.snapshot = build_snapshot(output_audio / "audio_manifest.json")
-
     def test_committed_config_and_artifacts_have_no_workspace_audit(self):
         self.assertNotIn("reuse_audit", self.config.keys())
         self.assertNotIn("reuse_audit", self.previous_manifest.keys())
-        self.assertNotIn("reuse_audit", read_snapshot(AUDIO / "audition_data.js").keys())
 
-    def test_generated_manifest_and_snapshot_exclude_legacy_workspace_audit(self):
+    def test_generated_manifest_excludes_legacy_workspace_audit(self):
         self.assertNotIn("reuse_audit", self.manifest.keys())
-        self.assertNotIn("reuse_audit", self.snapshot.keys())
-        self.assertEqual(self.snapshot, self.manifest)
 
     def test_generation_follows_configured_assets_categories_and_event_mappings(self):
         configured = {asset["id"]: asset for asset in self.config["external_assets"]}
@@ -154,7 +132,7 @@ class AdditionalCategoryTests(unittest.TestCase):
             audio_pipeline.generate(cls.config)
         cls.manifest = read_json(cls.output_audio / "audio_manifest.json")
 
-    def test_import_generation_quality_and_snapshot_support_additional_categories(self):
+    def test_import_generation_and_quality_support_additional_categories(self):
         self.assertEqual({asset["category"] for asset in self.manifest["assets"]}, {"sfx", "music"})
         self.assertEqual({tuple(asset["event_ids"]) for asset in self.manifest["assets"]},
                          {("fixture_collision",), ("fixture_background",)})
@@ -164,71 +142,9 @@ class AdditionalCategoryTests(unittest.TestCase):
         self.assertEqual(result, 0)
         manifest = read_json(self.output_audio / "audio_manifest.json")
         self.assertTrue(all(asset["quality"]["original_release_bytes_match"] for asset in manifest["assets"]))
-        self.assertEqual(build_snapshot(self.output_audio / "audio_manifest.json"), manifest)
+        playback = {asset["id"]: asset["playback"]["looped"] for asset in manifest["assets"]}
+        self.assertEqual(playback, {"fixture_effect": False, "fixture_theme": True})
 
-    def test_audition_categories_paths_and_loop_policy_follow_manifest(self):
-        # 使用现有离线页面 DOM 执行真实页面脚本，音频元素由数据桩代替。
-        script = r"""
-import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import path from 'node:path';
-import vm from 'node:vm';
-import { pathToFileURL } from 'node:url';
-const input = JSON.parse(fs.readFileSync(0, 'utf8'));
-const { scriptsIn, testDocument } = await import(pathToFileURL(path.join(input.root, 'docs/diagrams/tests/test-dom.mjs')).href);
-const html = fs.readFileSync(path.join(input.root, 'assets/audio/audition.html'), 'utf8');
-const document = testDocument(html);
-document.createTextNode = value => { const node = document.createElement('#text'); node.textContent = value; return node; };
-const audio = document.getElementById('audio');
-audio.paused = true;
-audio.pause = () => { audio.paused = true; };
-audio.load = () => {};
-audio.play = () => { audio.paused = false; return Promise.resolve(); };
-const context = vm.createContext({ document, URL, location: { protocol: 'file:' }, window: { AUDIO_MANIFEST: input.manifest } });
-for (const { attributes, script } of scriptsIn(html)) if (!attributes.includes('src=')) vm.runInContext(script, context);
-const tabs = () => document.getElementById('category-tabs').children;
-const cards = () => document.querySelectorAll('.card').map(card => card.dataset.assetId);
-assert.deepEqual(tabs().map(tab => tab.dataset.category), ['', 'music', 'sfx']);
-assert.deepEqual(cards(), ['fixture_theme', 'fixture_effect']);
-tabs().find(tab => tab.dataset.category === 'sfx').click();
-assert.deepEqual(cards(), ['fixture_effect']);
-document.getElementById('search').value = 'fixture_theme';
-tabs()[0].click();
-assert.deepEqual(cards(), ['fixture_theme']);
-document.getElementById('search').value = '';
-const effect = input.manifest.assets.find(asset => asset.category === 'sfx');
-assert.equal(context.assetUrl(effect), 'sfx/fixtures/fixture_effect.ogg');
-assert.equal(context.assetUrl({ ...effect, path: 'audio/sfx/nested/effect one.ogg' }), 'sfx/nested/effect%20one.ogg');
-for (const invalid of ['audio/../outside.ogg', 'audio/sfx/../outside.ogg', 'audio//file.ogg', 'audio/music/wrong.ogg', 'https://example.invalid/effect.ogg', 'audio/sfx/effect.ogg?query']) {
-  assert.throws(() => context.assetUrl({ ...effect, path: invalid }), /Invalid asset/);
-}
-const theme = input.manifest.assets.find(asset => asset.category === 'music');
-await context.playAsset(theme);
-assert.equal(audio.loop, true);
-await context.playAsset(effect);
-assert.equal(audio.loop, false);
-context.stop();
-assert.equal(audio.paused, true);
-tabs().find(tab => tab.dataset.category === 'sfx').click();
-context.setManifest({ assets: [{ ...effect, id: 'another', category: 'ambient', path: 'audio/ambient/another.ogg' }] }, 'replacement');
-assert.equal(tabs()[0].getAttribute('aria-pressed'), 'true');
-assert.deepEqual(cards(), ['another']);
-context.setManifest({ assets: [
-  { ...effect, id: 'all_category', category: 'all', path: 'audio/all/fixture.ogg' },
-  { ...effect, id: 'ambient_category', category: 'ambient', path: 'audio/ambient/fixture.ogg' },
-  { ...effect, id: 'constructor_category', category: 'constructor', path: 'audio/constructor/fixture.ogg' },
-] }, 'category names');
-assert.equal(tabs().find(tab => tab.dataset.category === 'constructor').textContent, 'constructor');
-tabs().find(tab => tab.dataset.category === 'all').click();
-assert.deepEqual(cards(), ['all_category']);
-tabs()[0].click();
-assert.equal(cards().length, 3);
-"""
-        subprocess.run(
-            ["node", "--input-type=module", "-e", script],
-            input=json.dumps({"root": str(ROOT), "manifest": self.manifest}),
-            check=True, capture_output=True, text=True,
-        )
 
 
 if __name__ == "__main__":

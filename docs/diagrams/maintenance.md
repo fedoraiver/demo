@@ -1,26 +1,16 @@
 # ECS 架构图维护
 
-本指南面向维护源码模型、查看器和发布流程的开发者。本地与 [GitHub Actions](../../.github/workflows/ecs-architecture.yml) 共用 [maintain.mjs](maintain.mjs)；rustc 提取事实，真实应用导出 Schedule，Rust 装配 schema `2` 语义模型，Node 生成并校验完整图，再打包 Pages。过程不读取用途注释，也不调用大模型。模型及查看器契约见[架构图参考](README.md)。
+本指南面向维护源码模型和查看器的开发者。[maintain.mjs](maintain.mjs) 使用 rustc 提取事实，真实应用导出 Schedule，Rust 装配 schema `2` 语义模型，Node 生成并校验完整图并运行测试；静态页面打包与检查通过单独命令执行。模型及查看器契约见[架构图参考](README.md)。
 
-## Actions 构建与发布
+架构图表示原生 Linux 目标在导出时的注册结构，不代表 Windows、macOS、其他设备能力或随后动态注册的 Schedule。源码提交、目标及构建 ID 保存在启动数据和清单中，用于校验同轮资源。
 
-相关源码、分析工具、图包或工作流变更推送到 `master` 时触发构建，成功后发布 [GitHub Pages](https://fedoraiver.github.io/demo/)；PR 不触发。也可从 Actions 的 `ECS architecture` 手动运行，只有选择 `master` 才构建和发布，其他分支跳过构建与发布任务。仓库 Pages 的构建来源须选择 GitHub Actions，部署环境使用 `github-pages`。
+Xvfb 提供虚拟显示，Mesa Lavapipe 提供软件 Vulkan；专用导出完整装配插件，但不执行 Startup、游戏循环或渲染线程。无音频设备时的实际初始化结果记录在会话日志中，不通过删插件或测试 fixture 替代真实导出。
 
-发布图表示原生 Linux 目标在导出时的注册结构，不代表 Windows、macOS、其他设备能力或随后动态注册的 Schedule。源码提交、目标及构建 ID 保存在启动数据和清单中，用于校验同轮资源。部署 job 只在同轮完整检查及静态包校验成功后运行，使用 Pages 写权限和 OIDC；构建 job 只有仓库读取权限。
-
-构建采用免费标准 `ubuntu-latest` runner、Node 24、仓库固定 nightly 和锁定依赖。自动触发按工作流中的路径过滤，纯 Markdown 文档修改不构建或发布；手动运行不受路径过滤限制。Xvfb 提供虚拟显示，Mesa Lavapipe 提供软件 Vulkan；专用导出仍完整装配插件，但不执行 Startup、游戏循环或渲染线程。无音频设备时的实际初始化结果记录在会话日志中，不通过删插件或测试 fixture 替代真实导出。
-
-Puppeteer 浏览器来自图包锁定依赖，工作流显式设置 `MERMAID_CHROMIUM_PATH` 并启动检查。`package.json` 的 `allowScripts` 只批准锁定版本的 esbuild 与 Puppeteer 安装脚本，版本升级时同步复核；CI 显式启用 Chrome 下载，并跳过 headless-shell 和 Firefox，覆盖本地默认不下载浏览器的配置。`npm ci --foreground-scripts` 保留安装日志，随后 `npm exec --yes=false -- puppeteer browsers install chrome` 使用已安装的锁定 CLI 明确完成下载；下载失败直接停止，不以 postinstall 的退出结果推定浏览器存在。中文字体安装后，实际字体文件 SHA-256 和 fontconfig 版本生成 `MERMAID_RENDER_CONTEXT`；该值和浏览器字节身份共同参与图形缓存指纹。原生 Node 回归必须使用该浏览器，不能把缺少浏览器导致的跳过当作通过。
-
-Rust 编译和对象绘图的初始并发均为 `2`，关闭开发／测试调试信息，构建限时 `240` 分钟。缓存仅保留 Cargo/npm 下载、锁定浏览器和仍须逐图核验的几何候选，不保存 Cargo 编译物或绕过事实校验。几何缓存恢复步骤成功后，即使本轮后续失败也保存已生成候选，恢复时仍逐图按当前输入和检查规则验证。内存、磁盘或时间不足时运行失败，保留可获得的日志与资源摘要，不自动改用付费或自托管 runner，也不缩减事实或放宽校验。
-
-工作流按分支分组，同一分支的新运行取消旧构建；Pages 部署单独串行，开始前再次核对 `master` 当前提交，旧构建只留审计、不覆盖新提交。构建记录进程峰值内存和每 `15` 秒磁盘样本。完整审计输出、编译事实及执行日志作为 Actions artifact 保存 `3` 天，静态 Pages artifact 同样保存 `3` 天。历史失败、中断或未知退出不能作为本轮成功依据。
-
-发布 job 使用同一已校验产物进行有界部署重试；部署成功后，独立的自动 HTTP 校验核对实际资源来源与完整性，并对传播延迟进行有界重试。校验失败则任务失败；可获得的证据写入 `tmp/ecs-architecture/deployment/verification.json`，并作为部署证据 artifact 保留供排查。此 HTTP 校验不是浏览器验收。发布 job 通过成功构建的输出获取 Pages 产物名称与发布证明的产物 ID。`Re-run failed jobs` 复用该构建的产物，不依赖发布 job 当前的重跑次数；产物超过保留期后需重新构建。工作流限制以所选分支内的配置为准，旧分支需同步配置；旧运行重跑仍沿用原提交的工作流。
+Puppeteer 浏览器使用图包锁定依赖，设置 `MERMAID_CHROMIUM_PATH` 并验证浏览器能启动。`package.json` 的 `allowScripts` 只批准锁定版本的 esbuild 与 Puppeteer 安装脚本，版本升级时同步复核；在 `docs/diagrams/` 目录执行 `npm ci --foreground-scripts` 安装依赖，再执行 `npm exec --yes=false -- puppeteer browsers install chrome` 明确安装浏览器，下载失败直接停止。调用方根据实际中文字体文件 SHA-256 和 fontconfig 版本提供 `MERMAID_RENDER_CONTEXT`；该值与浏览器字节身份共同参与图形缓存指纹。原生 Node 回归必须使用该浏览器，不能把缺少浏览器导致的跳过当作通过。
 
 ## 本地执行与恢复
 
-完整发布流程在 Linux 原生环境执行。准备仓库工具链、Bash、Python 3.11 以上版本、Node、Bevy 编译依赖、虚拟显示、软件 Vulkan、中文字体及图包依赖；版本入口分别为 [rust-toolchain.toml](../../rust-toolchain.toml)、[Cargo.lock](../../Cargo.lock) 和 [package-lock.json](package-lock.json)。Linux 设备和浏览器环境可对照工作流准备，不为维护入口新建另一套 npm 环境。
+完整维护流程在 Linux 原生环境执行。准备仓库工具链、Bash、Node、Bevy 编译依赖、虚拟显示、软件 Vulkan、中文字体及图包依赖；版本入口分别为 [rust-toolchain.toml](../../rust-toolchain.toml)、[Cargo.lock](../../Cargo.lock) 和 [package-lock.json](package-lock.json)。维护入口使用图包自身的 npm 环境。架构事实提取使用的编译器宿主必须匹配被调用的编译器提交。
 
 在目标 checkout 内运行以下统一命令；跨目录调用时显式传入 `--workspace`。执行前核对工作树、分支和已有修改，生成不会自动暂存或提交。
 
@@ -44,13 +34,13 @@ npm run maintain --prefix docs/diagrams -- check-pages
 
 ## 完整审计与 Pages 静态包
 
-`generated/` 只作为本地及 CI 的临时生成目录，不纳入 Git，也不使用 Git LFS。完整清单核验 schema `2` 模型、全部调用图 NDJSON、冻结源码、对象身份、关系证据及真实 Schedule；缺少调用图、哈希或准确边数不符均失败。完整审计文件是排查证据，不由网页重复下载。
+`generated/` 只作为临时生成目录，不纳入 Git，也不使用 Git LFS。完整清单核验 schema `2` 模型、全部调用图 NDJSON、冻结源码、对象身份、关系证据及真实 Schedule；缺少调用图、哈希或准确边数不符均失败。完整审计文件是排查证据，不由网页重复下载。
 
-页面启动与外置运行数据使用 schema `7`，完整架构数据包使用 schema `6`，Mermaid 几何输入版本为 `5`。完整检查从原模型独立推导可见规范关系、函数卡片成员和显示边分组，核对每条可见关系恰好属于一个显示组以及两侧成员方向。赋值 `modify` 保留在原模型审计，网页展示范围与[显示规则](README.md#对象专属图)一致。混用旧运行数据、组成员或几何输入的产物须重新生成。
+页面启动与外置运行数据使用 schema `7`，完整架构数据包使用 schema `6`，Mermaid 几何输入版本见[渲染身份](src/mermaid-cache.mjs)。完整检查从原模型独立推导可见规范关系、函数卡片成员和显示边分组，核对每条可见关系恰好属于一个显示组以及两侧成员方向。赋值 `modify` 保留在原模型审计，网页展示范围与[显示规则](README.md#对象专属图)一致。混用旧运行数据、组成员或几何输入的产物须重新生成。
 
 打包器从已通过完整校验的产物构建独立静态包，保留全部浏览与下载所需资源、源码快照以及本地 Graphviz／Mermaid 运行库，排除主模型和调用图。完整 SVG 下载使用静态原生产物，查看器的[连线流动](README.md#节点与连线视觉规范)由页面独立维护。发布清单独立描述静态包的实际文件与 SHA-256，不能沿用要求审计文件的完整清单再手工删文件。校验同时检查额外文件、资源闭包、相对路径、构建来源及体积预算；静态包上限为 `900000000` 字节，超出即失败。
 
-静态包根入口为 `index.html`，架构页和源码页位于 `pages/`；项目 Pages 子路径下全部资源使用相对 URL。可从 Actions artifact 下载同轮审计、日志或静态包。[本地预览服务](README.md#本地自动预览)默认读取完整 `generated/`，可显式指定实际静态包；目录参数按仓库根解析，直接双击 HTML 不能替代 HTTP 资源加载。
+静态包根入口为 `index.html`，架构页和源码页位于 `pages/`；项目 Pages 子路径下全部资源使用相对 URL。[本地预览服务](README.md#本地自动预览)默认读取完整 `generated/`，可显式指定实际静态包；目录参数按仓库根解析，直接双击 HTML 不能替代 HTTP 资源加载。
 
 ```text
 npm run serve --prefix docs/diagrams -- --directory tmp/ecs-architecture/pages
@@ -58,7 +48,7 @@ npm run serve --prefix docs/diagrams -- --directory tmp/ecs-architecture/pages
 
 ## 可选视觉诊断
 
-自动更新与发布不包含 SVG 目测、正式页面浏览器验收或 VS Code 协议验收。这些项目不构成发布 gate，也不需要为默认跳过取得额外确认。隔离静态 fixture 的浏览器、文字、几何及交互自动回归仍属于完整 Node 检查。
+默认维护不包含 SVG 目测、正式页面浏览器验收或 VS Code 协议验收。隔离静态 fixture 的浏览器、文字、几何及交互自动回归仍属于完整 Node 检查。
 
 用户明确要求视觉诊断时，可复用统一入口的 `visual plan/render/record/bind/report`。计划冻结当前清单及文件哈希；渲染保存预览和必要的原尺寸分块，截图本身不产生通过结论。只有实际观察后才记录 `passed`／`failed`、`reviewer: { "id": "检查者" }`、`actualInspection: true`、带时区的 `checkedAt`、具体 `notes`、`observedWith` 和完整 `images` 路径及哈希。检查者可以是人或工具，不要求指定 AI 模型。
 
@@ -71,4 +61,4 @@ npm run maintain --prefix docs/diagrams -- visual report --plan <plan.json>
 
 默认覆盖全部缺少有效观察的图；只有用户明确限定范围时使用 `--sample N --seed TEXT --scope TEXT`，可用 `--force-object ID` 或 `--force-view ID` 固定对象。证据索引默认保存在主检出 `tmp/ecs-architecture/visual-checks/index-v2.json`，不隐式迁移旧索引。`visual bind --commit COMMIT` 只适用于目标提交实际含有完全匹配产物的历史版本；当前不提交生成文件，日常维护无需绑定。
 
-正式页面或外部编辑器访问被策略拒绝后，停止该目标验收，不换端口、协议、浏览器或编译 fixture 绕过。自动检查与实际观察分别记录；具体检查项见[验证参考](../testing/README.md#架构图视觉检查)。
+正式页面或外部编辑器访问被策略拒绝后，停止该目标验收，不换端口、协议、浏览器或编译 fixture 绕过。自动检查与实际观察分别记录；具体检查项见[验证参考](testing.md#架构图视觉检查)。
