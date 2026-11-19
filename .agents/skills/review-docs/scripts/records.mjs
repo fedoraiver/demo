@@ -4,7 +4,7 @@ import { append, dependenciesFor, currentEvent, sessionDocuments, comparisonBase
 
 const types = ['assignment', 'content_review', 'independent_review', 'exclusion', 'delegation', 'return', 'reconfirmation'];
 const roles = ['editor', 'reviewer', 'independent_reviewer', 'links'];
-const models = ['gpt-6.1-sol', 'gpt-6.1-terra'];
+const models = ['gpt-6.2-sol', 'gpt-6.1-terra'];
 const efforts = ['low', 'medium', 'high', 'xhigh', 'max', 'ultra'];
 const reviewTypes = ['content_review', 'independent_review', 'return'];
 function nonempty(value, field) { if (typeof value !== 'string' || !value.trim()) fail(`${field} 必须为非空字符串`); }

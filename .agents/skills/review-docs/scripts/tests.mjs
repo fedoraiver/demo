@@ -36,7 +36,7 @@ function fixture(files = { 'README.md': '# 文档\n', 'AGENTS.md': '# Rules\n' }
 function start(root, scope = [], base) { const result = init(root, scope, base); return loadSession(root, result.session); }
 function evidence(p = 'README.md') { return [{ path: p, reference: '模拟测试证据，不表示真实阅读'  }]; }
 async function add(root, session, input) { return withLock(root, session.baseline.id, s => record(root, s, { schemaVersion: 1, ...input })); }
-function assignment(actor, role = 'reviewer', scope = ['README.md']) { return { type: 'assignment', actor, role, scope, evidence: evidence(), execution: { model: role === 'editor' ? 'gpt-6.1-terra' : 'gpt-6.1-sol', effort: 'high', forkTurns: 'none' } }; }
+function assignment(actor, role = 'reviewer', scope = ['README.md']) { return { type: 'assignment', actor, role, scope, evidence: evidence(), execution: { model: role === 'editor' ? 'gpt-6.1-terra' : 'gpt-6.2-sol', effort: 'high', forkTurns: 'none' } }; }
 function review(actor, type = 'content_review', scope = ['README.md']) { return { type, actor, scope, evidence: evidence(), result: 'no_findings', findings: [] }; }
 function cli(args, cwd = defaultWorkspace) {
   return new Promise(resolve => {
@@ -106,9 +106,9 @@ test('唯一编辑者、实际派发元数据与独立终审身份约束', async
   await add(root, session, assignment('writer', 'editor'));
   await assert.rejects(add(root, session, assignment('other', 'editor')), /一个编辑者/);
   await assert.rejects(add(root, session, assignment('writer', 'independent_reviewer')), /历史编辑者/);
-  await assert.rejects(add(root, session, { ...assignment('bad'), execution: { model: 'unknown', effort: 'high', forkTurns: 'none' } }), /能力范围/);
-  await assert.rejects(add(root, session, { ...assignment('bad'), execution: { model: 'gpt-6.1-sol', effort: 'high', forkTurns: 'all' } }), /forkTurns/);
-  await assert.rejects(add(root, session, { ...assignment('bad'), execution: { model: 'gpt-6.1-sol', effort: 'high', forkTurns: 'none', requestedModel: 'gpt-6.1-terra' } }), /不一致/);
+  await assert.rejects(add(root, session, { ...assignment('bad'), execution: { model: 'gpt-6.2-astra', effort: 'high', forkTurns: 'none' } }), /能力范围/);
+  await assert.rejects(add(root, session, { ...assignment('bad'), execution: { model: 'gpt-6.2-sol', effort: 'high', forkTurns: 'all' } }), /forkTurns/);
+  await assert.rejects(add(root, session, { ...assignment('bad'), execution: { model: 'gpt-6.2-sol', effort: 'high', forkTurns: 'none', requestedModel: 'gpt-6.1-terra' } }), /不一致/);
   await assert.rejects(add(root, session, { ...review('reviewer'), findings: undefined }), /findings/);
   write(root, 'README.md', '# Changed\n');
   await assert.rejects(add(root, session, assignment('writer', 'independent_reviewer')), /历史编辑者/);

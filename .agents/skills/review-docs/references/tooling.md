@@ -32,9 +32,9 @@ pwsh -NoProfile -File ./.agents/skills/review-docs/scripts/check-docs.ps1 check 
 $evidence = @(@{ path = 'docs/AGENTS.md'; reference = '核对文档规范及其归属' })
 $scope = @('docs/AGENTS.md')
 $records = @(
-  @{ schemaVersion = 1; type = 'assignment'; actor = 'reviewer'; scope = $scope; evidence = $evidence; role = 'reviewer'; execution = @{ model = 'gpt-6.1-sol'; effort = 'high'; forkTurns = 'none' } },
+  @{ schemaVersion = 1; type = 'assignment'; actor = 'reviewer'; scope = $scope; evidence = $evidence; role = 'reviewer'; execution = @{ model = 'gpt-6.2-sol'; effort = 'high'; forkTurns = 'none' } },
   @{ schemaVersion = 1; type = 'content_review'; actor = 'reviewer'; scope = $scope; evidence = $evidence; result = 'no_findings'; findings = @() },
-  @{ schemaVersion = 1; type = 'assignment'; actor = 'independent'; scope = $scope; evidence = $evidence; role = 'independent_reviewer'; execution = @{ model = 'gpt-6.1-sol'; effort = 'high'; forkTurns = 'none' } },
+  @{ schemaVersion = 1; type = 'assignment'; actor = 'independent'; scope = $scope; evidence = $evidence; role = 'independent_reviewer'; execution = @{ model = 'gpt-6.2-sol'; effort = 'high'; forkTurns = 'none' } },
   @{ schemaVersion = 1; type = 'independent_review'; actor = 'independent'; scope = $scope; evidence = $evidence; result = 'no_findings'; findings = @() }
 )
 $inputPath = Join-Path (Get-Location) 'tmp/review-docs/review-input.json'
