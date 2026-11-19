@@ -12,7 +12,7 @@ Status: implemented
 
 ## Changes
 
-[GameSettingsPlugin](../../../../src/settings/mod.rs) 注册设置类型并安装原生插件。FPS 使用保留整数格式的反射类型，使 Bevy 的逐字段加载能经过 Serde `try_from`。音量和相机使用各自的转换保留同组有效值。[菜单请求](../../../../src/ui/requests.rs)应用设置后提交原生保存命令。
+[GameSettingsPlugin](../../../../src/settings/mod.rs) 注册设置类型并安装原生插件。FPS 使用保留整数格式的反射类型，使 Bevy 的逐字段加载能经过 Serde `try_from`。默认帧率使用 `u32` 常量，构造运行值时复用同一范围检查。音量和相机使用各自的转换保留同组有效值。[菜单请求](../../../../src/ui/requests.rs)应用设置后提交原生保存命令。
 
 ## Alternatives considered
 
