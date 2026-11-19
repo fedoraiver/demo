@@ -191,8 +191,8 @@ name = "entity-name-fixture"
 version = "0.0.0"
 edition = "2024"
 [dependencies]
-bevy_ecs = "=0.20.0"
-bevy_scene = "=0.20.0"
+bevy_ecs = "0.20"
+bevy_scene = "0.20"
 fixture-macros = { path = "macros" }
 fixture-factories = { path = "factories" }
 [features]
@@ -203,8 +203,8 @@ name = "fixture-factories"
 version = "0.0.0"
 edition = "2024"
 [dependencies]
-bevy_ecs = "=0.20.0"
-bevy_scene = "=0.20.0"
+bevy_ecs = "0.20"
+bevy_scene = "0.20"
 "#);
         write(&root, "factories/src/lib.rs", r#"use bevy_ecs::prelude::*;
 use bevy_scene::prelude::*;
@@ -465,9 +465,8 @@ fn unrelated() { Other.spawn(Marker); }
         }
         fs::write(source_path, source).unwrap();
         write(&root, "src/inactive.rs", "#[derive(UnavailableMacro)] struct Inactive;\n");
-        if !root.join("Cargo.lock").exists() {
-            fs::copy(project_root().join("Cargo.lock"), root.join("Cargo.lock")).unwrap();
-        }
+        // 从当前项目锁文件开始离线解析，避免测试沿用上一个 Bevy 补丁版本。
+        fs::copy(project_root().join("Cargo.lock"), root.join("Cargo.lock")).unwrap();
         let output = Command::new("cargo").args(["metadata", "--offline", "--format-version", "1", "--manifest-path"]).arg(root.join("Cargo.toml")).output().unwrap();
         assert!(output.status.success(), "Cannot prepare fixture lockfile: {}", String::from_utf8_lossy(&output.stderr));
         check(&Options::new(root)).map_err(|error| format!("{error:#}"))
@@ -827,8 +826,8 @@ name = "entity-name-cli-outcomes"
 version = "0.0.0"
 edition = "2024"
 [dependencies]
-bevy_ecs = "=0.20.0"
-bevy_scene = "=0.20.0"
+bevy_ecs = "0.20"
+bevy_scene = "0.20"
 "#,
     );
     let unresolved = "use bevy_ecs::prelude::*;\nuse bevy_scene::prelude::*;\nmacro_rules! create { ($world:expr, $scene:expr) => { $world.spawn_scene($scene) }; }\nfn unresolved_source(world: &mut World, scene: Box<dyn Scene>) { create!(world, scene); }\npub fn outer(world: &mut World, scene: Box<dyn Scene>) { unresolved_source(world, scene); }\n";
