@@ -24,8 +24,9 @@ use settings::GameSettingsPlugin;
 use ui::GameUiPlugin;
 use window_policy::WindowPolicyPlugin;
 
-use bevy::{log::LogPlugin, prelude::*};
+use bevy::{log::LogPlugin, prelude::*, render::RenderApp, winit::WinitSettings};
 use bevy_enhanced_input::EnhancedInputPlugin;
+use bevy_framepace::FramepacePlugin;
 
 fn main() -> AppExit {
     let launch_mode = match inspector::parse_launch_mode(std::env::args_os().skip(1)) {
@@ -60,6 +61,12 @@ fn main() -> AppExit {
                 ..default()
             }),
     );
+
+    if app.get_sub_app(RenderApp).is_some() {
+        // 渲染插件负责帧间等待，前后台窗口循环采用相同的连续更新模式。
+        app.insert_resource(WinitSettings::continuous())
+            .add_plugins(FramepacePlugin);
+    }
 
     app.insert_resource(Time::<Fixed>::from_hz(FIXED_SIMULATION_HZ))
         .add_plugins((

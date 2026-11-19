@@ -7,15 +7,12 @@ use bevy::{
         TypeRegistry,
         serde::{TypedReflectDeserializer, TypedReflectSerializer},
     },
-    time::{TimePlugin, TimeUpdateStrategy},
-    winit::{UpdateMode, WinitSettings},
 };
 use serde::de::DeserializeSeed;
 use serde_json::{Value, json};
 use std::{
     any::TypeId,
     sync::{Arc, Mutex},
-    time::Duration,
 };
 
 use super::{config::FpsLimit, *};
@@ -283,66 +280,68 @@ fn ui_audio_draft_adjustments_preserve_values_and_clamp_only_edited_fields() {
     assert_eq!(draft.max_fps, 75);
 }
 
-#[test]
-fn frame_rate_limit_configures_native_runner_for_both_focus_modes() {
-    for (fps, interval_ns) in [(60, 16_666_667), (75, 13_333_334), (144, 6_944_445)] {
-        let mut app = App::new();
-        app.add_plugins(TimePlugin)
-            .insert_resource(GameSettings {
-                max_fps: FpsLimit::new(fps).unwrap(),
-                ..default()
-            })
-            .insert_resource(WinitSettings::continuous());
-        frame_pacing::register(&mut app);
-        app.update();
+// 插件在原生平台的 Update 读取帧间隔。空的 RenderApp 不执行渲染调度。
+#[cfg(not(target_arch = "wasm32"))]
+mod frame_pacing {
+    use super::*;
+    use bevy::{
+        app::SubApp,
+        render::RenderApp,
+        time::{TimePlugin, TimeUpdateStrategy},
+    };
+    use bevy_framepace::{FramepacePlugin, FrametimeLimit};
+    use std::time::Duration;
 
-        let winit = app.world().resource::<WinitSettings>();
-        for focused in [true, false] {
+    fn test_app() -> App {
+        let mut app = App::new();
+        app.insert_sub_app(RenderApp, SubApp::new());
+        app.add_plugins((TimePlugin, FramepacePlugin))
+            .init_resource::<GameSettings>();
+        register_frame_pacing(&mut app);
+        app
+    }
+
+    fn frametime_limit(app: &App) -> Duration {
+        *app.world().resource::<FrametimeLimit>().0.lock().unwrap()
+    }
+
+    #[test]
+    fn frame_rate_limit_rounds_up_from_default_and_custom_values() {
+        let mut app = test_app();
+        app.update();
+        assert_eq!(frametime_limit(&app), Duration::from_nanos(16_666_667));
+
+        for (fps, interval_ns) in [(75, 13_333_334), (144, 6_944_445), (u32::MAX, 1)] {
+            app.world_mut().resource_mut::<GameSettings>().max_fps = FpsLimit::new(fps).unwrap();
+            app.update();
             assert_eq!(
-                winit.update_mode(focused),
-                UpdateMode::Reactive {
-                    wait: Duration::from_nanos(interval_ns),
-                    react_to_device_events: false,
-                    react_to_user_events: false,
-                    react_to_window_events: false,
-                }
+                frametime_limit(&app),
+                Duration::from_nanos(interval_ns),
+                "{fps} FPS"
             );
         }
     }
-}
 
-#[test]
-fn changing_render_limit_preserves_fixed_simulation_timestep() {
-    // 只运行最小 App；手动推进时间，不加载窗口、渲染器或完整游戏。
-    let mut app = App::new();
-    app.add_plugins(TimePlugin)
-        .insert_resource(Time::<Fixed>::from_hz(60.0))
-        .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::from_millis(
-            20,
-        )))
-        .init_resource::<GameSettings>();
-    frame_pacing::register(&mut app);
-    app.update();
-    let timestep = app.world().resource::<Time<Fixed>>().timestep();
-    // 模拟菜单在 PreUpdate 应用配置，确认本帧结束时窗口循环已能读取新策略。
-    app.add_systems(PreUpdate, |mut settings: ResMut<GameSettings>| {
-        settings.max_fps = FpsLimit::new(120).unwrap();
-    });
-    app.update();
-    let winit = app.world().resource::<WinitSettings>();
-    for focused in [true, false] {
-        assert_eq!(
-            winit.update_mode(focused),
-            UpdateMode::Reactive {
-                wait: Duration::from_nanos(8_333_334),
-                react_to_device_events: false,
-                react_to_user_events: false,
-                react_to_window_events: false,
-            }
-        );
+    #[test]
+    fn changing_render_limit_takes_effect_within_update_and_preserves_fixed_timestep() {
+        let mut app = test_app();
+        app.insert_resource(Time::<Fixed>::from_hz(60.0))
+            .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::from_millis(
+                20,
+            )));
+        app.update();
+        let timestep = app.world().resource::<Time<Fixed>>().timestep();
+
+        // 模拟菜单在 PreUpdate 应用配置，确认插件在同一帧读取新的间隔。
+        app.add_systems(PreUpdate, |mut settings: ResMut<GameSettings>| {
+            settings.max_fps = FpsLimit::new(120).unwrap();
+        });
+        app.update();
+        assert_eq!(frametime_limit(&app), Duration::from_nanos(8_333_334));
+
+        let fixed = app.world().resource::<Time<Fixed>>();
+        assert_eq!(fixed.timestep(), timestep);
+        assert!((1.0 / fixed.timestep().as_secs_f64() - 60.0).abs() < 0.001);
+        assert!(fixed.elapsed() >= timestep);
     }
-    let fixed = app.world().resource::<Time<Fixed>>();
-    assert_eq!(fixed.timestep(), timestep);
-    assert!((1.0 / fixed.timestep().as_secs_f64() - 60.0).abs() < 0.001);
-    assert!(fixed.elapsed() >= timestep);
 }

@@ -2,11 +2,13 @@
 
 mod config;
 mod draft;
-mod frame_pacing;
 mod prototype;
 
+use std::time::Duration;
+
 use bevy::{prelude::*, settings::SettingsPlugin};
-use config::SETTINGS_APP_NAME;
+use bevy_framepace::{FramepaceSettings, Limiter};
+use config::{FpsLimit, SETTINGS_APP_NAME};
 
 pub use config::{
     AudioSettings, CameraSettings, DEFAULT_MOUSE_SENSITIVITY, GameSettings, MAX_AUDIO_VOLUME,
@@ -31,8 +33,54 @@ impl Plugin for GameSettingsPlugin {
             audio_master_volume = settings.audio.master_volume,
             audio_ui_volume = settings.audio.ui_volume,
             "Game settings initialized");
-        frame_pacing::register(app);
+        register_frame_pacing(app);
     }
+}
+
+fn register_frame_pacing(app: &mut App) {
+    app.init_resource::<FramepaceSettings>()
+        .add_systems(Startup, log_simulation_timestep)
+        // 菜单在 PreUpdate 应用设置，插件在 Update 同步到渲染世界。
+        .add_systems(
+            RunFixedMainLoop,
+            apply_frame_rate_limit.in_set(RunFixedMainLoopSystems::BeforeFixedMainLoop),
+        );
+}
+
+/// 记录应用配置的固定模拟频率。
+fn log_simulation_timestep(time: Res<Time<Fixed>>) {
+    info!(
+        target: "demo::settings",
+        simulation_hz = 1.0 / time.timestep().as_secs_f64(),
+        "Fixed simulation timestep initialized"
+    );
+}
+
+fn apply_frame_rate_limit(
+    settings: Res<GameSettings>,
+    mut framepace: ResMut<FramepaceSettings>,
+    mut applied_max_fps: Local<Option<FpsLimit>>,
+) {
+    if *applied_max_fps == Some(settings.max_fps) {
+        return;
+    }
+
+    let max_fps = settings.max_fps.get();
+    // 向上取整到纳秒，使所有合法 FPS 都有正帧间隔。
+    let interval = Duration::from_nanos(1_000_000_000_u64.div_ceil(u64::from(max_fps)));
+    framepace.limiter = Limiter::Manual(interval);
+    info!(
+        target: "demo::settings",
+        max_fps_before = ?applied_max_fps.map(FpsLimit::get),
+        max_fps_after = max_fps,
+        reason = if applied_max_fps.is_some() {
+            "settings_changed"
+        } else {
+            "initialization"
+        },
+        "Frame rate limit applied"
+    );
+    *applied_max_fps = Some(settings.max_fps);
 }
 
 #[cfg(test)]
