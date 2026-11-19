@@ -10,6 +10,8 @@
 
 ## 渲染限帧
 
-渲染限帧与 [固定模拟](game_flow.md#时钟与运行条件) 分别管理。`GameSettingsPlugin` 将 `WinitSettings` 的前台与后台模式统一设为 `UpdateMode::Reactive`，以 `1 / max_fps` 为近似更新间隔，关闭设备、用户与窗口事件触发的提前更新；输入缓冲到下一次更新。计时、等待和超时处理由 Bevy 原生窗口循环负责，启动与生命周期切换可强制更新，不保证任意相邻帧的严格最小间隔。`AutoNoVsync` 独立控制呈现方式，仍可能被平台回退。
+渲染限帧与[固定模拟](game_flow.md#时钟与运行条件)分别管理。应用先安装默认插件，再在有 `RenderApp` 时安装 `bevy_framepace` 的 `FramepacePlugin`。前台和后台均使用 Winit 连续更新模式，由插件在原生渲染清理阶段控制帧间等待。呈现方式仍由 `AutoNoVsync` 请求，平台可采用回退方式。
+
+`GameSettingsPlugin` 将生效的 `max_fps` 转换为向上取整到纳秒的帧间隔，写入 `FramepaceSettings.limiter`。菜单应用设置后，帧间隔在固定循环之前同步，供插件在同一帧的 `Update` 阶段读取。渲染侧通过共享值接收目标间隔，线程调度或锁竞争可能推迟新间隔的采用。
 
 `PrototypeConfig` 与设置字段 `SettingKey` 分别归属 [prototype.rs](../../src/settings/prototype.rs) 和 [draft.rs](../../src/settings/draft.rs)；角色、物品、场景和 UI 消费这些数据契约。

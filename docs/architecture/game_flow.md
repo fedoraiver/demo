@@ -30,7 +30,8 @@ stateDiagram-v2
 ```mermaid
 flowchart TD
     Pre[PreUpdate：输入与菜单请求] --> State[StateTransition：按状态变化执行入口]
-    State --> Loop{固定步 0 到 N 次}
+    State --> Pace[RunFixedMainLoop：同步帧率上限]
+    Pace --> Loop{固定步 0 到 N 次}
     Loop --> Fixed[FixedFirst → FixedUpdate → FixedPostUpdate → FixedLast]
     Fixed --> Loop
     Loop --> Ease[插值 Ease]
@@ -38,7 +39,7 @@ flowchart TD
     Presentation --> Tick[UpdateEasingTick]
     Tick --> Update["Update：UI Style → Audio Mix → Audio Playback"]
     Update --> Post[PostUpdate：变换传播、布局与 Egui]
-    Post --> Last[Last：同步限帧]
+    Post --> Last[Last]
     Fixed -. FixedUpdate 内 .-> Gameplay["FixedGameplay：Facing → Motion → Interaction → Target → Attachment"]
 ```
 
