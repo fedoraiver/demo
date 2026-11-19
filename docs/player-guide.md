@@ -86,7 +86,7 @@ Windows 与 macOS 的游戏内容区保持 16:9，初始为 `1280×720`，可拖
 
 当前 Audio 页提供 `Master Volume` 与 `UI Volume`，有效范围均为 `0–100%`，默认 `100%`，两项共同决定已接入菜单声音的音量。左右按钮、方向键与手柄每次调整 `5%`，鼠标滑条精确到 `1%`，`0%` 显示 `Muted`。拖动结束且数值改变时反馈一次，`Music Volume` 显示不可操作的 `Coming Soon`。
 
-同一用户的各工作目录共用用户配置目录下的 `io.github.fedoraiver.demo/settings.toml`。Windows 的配置目录为 `%LOCALAPPDATA%`，macOS 为 `~/Library/Preferences`，Linux 为 `$XDG_CONFIG_HOME`，缺省为 `~/.config`。首次成功保存时创建文件，手动修改在下次启动时读取。
+同一用户的各工作目录共用用户配置目录下的 `io.github.fedoraiver.demo/settings.toml`。Windows 的配置目录为 `%LOCALAPPDATA%`，macOS 为 `~/Library/Preferences`，Linux 为 `$XDG_CONFIG_HOME`，默认为 `~/.config`。首次成功保存时创建文件，手动修改在下次启动时读取。
 
 ```toml
 [game]

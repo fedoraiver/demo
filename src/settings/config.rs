@@ -8,8 +8,8 @@ use bevy::{
 };
 use serde::{Deserialize, Serialize};
 
-/// 缺省配置采用的渲染帧率上限。
-const DEFAULT_FPS_LIMIT: NonZeroU32 = NonZeroU32::new(60).unwrap();
+/// 默认渲染帧率上限。
+const DEFAULT_FPS_LIMIT: u32 = 60;
 
 /// 配置支持的最低渲染帧率上限。
 const MIN_FPS_LIMIT: u32 = 60;
@@ -47,9 +47,7 @@ impl FpsLimit {
 
 impl Default for FpsLimit {
     fn default() -> Self {
-        Self {
-            value: DEFAULT_FPS_LIMIT,
-        }
+        Self::new(DEFAULT_FPS_LIMIT).unwrap()
     }
 }
 
@@ -62,7 +60,7 @@ impl TryFrom<i64> for FpsLimit {
             .and_then(Self::new)
             .unwrap_or_else(|| {
                 warn!(target: "demo::settings", setting = "max_fps", value,
-                    default = DEFAULT_FPS_LIMIT.get(), "Invalid setting value; using default");
+                    default = DEFAULT_FPS_LIMIT, "Invalid setting value; using default");
                 Self::default()
             }))
     }
@@ -87,7 +85,7 @@ pub struct GameSettings {
     pub audio: AudioSettings,
 }
 
-/// 音频混音设置，缺省字段采用完整音量。
+/// 音频混音设置，默认采用完整音量。
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, Reflect)]
 #[reflect(Serialize, Deserialize)]
 #[serde(try_from = "AudioSettingsInput")]
