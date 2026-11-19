@@ -230,7 +230,7 @@ pub(super) fn log_session_start(writer: &SessionWriter, session_id: Uuid) {
         session_id = %session_id,
         path = %writer.path.display(),
         version = env!("CARGO_PKG_VERSION"),
-        bevy_version = "0.20.0",
+        bevy_version = "0.20.1",
         state_before = "not_started",
         state_after = "initializing",
         reason = "user_started_program",

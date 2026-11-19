@@ -144,7 +144,7 @@ mod schedule_dump {
         let manifest: Value =
             serde_json::from_slice(&fs::read(output.join("manifest.json")).unwrap()).unwrap();
         assert_eq!(manifest["schemaVersion"], 1);
-        assert_eq!(manifest["bevyVersion"], "0.20.0");
+        assert_eq!(manifest["bevyVersion"], "0.20.1");
         assert_eq!(manifest["debugdumpVersion"], "0.17.0");
         assert_eq!(manifest["target"], env!("DEMO_BUILD_TARGET"));
         assert_eq!(manifest["features"], serde_json::json!(["debugdump"]));

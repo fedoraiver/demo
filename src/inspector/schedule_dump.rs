@@ -89,7 +89,7 @@ fn write_schedules(app: &mut App, output: &Path, source_root: &Path) -> DumpResu
     let count = entries.len();
     let manifest = Manifest {
         schema_version: 1,
-        bevy_version: "0.20.0",
+        bevy_version: "0.20.1",
         debugdump_version: "0.17.0",
         exported_at: SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs(),
         target: env!("DEMO_BUILD_TARGET"),
