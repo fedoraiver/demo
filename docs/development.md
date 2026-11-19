@@ -77,7 +77,7 @@ API 行为以对应版本的官方文档为准，示例必须匹配项目版本�
 - 帮助编号等黄色装饰和 `Coming Soon` 占位不包含按钮动作、不进入导航列表，避免外观与可操作能力混淆。
 - 页面重建、鼠标处理与样式更新遵循现有 `Build → Pointer → Style` 顺序，应用旧树销毁和新树生成的延迟命令后再读取交互，防止旧按钮状态或请求影响新页面。
 
-相关实现入口为 [widgets.rs](../src/ui/widgets.rs)、[pages.rs](../src/ui/pages.rs)、[pointer.rs](../src/ui/pointer.rs) 和 [style.rs](../src/ui/style.rs)。具体检查方法见 [文字布局与高亮回归](testing/ui.md#文字布局与高亮回归)；无窗口布局与状态测试不能替代用户对实际游戏窗口的视觉验收。
+相关实现入口为 [widgets.rs](../src/ui/widgets.rs)、[pages.rs](../src/ui/pages.rs)、[pointer.rs](../src/ui/pointer.rs) 和 [style.rs](../src/ui/style.rs)。具体检查方法见 [文字布局与高亮回归](testing/ui.md#文字布局与高亮回归)；最小布局与状态测试之外，实际字体、裁切和命中按[应用自动化验收](testing/app-acceptance.md#菜单与暂停)补齐渲染与输入证据，不能只凭组件存在判定通过。
 
 ## 调度、通信与生命周期
 
@@ -183,7 +183,7 @@ Windows MSVC 目标由根 [build.rs](../build.rs) 在链接时嵌入 `Microsoft.
 
 构建和测试从对应 worktree 执行，用户启动游戏时也使用该工作目录，保证代码与资源一致。配置细节见 [Cargo 构建目录](https://doc.rust-lang.org/cargo/reference/config.html#buildbuild-dir)。
 
-构建检查由 Agent 执行，游戏启动与实机验收由用户完成。入口见 [运行方式](../README.md#运行)、[验证参考](testing/README.md) 和 [游戏手动验收](testing/README.md#验收测试)。
+构建检查与最小无窗口测试由 Agent 执行，应用级客观检查按[自动化验收契约](testing/app-acceptance.md)执行，当前未实现部分须明确记录。Agent 执行应用级测试只使用启用 `acceptance-test` 的构建，范围见 [Agent 验证边界](testing/README.md#agent-验证边界)。普通游戏仍由用户按[运行方式](../README.md#运行)启动，主观评价与确实无法自动化的专项见[人工补充验收](testing/game-acceptance.md)。
 
 ### 日志排查
 

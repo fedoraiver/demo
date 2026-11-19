@@ -10,6 +10,8 @@ use std::{io, path::Path};
 use bevy::{log::LogPlugin, prelude::*};
 
 pub(crate) use lifecycle::SessionLogGuard;
+#[cfg(feature = "acceptance-test")]
+pub(crate) use lifecycle::SessionLogInfo;
 use lifecycle::{ConsoleWriter, SessionWriter, console_layer, create_session_file, file_layer};
 
 /// 提前准备可失败的文件与线程；插件构建后，守卫仍由主入口持有到退出刷新完成。
@@ -34,6 +36,11 @@ impl SessionLogPlugin {
 
 impl Plugin for SessionLogPlugin {
     fn build(&self, app: &mut App) {
+        #[cfg(feature = "acceptance-test")]
+        app.insert_resource(SessionLogInfo {
+            id: self.session_id.to_string(),
+            path: self.writer.path.display().to_string(),
+        });
         app.insert_resource(self.writer.clone());
         app.insert_resource(self.console.clone());
         // hook 必须先于 LogPlugin，覆盖其后所有引擎和功能插件的初始化异常。

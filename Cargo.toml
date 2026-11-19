@@ -5,6 +5,7 @@ edition = "2024"
 rust-version = "1.97.1"
 
 [features]
+acceptance-test = ["bevy/bevy_remote"]
 debugdump = ["dep:bevy_mod_debugdump", "dep:sha2", "dep:analysis-contract"]
 
 [dependencies]

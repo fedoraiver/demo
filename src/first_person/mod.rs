@@ -98,7 +98,6 @@ pub(crate) struct CharacterVisual;
 #[reflect(Component)]
 pub(crate) struct FirstPersonCamera {
     yaw: f32,
-    #[reflect(ignore)]
     pending_yaw_delta: f32,
     pitch: f32,
     eye_height: f32,
@@ -133,6 +132,7 @@ impl FirstPersonCamera {
 
 /// 每个相机的捕获状态；恢复捕获的第一帧跳过自由光标位移。
 #[derive(Component, Default)]
+#[cfg_attr(feature = "acceptance-test", derive(Reflect), reflect(Component))]
 pub(crate) struct MouseLookState {
     active: bool,
     initialized: bool,
