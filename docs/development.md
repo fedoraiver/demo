@@ -170,4 +170,4 @@ Remove-Item Env:RUST_LOG -ErrorAction SilentlyContinue
 
 面向人类文档的分层、内容归属、写作和验证规则见 [文档规范](AGENTS.md)。理解当前机制所需的局部约束与实现解释仍放在架构说明中；开发设计、已完成工作、决策动机、替代方案和取舍由 [Agent Notes](notes/README.md) 维护，供开发者查阅。事故复盘遵循 [postmortem 约定](postmortem/README.md)。这两类记录使用各自的独立规则。
 
-正式 ECS 架构图由 GitHub Actions 在 `master` 上生成、校验和发布，流程见[架构图维护指南](diagrams/maintenance.md)。
+正式 ECS 架构图由 GitHub Actions 生成、校验和发布，流程见[架构图维护指南](diagrams/maintenance.md)。

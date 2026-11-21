@@ -17,7 +17,7 @@ cargo run --locked
 ## 文档
 
 - [玩家指南](docs/player-guide.md)：当前演示内容、操作、设置、资源与会话日志。
-- [游戏设计](docs/game-design.md)：项目目的与玩法探索状态。
+- [游戏设计](docs/game-design.md)：玩法探索与确认状态。
 - [开发规范](docs/development.md)：工程约定、构建与调试方法。
 - [Bevy App 与项目模块](docs/architecture/README.md)：通用 App 机制、默认生命周期与项目模块入口。
 - [在线 ECS 架构图](https://fedoraiver.github.io/demo/)：[模型与查看器说明](docs/diagrams/README.md)及[维护指南](docs/diagrams/maintenance.md)。

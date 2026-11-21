@@ -33,7 +33,7 @@ Agent 可阅读代码、检查格式和编译，并执行最小 `App` / `World` 
 | Rust 代码 | 阅读相关实现，运行 `cargo fmt --all -- --check` 和 `cargo check --locked`。 |
 | 行为 | 除 Rust 检查外，运行相关 `cargo test --locked` 无窗口测试及受影响的[应用验收脚本](app-acceptance.md#当前驱动范围)。未实现驱动和未执行环境记为覆盖缺口。 |
 
-需要全部无窗口 Rust 测试时运行 `cargo test --locked`；测试必须验证实际行为和边界，不得借测试启动游戏。
+需要默认配置的全部无窗口 Rust 测试时运行 `cargo test --locked`；测试必须验证实际行为和边界，不得借测试启动游戏。
 
 | 范围 | 指南 |
 | --- | --- |
@@ -67,18 +67,19 @@ python -B scripts/acceptance/session_log.py
 
 ### 远程身份与就绪条件
 
-脚本先读取 HTTP 响应头 `X-Bevy-Pid`，核对它等于所启动的进程，再在同一连接发送控制请求。重连后重新核对 PID。启动后依次等待远程可读、主窗口可用和对应场景就绪。发现意外失焦时停止发送操作。
+脚本先读取 HTTP 响应头 `X-Bevy-Pid`，核对它等于所启动的进程，再在同一连接发送控制请求。重连后重新核对 PID。启动后依次等待远程可读、主窗口可用和对应场景就绪。发现意外失焦时停止新的交互输入，仍可释放已持有的输入并正常关闭。
 
 ### 输入、截图与收尾
 
 脚本注入原生键鼠消息并分别观察业务结果。截图从主窗口像素事件生成，匹配请求实体后校验格式和尺寸并编码 PNG。通用接口和数据路径见[验收接入](../architecture/acceptance.md)。
 
-正常收尾释放脚本持有的按键和鼠标按钮，再发送窗口关闭消息并等待退出。出现失败或中断时保留报告和已取得的证据，并尝试优雅关闭已启动的子进程。正式日志路径从本次会话信息关联。设置脚本在游戏退出后核对磁盘并原样恢复，恢复冲突时保留备份。
+正常收尾释放脚本持有的按键和鼠标按钮，再发送窗口关闭消息并等待退出。出现失败或中断时保留报告和已取得的证据，并在主窗口已确认时尝试正常关闭；尚未确认主窗口，或正常关闭失败且子进程仍在运行时，终止本次子进程并在会话记录中标记 `forced_termination`。正式日志路径从本次会话信息关联。设置脚本在游戏退出后核对磁盘并原样恢复，恢复冲突时保留备份。
 
 Rust 无窗口验证覆盖消息输入、截图反射传输和朝向状态。Python 回归覆盖 BRP 请求、证据解析、PNG 编码、配置恢复和验收编号映射：
 
 ```powershell
 cargo test --locked --features acceptance-test acceptance::
+cargo test --locked --features acceptance-test brp_reads_and_writes_pending_yaw_before_facing_consumes_it
 python -B -m unittest discover -s scripts -p 'test_acceptance*.py'
 ```
 
@@ -90,7 +91,7 @@ python -B -m unittest discover -s scripts -p 'test_acceptance*.py'
 cargo run --locked --features acceptance-test
 ```
 
-用 HTTP 响应头 `X-Bevy-Pid` 核对实际游戏进程，并确认本次主窗口有焦点。控制请求通过已核对的连接发送，重连时重新核对 PID。通过 BRP 获取主窗口截图，根据画面决定下一步键鼠操作，再截图确认结果。意外失焦时停止发送输入。结束时释放自己持有的键鼠，再正常关闭本次进程。消息和截图接口见[验收接入](../architecture/acceptance.md)。
+用 HTTP 响应头 `X-Bevy-Pid` 核对实际游戏进程，并确认本次主窗口有焦点。控制请求通过已核对的连接发送，重连时重新核对 PID。通过 BRP 获取主窗口截图，根据画面决定下一步键鼠操作，再截图确认结果。意外失焦时停止新的交互输入。结束时释放自己持有的键鼠，再正常关闭本次进程。消息和截图接口见[验收接入](../architecture/acceptance.md)。
 
 探索性验证记录实际操作和观察，并附对应截图或会话日志。固定验收子项按脚本断言及其证据判定。
 

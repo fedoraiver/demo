@@ -26,7 +26,7 @@
 
 UI 控件与主菜单背景通过 `bsn!`、`bsn_list!` 和返回 `impl Scene` 的辅助函数声明结构；系统负责交互和运行时变化。页面与共享控件入口见 [pages.rs](../../src/ui/pages.rs) 和 [widgets.rs](../../src/ui/widgets.rs)。
 
-`rebuild_page` 仅在页面、分类、返回来源或视口结构变化时替换 `MenuRoot`。焦点、设置值和成功／失败提示原位更新，保留按钮、滑条、数字框和滚动实体身份。内容缩短时只夹取越界的 `ScrollPosition`；离页再进入或切换分类才初始化新页面。
+`rebuild_page` 在页面、分类、返回来源或视口任一逻辑尺寸取整后变化时替换 `MenuRoot`。新滚动容器从初始偏移开始，只有视口尺寸变化时保留导航焦点序号。焦点、设置值和成功／失败提示原位更新，保留按钮、滑条、数字框和滚动实体。原位更新使内容缩短时，只夹取超出范围的滚动位置。
 
 主菜单、暂停与帮助是固定内容区，没有 `MenuScroll`。设置仅右侧面板的标题、字段、说明和操作提示滚动；分类、底部操作和页脚固定。滚轮及焦点滚入只作用于该内容区。
 
@@ -34,7 +34,7 @@ UI 控件与主菜单背景通过 `bsn!`、`bsn_list!` 和返回 `impl Scene` �
 
 `UiSystems` 声明 `Build / Pointer / Style`。`Update` 中的滑条采样、填充更新与音量文字更新位于 `Pointer` 后、`Style` 前。滚动条绑定位于 `Build` 后、`Style` 前。Build 的延迟命令在后续读取前应用。
 
-主菜单的 `MenuBackdrop` 使用 `DespawnOnExit(AppState::MainMenu)` 管理纯色背景相机，设置和帮助沿用该相机，暂停沿用当前玩法相机。菜单相机标记 `IsDefaultUiCamera` 与 `PrimaryEguiContext`，进入游戏时随背景根销毁，玩法相机接管界面。字体准备约定见 [玩家指南](../player-guide.md#资源准备)。
+主菜单的 `MenuBackdrop` 使用 `DespawnOnExit(AppState::MainMenu)` 管理纯色背景相机，设置和帮助沿用该相机，暂停沿用当前玩法相机。菜单相机标记 `IsDefaultUiCamera`，进入游戏时随背景根销毁，玩法相机接管界面。启用检查器时由其添加 Egui 上下文。字体准备约定见 [玩家指南](../player-guide.md#资源准备)。
 
 ### 文字测量与容器约束
 

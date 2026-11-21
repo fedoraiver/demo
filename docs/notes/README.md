@@ -25,12 +25,12 @@ Agent 每项开发任务都应在 `docs/notes/` 新增或更新相关笔记，�
 
 ## 记录格式
 
-每份笔记以标题和状态开头：
+每份笔记以标题和状态开头。状态后可用 `—` 加简短说明。
 
 ```text
 # Agent Note: <title>
 
-Status: proposed | implemented | rejected — <reason>
+Status: proposed | implemented | rejected
 ```
 
 按状态使用以下章节：

@@ -18,6 +18,7 @@ Status: implemented — 已核对维护文档并修正与当前实现不符的�
 - 精简 [App 总览](../../architecture/README.md) 中的局部场景实现，以及 [第一人称](../../architecture/first_person.md)、[角色](../../architecture/character.md) 和 [设置](../../architecture/settings.md) 中仅复述 `Local` 存储的说明；保留应用生命周期、跨功能关系、状态清理和日志边界。
 - 修正 [开发规范](../../development.md) 的采样字段与架构图验证范围、[玩家指南](../../player-guide.md) 的地面减速和空中惯性说明，并移除面向玩家的音频后端细节。
 - 将 [角色测试](../../testing/character.md) 中的休眠行为要求与现有回归覆盖分开，明确休眠后跳跃和外部冲量的覆盖缺口；清理第一人称和设置架构文档末尾多余空行。
+- 2026-11-21 复查将 [应用验收](../../testing/app-acceptance.md) 的断言与脚本对齐，修正设置初始化、视口重建和原生窗口行为的说明。资产事件说明按实际反馈条件维护，架构图故障复现和打包约束集中在[维护指南](../../diagrams/maintenance.md)。
 
 ## Alternatives considered
 

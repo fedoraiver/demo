@@ -45,7 +45,7 @@ foreach ($record in $records) {
 pwsh -NoProfile -File ./.agents/skills/review-docs/scripts/check-docs.ps1 report --session $session --require-complete
 ```
 
-`check --record` 保存检查结果；不带该选项时只检查。`report --require-complete` 对未完成的会话返回非零状态。输入或基点变化使证据过期时，重新核对受影响内容并追加重新确认记录，不改写历史。报告的机械结果、逐文件覆盖状态与内容结论分别判断：机械通过不证明内容正确，清单或申报也不证明完成了阅读。
+`check --record` 保存检查结果；不带该选项时只检查。`report --require-complete` 对未完成的会话返回非零状态。普通输入或依据变化使证据过期时，补审受影响内容或由原审查者重新确认并追加记录，不改写历史。显式基线别名移动后须创建新会话。报告的机械结果、逐文件覆盖状态与内容结论分别判断：机械通过不证明内容正确，清单或申报也不证明完成了阅读。
 
 ## 命令与记录
 
