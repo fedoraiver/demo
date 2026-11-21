@@ -19,6 +19,7 @@ src/                   Feature directories, each owning one project Plugin
   inspector/           World inspector integration
   session_log/         Session logging, background output, and exit flush
   window_policy/       Platform-specific window behavior
+  acceptance/          Native Bevy BRP for application acceptance
 assets/                Runtime resources
   audio/               Sounds, machine-readable metadata, and license evidence
   ui/                  UI resources
@@ -28,6 +29,7 @@ assets/                Runtime resources
 ## Required Reading
 
 - Before changing code, read the [Development Standards](docs/development.md), [Bevy App and Project Modules](docs/architecture/README.md), the relevant module references, and the [Testing Guide](docs/testing/README.md). Project states, clocks, and cross-feature scheduling are maintained in [Game Flow](docs/architecture/game_flow.md).
+- When investigating a regression or changing a previously affected path, consult relevant [incident records](docs/postmortem/README.md) for failure conditions and regression checks.
 - For gameplay requirements, read the [Game Design](docs/game-design.md) and related issues. Distinguish confirmed decisions, design suggestions, and open questions. See the [Player Guide](docs/player-guide.md) for currently available capabilities, controls, and configuration; the source code is authoritative for actual implementation.
 - For documentation-only changes, read the affected documents and their applicable writing rules, then check content and links.
 - For asset maintenance, read the [asset documentation](docs/assets/README.md); authoring, import, event mappings, and source records belong there, while runtime module architecture has its own references.
@@ -49,8 +51,10 @@ assets/                Runtime resources
 
 Do not use computer-use to launch or operate the game.
 
+Automate acceptance checks wherever inputs can be driven and results observed. Follow the [Agent execution boundaries](docs/testing/README.md#agent-验证边界) and [acceptance guidance](docs/testing/README.md#验收测试).
+
 ## Delivery Requirements
 
-Before finishing, follow the [Testing Guide](docs/testing/README.md) checklist to review ECS design, comments, system access and ordering, deferred commands, registration and lifecycle, and file logging. For ordinary documentation-only changes, checking content and links is sufficient. Architecture diagram changes follow that guide's validation scope; SVG visual validation runs only when explicitly requested by the user.
+Before finishing, follow the [Testing Guide](docs/testing/README.md) checklist to review ECS design, comments, system access and ordering, deferred commands, registration and lifecycle, and file logging. For ordinary documentation-only changes, checking content and links is sufficient.
 
-Delivery notes must describe the specific changes, validation actually completed, and any unverified items. For behavior that depends on gameplay, include user-performed steps, expected results, and log locations. Record execution details in the corresponding issue or PR; keep reusable guidance in long-term documentation.
+Delivery notes must describe the specific changes, validation actually completed, and any unverified items. For gameplay behavior, report the scenarios exercised, expected results, observations, artifacts, and log locations. Record execution details in the corresponding issue or PR; keep reusable guidance in long-term documentation.

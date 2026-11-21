@@ -1,17 +1,18 @@
 //! 封装世界检查器的装配和启用日志，复用统一会话日志设施。
 
-mod launch;
 #[cfg(feature = "debugdump")]
 mod schedule_dump;
 #[cfg(test)]
 mod tests;
 
-pub use launch::{LaunchMode, parse_launch_mode, print_help};
 #[cfg(feature = "debugdump")]
 pub use schedule_dump::dump_schedules;
 
 use bevy::prelude::*;
-use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
+use bevy_inspector_egui::{
+    bevy_egui::{EguiPlugin, PrimaryEguiContext},
+    quick::WorldInspectorPlugin,
+};
 
 use crate::game_flow::gameplay_running;
 
@@ -25,8 +26,16 @@ impl Plugin for InspectorPlugin {
             EguiPlugin::default(),
             WorldInspectorPlugin::new().run_if(gameplay_running),
         ))
+        .add_observer(attach_to_ui_camera)
         .add_systems(Startup, log_world_inspector);
     }
+}
+
+/// 主菜单与游戏会交替创建界面相机，各自需要检查器上下文。
+fn attach_to_ui_camera(camera: On<Add<IsDefaultUiCamera>>, mut commands: Commands) {
+    commands
+        .entity(camera.entity)
+        .try_insert_if_new(PrimaryEguiContext);
 }
 
 /// 启用记录表示插件已装配，不依赖场景实体或当前面板可见性。

@@ -88,3 +88,4 @@ flowchart TD
 | inspector | `InspectorPlugin` | [世界检查器](inspector.md)。 |
 | session_log | `SessionLogPlugin` | [会话日志](session_log.md)。 |
 | window_policy | `WindowPolicyPlugin` | [原生窗口策略](window_policy.md)。 |
+| acceptance | `AcceptancePlugin` | [验收构建的原生 BRP 接入](acceptance.md)。 |

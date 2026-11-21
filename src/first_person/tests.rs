@@ -686,6 +686,67 @@ mod pose_tests {
         app.insert_resource(strategy);
     }
 
+    /// 原生 BRP 写入仍经过朝向系统消耗，逐帧同步覆盖零固定步的帧。
+    #[cfg(feature = "acceptance-test")]
+    #[test]
+    fn brp_reads_and_writes_pending_yaw_before_facing_consumes_it() {
+        use bevy::{
+            reflect::TypePath,
+            remote::builtin_methods::{
+                process_remote_get_components_request, process_remote_mutate_components_request,
+            },
+        };
+        use serde_json::json;
+
+        let (mut app, _, character, camera, _) = test_app();
+        let component = FirstPersonCamera::type_path();
+        let mutate = app
+            .world_mut()
+            .register_system(process_remote_mutate_components_request);
+        let read = app
+            .world_mut()
+            .register_system(process_remote_get_components_request);
+        for path in ["yaw", "pending_yaw_delta"] {
+            app.world_mut()
+                .run_system_with(
+                    mutate,
+                    Some(json!({
+                        "entity": camera,
+                        "component": component,
+                        "path": path,
+                        "value": 0.25,
+                    })),
+                )
+                .unwrap()
+                .unwrap();
+        }
+        let read_delta = |app: &mut App| {
+            let result = app
+                .world_mut()
+                .run_system_with(
+                    read,
+                    Some(json!({
+                        "entity": camera,
+                        "components": [component],
+                        "strict": true,
+                    })),
+                )
+                .unwrap()
+                .unwrap();
+            result[component]["pending_yaw_delta"].as_f64().unwrap()
+        };
+        assert_eq!(read_delta(&mut app), 0.25);
+        app.update();
+        assert_eq!(read_delta(&mut app), 0.0);
+        assert!(
+            app.world()
+                .get::<Transform>(character)
+                .unwrap()
+                .rotation
+                .abs_diff_eq(Quat::from_rotation_y(0.25), 0.000001)
+        );
+    }
+
     fn spawn_test_item(app: &mut App, position: Vec3) -> Entity {
         let config = app.world().resource::<PrototypeConfig>().clone();
         app.world_mut()

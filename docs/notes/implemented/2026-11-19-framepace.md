@@ -12,7 +12,7 @@ Status: implemented
 
 ## Changes
 
-[设置模块](../../../../src/settings/mod.rs)在固定循环之前同步运行设置，让插件读取本帧菜单应用的帧率。渲染限帧的装配、时序与窗口行为见[设置架构](../../../architecture/settings.md#渲染限帧)。
+[设置模块](../../../src/settings/mod.rs)在固定循环之前同步运行设置，让插件读取本帧菜单应用的帧率。渲染限帧的装配、时序与窗口行为见[设置架构](../../architecture/settings.md#渲染限帧)。
 
 ## Alternatives considered
 
@@ -24,4 +24,4 @@ Bevy 已将帧节奏插件合入主线，项目锁定的发布版是 0.20.1。�
 
 ## Verification
 
-无窗口测试检查帧间隔映射、同帧设置同步与固定模拟时步。前后台实际帧率沿用[窗口验收](../../../testing/settings.md#窗口验收)。
+无窗口测试检查帧间隔映射、同帧设置同步与固定模拟时步。前后台实际帧率沿用[窗口验收](../../testing/settings.md#窗口验收)。

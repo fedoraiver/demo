@@ -1,9 +1,12 @@
+#[cfg(feature = "acceptance-test")]
+mod acceptance;
 mod audio;
 mod character;
 mod first_person;
 mod game_flow;
 mod inspector;
 mod item_interaction;
+mod launch;
 mod physics;
 mod scene_assembly;
 mod session_log;
@@ -15,8 +18,9 @@ use audio::GameAudioPlugin;
 use character::CharacterPlugin;
 use first_person::FirstPersonPlugin;
 use game_flow::{FIXED_SIMULATION_HZ, GameFlowPlugin};
-use inspector::{InspectorPlugin, LaunchMode};
+use inspector::InspectorPlugin;
 use item_interaction::ItemInteractionPlugin;
+use launch::LaunchMode;
 use physics::GamePhysicsPlugin;
 use scene_assembly::SceneAssemblyPlugin;
 use session_log::SessionLogPlugin;
@@ -29,9 +33,9 @@ use bevy_enhanced_input::EnhancedInputPlugin;
 use bevy_framepace::FramepacePlugin;
 
 fn main() -> AppExit {
-    let launch_mode = match inspector::parse_launch_mode(std::env::args_os().skip(1)) {
+    let launch_mode = match launch::parse_launch_mode(std::env::args_os().skip(1)) {
         Ok(LaunchMode::Help) => {
-            inspector::print_help();
+            launch::print_help();
             return AppExit::Success;
         }
         Ok(mode) => mode,
@@ -40,6 +44,8 @@ fn main() -> AppExit {
             return AppExit::error();
         }
     };
+    let acceptance_run =
+        cfg!(feature = "acceptance-test") && matches!(launch_mode, LaunchMode::Game);
     let mut app = App::new();
     let (logging, session) = match SessionLogPlugin::prepare() {
         Ok(prepared) => prepared,
@@ -50,11 +56,15 @@ fn main() -> AppExit {
     };
     // 日志先于引擎其他插件安装，构建阶段的事件也进入本次会话。
     app.add_plugins(logging);
+    #[cfg(feature = "acceptance-test")]
+    if acceptance_run {
+        app.add_plugins(acceptance::AcceptancePlugin);
+    }
     app.add_plugins(
         DefaultPlugins
             .build()
             .disable::<LogPlugin>()
-            // 音频设备输出统一由 Kira 管理。
+            // 设备输出统一由 Kira 管理。
             .disable::<bevy::audio::AudioPlugin>()
             .set(WindowPlugin {
                 primary_window: Some(window_policy::primary_window()),
@@ -69,20 +79,22 @@ fn main() -> AppExit {
     }
 
     app.insert_resource(Time::<Fixed>::from_hz(FIXED_SIMULATION_HZ))
-        .add_plugins((
-            EnhancedInputPlugin,
-            InspectorPlugin,
-            WindowPolicyPlugin,
-            GameFlowPlugin,
-            GameSettingsPlugin,
-            GamePhysicsPlugin,
-            CharacterPlugin,
-            ItemInteractionPlugin,
-            FirstPersonPlugin,
-            SceneAssemblyPlugin,
-            GameUiPlugin,
-            GameAudioPlugin,
-        ));
+        .add_plugins(EnhancedInputPlugin);
+    if !acceptance_run {
+        app.add_plugins(InspectorPlugin);
+    }
+    app.add_plugins((
+        WindowPolicyPlugin,
+        GameFlowPlugin,
+        GameSettingsPlugin,
+        GamePhysicsPlugin,
+        CharacterPlugin,
+        ItemInteractionPlugin,
+        FirstPersonPlugin,
+        SceneAssemblyPlugin,
+        GameUiPlugin,
+        GameAudioPlugin,
+    ));
 
     let exit = match launch_mode {
         LaunchMode::Game => app.run(),

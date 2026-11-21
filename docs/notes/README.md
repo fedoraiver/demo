@@ -6,18 +6,14 @@ Agent Note 供开发者查阅 Agent 开发过程中的设计、已完成工作�
 
 ## 目录与生命周期
 
-路径使用 `{lifecycle}/{class}/YYYY-MM-DD-topic.md`。文件名日期为主题首次提出的日期，移动笔记时保持不变。
+笔记直接放在 `proposed/YYYY-MM-DD-topic.md` 或 `implemented/YYYY-MM-DD-topic.md`。文件名日期为主题首次提出的日期，移动笔记时保持不变。
 
-| 生命周期 | 用途 |
+| 目录 | 用途 |
 | --- | --- |
-| `proposed/` | 待决策、待实施或正在实施的设计与开发记录 |
-| `implemented/` | 已完成实施且仍供开发者查阅的开发与决策记录 |
-| `rejected/` | 已否决但否决理由仍有参考价值的提案 |
-| `archived/` | 已实施、仅作为历史依据保留的记录 |
+| `proposed/` | 尚未完成实施的提案和开发记录 |
+| `implemented/` | 已完成实施的开发与决策记录 |
 
-类别为 `feature`（新能力）、`bug-fix`（缺陷修复）、`simplification`（简化）、`architecture`（架构）、`process`（流程）和 `testing`（测试）。只有实际笔记需要时才创建目录。
-
-直接通过活跃记录的生命周期目录查找笔记，不额外维护重复的中央索引。笔记之间使用相对 Markdown 链接。
+直接通过目录查找笔记，关联记录使用相对 Markdown 链接。否决或归档信息记在笔记内。
 
 ## 何时编写
 
@@ -29,19 +25,19 @@ Agent 每项开发任务都应在 `docs/notes/` 新增或更新相关笔记，�
 
 ## 记录格式
 
-每份活跃笔记以标题和状态开头：
+每份笔记以标题和状态开头。状态后可用 `—` 加简短说明。
 
 ```text
 # Agent Note: <title>
 
-Status: proposed | implemented | rejected — <reason>
+Status: proposed | implemented | rejected
 ```
 
 按状态使用以下章节：
 
 - `proposed`：`Problem`（问题）、`Proposal`（提案）、`Alternatives considered`（考虑过的替代方案）、`Acceptance criteria`（验收标准）、`Risks`（风险）；实施期间增加 `Changes`（已完成工作与未完成事项），区分实际进展和计划。
 - `implemented`：`Problem`（问题）、`Decision`（设计与决策）、`Changes`（实际完成的改动）、`Alternatives considered`（考虑过的替代方案）、`Consequences`（影响与代价）、`Verification`（验证）。
-- `rejected`：保留提案内容，在状态行中记录否决理由。
+- `rejected`：保留在 `proposed/`，在状态行中记录否决理由，并保留原提案内容供参考。
 
 实际改动说明应包含受影响的模块或文档及可供追查的相对链接，不用完整文件清单代替工作说明。验证章节记录持续适用的检查、覆盖范围和已知缺口。每次具体执行的结果仍放在关联 Issue 或 PR 中。
 
@@ -51,6 +47,6 @@ Status: proposed | implemented | rejected — <reason>
 
 路径、名称或相关契约变化时，同步更新仍活跃的已实施笔记。已经实施的设计或决策本身改变时，新建笔记并链接被取代的记录，不把原决策改写成相反结论。
 
-已实施笔记的设计、改动或决策不再指导当前工作、但仍有历史价值时，将其归档。保留 `implemented` 状态，并增加 `Archived: YYYY-MM-DD`。归档记录仅作为历史依据，不随当前代码继续更新。
+仅供历史查阅的已实施笔记留在 `implemented/`，保留 `implemented` 状态并增加 `Archived: YYYY-MM-DD`，正文保留当时的结论。
 
 删除已无开发或决策参考价值的记录，并修复指向它们的链接。尚未实施的提案不能归档；不再推进时应标记为否决。
