@@ -12,9 +12,9 @@ Status: implemented — 控制、相机、持物碰撞代理与滚动区域关�
 
 ## Changes
 
-- [第一人称](../../../../src/first_person/mod.rs) 将控制者到角色、控制者到相机、相机到角色的引用分离为关系组件；关联失效时释放捕获并停用玩法输入。
-- [物品交互](../../../../src/item_interaction/components.rs) 使用 `HeldCollider / ItemCollider` 关联代理与物品，`HeldAttachment` 仅保存挂接和恢复状态。独立的 `HeldCollisionProxy` 标记在关系消失后仍能识别孤儿代理，沿物理卸载顺序清理并恢复物品身体及持有者质量。
-- [滚动条](../../../../src/ui/scroll.rs) 使用 `Scrolls / ScrolledBy` 关联区域，通过组件钩子适配原生 `Scrollbar.target`；改绑、解绑或目标销毁时清除旧拖动与拾取状态。
+- [第一人称](../../../src/first_person/mod.rs) 将控制者到角色、控制者到相机、相机到角色的引用分离为关系组件；关联失效时释放捕获并停用玩法输入。
+- [物品交互](../../../src/item_interaction/components.rs) 使用 `HeldCollider / ItemCollider` 关联代理与物品，`HeldAttachment` 仅保存挂接和恢复状态。独立的 `HeldCollisionProxy` 标记在关系消失后仍能识别孤儿代理，沿物理卸载顺序清理并恢复物品身体及持有者质量。
+- [滚动条](../../../src/ui/scroll.rs) 使用 `Scrolls / ScrolledBy` 关联区域，通过组件钩子适配原生 `Scrollbar.target`；改绑、解绑或目标销毁时清除旧拖动与拾取状态。
 - 对应模块的回归覆盖反向索引更新、端点销毁后独立实体保留，以及捕获、物理代理和拖动的失效清理。
 
 ## Alternatives considered
@@ -27,4 +27,4 @@ Status: implemented — 控制、相机、持物碰撞代理与滚动区域关�
 
 ## Verification
 
-通过第一人称、物品交互、角色、物理、场景与 UI 的无窗口回归核对改绑和销毁边界。实际窗口捕获、物理表现与滚动条拖动仍按[测试指南](../../../testing/README.md)由用户确认；单次执行结果放在交付说明或对应 Issue／PR。
+通过第一人称、物品交互、角色、物理、场景与 UI 的无窗口回归核对改绑和销毁边界。实际窗口捕获、物理表现与滚动条拖动仍按[测试指南](../../testing/README.md)由用户确认；单次执行结果放在交付说明或对应 Issue／PR。

@@ -4,7 +4,7 @@
 
 ## 休眠身体唤醒
 
-`GamePhysicsPlugin` 的提前唤醒只处理 `Sleeping` 身体：位姿、速度或 `SleepTimer` 的变化必须晚于 `LastPhysicsTick`，才排队 `WakeBody`，并在准备求解器前提交。这样跳跃、主动移动与外部冲量在首个固定步参与重力和位置积分；物理自身的回写不会反复唤醒静置物体，正常休眠继续由 Avian 管理。离散唤醒以 `debug` 记录实体和 `external_physics_change` 原因。
+`GamePhysicsPlugin` 的提前唤醒只处理 `Sleeping` 身体：位姿、速度或 `SleepTimer` 的变化必须晚于 `LastPhysicsTick`，才排队 `WakeBody`，并在准备求解器前提交。这样跳跃、主动移动与外部冲量在首个固定步参与重力和位置积分；物理自身的回写不会反复唤醒静置物体，正常休眠继续由 Avian 管理。
 
 ## 碰撞检测与重力
 

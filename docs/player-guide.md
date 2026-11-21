@@ -2,7 +2,7 @@
 
 本文说明当前演示内容、操作、设置、资源准备和问题反馈。玩法探索与确认状态见 [游戏设计](game-design.md)。
 
-运行方式见 [README](../README.md#运行)，开发构建与发布说明见 [开发规范](development.md#构建与调试)，客观验收条件见 [应用自动化验收](testing/app-acceptance.md)（待实现契约），主观判断见 [人工补充验收](testing/game-acceptance.md)。
+运行方式见 [README](../README.md#运行)，开发构建与发布说明见 [开发规范](development.md#构建与调试)，客观验收条件与覆盖状态见 [应用自动化验收](testing/app-acceptance.md)。
 
 ## 当前内容
 
@@ -121,7 +121,7 @@ ui_volume = 100
 
 ## 会话日志
 
-每次启动生成独立的 `logs/unix-<时间戳>_<会话UUID>.log`，历史日志保留。文件记录启动、版本与配置、关键状态变化、错误上下文及正常退出。
+在游戏启动所在目录的 `logs/` 中，按本次启动时间查找对应的 `.log` 文件。
 
 出现问题时，提供对应会话日志、复现步骤、实际结果与预期结果，以及相关设置。提高日志详细程度的方法见 [日志排查](development.md#日志排查)，日志验收方法见 [日志检查与问题反馈](testing/session_log.md#日志检查与问题反馈)。
 

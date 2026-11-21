@@ -12,9 +12,9 @@ Status: implemented — 开发规范和 Notes 约定已加入过程记录要求�
 
 ## Changes
 
-- 在根 [Agent 开发指南](../../../../AGENTS.md#conventions) 加入开发过程中维护 Notes、供开发者查阅的要求。
-- 在 [Notes 约定](../../README.md) 中扩大记录范围，补充写入时机和实际改动章节，保留独立文档规则、日期命名和生命周期；简单改动可以简记，无真实替代方案时如实说明。
-- 同步 [文档归属](../../../AGENTS.md#the-tier-taxonomy-one-home-per-fact) 与 [开发规范](../../../development.md#文档维护)，明确设计、已完成工作与决策理由的归属。
+- 在根 [Agent 开发指南](../../../AGENTS.md#conventions) 加入开发过程中维护 Notes、供开发者查阅的要求。
+- 在 [Notes 约定](../README.md) 中扩大记录范围，补充写入时机和实际改动章节，保留独立文档规则、日期命名和生命周期；简单改动可以简记，无真实替代方案时如实说明。
+- 同步 [文档归属](../../AGENTS.md#the-tier-taxonomy-one-home-per-fact) 与 [开发规范](../../development.md#文档维护)，明确设计、已完成工作与决策理由的归属。
 
 ## Alternatives considered
 

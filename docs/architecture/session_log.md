@@ -2,7 +2,7 @@
 
 源码入口见 [session_log/](../../src/session_log/mod.rs)。
 
-`SessionLogPlugin::prepare()` 准备插件与 `SessionLogGuard`，目录、文件或线程准备失败时中止启动。该插件先于其他插件构建安装 panic hook 和日志层，记录 `Session started` 与版本；`DefaultPlugins` 禁用内建 `LogPlugin`，日志只有一个安装入口。文件使用 Unix 时间戳、纳秒和 UUID 命名，以 `create_new` 防止覆盖；文件名和日志时间分别使用 Unix 时间与可读 UTC 时间。
+`SessionLogPlugin::prepare()` 准备插件与 `SessionLogGuard`，目录、文件或线程准备失败时中止启动。该插件先于其他插件构建安装 panic hook 和日志层，记录 `Session started` 与版本。它统一安装日志层，`DefaultPlugins` 禁用内建 `LogPlugin`。
 
 ## 后台输出
 
@@ -18,4 +18,4 @@ panic hook 尽力记录错误，优先等待文件队列写完并调用 `sync_da
 
 玩法、设置和检查器在各自插件的 `Startup` 注册初始化日志；配置值从实际资源只读取得，不由日志系统初始化或覆盖。各条记录及其与场景生成之间无全序，也不依赖已生成玩法实体；缺失插件不会由别处代报初始化。
 
-连续角度和世界速度按 `debug` 每 0.5 秒最多采样一次，离散输入与捕获变化用 `info`。会话位置见 [玩家指南](../player-guide.md#会话日志)，过滤配置见 [开发规范](../development.md#日志排查)，字段与实际运行核对见 [日志验收](../testing/session_log.md#日志检查与问题反馈)。
+会话位置见 [玩家指南](../player-guide.md#会话日志)，过滤配置见 [日志排查](../development.md#日志排查)，真实会话的检查项见 [应用验收](../testing/app-acceptance.md#会话日志)。

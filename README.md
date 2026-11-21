@@ -23,7 +23,6 @@ cargo run --locked
 - [在线 ECS 架构图](https://fedoraiver.github.io/demo/)：[模型与查看器说明](docs/diagrams/README.md)及[维护指南](docs/diagrams/maintenance.md)。
 - [测试指南](docs/testing/README.md)：测试框架、四个测试层级、模块验证与实机验收入口。
 - [应用自动化验收](docs/testing/app-acceptance.md)：分类脚本、客观验收条件与覆盖范围。
-- [人工补充验收](docs/testing/game-acceptance.md)：首次视觉基线批准与主观体验。
 - [资产文档](docs/assets/README.md)：资产维护、导入、事件映射与来源记录。
 
 面向 Agent 的执行要求见 [AGENTS.md](AGENTS.md)。

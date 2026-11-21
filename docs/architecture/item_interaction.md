@@ -28,8 +28,6 @@
 
 三角网格查询仅在能证明整段路径分离时跳过完整连续查询：使用平面距离、支撑映射与转动位移上界，必要时二分区间；不能把离散安全姿态当作证明。起点分离用零余量，仅同一平面的真实已有接触允许 `0.001 m` 数值余量。有限三角面与方盒采用支持映射最近点查询，复合箱体逐子形状分派；无法证明安全或达到细分上限时回到完整查询，仍阻挡中途薄墙和再次穿入。查询入口与扫掠几何分别见 [rotation_query.rs](../../src/item_interaction/rotation_query.rs) 和 [rotation_sweep.rs](../../src/item_interaction/rotation_sweep.rs)。
 
-转向受阻自动释放记录 `Held item turn blocked`，包含阻挡实体、实体名称与实际有向转角。
-
 `CarryGrip` 是每件物品相对角色脚底与水平朝向的目标偏移，未指定时使用 `PrototypeConfig.hold_offset`。实际挂接姿态存于 `HeldAttachment.local_pose`，供真实碰撞和呈现共同读取；拾取对齐朝目标逐步推进，不直接以目标覆盖真实姿态。
 
 `GamePhysicsLayer` 分为 `World`、`Character` 和 `Item`。自由箱体与持箱代理都保留外部碰撞；同一人物刚体内的形状由 Avian 排除自碰，转向查询另按 `ColliderOf.body` 排除整套自身碰撞，持握不会忽略其他角色所属的 `Character` 层。

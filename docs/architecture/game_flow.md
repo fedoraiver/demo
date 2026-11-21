@@ -45,6 +45,10 @@ flowchart TD
 
 `PreUpdate` 的动作 Observer 更新意图和观察角度，命令在阶段结束时应用；状态转换后进入固定循环。`FixedGameplaySystems` 的依赖顺序分别覆盖朝向、运动、交互、持物目标与挂接；重力同步只约束在 Motion 前。物理求解位于 `FixedPostUpdate`，物理回写后的持物真实同步与“接地 → 速度日志”是独立分支。`FixedLast` 记录插值端点。
 
-固定循环后，`PresentationSystems` 在 `TransformEasingSystems::Ease` 之后、`UpdateEasingTick` 之前同步朝向、持箱物理和显示姿态、镜头与可见性。零固定步帧仍执行该链，但不额外积分位移或消费拿放请求；多个固定步也不会重复应用鼠标位移。UI 的局部顺序见 [UI 架构](ui.md)，样式、混音与播放由第三条公开链连接。
+固定循环后，`PresentationSystems` 在 `TransformEasingSystems::Ease` 之后、`UpdateEasingTick` 之前同步朝向、持物物理和显示姿态、镜头与可见性，随后 `PostUpdate` 传播变换。即使本帧没有固定步，受视角驱动的角色和持物姿态也须在镜头更新前同步。运动积分和拿放请求只在固定步中处理，先同步最新朝向。
+
+固定步与逐帧复用的同步逻辑需要防止同一鼠标位移被重复应用。该输入已应用时，再次同步以当前视角和姿态为准。转向碰障可能在同步时自动放下持物，具体行为见[物品交互](item_interaction.md#持有关系与生命周期)。
+
+逐帧同步依赖 `PreUpdate` 写入的视角和固定步提交后的持有关系。调整这条链时，核对主调度和延迟命令的实际应用时机，确保两个来源在同步时已经可见。UI 的局部顺序见 [UI 架构](ui.md)，样式、混音与播放由第三条公开链连接。帧末姿态的回归条件见 [物品交互测试](../testing/item_interaction.md#避免测试掩盖帧间错位)。
 
 首次初始化时 `StatesPlugin` 还在 `PreStartup` 前执行 `StateTransition`；`OnEnter` 只在进入状态时执行。跨阶段数据流依赖 Bevy 默认主调度，不应将图中的模块装配顺序当成系统执行顺序。
