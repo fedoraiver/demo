@@ -4,6 +4,7 @@ import math
 import time
 
 from driver import TYPES, assert_that, run
+from gameplay import camera_view, motion, position, start_session
 
 
 CASES = {
@@ -12,62 +13,6 @@ CASES = {
     "PHYS-05.pickup": "按 E 后仅最近的初始方块建立持有目标并被抬起。",
     "PHYS-06.release": "松开再按 E 后同一方块解除持有并落回地面。",
 }
-
-
-def entities(game, kind, *, strict=True):
-    return [row["entity"] for row in game.query(with_=(TYPES[kind],), strict=strict)]
-
-
-def state(game, wanted):
-    return game.resource(TYPES["app_state"]) == wanted
-
-
-def session_entities(game, *, strict=True):
-    return {
-        "character": entities(game, "character", strict=strict),
-        "items": entities(game, "item", strict=strict),
-        "camera": entities(game, "first_person_camera", strict=strict),
-        "ground": [
-            row["entity"] for row in game.query(TYPES["name"])
-            if row["components"][TYPES["name"]] == "Greybox ground"
-        ],
-    }
-
-
-def camera_view(game, entity):
-    return game.get(entity, TYPES["first_person_camera"])[TYPES["first_person_camera"]]
-
-
-def position(game, entity):
-    return game.get(entity, TYPES["position"])[TYPES["position"]]
-
-
-def motion(game, character):
-    components = game.get(
-        character, TYPES["character_motion"], TYPES["position"], TYPES["linear_velocity"],
-    )
-    return {
-        "grounded": components[TYPES["character_motion"]]["grounded"],
-        "position": components[TYPES["position"]],
-        "velocity": components[TYPES["linear_velocity"]],
-    }
-
-
-def start_session(game):
-    game.click("StartGame")
-    game.wait(lambda: state(game, "Running"), "进入玩法")
-    scene = session_entities(game)
-    counts = {kind: len(entity_ids) for kind, entity_ids in scene.items()}
-    assert_that(counts == {"character": 1, "items": 3, "camera": 1, "ground": 1},
-                f"实际场景实体数量 {counts}")
-    camera = scene["camera"][0]
-
-    def capture_active():
-        capture = game.get(camera, TYPES["mouse_look_state"])[TYPES["mouse_look_state"]]
-        return capture["active"] and not capture["skip_motion"]
-
-    game.wait(capture_active, "玩法捕获鼠标")
-    return scene
 
 
 def exercise(game):

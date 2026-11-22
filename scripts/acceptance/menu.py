@@ -3,7 +3,7 @@
 import math
 
 from driver import TYPES, assert_that, run
-from physics import camera_view, entities, motion, position, session_entities, start_session, state
+from gameplay import camera_view, entities, motion, position, session_entities, start_session, state
 
 
 CASES = {

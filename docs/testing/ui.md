@@ -59,7 +59,7 @@ cargo test --locked ui::
 
 ## 英文菜单与暂停验收
 
-实际窗口的菜单和暂停条件见[应用自动化验收](app-acceptance.md#菜单与暂停)。
+菜单和暂停的应用级条件见[应用自动化验收](app-acceptance.md#菜单与暂停)。
 
 ### 鼠标灵敏度验收
 

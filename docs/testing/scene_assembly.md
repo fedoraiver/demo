@@ -1,6 +1,6 @@
 # scene_assembly 测试
 
-[测试指南](README.md)说明分层和执行边界；实机条件的脚本覆盖与缺口见[应用自动化验收](app-acceptance.md)。
+[测试指南](README.md)说明分层和执行边界。脚本覆盖与缺口见[应用自动化验收](app-acceptance.md)。
 
 ## 场景与无窗口验证
 

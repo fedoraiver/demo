@@ -12,6 +12,8 @@
 
 UI 在 Style 阶段发布 `AudioPreview.settings`，设置页分类切换保留预览，离页时清空。音频功能读取预览及 `GameSettings.audio`，当前 UI 通道的有效增益为默认基准增益 × 素材清单音量 × Master 音量 × UI 音量；正在播放和排队的实例均同步当前增益。零增益使用 `Decibels::SILENCE`，静音请求不占冷却与并发，恢复后不补播。主入口禁用 Bevy 内建音频，设备输出统一由 Kira 管理。
 
+普通游戏和无窗验收都由 Kira 初始化默认设备并使用同一套混音与播放逻辑。自动化验收通过启动配置控制总音量。见[验收启动准备](../testing/README.md#自动化启动准备)。
+
 新增素材、事件与通道的接入要求，以及制作、来源与检查入口见 [音频管线](../assets/audio/README.md)，无窗口检查见 [音频验证](../testing/audio.md#音频无窗口验证)。
 
 事件与素材映射见[声音事件](../assets/audio/events.md)。

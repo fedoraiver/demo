@@ -28,7 +28,11 @@ use settings::GameSettingsPlugin;
 use ui::GameUiPlugin;
 use window_policy::WindowPolicyPlugin;
 
-use bevy::{log::LogPlugin, prelude::*, render::RenderApp, winit::WinitSettings};
+use std::time::Duration;
+
+use bevy::{
+    app::ScheduleRunnerPlugin, log::LogPlugin, prelude::*, render::RenderApp, winit::WinitSettings,
+};
 use bevy_enhanced_input::EnhancedInputPlugin;
 use bevy_framepace::FramepacePlugin;
 
@@ -60,19 +64,31 @@ fn main() -> AppExit {
     if acceptance_run {
         app.add_plugins(acceptance::AcceptancePlugin);
     }
-    app.add_plugins(
-        DefaultPlugins
-            .build()
-            .disable::<LogPlugin>()
-            // 设备输出统一由 Kira 管理。
-            .disable::<bevy::audio::AudioPlugin>()
-            .set(WindowPlugin {
-                primary_window: Some(window_policy::primary_window()),
-                ..default()
-            }),
-    );
+    let mut engine = DefaultPlugins
+        .build()
+        .disable::<LogPlugin>()
+        // 设备输出统一由 Kira 管理。
+        .disable::<bevy::audio::AudioPlugin>();
+    #[cfg(feature = "acceptance-test")]
+    if acceptance_run {
+        engine = engine
+            .disable::<bevy::winit::WinitPlugin>()
+            .disable::<bevy::gilrs::GilrsPlugin>()
+            .set(acceptance::input_window_plugin());
+    }
+    if !acceptance_run {
+        engine = engine.set(WindowPlugin {
+            primary_window: Some(window_policy::primary_window()),
+            ..default()
+        });
+    }
+    app.add_plugins(engine);
 
-    if app.get_sub_app(RenderApp).is_some() {
+    if acceptance_run {
+        app.add_plugins(ScheduleRunnerPlugin::run_loop(Duration::from_secs_f64(
+            1.0 / 60.0,
+        )));
+    } else if app.get_sub_app(RenderApp).is_some() {
         // 渲染插件负责帧间等待，前后台窗口循环采用相同的连续更新模式。
         app.insert_resource(WinitSettings::continuous())
             .add_plugins(FramepacePlugin);
@@ -81,10 +97,9 @@ fn main() -> AppExit {
     app.insert_resource(Time::<Fixed>::from_hz(FIXED_SIMULATION_HZ))
         .add_plugins(EnhancedInputPlugin);
     if !acceptance_run {
-        app.add_plugins(InspectorPlugin);
+        app.add_plugins((InspectorPlugin, WindowPolicyPlugin));
     }
     app.add_plugins((
-        WindowPolicyPlugin,
         GameFlowPlugin,
         GameSettingsPlugin,
         GamePhysicsPlugin,

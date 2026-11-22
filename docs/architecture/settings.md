@@ -12,8 +12,8 @@
 
 ## 渲染限帧
 
-渲染限帧与[固定模拟](game_flow.md#时钟与运行条件)分别管理。应用先安装默认插件，再在有 `RenderApp` 时安装 `bevy_framepace` 的 `FramepacePlugin`。前台和后台均使用 Winit 连续更新模式，由插件在原生渲染清理阶段控制帧间等待。呈现方式仍由 `AutoNoVsync` 请求，平台可采用回退方式。
+渲染限帧与[固定模拟](game_flow.md#时钟与运行条件)分别管理。普通游戏安装默认插件，再在有 `RenderApp` 时安装 `bevy_framepace` 的 `FramepacePlugin`。前台和后台均使用 Winit 连续更新模式，由插件在渲染清理阶段控制帧间等待。呈现方式由 `AutoNoVsync` 请求，平台可采用回退方式。
 
-`GameSettingsPlugin` 将生效的 `max_fps` 转换为帧间隔，写入 `FramepaceSettings.limiter`。菜单应用设置后，帧间隔在固定循环之前同步，供插件在同一帧的 `Update` 阶段读取。渲染侧通过共享值接收目标间隔，线程调度或锁竞争可能推迟新间隔的采用。真实配置的备份与恢复由[设置验收脚本](../testing/app-acceptance.md#设置)负责。
+`GameSettingsPlugin` 将生效的 `max_fps` 转换为帧间隔，写入 `FramepaceSettings.limiter`。菜单应用设置后，帧间隔在固定循环之前同步，供插件在同一帧的 `Update` 阶段读取。渲染侧通过共享值接收目标间隔，线程调度或锁竞争可能推迟新间隔的采用。[无窗验收](acceptance.md)由 `ScheduleRunnerPlugin` 驱动，保留帧率配置与初始化日志供验收核对。
 
 `PrototypeConfig` 与设置字段 `SettingKey` 分别归属 [prototype.rs](../../src/settings/prototype.rs) 和 [draft.rs](../../src/settings/draft.rs)；角色、物品、场景和 UI 消费这些数据契约。

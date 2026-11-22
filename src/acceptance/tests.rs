@@ -1,16 +1,17 @@
 //! 使用原生 BRP 处理器验证消息消费及截图载荷，保持无窗口、无渲染。
 
 use bevy::{
-    asset::RenderAssetUsages,
+    asset::{AssetPlugin, RenderAssetUsages},
     ecs::message::MessageCursor,
-    input::InputPlugin,
+    input::{InputPlugin, mouse::AccumulatedMouseMotion},
     picking::{
         DefaultPickingPlugins,
-        pointer::{PointerAction, PointerButton, PointerInput},
+        pointer::{PointerAction, PointerButton, PointerLocation},
     },
     reflect::TypePath,
     remote::{RemoteMethodSystemId, RemoteMethods},
-    render::render_resource::{Extent3d, TextureDimension, TextureFormat},
+    render::render_resource::{Extent3d, TextureDimension},
+    window::RawHandleWrapper,
 };
 use serde_json::{Value, json};
 
@@ -25,6 +26,14 @@ fn fixture() -> App {
     app.add_plugins(RemotePlugin::default());
     register_types(&mut app);
     app
+}
+
+fn primary_window_entity(app: &mut App) -> Entity {
+    let world = app.world_mut();
+    world
+        .query_filtered::<Entity, With<PrimaryWindow>>()
+        .single(world)
+        .unwrap()
 }
 
 fn request(app: &mut App, method: &str, params: Value) -> Value {
@@ -101,21 +110,109 @@ fn native_reads_game_resources_and_menu_actions() {
 }
 
 #[test]
-fn reflected_input_reaches_keyboard_and_picking_consumers() {
+fn synthetic_window_stays_focused_without_a_native_handle_and_closes_through_brp() {
+    let mut app = fixture();
+    app.add_plugins((MinimalPlugins, input_window_plugin()));
+    let entity = primary_window_entity(&mut app);
+    let window = app.world().get::<Window>(entity).unwrap();
+    assert!(window.focused);
+    assert!(!window.visible);
+    assert_eq!(window.physical_size(), UVec2::new(1920, 1080));
+    assert_eq!(window.resolution.scale_factor(), 1.0);
+    assert!(app.world().get::<RawHandleWrapper>(entity).is_none());
+    assert!(app.should_exit().is_none());
+
+    write_message::<WindowCloseRequested>(&mut app, json!({"window": entity}));
+    app.update();
+    app.update();
+    assert!(app.world().get_entity(entity).is_err());
+    assert_eq!(app.should_exit(), Some(AppExit::Success));
+}
+
+#[test]
+fn offscreen_camera_target_round_trips_into_a_native_screenshot_after_recreation() {
     let mut app = fixture();
     app.add_plugins((
         MinimalPlugins,
-        WindowPlugin::default(),
+        AssetPlugin::default(),
+        input_window_plugin(),
         InputPlugin,
         DefaultPickingPlugins,
-    ));
-    let window = {
-        let world = app.world_mut();
-        world
-            .query_filtered::<Entity, With<PrimaryWindow>>()
-            .single(world)
+    ))
+    .init_asset::<Image>();
+    register_offscreen_systems(&mut app);
+    let camera = app
+        .world_mut()
+        .spawn((Camera::default(), IsDefaultUiCamera))
+        .id();
+    let unrelated_camera = app.world_mut().spawn(Camera::default()).id();
+    app.update();
+    assert_eq!(
+        app.world().get::<RenderTarget>(camera).unwrap().as_image(),
+        Some(&OFFSCREEN_IMAGE)
+    );
+    assert!(
+        app.world()
+            .get::<RenderTarget>(unrelated_camera)
             .unwrap()
-    };
+            .as_image()
+            .is_none()
+    );
+    let image = app
+        .world()
+        .resource::<Assets<Image>>()
+        .get(&OFFSCREEN_IMAGE)
+        .unwrap();
+    assert_eq!(image.size(), OFFSCREEN_SIZE);
+    assert_eq!(
+        image.texture_descriptor.format,
+        TextureFormat::Rgba8UnormSrgb
+    );
+    assert!(
+        image
+            .asset_usage
+            .contains(RenderAssetUsages::MAIN_WORLD | RenderAssetUsages::RENDER_WORLD)
+    );
+
+    app.world_mut().entity_mut(camera).despawn();
+    let camera = app
+        .world_mut()
+        .spawn((Camera::default(), IsDefaultUiCamera))
+        .id();
+    app.update();
+    let component = RenderTarget::type_path();
+    let target = request(
+        &mut app,
+        "world.get_components",
+        json!({"entity": camera, "components": [component], "strict": true}),
+    );
+    let spawned = request(
+        &mut app,
+        "world.spawn_entity",
+        json!({"components": {Screenshot::type_path(): target[component]}}),
+    );
+    let screenshot: Entity = serde_json::from_value(spawned["entity"].clone()).unwrap();
+    assert_eq!(
+        app.world()
+            .get::<Screenshot>(screenshot)
+            .unwrap()
+            .0
+            .as_image(),
+        Some(&OFFSCREEN_IMAGE)
+    );
+}
+
+#[test]
+fn reflected_input_reaches_keyboard_camera_and_offscreen_picking_consumers() {
+    let mut app = fixture();
+    app.add_plugins((
+        MinimalPlugins,
+        input_window_plugin(),
+        InputPlugin,
+        DefaultPickingPlugins,
+    ))
+    .add_systems(First, retarget_mouse.in_set(PickingSystems::PostInput));
+    let window = primary_window_entity(&mut app);
     app.update();
 
     write_message::<KeyboardInput>(
@@ -152,12 +249,29 @@ fn reflected_input_reaches_keyboard_and_picking_consumers() {
             "MouseButtonInput": {"window": window, "button": "Left", "state": "Pressed"},
         }),
     );
+    write_message::<WindowEvent>(
+        &mut app,
+        json!({
+            "MouseWheel": {"window": window, "unit": "Line", "x": 0.0, "y": -1.0, "phase": "Moved"},
+        }),
+    );
+    write_message::<WindowEvent>(
+        &mut app,
+        json!({
+            "MouseButtonInput": {"window": window, "button": "Left", "state": "Released"},
+        }),
+    );
+    write_message::<MouseMotion>(&mut app, json!({"delta": [12.0, -8.0]}));
     app.update();
 
     assert!(
         app.world()
             .resource::<ButtonInput<KeyCode>>()
             .pressed(KeyCode::KeyW)
+    );
+    assert_eq!(
+        app.world().resource::<AccumulatedMouseMotion>().delta,
+        Vec2::new(12.0, -8.0)
     );
     let keys = request(
         &mut app,
@@ -173,14 +287,36 @@ fn reflected_input_reaches_keyboard_and_picking_consumers() {
         Some(position)
     );
     let pointer_messages = app.world().resource::<Messages<PointerInput>>();
+    let mut cursor = MessageCursor::default();
+    let events: Vec<_> = cursor.read(pointer_messages).collect();
+    let target = NormalizedRenderTarget::Image(OFFSCREEN_IMAGE.into());
+    assert_eq!(events.len(), 4);
     assert!(
-        MessageCursor::default()
-            .read(pointer_messages)
-            .any(|event| {
-                event.location.position == position
-                    && matches!(event.action, PointerAction::Press(PointerButton::Primary))
-            })
+        events
+            .iter()
+            .all(|event| event.location.position == position && event.location.target == target)
     );
+    assert!(matches!(events[0].action, PointerAction::Move { delta } if delta == position));
+    assert!(matches!(
+        events[1].action,
+        PointerAction::Press(PointerButton::Primary)
+    ));
+    assert!(matches!(
+        events[2].action,
+        PointerAction::Scroll { y: -1.0, .. }
+    ));
+    assert!(matches!(
+        events[3].action,
+        PointerAction::Release(PointerButton::Primary)
+    ));
+    let world = app.world_mut();
+    let location = world
+        .query::<&PointerLocation>()
+        .single(world)
+        .unwrap()
+        .location()
+        .unwrap();
+    assert_eq!(location.target, target);
 }
 
 #[test]
