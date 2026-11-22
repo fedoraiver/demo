@@ -7,12 +7,14 @@ use bevy::{
         TypeRegistry,
         serde::{TypedReflectDeserializer, TypedReflectSerializer},
     },
+    settings::SaveSettingsSync,
 };
 use serde::de::DeserializeSeed;
 use serde_json::{Value, json};
 use std::{
     any::TypeId,
     io,
+    path::PathBuf,
     sync::{Arc, Mutex},
 };
 
@@ -22,6 +24,37 @@ fn settings_types() -> TypeRegistry {
     let mut types = TypeRegistry::new();
     types.register::<GameSettings>();
     types
+}
+
+#[test]
+fn bevy_settings_load_and_save_game_configuration() {
+    let directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("tmp")
+        .join(format!("settings-test-{}", uuid::Uuid::new_v4()));
+    let file = directory.join("settings.toml");
+    // 文件回归使用原生存储的独立测试目录，避免改写实际玩家设置。
+    let new_app = || {
+        let mut app = App::new();
+        app.add_plugins(MinimalPlugins)
+            .register_type::<GameSettings>()
+            .add_plugins(SettingsPlugin::new(directory.to_str().unwrap()));
+        app
+    };
+    let mut app = new_app();
+    assert_eq!(
+        *app.world().resource::<GameSettings>(),
+        GameSettings::default()
+    );
+    app.world_mut().resource_mut::<GameSettings>().max_fps = FpsLimit::new(120).unwrap();
+    app.world_mut().commands().queue(SaveSettingsSync::Always);
+    app.world_mut().flush();
+
+    let reload = new_app();
+    let saved_fps = reload.world().resource::<GameSettings>().max_fps.get();
+
+    std::fs::remove_file(file).unwrap();
+    std::fs::remove_dir(directory).unwrap();
+    assert_eq!(saved_fps, 120);
 }
 
 // 使用与 SettingsPlugin 相同的类型注册和字段反序列化入口，测试数据留在内存。

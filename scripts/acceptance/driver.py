@@ -8,13 +8,15 @@ from pathlib import Path
 import re
 import subprocess
 import time
+import tomllib
 
 from brp import BrpClient, HOST, PORT, ProcessMismatch, SCREENSHOT, UniformScreenshot, screenshot_png
-from settings_file import SettingsBackup, user_settings_path
+from settings_file import SettingsBackup, shared_settings_path
 
 
 ROOT = Path(__file__).resolve().parents[2]
 ACCEPTANCE_DOCUMENT = ROOT / "docs/testing/app-acceptance.md"
+STARTUP_SETTINGS = b"[game.audio]\nmaster_volume = 0\n"
 CATEGORIES = {
     "menu": "菜单与暂停",
     "settings": "设置",
@@ -46,6 +48,7 @@ TYPES = {
     "keys": "bevy_input::button_input::ButtonInput<bevy_input::keyboard::KeyCode>",
     "mouse_buttons": "bevy_input::button_input::ButtonInput<bevy_input::mouse::MouseButton>",
     "character": "demo::character::components::Character",
+    "character_intent": "demo::character::components::CharacterIntent",
     "character_motion": "demo::character::components::CharacterMotion",
     "position": "avian3d::physics_transform::transform::Position",
     "linear_velocity": "avian3d::dynamics::rigid_body::LinearVelocity",
@@ -54,6 +57,7 @@ TYPES = {
     "first_person_camera": "demo::first_person::FirstPersonCamera",
     "mouse_look_state": "demo::first_person::MouseLookState",
     "camera": "bevy_camera::camera::Camera",
+    "render_target": "bevy_camera::camera::RenderTarget",
     "transform": "bevy_transform::components::transform::Transform",
     "name": "bevy_ecs::name::Name",
 }
@@ -89,7 +93,7 @@ def document_cases(document=ACCEPTANCE_DOCUMENT):
 
 @contextmanager
 def worktree_lock(path):
-    # 五个脚本共享一个监听端口和真实设置。进程退出时操作系统释放锁。
+    # 五个脚本共享一个监听端口。进程退出时操作系统释放锁。
     with path.open("a+b") as lock:
         lock.seek(0)
         try:
@@ -115,6 +119,7 @@ class Game:
         self.process = None
         self.client = None
         self.window = None
+        self.screenshot_target = None
         self.keys = set()
         self.buttons = set()
         self.settings = None
@@ -150,13 +155,32 @@ class Game:
                 raise TimeoutError(f"Timed out waiting for {description}")
             time.sleep(0.03)
 
+    def prepare_settings(self):
+        try:
+            path = shared_settings_path()
+            backup = path.with_name("settings.acceptance-recovery.json")
+            self.report["environment"]["settings_file"] = str(path)
+            self.settings = SettingsBackup(path, backup)
+            self.settings.stage(STARTUP_SETTINGS)
+        except FileExistsError as error:
+            raise EnvironmentBlocked(f"Settings recovery record already exists: {error.filename}") from error
+        except (OSError, RuntimeError) as error:
+            raise EnvironmentBlocked(f"Could not prepare shared settings: {error}") from error
+
     def start(self):
         if self.process is not None and self.process.poll() is None:
             raise RuntimeError("Game is already running")
         executable = self.args.exe.resolve()
         if not executable.is_file():
             raise EnvironmentBlocked(f"Missing acceptance-test executable: {executable}")
-        self.window = self.session_id = self.log_path = None
+        try:
+            prepared = self.settings.verify_prepared()
+            master_volume = tomllib.loads(prepared.data.decode("utf-8"))["game"]["audio"]["master_volume"]
+        except (OSError, RuntimeError, ValueError, KeyError, TypeError) as error:
+            raise EnvironmentBlocked(f"Could not verify startup settings in {self.settings.path}: {error}") from error
+        if type(master_volume) is not int or master_volume != 0:
+            raise EnvironmentBlocked(f"Expected master_volume = 0 before launch in {self.settings.path}, got {master_volume!r}")
+        self.window = self.screenshot_target = self.session_id = self.log_path = None
         environment = dict(os.environ, BEVY_ASSET_ROOT=str(ROOT), RUST_LOG="info")
         number = len(self.report["sessions"]) + 1
         output = self.output / f"{self.category}-process-{number}.log"
@@ -184,9 +208,27 @@ class Game:
         self.log_path = (ROOT / session_log["path"]).resolve()
         assert_that(self.log_path.is_relative_to(ROOT / "logs"), "Session log is outside this worktree")
         self.session.update(session_id=self.session_id, session_log=str(self.log_path))
-        windows = self.wait(lambda: self.query(TYPES["window"], with_=(TYPES["primary_window"],)), "primary window")
-        assert_that(len(windows) == 1, f"Expected one primary window; observed {len(windows)}")
+        windows = self.wait(lambda: self.query(TYPES["window"], with_=(TYPES["primary_window"],)),
+                            "logical input window")
+        assert_that(len(windows) == 1, f"Expected one logical input window; observed {len(windows)}")
+        window = windows[0]["components"][TYPES["window"]]
+        assert_that(not window["visible"] and window["focused"], "Expected a focused, invisible logical window")
         self.window = windows[0]["entity"]
+        live_master_volume = self.resource(TYPES["game_settings"])["audio"]["master_volume"]
+        self.session["startup_master_volume"] = live_master_volume
+        if type(live_master_volume) is not int or live_master_volume != master_volume:
+            raise EnvironmentBlocked(f"Game loaded master volume {live_master_volume!r}, expected {master_volume}")
+        self.screenshot_target = self.wait(self.offscreen_target, "offscreen camera")
+        resolution = window["resolution"]
+        self.session["viewport"] = {key: resolution[key] for key in ("physical_width", "physical_height")}
+
+    def offscreen_target(self):
+        rows = self.query(TYPES["render_target"], with_=(TYPES["camera"],))
+        targets = [row["components"][TYPES["render_target"]] for row in rows]
+        if not targets or any("Image" not in target for target in targets):
+            return None
+        assert_that(all(target == targets[0] for target in targets), "Cameras use different offscreen targets")
+        return targets[0]
 
     def call(self, method, params=None):
         return self.client.call(method, params)
@@ -210,7 +252,7 @@ class Game:
     def _focused_window(self):
         window = self._window_value()
         if not window["focused"]:
-            raise EnvironmentBlocked("The acceptance window lost focus")
+            raise EnvironmentBlocked("The logical input window is unfocused")
         return window
 
     def _pressed(self, resource):
@@ -235,6 +277,17 @@ class Game:
         self._keyboard(code, "Released")
         self.wait(lambda: code not in self._pressed(TYPES["keys"]), f"{code} released")
         self.keys.discard(code)
+
+    @contextmanager
+    def hold_key(self, code):
+        already_owned = code in self.keys
+        try:
+            self.key_down(code)
+            yield
+        finally:
+            # 按下请求发出后即由本脚本负责释放，即使未收到消费确认。
+            if not already_owned and code in self.keys:
+                self.key_up(code)
 
     def tap(self, code):
         self.key_down(code)
@@ -284,7 +337,7 @@ class Game:
         uniform_frames = 0
         with self.client.screenshot_events() as read:
             while time.monotonic() < deadline:
-                entity = self.call("world.spawn_entity", {"components": {SCREENSHOT: {"Window": "Primary"}}})["entity"]
+                entity = self.call("world.spawn_entity", {"components": {SCREENSHOT: self.screenshot_target}})["entity"]
                 image = read(entity, deadline - time.monotonic())
                 try:
                     png, dimensions = screenshot_png(image, require_content=True)
@@ -346,7 +399,7 @@ class Game:
         return errors
 
 
-def run(category, cases, exercise, settings=False):
+def run(category, cases, exercise):
     """启动一个类别的验收，将每条断言及其证据写入报告。"""
     parser = argparse.ArgumentParser(description=CATEGORIES[category])
     executable = "demo.exe" if os.name == "nt" else "demo"
@@ -362,7 +415,8 @@ def run(category, cases, exercise, settings=False):
     if set(cases) != runnable:
         raise RuntimeError(f"Script and document disagree in {category}: {set(cases) ^ runnable}")
     report = {
-        "category": category, "passed": False, "sessions": [], "environment": {"RUST_LOG": "info"},
+        "category": category, "passed": False, "sessions": [],
+        "environment": {"RUST_LOG": "info", "mode": "headless"},
         "checks": {name: {"status": "not_run", "expected": expected, "evidence": {}}
                    for name, expected in cases.items()},
     }
@@ -374,11 +428,7 @@ def run(category, cases, exercise, settings=False):
     try:
         with worktree_lock(ROOT / "tmp/acceptance.lock"):
             try:
-                if settings:
-                    try:
-                        game.settings = SettingsBackup(user_settings_path(), ROOT / "tmp/acceptance-settings-recovery.json")
-                    except FileExistsError as error:
-                        raise EnvironmentBlocked(f"Unresolved settings backup: {error.filename}") from error
+                game.prepare_settings()
                 game.start()
                 exercise(game)
                 game.close()

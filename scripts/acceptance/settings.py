@@ -1,4 +1,4 @@
-"""通过设置界面验证草稿、真实配置写入和退出后恢复。"""
+"""通过设置界面验证草稿、验收配置写入和退出后恢复。"""
 
 from driver import TYPES, assert_that, run
 from menu import button_layout, menu_page
@@ -7,8 +7,8 @@ from menu import button_layout, menu_page
 CASES = {
     "MENU-03.tabs": "设置的四个分类都可通过鼠标切换，保留 Apply 和 Back 控件。",
     "MENU-04.frame_rate_discard": "帧率调整只改变草稿，返回再打开时恢复当前生效值，配置文件未改动。",
-    "MENU-04.frame_rate_apply": "Apply 更新生效的帧率和真实 TOML，提示 Settings applied.，保留其他设置。",
-    "MENU-04.settings_restored": "游戏正常退出后将玩家配置恢复成原始字节或原本缺失的状态。",
+    "MENU-04.frame_rate_apply": "Apply 更新生效的帧率和验收 TOML，提示 Settings applied.，保留其他设置。",
+    "MENU-04.settings_restored": "游戏正常退出后恢复玩家设置文件原始字节，原文件缺失时恢复为缺失。",
 }
 
 FRAME_RATES = (60, 90, 120, 144, 165, 240)
@@ -77,11 +77,11 @@ def exercise(game):
         open_settings(game)
         evidence["draft_after_reopen"] = frame_rate_draft(game)
         assert_that(evidence["draft_after_reopen"] == original_fps, "重新开设置时保留了未应用的草稿")
-        game.settings.verify_original()
+        game.settings.verify_prepared()
 
     with game.case("MENU-04.frame_rate_apply") as evidence:
         expected_fps = adjust_frame_rate(game, original_fps)
-        game.settings.verify_original()
+        game.settings.verify_prepared()
         evidence["target_fps"] = expected_fps
         game.click("ApplySettings")
 
@@ -106,4 +106,4 @@ def exercise(game):
 
 
 if __name__ == "__main__":
-    raise SystemExit(run("settings", CASES, exercise, settings=True))
+    raise SystemExit(run("settings", CASES, exercise))

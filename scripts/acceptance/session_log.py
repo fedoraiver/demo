@@ -5,8 +5,8 @@ from pathlib import Path
 import re
 
 from driver import TYPES, assert_that, run
+from gameplay import start_session, state
 from menu import pause
-from physics import start_session, state
 
 
 CASES = {
