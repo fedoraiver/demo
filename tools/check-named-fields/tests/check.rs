@@ -53,7 +53,8 @@ impl Fixture {
         );
     }
     fn package(&self) {
-        self.write("Cargo.toml", &format!("[package]\nname = \"named-fields-fixture-{}\"\nversion = \"0.0.0\"\nedition = \"2024\"\n", NEXT.fetch_add(1, Ordering::Relaxed)));
+        // 临时测试包位于仓库内，显式声明独立工作区以避免继承父工作区。
+        self.write("Cargo.toml", &format!("[package]\nname = \"named-fields-fixture-{}\"\nversion = \"0.0.0\"\nedition = \"2024\"\n\n[workspace]\n", NEXT.fetch_add(1, Ordering::Relaxed)));
         self.lock();
     }
 }
@@ -159,6 +160,8 @@ fn macro_fixture() -> &'static Fixture {
 name = "named-fields-macros-fixture"
 version = "0.0.0"
 edition = "2024"
+[workspace]
+exclude = ["macros"]
 [dependencies]
 external-macros = { path = "macros" }
 [features]
