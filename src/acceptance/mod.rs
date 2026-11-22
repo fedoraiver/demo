@@ -1,35 +1,15 @@
 //! 在主世界装配 Bevy 原生远程接口，为应用验收提供离屏呈现与输入。
 
-use avian3d::prelude::{LinearVelocity, Position, Rotation};
 use bevy::{
     camera::{CameraUpdateSystems, NormalizedRenderTarget, RenderTarget},
-    input::{
-        keyboard::KeyboardInput,
-        mouse::{MouseButtonInput, MouseMotion, MouseWheel},
-    },
     picking::{
         PickingSystems,
-        hover::Hovered,
         pointer::{PointerId, PointerInput},
     },
     prelude::*,
     remote::{RemotePlugin, http::RemoteHttpPlugin},
-    render::{
-        render_resource::TextureFormat,
-        view::screenshot::{Screenshot, ScreenshotCaptured},
-    },
-    window::{
-        CursorMoved, CursorOptions, PrimaryWindow, WindowCloseRequested, WindowEvent,
-        WindowResolution,
-    },
-};
-
-use crate::{
-    first_person::MouseLookState,
-    game_flow::AppState,
-    session_log::SessionLogInfo,
-    settings::SettingsDraft,
-    ui::{MenuButton, MenuFocus, MenuInputSource, MenuState},
+    render::render_resource::TextureFormat,
+    window::{PrimaryWindow, WindowResolution},
 };
 
 #[cfg(test)]
@@ -63,7 +43,7 @@ impl Plugin for AcceptancePlugin {
             RemotePlugin::default(),
             RemoteHttpPlugin::default().with_header("X-Bevy-Pid", std::process::id().to_string()),
         ));
-        register_types(app);
+        register_input_types(app);
         register_offscreen_systems(app);
     }
 }
@@ -120,37 +100,8 @@ fn retarget_mouse(
     }
 }
 
-fn register_types(app: &mut App) {
-    app.register_type::<State<AppState>>()
-        .register_type::<SessionLogInfo>()
-        .register_type::<MenuState>()
-        .register_type::<MenuFocus>()
-        .register_type::<MenuInputSource>()
-        .register_type::<MenuButton>()
-        .register_type::<SettingsDraft>()
-        .register_type::<MouseLookState>()
-        .register_type::<Camera>()
-        .register_type::<RenderTarget>()
-        .register_type::<Name>()
-        .register_type::<Transform>()
-        .register_type::<Position>()
-        .register_type::<Rotation>()
-        .register_type::<LinearVelocity>()
-        .register_type::<Window>()
-        .register_type::<PrimaryWindow>()
-        .register_type::<CursorOptions>()
-        .register_type::<ButtonInput<KeyCode>>()
-        .register_type::<ButtonInput<MouseButton>>()
-        .register_type::<KeyboardInput>()
-        .register_type::<CursorMoved>()
-        .register_type::<MouseButtonInput>()
-        .register_type::<MouseMotion>()
-        .register_type::<MouseWheel>()
-        .register_type::<WindowEvent>()
-        .register_type::<WindowCloseRequested>()
-        .register_type::<ComputedNode>()
-        .register_type::<UiGlobalTransform>()
-        .register_type::<Hovered>()
-        .register_type::<Screenshot>()
-        .register_type::<ScreenshotCaptured>();
+/// 自动注册不包含泛型实例。脚本通过 BRP 读取这两种按键状态。
+fn register_input_types(app: &mut App) {
+    app.register_type::<ButtonInput<KeyCode>>()
+        .register_type::<ButtonInput<MouseButton>>();
 }

@@ -90,7 +90,7 @@ F3 相关的 `PHYS-07` 见[检查器验收](inspector.md#世界检查器验收)�
 | --- | --- | --- |
 | **PHYS-09.gameplay_session_log** | 待实现 | 完成玩法交互后，核对本次会话中的配置、移动、跳落、拿放及捕获日志。日志隔离与尾记录见 `LOG-06` 和 `LOG-10`。 |
 | **LOG-01.session_start** | 脚本 | 通过本次进程的会话信息读取日志，核对唯一的 INFO 启动记录中的会话 ID 和日志文件名与本次会话一致、游戏及 Bevy 版本字段均非空，验证文件无 ANSI 色码。 |
-| **LOG-02.initialization_once** | 脚本 | 核对玩法、固定时步与限帧的初始化各出现一次，且验收构建没有检查器初始化记录。检查器初始化见 `INSPECT-04`。 |
+| **LOG-02.initialization_once** | 脚本 | 核对玩法、固定时步与限帧的初始化各出现一次。 |
 | **LOG-03.fixed_configuration** | 脚本 | 核对 `Fixed simulation timestep initialized` 中的 `simulation_hz` 约为 60 Hz，确认初始化限帧日志与生效配置上限一致。 |
 | **LOG-03.settings_history** | 待实现 | 用部分缺失字段或越界配置启动并应用新设置，核对加载、回退和应用过程的日志与生效值。 |
 | **LOG-04.two_scene_assemblies** | 脚本 | 在同一进程中开始两次，每次对应一次场景装配与三个方块日志。 |

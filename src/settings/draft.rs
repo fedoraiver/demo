@@ -15,7 +15,10 @@ const VOLUME_STEP: i16 = 5;
 
 /// 设置草稿中的可修改字段。
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-#[cfg_attr(feature = "acceptance-test", derive(Reflect))]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect)
+)]
 pub enum SettingKey {
     FrameRate,
     MouseSensitivity,
@@ -26,7 +29,11 @@ pub enum SettingKey {
 
 /// 菜单独立编辑的草稿，音量供临时预览，确认应用后替换生效设置。
 #[derive(Resource, Clone, Debug, PartialEq)]
-#[cfg_attr(feature = "acceptance-test", derive(Reflect), reflect(Resource))]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Resource)
+)]
 pub struct SettingsDraft {
     pub max_fps: u32,
     /// 原始倍率文本保留空值与未完成编辑，不能在应用时悄悄使用上一个合法数值。

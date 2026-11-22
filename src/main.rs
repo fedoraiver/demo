@@ -4,6 +4,7 @@ mod audio;
 mod character;
 mod first_person;
 mod game_flow;
+#[cfg(any(feature = "inspector", feature = "debugdump", test))]
 mod inspector;
 mod item_interaction;
 mod launch;
@@ -18,6 +19,7 @@ use audio::GameAudioPlugin;
 use character::CharacterPlugin;
 use first_person::FirstPersonPlugin;
 use game_flow::{FIXED_SIMULATION_HZ, GameFlowPlugin};
+#[cfg(feature = "inspector")]
 use inspector::InspectorPlugin;
 use item_interaction::ItemInteractionPlugin;
 use launch::LaunchMode;
@@ -97,7 +99,9 @@ fn main() -> AppExit {
     app.insert_resource(Time::<Fixed>::from_hz(FIXED_SIMULATION_HZ))
         .add_plugins(EnhancedInputPlugin);
     if !acceptance_run {
-        app.add_plugins((InspectorPlugin, WindowPolicyPlugin));
+        #[cfg(feature = "inspector")]
+        app.add_plugins(InspectorPlugin);
+        app.add_plugins(WindowPolicyPlugin);
     }
     app.add_plugins((
         GameFlowPlugin,

@@ -12,7 +12,7 @@ from menu import pause
 CASES = {
     "LOG-01.session_start": "会话日志开始记录中的 ID、路径和版本对应本次进程。",
     "LOG-04.two_scene_assemblies": "开始和重新开始各记录一次场景与三个不同方块，暂停恢复无额外装配。",
-    "LOG-02.initialization_once": "玩法、固定时步和帧率的初始化各记录一次，验收构建不注册检查器。",
+    "LOG-02.initialization_once": "玩法、固定时步和帧率的初始化各记录一次。",
     "LOG-03.fixed_configuration": "固定模拟启动日志为约 60 Hz，帧率日志对应当前设置。",
     "LOG-10.normal_exit_record": "优雅关闭返回 0，日志完整刷新且最后一条记录为本次会话的正常退出。",
     "LOG-06.restart_file_isolation": "再次启动使用新会话 ID 和新日志文件，原有会话文件字节不变。",
@@ -106,11 +106,10 @@ def exercise(game):
         clock = select(first_events, "demo::settings", "Fixed simulation timestep initialized")
         limiter = [item for item in select(first_events, "demo::settings", "Frame rate limit applied")
                    if field(item, "reason") == "initialization"]
-        inspector = select(first_events, "demo::inspector", "World inspector enabled")
-        evidence.update(gameplay=gameplay, clock=clock, limiter=limiter, inspector=inspector)
+        evidence.update(gameplay=gameplay, clock=clock, limiter=limiter)
         assert_that(all(len(entries) == 1 and entries[0]["level"] == "INFO"
-                        for entries in (gameplay, clock, limiter)) and not inspector,
-                    "玩法、设置或检查器的初始化记录与验收构建不符")
+                        for entries in (gameplay, clock, limiter)),
+                    "玩法、固定时步或限帧的初始化记录与验收构建不符")
 
     with game.case("LOG-03.fixed_configuration") as evidence:
         frequency = field(clock[0], "simulation_hz")

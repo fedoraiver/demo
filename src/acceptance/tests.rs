@@ -1,30 +1,41 @@
 //! 使用原生 BRP 处理器验证消息消费及截图载荷，保持无窗口、无渲染。
 
+use avian3d::prelude::{LinearVelocity, Position};
 use bevy::{
     asset::{AssetPlugin, RenderAssetUsages},
     ecs::message::MessageCursor,
-    input::{InputPlugin, mouse::AccumulatedMouseMotion},
+    input::{
+        InputPlugin,
+        keyboard::KeyboardInput,
+        mouse::{AccumulatedMouseMotion, MouseMotion},
+    },
     picking::{
         DefaultPickingPlugins,
         pointer::{PointerAction, PointerButton, PointerLocation},
     },
     reflect::TypePath,
     remote::{RemoteMethodSystemId, RemoteMethods},
-    render::render_resource::{Extent3d, TextureDimension},
-    window::RawHandleWrapper,
+    render::{
+        render_resource::{Extent3d, TextureDimension},
+        view::screenshot::{Screenshot, ScreenshotCaptured},
+    },
+    window::{RawHandleWrapper, WindowCloseRequested, WindowEvent},
 };
 use serde_json::{Value, json};
 
 use super::*;
 use crate::{
-    settings::{GameSettings, SettingKey},
-    ui::UiAction,
+    character::{Character, CharacterMotion},
+    game_flow::AppState,
+    session_log::SessionLogInfo,
+    settings::{GameSettings, SettingKey, SettingsDraft},
+    ui::{MenuButton, UiAction},
 };
 
 fn fixture() -> App {
     let mut app = App::new();
     app.add_plugins(RemotePlugin::default());
-    register_types(&mut app);
+    register_input_types(&mut app);
     app
 }
 
@@ -63,8 +74,8 @@ fn write_message<T: TypePath>(app: &mut App, value: Value) {
 fn native_reads_game_resources_and_menu_actions() {
     let mut app = fixture();
     app.insert_resource(State::new(AppState::MainMenu))
+        .register_type::<State<AppState>>()
         .init_resource::<GameSettings>()
-        .register_type::<GameSettings>()
         .init_resource::<SettingsDraft>()
         .insert_resource(SessionLogInfo {
             id: "test-id".to_string(),
@@ -107,6 +118,31 @@ fn native_reads_game_resources_and_menu_actions() {
         button[component]["action"],
         json!({"Adjust": ["FrameRate", 1]})
     );
+}
+
+#[test]
+fn native_reads_auto_registered_gameplay_and_physics_components() {
+    let mut app = fixture();
+    let character = app
+        .world_mut()
+        .spawn((
+            Character,
+            CharacterMotion { grounded: true },
+            Position(Vec3::new(1.0, 2.0, 3.0)),
+            LinearVelocity(Vec3::new(4.0, 5.0, 6.0)),
+        ))
+        .id();
+    let motion = CharacterMotion::type_path();
+    let position = Position::type_path();
+    let velocity = LinearVelocity::type_path();
+    let components = request(
+        &mut app,
+        "world.get_components",
+        json!({"entity": character, "components": [motion, position, velocity], "strict": true}),
+    );
+    assert_eq!(components[motion]["grounded"], json!(true));
+    assert_eq!(components[position], json!([1.0, 2.0, 3.0]));
+    assert_eq!(components[velocity], json!([4.0, 5.0, 6.0]));
 }
 
 #[test]

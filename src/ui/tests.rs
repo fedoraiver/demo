@@ -329,6 +329,7 @@ mod backdrop_tests {
     use crate::game_flow::AppState;
     use crate::ui::backdrop::*;
     use bevy::{asset::AssetPlugin, scene::ScenePlugin, state::app::StatesPlugin};
+    #[cfg(feature = "inspector")]
     use bevy_inspector_egui::bevy_egui::PrimaryEguiContext;
 
     use super::*;
@@ -354,6 +355,7 @@ mod backdrop_tests {
             .unwrap();
         let menu_camera = app.world().get::<Children>(root).unwrap()[0];
         assert!(app.world().get::<IsDefaultUiCamera>(menu_camera).is_some());
+        #[cfg(feature = "inspector")]
         assert!(app.world().get::<PrimaryEguiContext>(menu_camera).is_none());
 
         app.world_mut()

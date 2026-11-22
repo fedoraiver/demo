@@ -10,6 +10,8 @@
 cargo run --locked
 ```
 
+在窗口游戏中使用世界检查器时运行 `cargo run --locked --features inspector`。[检查器操作](docs/player-guide.md#世界检查器)
+
 运行资源随仓库保存在 [assets/](assets/)，请保留完整目录及路径结构。依赖版本以 [Cargo.toml](Cargo.toml) 与 [Cargo.lock](Cargo.lock) 为准。
 
 详细使用方式见 [玩家指南](docs/player-guide.md)，构建与发布方法见 [开发规范](docs/development.md#构建与调试)。

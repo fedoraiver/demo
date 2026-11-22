@@ -10,7 +10,7 @@ use std::{io, path::Path};
 use bevy::{log::LogPlugin, prelude::*};
 
 pub(crate) use lifecycle::SessionLogGuard;
-#[cfg(feature = "acceptance-test")]
+#[cfg(any(feature = "inspector", feature = "acceptance-test"))]
 pub(crate) use lifecycle::SessionLogInfo;
 use lifecycle::{ConsoleWriter, SessionWriter, console_layer, create_session_file, file_layer};
 
@@ -36,7 +36,7 @@ impl SessionLogPlugin {
 
 impl Plugin for SessionLogPlugin {
     fn build(&self, app: &mut App) {
-        #[cfg(feature = "acceptance-test")]
+        #[cfg(any(feature = "inspector", feature = "acceptance-test"))]
         app.insert_resource(SessionLogInfo {
             id: self.session_id.to_string(),
             path: self.writer.path.display().to_string(),

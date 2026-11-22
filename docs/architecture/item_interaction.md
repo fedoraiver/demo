@@ -2,7 +2,7 @@
 
 源码入口见 [item_interaction/](../../src/item_interaction/mod.rs)。
 
-- **可搬物品实体**以 `Item / Pickable` 表达物品身份和拾取能力；`Item` 由物品交互插件定义并注册反射，场景直接使用该组件，物品根位于几何中心。自由时拥有独立动态刚体，持握时通过 `HeldBy` 关联持有者，`HeldCollider / ItemCollider` 关联同形碰撞代理与业务物品，`HeldAttachment` 保存挂接姿态与恢复状态；业务根始终独立，具体装卸见下文。
+- **可搬物品实体**以 `Item / Pickable` 表达物品身份和拾取能力。场景直接使用这两个组件，物品根位于几何中心。自由时拥有独立动态刚体，持握时通过 `HeldBy` 关联持有者，`HeldCollider / ItemCollider` 关联同形碰撞代理与业务物品，`HeldAttachment` 保存挂接姿态与恢复状态。业务根始终独立。
 
 灰盒方块的网格、材质和物理身体位于同一业务根。持有关系与视觉父子关系相互独立。
 

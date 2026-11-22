@@ -6,7 +6,7 @@
 
 无窗验收与普通游戏都通过 `GameSettingsPlugin` 读写同一个用户设置文件。自动化脚本负责启用测试配置，并在进程退出后恢复用户设置。[设置架构](settings.md#设置草稿与持久化) · [共用设置与恢复](../testing/README.md#共用设置与恢复)
 
-验收接入注册脚本使用的组件、资源、消息和事件。菜单、应用状态、玩法实体、实际设置和会话日志由各功能模块维护。脚本通过 `world.query`、`world.get_components` 和 `world.get_resources` 读取这些数据。
+脚本使用 Bevy 自动注册的组件、资源、消息和事件。验收插件显式注册 `ButtonInput<KeyCode>` 和 `ButtonInput<MouseButton>`，应用流程插件在诊断构建中显式注册 `State<AppState>`。Bevy 自动注册不覆盖这三个泛型实例。脚本通过 `world.query`、`world.get_components` 和 `world.get_resources` 读取当前世界的数据。
 
 按键、按钮、相对鼠标位移和逻辑窗口关闭通过 `world.write_message` 投递。玩法消费具体键鼠消息，Picking 从 Bevy 原生 `WindowEvent` 转换光标和鼠标按钮。绝对光标位置在逻辑窗口及 `CursorMoved` 中同步，Picking 的指针目标由逻辑窗口映射到离屏图像。连续 BRP 请求可以在同一帧处理，脚本轮询键鼠和业务状态确认输入已被消费。
 

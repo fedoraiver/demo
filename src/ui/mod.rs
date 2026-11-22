@@ -26,7 +26,10 @@ use crate::{
 
 /// 当前菜单页面；设置和帮助不改变游戏会话的生命周期。
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-#[cfg_attr(feature = "acceptance-test", derive(Reflect))]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect)
+)]
 pub enum MenuPage {
     #[default]
     Main,
@@ -38,7 +41,10 @@ pub enum MenuPage {
 
 /// 设置分类只展示已接通的能力。
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-#[cfg_attr(feature = "acceptance-test", derive(Reflect))]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect)
+)]
 pub enum SettingsTab {
     #[default]
     Graphics,
@@ -49,7 +55,11 @@ pub enum SettingsTab {
 
 /// 页面数据与返回来源；焦点单独保存，避免导航时重建整个页面。
 #[derive(Resource, Debug, Default)]
-#[cfg_attr(feature = "acceptance-test", derive(Reflect), reflect(Resource))]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Resource)
+)]
 pub struct MenuState {
     pub page: MenuPage,
     pub tab: SettingsTab,
@@ -59,14 +69,22 @@ pub struct MenuState {
 
 /// 当前可操作按钮的序号，由键盘导航和鼠标悬停共同维护。
 #[derive(Resource, Default)]
-#[cfg_attr(feature = "acceptance-test", derive(Reflect), reflect(Resource))]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Resource)
+)]
 pub struct MenuFocus {
     pub index: usize,
 }
 
 /// 输入来源单独决定焦点是否可见；鼠标离开后仍保留序号供后续导航使用。
 #[derive(Resource, Clone, Copy, Debug, Default, PartialEq, Eq)]
-#[cfg_attr(feature = "acceptance-test", derive(Reflect), reflect(Resource))]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Resource)
+)]
 pub(crate) enum MenuInputSource {
     #[default]
     Pointer,
@@ -75,7 +93,10 @@ pub(crate) enum MenuInputSource {
 
 /// 鼠标与 Enhanced Input 共用的菜单语义，避免两条路径分别执行业务。
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-#[cfg_attr(feature = "acceptance-test", derive(Reflect))]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect)
+)]
 pub enum UiAction {
     StartGame,
     OpenSettings,
@@ -100,7 +121,11 @@ pub enum UiAction {
 
 /// 菜单实体保存动作与导航序号，系统不依赖显示文字或实体名称。
 #[derive(Component, Clone, Default)]
-#[cfg_attr(feature = "acceptance-test", derive(Reflect), reflect(Component))]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Component)
+)]
 #[require(Button, Node, Hovered, BackgroundColor, BorderColor)]
 pub struct MenuButton {
     pub action: UiAction,

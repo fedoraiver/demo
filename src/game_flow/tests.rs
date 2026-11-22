@@ -113,13 +113,15 @@ mod initialization_tests {
         time::TimeUpdateStrategy,
         window::ExitCondition,
     };
+    #[cfg(feature = "inspector")]
     use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
     use uuid::Uuid;
 
+    #[cfg(feature = "inspector")]
+    use crate::inspector::InspectorPlugin;
     use crate::{
-        character::CharacterPlugin, game_flow::AppState, inspector::InspectorPlugin,
-        item_interaction::ItemInteractionPlugin, physics::GamePhysicsPlugin,
-        settings::GameSettingsPlugin, settings::PrototypeConfig,
+        character::CharacterPlugin, game_flow::AppState, item_interaction::ItemInteractionPlugin,
+        physics::GamePhysicsPlugin, settings::GameSettingsPlugin, settings::PrototypeConfig,
     };
 
     #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -137,7 +139,12 @@ mod initialization_tests {
 
     #[test]
     fn absent_feature_plugins_do_not_report_initialization() {
-        for omitted in [Feature::Gameplay, Feature::Settings, Feature::Inspector] {
+        for omitted in [
+            Feature::Gameplay,
+            Feature::Settings,
+            #[cfg(feature = "inspector")]
+            Feature::Inspector,
+        ] {
             let contents = capture_initialization_logs(Some(omitted));
             assert_initialization_logs(&contents, Some(omitted));
         }
@@ -174,6 +181,7 @@ mod initialization_tests {
         if omitted != Some(Feature::Settings) {
             app.add_plugins(GameSettingsPlugin);
         }
+        #[cfg(feature = "inspector")]
         if omitted != Some(Feature::Inspector) {
             app.add_plugins(InspectorPlugin);
             assert!(app.is_plugin_added::<EguiPlugin>());
@@ -304,7 +312,8 @@ mod initialization_tests {
                 .lines()
                 .filter(|line| line.contains(message))
                 .collect();
-            let expected_count = usize::from(omitted != Some(feature));
+            let enabled = feature != Feature::Inspector || cfg!(feature = "inspector");
+            let expected_count = usize::from(enabled && omitted != Some(feature));
             assert_eq!(
                 records.len(),
                 expected_count,

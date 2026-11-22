@@ -34,7 +34,7 @@ struct Manifest {
     debugdump_version: &'static str,
     exported_at: u64,
     target: &'static str,
-    features: [&'static str; 1],
+    features: &'static [&'static str],
     source_fingerprint: String,
     schedules: Vec<ScheduleEntry>,
 }
@@ -93,7 +93,13 @@ fn write_schedules(app: &mut App, output: &Path, source_root: &Path) -> DumpResu
         debugdump_version: "0.17.0",
         exported_at: SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs(),
         target: env!("DEMO_BUILD_TARGET"),
-        features: ["debugdump"],
+        features: &[
+            #[cfg(feature = "acceptance-test")]
+            "acceptance-test",
+            "debugdump",
+            #[cfg(feature = "inspector")]
+            "inspector",
+        ],
         source_fingerprint,
         schedules: entries,
     };

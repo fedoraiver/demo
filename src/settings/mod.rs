@@ -20,15 +20,13 @@ pub(crate) use config::{DEFAULT_MOUSE_SENSITIVITY, MAX_MOUSE_SENSITIVITY, MIN_MO
 pub use draft::{SettingKey, SettingsDraft};
 pub use prototype::PrototypeConfig;
 
-/// 加载玩家设置并注册原型参数反射和渲染限帧。
+/// 加载玩家设置并初始化原型参数与渲染限帧。
 pub struct GameSettingsPlugin;
 
 impl Plugin for GameSettingsPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<GameSettings>()
-            .add_plugins(SettingsPlugin::new(SETTINGS_APP_NAME))
-            .init_resource::<PrototypeConfig>()
-            .register_type::<PrototypeConfig>();
+        app.add_plugins(SettingsPlugin::new(SETTINGS_APP_NAME))
+            .init_resource::<PrototypeConfig>();
 
         let settings = app.world().resource::<GameSettings>();
         info!(target: "demo::settings", max_fps = settings.max_fps.get(),

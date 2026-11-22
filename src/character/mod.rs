@@ -22,16 +22,12 @@ use crate::{
 use lifecycle::clear_character_intents;
 use motion::{jump_characters, log_character_velocity, move_characters, update_grounded};
 
-/// 注册角色运动与反射元数据，不加载窗口、场景或其他项目插件。
+/// 注册角色运动和物理状态记录，不加载窗口、场景或其他项目插件。
 pub(crate) struct CharacterPlugin;
 
 impl Plugin for CharacterPlugin {
     fn build(&self, app: &mut App) {
-        app.register_type::<Character>()
-            .register_type::<CharacterIntent>()
-            .register_type::<CharacterMotion>()
-            .register_type::<PrototypeConfig>()
-            .init_resource::<PrototypeConfig>()
+        app.init_resource::<PrototypeConfig>()
             .add_systems(Startup, log_configuration)
             .add_systems(OnEnter(AppState::MainMenu), clear_character_intents)
             .add_systems(OnEnter(AppState::Paused), clear_character_intents)

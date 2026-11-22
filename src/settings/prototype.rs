@@ -3,8 +3,12 @@
 use bevy::prelude::*;
 
 /// 原型的运动、平地和持箱参数。
-#[derive(Resource, Reflect, Clone, Debug)]
-#[reflect(Resource)]
+#[derive(Resource, Clone, Debug)]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Resource)
+)]
 pub struct PrototypeConfig {
     pub move_speed: f32,
     pub acceleration: f32,
