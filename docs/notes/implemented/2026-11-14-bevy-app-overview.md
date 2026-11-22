@@ -10,7 +10,7 @@ Status: implemented — 已分离通用 Bevy App 说明与项目流程架构。
 
 ## Decision
 
-将 [架构首页](../../../architecture/README.md) 限定为 Bevy 0.20 的通用 App 机制、默认生命周期及 12 个项目模块的阅读入口。[应用流程](../../../architecture/game_flow.md) 维护项目状态、时钟和跨模块调度；[会话日志](../../../architecture/session_log.md#退出与异常) 维护退出时先释放 App 再记录结果和刷新日志的顺序。
+将 [架构首页](../../architecture/README.md) 限定为 Bevy 0.20 的通用 App 机制、默认生命周期及 12 个项目模块的阅读入口。[应用流程](../../architecture/game_flow.md) 维护项目状态、时钟和跨模块调度；[会话日志](../../architecture/session_log.md#退出与异常) 维护退出时先释放 App 再记录结果和刷新日志的顺序。
 
 App 与 SubApp 的说明先介绍包含结构和世界边界，再解释普通更新与显式提取；渲染仅作为应用实例，说明流水线线程安排由插件提供，不展开完整渲染管线。
 
@@ -20,7 +20,7 @@ App 与 SubApp 的说明先介绍包含结构和世界边界，再解释普通�
 - 首页移除外部参考链接，保留项目模块的内部阅读入口。
 - 补充 App 与 SubApp 的结构图、普通更新顺序图及说明，覆盖主应用也是 SubApp、独立 World、默认配置目标、入口调度与提取回调；以渲染解释用途和线程边界，保留主调度生命周期图与模块表。
 - game_flow 承接菜单、会话、场景生命周期和两张原有项目图，保留暂停清零、无状态测试例外、三个公开调度链与零／多个固定步的边界，并说明固定 60 Hz 模拟与渲染限帧的分离。
-- 更新 [Agent 阅读入口](../../../../AGENTS.md)、[文档归属规范](../../../AGENTS.md)、[开发规范](../../../development.md) 及相关模块和架构图说明的引用；旧 Notes 保留原有历史结论。
+- 更新 [Agent 阅读入口](../../../AGENTS.md)、[文档归属规范](../../AGENTS.md)、[开发规范](../../development.md) 及相关模块和架构图说明的引用；旧 Notes 保留原有历史结论。
 
 ## Alternatives considered
 

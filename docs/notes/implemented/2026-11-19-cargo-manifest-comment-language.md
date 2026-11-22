@@ -4,7 +4,7 @@ Status: implemented
 
 ## Problem
 
-根 [Cargo.toml](../../../../Cargo.toml) 的平台依赖注释为中文，其余注释为英文。
+根 [Cargo.toml](../../../Cargo.toml) 的平台依赖注释为中文，其余注释为英文。
 
 ## Decision
 
