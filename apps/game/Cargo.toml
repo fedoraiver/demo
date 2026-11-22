@@ -5,6 +5,9 @@ edition = "2024"
 publish = false
 build = "../build.rs"
 
+[package.metadata.bevy-architecture]
+app-factory = "build_app"
+
 [dependencies]
 bevy.workspace = true
 bevy_enhanced_input.workspace = true

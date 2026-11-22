@@ -26,11 +26,9 @@ Each fact has one complete home. Elsewhere, summarize briefly and link there. Th
 | [architecture/game_flow.md](architecture/game_flow.md) | Project application states, clocks, session lifecycle, and cross-feature scheduling contracts | Duplicated generic Bevy explanations or other modules' internal behavior |
 | [architecture/](architecture/) | Module-owned ECS responsibilities, relationships, internal scheduling, lifecycle, and failure boundaries | Duplicated shared contracts, asset authoring guides, or decision history |
 | [testing/README.md](testing/README.md) | Test frameworks, unit/integration/system/acceptance levels, shared validation boundaries, and module entry points | Detailed module checklists or individual execution results |
-| [testing/](testing/) | Module-specific test scenarios, commands, expected results, and user-performed acceptance | Duplicated framework rules or architecture-diagram tool tests |
+| [testing/](testing/) | Module-specific test scenarios, commands, expected results, and user-performed acceptance | Duplicated framework rules |
 | [testing/app-acceptance.md](testing/app-acceptance.md) | Objective application acceptance conditions, scripted evidence, coverage, and explicit implementation status | Run results, subjective approval, or duplicated test internals |
 | [assets/](assets/README.md) | Asset authoring, import and validation guides, event mappings, and source records | Runtime module architecture or duplicated machine-readable manifests and license evidence |
-| [diagrams/](diagrams/README.md) | Generated architecture views and their maintenance workflow | Hand-edited generated outputs or independent copies of source contracts |
-| [diagrams/maintenance.md](diagrams/maintenance.md) | Generated ECS diagram sources, the GitHub Actions workflow, and troubleshooting | Game-module test checklists or enumerations of individual test cases |
 | [domain.md](domain.md), [issue-tracker.md](issue-tracker.md), and [triage-labels.md](triage-labels.md) | Issue-tracker, label, and domain-reading conventions | Task progress or a second copy of domain architecture |
 | [Agent Notes](notes/README.md) | Development designs, completed work, choices and rationale, alternatives, consequences, and verification boundaries for developer review | Raw command logs or duplicated current runtime references |
 | [postmortem/](postmortem/README.md) | Incident evidence, failure mechanisms, missed safeguards, and prevention | Feature proposals or the current runtime specification |
@@ -56,5 +54,5 @@ The architecture overview introduces generic Bevy App mechanisms and indexes pro
 - Adding or changing a feature or constraint does not by itself require a documentation change. Add documentation only for information future development needs that cannot be directly and reliably inferred from the repository. Update existing documentation when a change makes it inaccurate, and check commands, parameters, paths, and examples against current source and configuration.
 - When moving or deleting content, repair incoming links and remove duplicated or orphaned explanations.
 - Record individual execution results in the corresponding Issue or PR, following [Issue Tracking Conventions](issue-tracker.md).
-- Update the owning inventory or generator for changes to generated ECS diagrams. GitHub Actions generates, validates, and publishes the official diagrams as described in [Architecture Maintenance](diagrams/maintenance.md). Maintain inline Mermaid diagrams with the accompanying prose and check them against source and Mermaid syntax.
+- Maintain inline Mermaid diagrams with the accompanying prose and check them against source and Mermaid syntax.
 - For ordinary documentation changes, check facts, ownership, links, anchors, and formatting. Follow the [Testing Guide](testing/README.md) when additional validation is required.

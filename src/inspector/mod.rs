@@ -1,12 +1,7 @@
 //! 封装世界检查器的装配和启用日志，复用统一会话日志设施。
 
-#[cfg(feature = "debugdump")]
-mod schedule_dump;
 #[cfg(test)]
 mod tests;
-
-#[cfg(feature = "debugdump")]
-pub use schedule_dump::dump_schedules;
 
 #[cfg(feature = "inspector")]
 use bevy::prelude::*;

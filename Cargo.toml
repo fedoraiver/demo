@@ -1,13 +1,10 @@
 [workspace]
-members = ["apps/game", "apps/inspector", "apps/acceptance", "apps/debugdump"]
+members = ["apps/game", "apps/inspector", "apps/acceptance"]
 default-members = ["apps/game"]
-exclude = [
-    "tools/check-entity-names",
-    "tools/check-named-fields",
-    "tools/rustc-analysis",
-    "tools/rustc-analysis/contract",
-]
 resolver = "3"
+
+[workspace.metadata.bevy-architecture]
+package = "demo"
 
 [workspace.dependencies]
 bevy = { version = "0.20.1", features = ["bevy_settings"] }

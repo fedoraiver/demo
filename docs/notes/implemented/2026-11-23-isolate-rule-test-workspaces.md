@@ -12,7 +12,7 @@ Status: implemented
 
 ## Changes
 
-[具名字段测试](../../../tools/check-named-fields/tests/check.rs)和[实体命名测试](../../../tools/check-entity-names/tests/check.rs)各自声明临时包的工作区边界。
+[具名字段测试](https://github.com/fedoraiver/demo/blob/054f6fdf596d2f6b4c9c0ce9ce6999250e28da4f/tools/check-named-fields/tests/check.rs)和[实体命名测试](https://github.com/fedoraiver/demo/blob/054f6fdf596d2f6b4c9c0ce9ce6999250e28da4f/tools/check-entity-names/tests/check.rs)各自声明临时包的工作区边界。
 
 ## Alternatives considered
 

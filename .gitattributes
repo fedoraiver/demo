@@ -6,11 +6,6 @@ assets/audio/** -text whitespace=cr-at-eol
 assets/audio/sources/*-License.txt -whitespace
 # 清单包含生成器自身的哈希，因此检出也不能改变其换行。
 scripts/audio_pipeline.py -text
-# 原生调度回归 fixture 保留导出字节及空白行上的缩进。
-docs/diagrams/tests/fixtures/native-postupdate.dot -text diff whitespace=cr-at-eol,-blank-at-eol
-docs/diagrams/tests/fixtures/native-render.dot -text diff whitespace=cr-at-eol,-blank-at-eol
-# 分发运行库的完整许可证保留来源格式。
-docs/diagrams/licenses/SCHEDULE-RUNTIME-LICENSES.txt -text -whitespace
 
 # 当前音频和字体资源按二进制处理，避免文本差异比较和文本合并。
 *.ogg binary

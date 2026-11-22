@@ -1,11 +1,6 @@
-//! 为应用入口及测试程序配置目标信息和 Windows 链接清单。
+//! 为应用入口及测试程序配置 Windows 链接清单。
 
 pub(crate) fn emit_build_configuration() {
-    println!(
-        "cargo::rustc-env=DEMO_BUILD_TARGET={}",
-        std::env::var("TARGET").unwrap()
-    );
-
     // 按编译目标判断平台，避免从 macOS 交叉编译时把宿主平台当作目标平台。
     let target_os = std::env::var("CARGO_CFG_TARGET_OS").unwrap();
     let target_env = std::env::var("CARGO_CFG_TARGET_ENV").unwrap();

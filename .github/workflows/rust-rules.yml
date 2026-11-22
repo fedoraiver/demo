@@ -7,8 +7,6 @@ on:
       - 'src/**'
       - 'apps/**'
       - 'assets/**'
-      - 'tools/**'
-      - '.github/scripts/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
       - 'build_configuration.rs'
@@ -16,7 +14,6 @@ on:
       - '.cargo/**'
       - '.gitattributes'
       - '.github/workflows/rust-rules.yml'
-      - '.github/actions/setup-rust-checks/**'
       - '!**/*.md'
   push:
     branches: [master]
@@ -24,8 +21,6 @@ on:
       - 'src/**'
       - 'apps/**'
       - 'assets/**'
-      - 'tools/**'
-      - '.github/scripts/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
       - 'build_configuration.rs'
@@ -33,162 +28,21 @@ on:
       - '.cargo/**'
       - '.gitattributes'
       - '.github/workflows/rust-rules.yml'
-      - '.github/actions/setup-rust-checks/**'
       - '!**/*.md'
   workflow_dispatch:
 
 permissions:
   contents: read
 
-defaults:
-  run:
-    shell: bash
-
 concurrency:
   group: rust-rules-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  fmt:
-    name: fmt
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - name: Check out source
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-
-      - name: Prepare formatter
-        uses: ./.github/actions/setup-rust-checks
-        with:
-          prepare-build: 'false'
-
-      - name: Check Rust formatting
-        run: |
-          manifests=(
-            'Cargo.toml'
-            'tools/rustc-analysis/Cargo.toml'
-            'tools/check-entity-names/Cargo.toml'
-            'tools/check-named-fields/Cargo.toml'
-          )
-          for manifest in "${manifests[@]}"; do
-            cargo fmt --manifest-path "$manifest" --all -- --check
-          done
-
-  quality:
-    name: rust (${{ matrix.configuration }})
-    needs: fmt
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
-    strategy:
-      fail-fast: false
-      matrix:
-        configuration: [default, workspace]
-    env:
-      CHECK_CONFIGURATION: ${{ matrix.configuration }}
-      CARGO_TERM_COLOR: always
-      # 完整 Bevy 测试需要链接；CI 省略调试符号以控制磁盘占用。
-      CARGO_PROFILE_DEV_DEBUG: '0'
-      CARGO_PROFILE_TEST_DEBUG: '0'
-    steps:
-      - name: Check out source
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-
-      - name: Prepare Rust build
-        uses: ./.github/actions/setup-rust-checks
-
-      - name: Check all Cargo targets
-        id: check
-        run: |
-          cargo_args=(check --locked --all-targets)
-          if [[ "$CHECK_CONFIGURATION" == workspace ]]; then cargo_args+=(--workspace); fi
-          cargo "${cargo_args[@]}"
-
-      - name: Run Clippy with pedantic warnings
-        id: clippy
-        if: ${{ !cancelled() && steps.check.outcome == 'success' }}
-        run: |
-          cargo_args=(clippy --locked --all-targets)
-          if [[ "$CHECK_CONFIGURATION" == workspace ]]; then cargo_args+=(--workspace); fi
-          cargo_args+=(-- --no-deps -W clippy::pedantic)
-          cargo "${cargo_args[@]}"
-
-      - name: Run headless tests
-        id: test
-        if: ${{ !cancelled() && steps.check.outcome == 'success' }}
-        run: |
-          cargo_args=(test --locked)
-          if [[ "$CHECK_CONFIGURATION" == workspace ]]; then cargo_args+=(--workspace); fi
-          cargo_args+=(-- --test-threads=1)
-          cargo "${cargo_args[@]}"
-
-      - name: Summarize checks and disk space
-        if: ${{ always() }}
-        env:
-          CHECK_OUTCOME: ${{ steps.check.outcome }}
-          CLIPPY_OUTCOME: ${{ steps.clippy.outcome }}
-          TEST_OUTCOME: ${{ steps.test.outcome }}
-        run: |
-          {
-            printf '## Rust (%s)\n\n' "$CHECK_CONFIGURATION"
-            printf 'Compilation: %s\n' "$CHECK_OUTCOME"
-            printf 'Clippy (default levels and pedantic warnings): %s\n' "$CLIPPY_OUTCOME"
-            printf 'Headless tests: %s\n' "$TEST_OUTCOME"
-            printf '\n### Remaining disk space\n\n```text\n'
-            df -h .
-            printf '```\n'
-          } | tee -a "$GITHUB_STEP_SUMMARY"
+  rust:
+    uses: fedoraiver/bevy-cicd/.github/workflows/rust-checks.yml@08401c3e82659ab80b42ccb5f82ded757be20ea6
 
   rules:
-    name: ${{ matrix.rule }}
-    needs: fmt
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
-    strategy:
-      fail-fast: false
-      matrix:
-        rule: [entity-names, named-fields]
-    env:
-      ANALYSIS_RULE: ${{ matrix.rule }}
-      CARGO_TERM_COLOR: always
-      CARGO_PROFILE_DEV_DEBUG: '0'
-      CARGO_PROFILE_TEST_DEBUG: '0'
-
-    steps:
-      - name: Check out source
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-
-      - name: Prepare Rust build
-        id: dependencies
-        uses: ./.github/actions/setup-rust-checks
-
-      - name: Verify regressions and default configuration
-        id: default
-        run: |
-          bash .github/scripts/rustc-analysis.sh verify --rule "$ANALYSIS_RULE" --workspace "$GITHUB_WORKSPACE"
-
-      - name: Check debugdump configuration
-        id: debugdump
-        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
-        run: |
-          bash .github/scripts/rustc-analysis.sh check --rule "$ANALYSIS_RULE" --workspace "$GITHUB_WORKSPACE/apps/debugdump"
-
-      - name: Summarize checks and disk space
-        if: ${{ always() }}
-        env:
-          DEFAULT_OUTCOME: ${{ steps.default.outcome }}
-          DEBUGDUMP_OUTCOME: ${{ steps.debugdump.outcome }}
-        run: |
-          {
-            printf '## %s\n\n' "$ANALYSIS_RULE"
-            printf 'Default configuration and regressions: %s\n' "$DEFAULT_OUTCOME"
-            printf 'debugdump configuration: %s\n' "$DEBUGDUMP_OUTCOME"
-            printf '\n### Remaining disk space\n\n```text\n'
-            df -h .
-            printf '```\n'
-          } | tee -a "$GITHUB_STEP_SUMMARY"
+    uses: fedoraiver/bevy-cicd/.github/workflows/bevy-rules.yml@08401c3e82659ab80b42ccb5f82ded757be20ea6
+    with:
+      package-path: apps/game

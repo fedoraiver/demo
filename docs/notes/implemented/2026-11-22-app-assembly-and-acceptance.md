@@ -26,4 +26,4 @@ Status: implemented
 
 ## Verification
 
-按[测试指南](../../testing/README.md)检查默认与专用入口构建、业务 BRP 契约、Python 驱动和五套无窗验收。调度导出按[调度导出边界](../../diagrams/maintenance.md#调度导出边界)检查普通窗口配置与源码指纹。普通窗口交互由用户验收。
+按[测试指南](../../testing/README.md)检查默认与专用入口构建、业务 BRP 契约、Python 驱动和五套无窗验收。调度导出按[调度导出边界](https://github.com/fedoraiver/demo/blob/054f6fdf596d2f6b4c9c0ce9ce6999250e28da4f/docs/diagrams/maintenance.md#调度导出边界)检查普通窗口配置与源码指纹。普通窗口交互由用户验收。

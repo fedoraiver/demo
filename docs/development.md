@@ -4,9 +4,9 @@
 
 ## 技术栈与版本
 
-项目统一使用 [rust-toolchain.toml](../rust-toolchain.toml) 固定的 nightly。在仓库目录运行 rustup 管理的 Cargo 会选择该版本，工具链升级需同时验证[共享编译器分析工具](../tools/rustc-analysis/Cargo.toml)的架构事实提取。Rust edition 见各应用清单，workspace 成员、共享依赖和构建参数见 [Cargo.toml](../Cargo.toml)，实际依赖版本见 [Cargo.lock](../Cargo.lock)。
+项目统一使用 [rust-toolchain.toml](../rust-toolchain.toml) 固定的 nightly。在仓库目录运行 rustup 管理的 Cargo 会选择该版本。Rust edition 见各应用清单，workspace 成员、共享依赖和构建参数见 [Cargo.toml](../Cargo.toml)，实际依赖版本见 [Cargo.lock](../Cargo.lock)。
 
-固定工具链包含 `rustfmt`、`clippy`、`rust-src`、`rustc-dev` 和 `llvm-tools-preview`。
+固定工具链包含 `rustfmt`、`clippy` 和 `rust-src`。
 
 API 行为以对应版本的官方文档为准，示例必须匹配项目版本。
 
@@ -122,7 +122,7 @@ API 行为以对应版本的官方文档为准，示例必须匹配项目版本�
 cargo build --locked
 ```
 
-工作区默认构建普通游戏。Windows 输出程序为 `target/debug/demo.exe`。开发构建保留调试信息，但优化可能使单步调试跳行或令部分变量不可查看。首次构建依赖耗时较长，后续构建可以复用缓存。[世界检查器](../README.md#运行) · [应用验收](testing/README.md#自动化启动准备) · [调度导出](diagrams/maintenance.md#调度导出边界)
+工作区默认构建普通游戏。Windows 输出程序为 `target/debug/demo.exe`。开发构建保留调试信息，但优化可能使单步调试跳行或令部分变量不可查看。首次构建依赖耗时较长，后续构建可以复用缓存。[世界检查器](../README.md#运行) · [应用验收](testing/README.md#自动化启动准备)
 
 ### 发布构建
 
@@ -134,7 +134,7 @@ Windows 输出程序为 `target/release/demo.exe`。发布构建保留默认 pan
 
 `--locked` 确保使用提交的依赖锁定文件，需要变化时直接报错。构建参数以 Cargo 文件为准。发布包必须携带完整的 `assets/`。
 
-四个入口共用[构建脚本](../apps/build.rs)。脚本为编译期嵌入资源、测试 fixture 和调度指纹提供仓库根路径，为 Windows MSVC 的开发、发布及测试程序嵌入 `Microsoft.Windows.Common-Controls` v6 清单。原生窗口策略按名称导入的 `GetWindowSubclass` 依赖该清单选择 v6 `comctl32.dll`，须按[验证指南](testing/window_policy.md#windows-msvc-链接产物)检查最终可执行文件。
+各应用共用[构建脚本](../apps/build.rs)。脚本为编译期嵌入资源和测试 fixture 提供仓库根路径，为 Windows MSVC 的开发、发布及测试程序嵌入 `Microsoft.Windows.Common-Controls` v6 清单。原生窗口策略按名称导入的 `GetWindowSubclass` 依赖该清单选择 v6 `comctl32.dll`，须按[验证指南](testing/window_policy.md#windows-msvc-链接产物)检查最终可执行文件。
 
 使用支持 `build.build-dir` 的 Cargo 时，可在用户级 Cargo 配置中设置 `[build] build-dir`，或为各 worktree 的构建设置同一个 `CARGO_BUILD_BUILD_DIR`。将其指向专用缓存目录，例如主检出的 `tmp/shared-crates/`。最终程序仍保存在各 worktree 的 `target/` 中。机器专属路径留在本地配置。
 
@@ -169,5 +169,3 @@ Remove-Item Env:RUST_LOG -ErrorAction SilentlyContinue
 ## 文档维护
 
 面向人类文档的分层、内容归属、写作和验证规则见 [文档规范](AGENTS.md)。理解当前机制所需的局部约束与实现解释仍放在架构说明中；开发设计、已完成工作、决策动机、替代方案和取舍由 [Agent Notes](notes/README.md) 维护，供开发者查阅。事故复盘遵循 [postmortem 约定](postmortem/README.md)。这两类记录使用各自的独立规则。
-
-正式 ECS 架构图由 GitHub Actions 生成、校验和发布，流程见[架构图维护指南](diagrams/maintenance.md)。

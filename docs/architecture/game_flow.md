@@ -4,7 +4,7 @@
 
 ## 应用装配
 
-[普通游戏](../../apps/game/src/main.rs)、[世界检查器](../../apps/inspector/src/main.rs)、[BRP 验收](../../apps/acceptance/src/main.rs)和[调度导出](../../apps/debugdump/src/main.rs)各自创建 Bevy `App`，选择引擎插件、运行方式和诊断工具。每个入口将同一份 `src/` 玩法模块编译进自己的二进制，并显式安装所需插件。调度导出按普通游戏的插件顺序装配，在应用循环开始前读取调度。[调度导出边界](../diagrams/maintenance.md#调度导出边界)
+[普通游戏](../../apps/game/src/lib.rs)、[世界检查器](../../apps/inspector/src/main.rs)和 [BRP 验收](../../apps/acceptance/src/main.rs)各自选择引擎插件、运行方式和诊断配置。每个应用编译同一份 `src/` 玩法模块，并显式安装所需插件。[在线 ECS 架构图](https://fedoraiver.github.io/demo/)
 
 Cargo workspace 默认选择普通游戏。检查器和验收在各自包中默认启用诊断 feature，注册各工具需要的玩法反射。检查器还启用游戏内的 Egui 输入转发。[验证入口](../testing/README.md)
 

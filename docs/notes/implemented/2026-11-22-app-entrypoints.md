@@ -12,7 +12,7 @@ Status: implemented
 
 ## Changes
 
-当时由 `src/app.rs` 提供窗口、检查器和无窗构建。[启动说明](../../../README.md#运行)和[自动化启动准备](../../testing/README.md#自动化启动准备)使用按包选择的命令。调度导出专包接受 `--output`，当时另提供 `cargo dump-inspector` 显式导出检查器调度。[架构提取](../../../tools/rustc-analysis/runner/src/host.rs)绑定导出包及目标，模型识别共享装配，调度快照的指纹覆盖新入口源码。后续调整见[普通游戏调度导出与入口参数](2026-11-22-ordinary-game-schedule-export.md)及[应用入口装配与外部验收工具](2026-11-22-app-assembly-and-acceptance.md)。
+当时由 `src/app.rs` 提供窗口、检查器和无窗构建。[启动说明](../../../README.md#运行)和[自动化启动准备](../../testing/README.md#自动化启动准备)使用按包选择的命令。调度导出专包接受 `--output`，当时另提供 `cargo dump-inspector` 显式导出检查器调度。[架构提取](https://github.com/fedoraiver/demo/blob/054f6fdf596d2f6b4c9c0ce9ce6999250e28da4f/tools/rustc-analysis/runner/src/host.rs)绑定导出包及目标，模型识别共享装配，调度快照的指纹覆盖新入口源码。后续调整见[普通游戏调度导出与入口参数](2026-11-22-ordinary-game-schedule-export.md)及[应用入口装配与外部验收工具](2026-11-22-app-assembly-and-acceptance.md)。
 
 ## Alternatives considered
 
