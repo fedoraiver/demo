@@ -86,7 +86,7 @@ impl Fixture {
         .unwrap();
         fs::write(
             root.join("src/lib.rs"),
-            "pub fn library_value() -> usize { fixture_dependency::VALUE }\n",
+            "pub fn library_value() -> usize { fixture_dependency::VALUE }\npub const DEBUGDUMP_ENABLED: bool = cfg!(feature = \"debugdump\");\n",
         )
         .unwrap();
         fs::write(root.join("Cargo.lock"), format!(
@@ -121,18 +121,63 @@ pub fn value() -> usize {
         + option_env!("ANALYSIS_FIXTURE_VALUE").map(str::len).unwrap_or(0) + __VALUE__
 }
 fn main() {
+    panic!("Architecture extraction must never execute the ordinary game binary");
+}
+"#
+        .replace("__VALUE__", &value.to_string())
+        .replace(
+            "__NEGATIVE__",
+            if negative {
+                "pub struct NeedsNamedField(pub usize);"
+            } else {
+                ""
+            },
+        );
+        fs::write(self.root.join("src/main.rs"), source).unwrap();
+    }
+
+    fn install_schedule_exporter(&self) {
+        let manifest_path = self.root.join("Cargo.toml");
+        let manifest = fs::read_to_string(&manifest_path).unwrap();
+        assert!(manifest.contains("members = ["));
+        fs::write(
+            manifest_path,
+            manifest.replacen("members = [", "members = [\"apps/debugdump\", ", 1),
+        )
+        .unwrap();
+        let exporter = self.root.join("apps/debugdump");
+        fs::create_dir_all(exporter.join("src")).unwrap();
+        fs::write(
+            exporter.join("Cargo.toml"),
+            format!(
+                "[package]\nname = \"demo-debugdump\"\nversion = \"0.1.0\"\nedition = \"2024\"\n[dependencies]\nfixture_game = {{ package = {:?}, path = \"../..\", features = [\"debugdump\"] }}\n",
+                self.package
+            ),
+        )
+        .unwrap();
+        fs::write(exporter.join("src/main.rs"), r#"fn main() {
     let mut args = std::env::args().skip(1);
-    assert_eq!(args.next().as_deref(), Some("--dump-schedules"), "Only the dedicated test export may execute");
-    assert!(cfg!(feature = "debugdump"));
+    assert_eq!(args.next().as_deref(), Some("--output"), "Only the dedicated test export may execute");
+    assert!(fixture_game::DEBUGDUMP_ENABLED);
     let output = std::path::PathBuf::from(args.next().unwrap());
+    assert!(args.next().is_none());
     std::fs::create_dir_all(&output).unwrap();
-    let fingerprint = format!("fixture-{}", value());
+    let fingerprint = format!("fixture-{}", fixture_game::library_value());
     let exported_at = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_secs();
     std::fs::write(output.join("manifest.json"), format!("{{\"schemaVersion\":1,\"bevyVersion\":\"0.20.0\",\"debugdumpVersion\":\"0.17.0\",\"sourceFingerprint\":\"{}\",\"target\":\"fixture\",\"features\":[\"debugdump\"],\"exportedAt\":{},\"schedules\":[]}}", fingerprint, exported_at)).unwrap();
     std::fs::write(output.join("runtime.json"), format!("{{\"schemaVersion\":1,\"sourceFingerprint\":\"{}\",\"target\":\"fixture\",\"features\":[\"debugdump\"],\"schedules\":[]}}", fingerprint)).unwrap();
 }
-"#.replace("__VALUE__", &value.to_string()).replace("__NEGATIVE__", if negative { "pub struct NeedsNamedField(pub usize);" } else { "" });
-        fs::write(self.root.join("src/main.rs"), source).unwrap();
+"#).unwrap();
+        let lockfile = Command::new("cargo")
+            .current_dir(&self.root)
+            .args(["generate-lockfile", "--offline"])
+            .output()
+            .unwrap();
+        assert!(
+            lockfile.status.success(),
+            "{}",
+            String::from_utf8_lossy(&lockfile.stderr)
+        );
     }
 
     fn nested_tool_workspace(&self) -> [String; 3] {
@@ -612,6 +657,7 @@ fn failed_architecture_build_preserves_valid_cache_and_published_outputs(
     let manifests = BTreeSet::from([
         normalized(&fixture.root).unwrap(),
         normalized(&fixture.root.join("dependency")).unwrap(),
+        normalized(&fixture.root.join("apps/debugdump")).unwrap(),
     ]);
     let mut observed_manifests = BTreeSet::new();
     let mut indices = 0;
@@ -782,6 +828,9 @@ fn all_public_entries_reuse_hot_units_and_recompile_only_changed_root_sources() 
     let _serial = host_test_guard();
     for rule in ["named-fields", "entity-names", "architecture"] {
         let fixture = Fixture::new(&rule.replace('-', "_"));
+        if rule == "architecture" {
+            fixture.install_schedule_exporter();
+        }
         let cold = fixture.run(rule, "cold", "first", "1");
         changed(&cold);
         native_incremental_was_enabled(&cold, &fixture, rule == "architecture");
@@ -978,6 +1027,7 @@ fn architecture_binds_equal_parent_units_by_distinct_native_dependency_closures(
         b"\nconst _: () = assert!(fixture_dependency::VALUE == 8);\nconst _: () = assert!(fixture_leaf::VALUE == 8);\nconst _: usize = fixture_sibling::VALUE;\nconst _: () = assert!(env!(\"ANALYSIS_FIXTURE_PARENT\").as_bytes()[0] == b'4');\n",
     ).unwrap();
 
+    fixture.install_schedule_exporter();
     let cold = fixture.run("architecture", "proof-cold", "first", "1");
     changed(&cold);
     compiler_environment_matches(&cold, &fixture, "ANALYSIS_FIXTURE_PARENT", "4");

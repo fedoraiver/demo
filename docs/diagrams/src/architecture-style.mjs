@@ -198,7 +198,5 @@ export function scheduleLinksFor(groups) {
   }
   const mainTracks = new Set(['startup', 'frame', 'conditional', 'fixed']);
   const main = groups.filter(group => mainTracks.has(group.track) || group.id === 'RunFixedMainLoop.AfterFixedMainLoop').toSorted((a, b) => a.order - b.order);
-  const links = main.slice(1).map((group, index) => ({ id: `schedule-${main[index].id}-${group.id}`, from: main[index].id, to: group.id, edgeSemantic: 'schedule', displayLabel: EDGE_STYLES.schedule.label }));
-  if (ids.has('PostUpdate') && ids.has('EguiPrimaryContextPass')) links.push({ id: 'nested-PostUpdate-EguiPrimaryContextPass', from: 'PostUpdate', to: 'EguiPrimaryContextPass', edgeSemantic: 'nested', displayLabel: EDGE_STYLES.nested.label });
-  return links;
+  return main.slice(1).map((group, index) => ({ id: `schedule-${main[index].id}-${group.id}`, from: main[index].id, to: group.id, edgeSemantic: 'schedule', displayLabel: EDGE_STYLES.schedule.label }));
 }

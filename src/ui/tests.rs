@@ -186,14 +186,14 @@ mod test_support {
         UiTheme {
             heading: fonts.add(Font::from_bytes(
                 include_bytes!(concat!(
-                    env!("CARGO_MANIFEST_DIR"),
+                    env!("DEMO_WORKSPACE_ROOT"),
                     "/assets/ui/fonts/heading.ttf"
                 ))
                 .to_vec(),
             )),
             body: fonts.add(Font::from_bytes(
                 include_bytes!(concat!(
-                    env!("CARGO_MANIFEST_DIR"),
+                    env!("DEMO_WORKSPACE_ROOT"),
                     "/assets/ui/fonts/body.ttf"
                 ))
                 .to_vec(),

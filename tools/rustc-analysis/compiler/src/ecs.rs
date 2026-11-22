@@ -76,12 +76,13 @@ fn alias_definition(alias: ty::AliasTy<'_>) -> DefId {
 
 /// 每个实际编译单元独立产生报告；条件编译和宏处理完全由当前编译器负责。
 pub fn extract(tcx: TyCtxt<'_>) -> Result<UnitFacts> {
-    extract_with_origins(tcx, &[])
+    extract_with_origins(tcx, &[], None)
 }
 
 pub fn extract_with_origins(
     tcx: TyCtxt<'_>,
     origins: &[analysis_contract::PackageOrigin],
+    workspace: Option<&str>,
 ) -> Result<UnitFacts> {
     let traits = tcx
         .all_traits_including_private()
@@ -189,7 +190,7 @@ pub fn extract_with_origins(
     collector.index_hir_templates();
     collector.seed_native_system_instances();
     collector.collect_mir_instances();
-    collector.collect_entity_templates()?;
+    collector.collect_entity_templates(workspace)?;
     // include!、过程宏实际加载的文件也参与内容指纹，不能只枚举 src/。
     for file in tcx.sess.source_map().files().iter() {
         let filename = file.name.prefer_local_unconditionally().to_string();
@@ -1838,6 +1839,7 @@ impl<'tcx> Collector<'tcx> {
                 | "bevy_ecs::schedule::schedule::Schedule"
                 | "bevy_ecs::schedule::schedule::Schedules"
                 | "bevy_app::app::App"
+                | "bevy_app::plugin_group::PluginGroupBuilder"
                 | "bevy_app::sub_app::SubApp"
         ) {
             return None;
@@ -1907,12 +1909,12 @@ impl<'tcx> Collector<'tcx> {
         vec![Some(self.type_id(target, env, 0))]
     }
 
-    fn collect_entity_templates(&mut self) -> Result<()> {
+    fn collect_entity_templates(&mut self, workspace: Option<&str>) -> Result<()> {
         // 名称检查器的值流引擎同时输出结构，确保 BSN、Bundle 与 required 使用同一解释。
         if std::env::var_os("CARGO_PRIMARY_PACKAGE").is_none() {
             return Ok(());
         }
-        let structures = crate::entity::analysis::structures(self.tcx)?;
+        let structures = crate::entity::analysis::structures(self.tcx, workspace)?;
         let mut sites: HashMap<String, HashMap<Span, usize>> = HashMap::new();
         let mut groups: Vec<(
             String,
@@ -2382,7 +2384,12 @@ impl<'tcx> BodyVisitor<'_, 'tcx> {
                 });
             }
         }
-        match name.as_str() {
+        // PluginGroupBuilder 的成员与 App 安装调用采用同一种注册关系。
+        let registration = match (receiver_path.as_str(), name.as_str()) {
+            ("bevy_app::plugin_group::PluginGroupBuilder", "add" | "add_group") => "add_plugins",
+            (_, name) => name,
+        };
+        match registration {
             "queue" if commands => {
                 for argument in arguments {
                     if let Some((closure, closure_args)) = self.resolved(argument) {
@@ -2411,7 +2418,7 @@ impl<'tcx> BodyVisitor<'_, 'tcx> {
                     if functions.is_empty() {
                         self.collector.facts.registrations.push(RegistrationFact {
                             owner: self.owner.clone(),
-                            kind: name.clone(),
+                            kind: registration.to_owned(),
                             target: None,
                             type_id: Some(type_id),
                             source,
@@ -2421,7 +2428,7 @@ impl<'tcx> BodyVisitor<'_, 'tcx> {
                             let target = self.collector.callable(target_id, target_args, self.env);
                             self.collector.facts.registrations.push(RegistrationFact {
                                 owner: self.owner.clone(),
-                                kind: name.clone(),
+                                kind: registration.to_owned(),
                                 target: Some(target),
                                 type_id: Some(type_id.clone()),
                                 source: source.clone(),

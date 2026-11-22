@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+use bevy_app::{App, PluginGroup, PluginGroupBuilder};
 use bevy_ecs::{
     prelude::*,
     system::{IntoSystem, SystemParam},
@@ -78,6 +79,20 @@ pub fn external_assembly(app: &mut bevy_app::App) {
     app.add_plugins(architecture_external::ExternalGenericPlugin::<
         architecture_external::ExternalMarker,
     >::default());
+}
+
+pub struct FixturePlugins;
+
+impl PluginGroup for FixturePlugins {
+    fn build(self) -> PluginGroupBuilder {
+        PluginGroupBuilder::start::<Self>().add(
+            architecture_external::ExternalGenericPlugin::<architecture_external::ExternalMarker>::default(),
+        )
+    }
+}
+
+pub fn group_assembly(app: &mut App) {
+    app.add_plugins(FixturePlugins);
 }
 
 fn branch_content(text: bool) -> Box<dyn Scene> {

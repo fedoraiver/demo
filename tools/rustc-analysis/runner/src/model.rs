@@ -41,6 +41,10 @@ struct Model {
     fatal: Vec<String>,
 }
 
+fn is_game_crate(crate_name: &str) -> bool {
+    matches!(crate_name, "demo" | "demo_debugdump")
+}
+
 fn parameter_relation_evidence(
     access: &AccessFact,
     owner: &str,
@@ -515,11 +519,13 @@ impl Model {
     fn feature(&mut self, declaration: Option<&Declaration>) -> String {
         let id = declaration
             .map(|declaration| {
-                if declaration.crate_name == "demo" {
+                if is_game_crate(&declaration.crate_name) {
                     declaration
                         .full_name
-                        .split("::")
-                        .nth(1)
+                        .strip_prefix(&declaration.crate_name)
+                        .and_then(|path| path.strip_prefix("::"))
+                        .and_then(|path| path.split_once("::"))
+                        .map(|(module, _)| module)
                         .unwrap_or("application")
                         .to_owned()
                 } else {
@@ -916,6 +922,10 @@ pub fn build(facts: &Path, runtime: &Path, output: &Path) -> Result<()> {
         "Unsupported analysis schema"
     );
     ensure!(
+        runtime_data.features == ["debugdump"],
+        "Runtime snapshot does not match the ordinary game configuration"
+    );
+    ensure!(
         !bundle.compiler.is_empty() && !bundle.units.is_empty(),
         "Compiler provenance is missing"
     );
@@ -1086,7 +1096,7 @@ pub fn build(facts: &Path, runtime: &Path, output: &Path) -> Result<()> {
                     .declaration
                     .as_ref()
                     .and_then(|id| model.declarations.get(id))
-                    .is_some_and(|declaration| declaration.crate_name == "demo")
+                    .is_some_and(|declaration| is_game_crate(&declaration.crate_name))
         })
         .map(|ty| ty.id.clone())
         .collect();
@@ -1120,17 +1130,22 @@ pub fn build(facts: &Path, runtime: &Path, output: &Path) -> Result<()> {
         "Runtime manifest schedule coverage mismatch"
     );
     let mut assembly_owners: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    let mut application_sources = vec![];
     for callable in model.callables.values().cloned().collect::<Vec<_>>() {
         let Some(declaration) = model.declarations.get(&callable.declaration).cloned() else {
             continue;
         };
-        if declaration.crate_name == "demo" && declaration.name == "main" {
+        let application_role = match declaration.full_name.as_str() {
+            "demo::main" => Some("run"),
+            "demo_debugdump::main" => Some("assembly"),
+            _ => None,
+        };
+        if let Some(role) = application_role {
             assembly_owners
                 .entry(callable.id.clone())
                 .or_default()
                 .insert("app-main".into());
-            let sources = model.source(&declaration.source, "assembly");
-            model.objects.get_mut("app-main").unwrap()["sourceEntries"] = json!(sources);
+            application_sources.extend(model.source(&declaration.source, role));
         }
         if declaration.name == "build"
             && let Some(parameter) = callable.parameters.first()
@@ -1147,6 +1162,8 @@ pub fn build(facts: &Path, runtime: &Path, output: &Path) -> Result<()> {
             }
         }
     }
+    model.objects.get_mut("app-main").unwrap()["sourceEntries"] =
+        json!(unique(application_sources));
     let mut assembly_queue: VecDeque<_> = assembly_owners
         .iter()
         .flat_map(|(callable, owners)| {
@@ -1267,7 +1284,7 @@ pub fn build(facts: &Path, runtime: &Path, output: &Path) -> Result<()> {
                 source_entries.extend(sources);
                 let feature = model.feature(Some(&declaration));
                 features.insert(feature.clone());
-                let group = if declaration.crate_name == "demo" {
+                let group = if is_game_crate(&declaration.crate_name) {
                     format!("plugin:{feature}")
                 } else {
                     format!("crate:{}", declaration.crate_name)
@@ -2104,10 +2121,23 @@ pub fn source_fingerprint(root: &Path) -> Result<String> {
         Ok(())
     }
     let mut files = vec!["Cargo.toml".to_owned(), "Cargo.lock".to_owned()];
-    if root.join("build.rs").exists() {
-        files.push("build.rs".into());
+    for file in [
+        "build.rs",
+        "build_configuration.rs",
+        "apps/build.rs",
+        "apps/debugdump/Cargo.toml",
+        "apps/game/Cargo.toml",
+    ] {
+        if root.join(file).exists() {
+            files.push(file.into());
+        }
     }
     collect(root, Path::new("src"), &mut files)?;
+    for directory in ["apps/debugdump/src", "apps/game/src"].map(Path::new) {
+        if root.join(directory).is_dir() {
+            collect(root, directory, &mut files)?;
+        }
+    }
     files.sort();
     let mut hash = Sha256::new();
     for file in files {

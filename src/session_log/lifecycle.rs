@@ -22,7 +22,7 @@ use uuid::Uuid;
 use super::output::{Barrier, IN_LOG_WORKER, LogWorker, QueuedWriter};
 
 /// 保留会话文件到应用退出，并负责退出时刷新日志。
-pub(crate) struct SessionLogGuard {
+pub struct SessionLogGuard {
     pub(super) writer: SessionWriter,
     pub(super) console: ConsoleWriter,
     pub(super) file_worker: LogWorker,
@@ -75,7 +75,7 @@ pub(super) fn console_layer(app: &mut App) -> Option<BoxedFmtLayer> {
 
 impl SessionLogGuard {
     /// 记录 Bevy 返回的退出状态，并排空两路输出；应在 `App::run` 返回后调用。
-    pub(crate) fn record_exit(&self, exit: &AppExit) -> io::Result<()> {
+    pub fn record_exit(&self, exit: &AppExit) -> io::Result<()> {
         match exit {
             AppExit::Success => info!(
                 target: "demo::session_log",

@@ -97,6 +97,120 @@ fn pause_freezes_actual_physics_immediately_and_resume_does_not_catch_up() {
     assert!(app.world().resource::<Time<Virtual>>().elapsed() > menu_started);
 }
 
+#[cfg(feature = "acceptance-test")]
+mod remote_contract {
+    //! 使用原生 BRP 处理器验证 Demo 的业务反射接口。
+
+    use avian3d::prelude::{LinearVelocity, Position};
+    use bevy::{
+        prelude::*,
+        reflect::TypePath,
+        remote::{RemoteMethodSystemId, RemoteMethods, RemotePlugin},
+    };
+    use serde_json::{Value, json};
+
+    use crate::{
+        character::{Character, CharacterMotion},
+        game_flow::AppState,
+        session_log::SessionLogInfo,
+        settings::{GameSettings, SettingKey, SettingsDraft},
+        ui::{MenuButton, UiAction},
+    };
+
+    fn fixture() -> App {
+        let mut app = App::new();
+        app.add_plugins(RemotePlugin::default());
+        app
+    }
+
+    fn request(app: &mut App, method: &str, params: Value) -> Value {
+        let Some(RemoteMethodSystemId::Instant(handler)) =
+            app.world().resource::<RemoteMethods>().get(method).copied()
+        else {
+            panic!("missing instant BRP method: {method}");
+        };
+        app.world_mut()
+            .run_system_with(handler, Some(params))
+            .unwrap()
+            .unwrap()
+    }
+
+    #[test]
+    fn native_reads_game_resources_and_menu_actions() {
+        let mut app = fixture();
+        app.insert_resource(State::new(AppState::MainMenu))
+            .register_type::<State<AppState>>()
+            .init_resource::<GameSettings>()
+            .init_resource::<SettingsDraft>()
+            .insert_resource(SessionLogInfo {
+                id: "test-id".to_string(),
+                path: "logs/test.log".to_string(),
+            });
+        let button = app
+            .world_mut()
+            .spawn(MenuButton {
+                action: UiAction::Adjust(SettingKey::FrameRate, 1),
+                index: 0,
+            })
+            .id();
+
+        let mut read_resource = |resource: &str| {
+            request(
+                &mut app,
+                "world.get_resources",
+                json!({"resource": resource}),
+            )["value"]
+                .clone()
+        };
+        assert_eq!(
+            read_resource(State::<AppState>::type_path()),
+            json!("MainMenu")
+        );
+        let settings = read_resource(GameSettings::type_path());
+        let draft = read_resource(SettingsDraft::type_path());
+        assert_eq!(settings["max_fps"], draft["max_fps"]);
+        assert_eq!(
+            read_resource(SessionLogInfo::type_path()),
+            json!({"id": "test-id", "path": "logs/test.log"})
+        );
+        let component = MenuButton::type_path();
+        let button = request(
+            &mut app,
+            "world.get_components",
+            json!({"entity": button, "components": [component], "strict": true}),
+        );
+        assert_eq!(
+            button[component]["action"],
+            json!({"Adjust": ["FrameRate", 1]})
+        );
+    }
+
+    #[test]
+    fn native_reads_auto_registered_gameplay_and_physics_components() {
+        let mut app = fixture();
+        let character = app
+            .world_mut()
+            .spawn((
+                Character,
+                CharacterMotion { grounded: true },
+                Position(Vec3::new(1.0, 2.0, 3.0)),
+                LinearVelocity(Vec3::new(4.0, 5.0, 6.0)),
+            ))
+            .id();
+        let motion = CharacterMotion::type_path();
+        let position = Position::type_path();
+        let velocity = LinearVelocity::type_path();
+        let components = request(
+            &mut app,
+            "world.get_components",
+            json!({"entity": character, "components": [motion, position, velocity], "strict": true}),
+        );
+        assert_eq!(components[motion]["grounded"], json!(true));
+        assert_eq!(components[position], json!([1.0, 2.0, 3.0]));
+        assert_eq!(components[velocity], json!([4.0, 5.0, 6.0]));
+    }
+}
+
 mod initialization_tests {
     //! 通过实际功能插件的无窗口装配验证启动日志的归属、内容和一次性生命周期。
 
@@ -223,7 +337,7 @@ mod initialization_tests {
     /// 不直接调用日志函数：注册真实插件并执行多次完整 update，检查不会提前或重复输出。
     fn capture_initialization_logs(omitted: Option<Feature>) -> String {
         let directory =
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tmp/initialization-log-tests");
+            std::path::Path::new(env!("DEMO_WORKSPACE_ROOT")).join("tmp/initialization-log-tests");
         fs::create_dir_all(&directory).unwrap();
         let path = directory.join(format!("{}.log", Uuid::new_v4()));
         let subscriber = tracing_subscriber::fmt()

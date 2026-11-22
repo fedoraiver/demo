@@ -710,7 +710,7 @@ mod test_support {
     }
 
     pub(super) fn test_directory() -> PathBuf {
-        let directory = Path::new(env!("CARGO_MANIFEST_DIR"))
+        let directory = Path::new(env!("DEMO_WORKSPACE_ROOT"))
             .join("tmp")
             .join(format!("session-log-test-{}", Uuid::new_v4()));
         fs::create_dir_all(&directory).unwrap();

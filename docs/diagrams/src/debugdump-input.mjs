@@ -11,7 +11,9 @@ const requireCondition = (condition, message) => { if (!condition) throw new Err
 /** 与 Rust 导出器共用换行归一化和按仓库相对路径排序的指纹协议。 */
 export function sourceFingerprint(root) {
   const filenames = ['Cargo.toml', 'Cargo.lock'];
-  if (fs.existsSync(path.join(root, 'build.rs'))) filenames.push('build.rs');
+  for (const filename of ['build.rs', 'build_configuration.rs', 'apps/build.rs', 'apps/debugdump/Cargo.toml', 'apps/game/Cargo.toml']) {
+    if (fs.existsSync(path.join(root, filename))) filenames.push(filename);
+  }
   function walk(directory) {
     for (const entry of fs.readdirSync(path.join(root, directory), { withFileTypes: true })) {
       const filename = `${directory}/${entry.name}`;
@@ -21,6 +23,9 @@ export function sourceFingerprint(root) {
     }
   }
   walk('src');
+  for (const directory of ['apps/debugdump/src', 'apps/game/src']) {
+    if (fs.existsSync(path.join(root, directory))) walk(directory);
+  }
   const hash = crypto.createHash('sha256');
   for (const filename of filenames.sort()) hash.update(filename + '\0' + fs.readFileSync(path.join(root, filename), 'utf8').replace(/\r\n/g, '\n') + '\0');
   return hash.digest('hex');
@@ -34,7 +39,7 @@ function lockedVersion(root, name) {
 /** 在任何正式产物写入之前核实来源与所有 DOT；失败不复用旧图。 */
 export function readDebugdump(directory, root, filename = 'manifest.json') {
   const manifestPath = path.join(directory, filename);
-  requireCondition(fs.existsSync(manifestPath), `Missing debugdump manifest: ${manifestPath}. Run cargo run --locked --features debugdump -- --dump-schedules tmp/debugdump, then build with --debugdump tmp/debugdump`);
+  requireCondition(fs.existsSync(manifestPath), `Missing debugdump manifest: ${manifestPath}. Run cargo run --locked -p demo-debugdump -- --output tmp/debugdump, then build with --debugdump tmp/debugdump`);
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   requireCondition(manifest.schemaVersion === 1, 'Unsupported debugdump manifest schema');
   for (const [field, crate] of [['bevyVersion', 'bevy'], ['debugdumpVersion', 'bevy_mod_debugdump']]) {
@@ -42,7 +47,7 @@ export function readDebugdump(directory, root, filename = 'manifest.json') {
   }
   requireCondition(manifest.sourceFingerprint === sourceFingerprint(root), 'Debugdump source fingerprint is stale; run the export command again');
   requireCondition(Number.isSafeInteger(manifest.exportedAt) && manifest.exportedAt >= 0 && typeof manifest.target === 'string' && manifest.target.length > 0, 'Invalid debugdump provenance');
-  requireCondition(Array.isArray(manifest.features) && manifest.features.includes('debugdump'), 'Debugdump feature provenance is missing');
+  requireCondition(Array.isArray(manifest.features) && manifest.features.length === 1 && manifest.features[0] === 'debugdump', 'Debugdump feature provenance does not match the ordinary game');
   requireCondition(Array.isArray(manifest.schedules) && manifest.schedules.length > 0, 'Debugdump contains no schedules');
   const ids = new Set();
   const schedules = manifest.schedules.map(entry => {

@@ -9,13 +9,13 @@ use std::{io, path::Path};
 
 use bevy::{log::LogPlugin, prelude::*};
 
-pub(crate) use lifecycle::SessionLogGuard;
+pub use lifecycle::SessionLogGuard;
 #[cfg(any(feature = "inspector", feature = "acceptance-test"))]
 pub(crate) use lifecycle::SessionLogInfo;
 use lifecycle::{ConsoleWriter, SessionWriter, console_layer, create_session_file, file_layer};
 
 /// 提前准备可失败的文件与线程；插件构建后，守卫仍由主入口持有到退出刷新完成。
-pub(crate) struct SessionLogPlugin {
+pub struct SessionLogPlugin {
     writer: SessionWriter,
     console: ConsoleWriter,
     session_id: uuid::Uuid,
@@ -23,7 +23,7 @@ pub(crate) struct SessionLogPlugin {
 
 impl SessionLogPlugin {
     /// 创建独立会话输出；失败时尚未安装全局 logger，可由主入口中止启动。
-    pub(crate) fn prepare() -> io::Result<(Self, SessionLogGuard)> {
+    pub fn prepare() -> io::Result<(Self, SessionLogGuard)> {
         let guard = create_session_file(Path::new("logs"))?;
         let plugin = Self {
             writer: guard.writer.clone(),

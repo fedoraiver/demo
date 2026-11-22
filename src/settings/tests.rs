@@ -28,7 +28,7 @@ fn settings_types() -> TypeRegistry {
 
 #[test]
 fn bevy_settings_load_and_save_game_configuration() {
-    let directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+    let directory = PathBuf::from(env!("DEMO_WORKSPACE_ROOT"))
         .join("tmp")
         .join(format!("settings-test-{}", uuid::Uuid::new_v4()));
     let file = directory.join("settings.toml");

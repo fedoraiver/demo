@@ -517,6 +517,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy-acceptance-test"
+version = "0.1.0"
+source = "git+https://github.com/fedoraiver/bevy-acceptance-test.git?branch=master#4a50239b27fd6c05e49ce7662832d718e094d95c"
+dependencies = [
+ "bevy",
+]
+
+[[package]]
 name = "bevy-inspector-egui"
 version = "0.38.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3002,10 +3010,43 @@ checksum = "0c87e182de0887fd5361989c677c4e8f5000cd9491d6d563161a8f3a5519fc7f"
 name = "demo"
 version = "0.1.0"
 dependencies = [
+ "avian3d",
+ "bevy",
+ "bevy_enhanced_input",
+ "bevy_framepace",
+ "bevy_kira_audio",
+ "objc2 0.6.4",
+ "objc2-app-kit 0.3.2",
+ "objc2-foundation 0.3.2",
+ "raw-window-handle",
+ "serde",
+ "serde_json",
+ "uuid",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "demo-acceptance"
+version = "0.1.0"
+dependencies = [
+ "avian3d",
+ "bevy",
+ "bevy-acceptance-test",
+ "bevy_enhanced_input",
+ "bevy_framepace",
+ "bevy_kira_audio",
+ "serde",
+ "serde_json",
+ "uuid",
+]
+
+[[package]]
+name = "demo-debugdump"
+version = "0.1.0"
+dependencies = [
  "analysis-contract",
  "avian3d",
  "bevy",
- "bevy-inspector-egui",
  "bevy_enhanced_input",
  "bevy_framepace",
  "bevy_kira_audio",
@@ -3017,6 +3058,26 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
+ "uuid",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "demo-inspector"
+version = "0.1.0"
+dependencies = [
+ "avian3d",
+ "bevy",
+ "bevy-inspector-egui",
+ "bevy_enhanced_input",
+ "bevy_framepace",
+ "bevy_kira_audio",
+ "objc2 0.6.4",
+ "objc2-app-kit 0.3.2",
+ "objc2-foundation 0.3.2",
+ "raw-window-handle",
+ "serde",
+ "serde_json",
  "uuid",
  "windows-sys 0.61.2",
 ]

@@ -24,7 +24,7 @@ pub(crate) const MIN_LOGICAL_SIZE: Vec2 = Vec2::new(960.0, 540.0);
 const INITIAL_SIZE: UVec2 = UVec2::new(1280, 720);
 
 /// 在现有会话日志和原生窗口创建之后安装比例策略。
-pub(crate) struct WindowPolicyPlugin;
+pub struct WindowPolicyPlugin;
 
 impl Plugin for WindowPolicyPlugin {
     fn build(&self, app: &mut App) {
@@ -37,7 +37,7 @@ impl Plugin for WindowPolicyPlugin {
 }
 
 /// 主窗口暂时隐藏，等原生约束装好再显示，避免首帧可绕过缩放限制。
-pub(crate) fn primary_window() -> Window {
+pub fn primary_window() -> Window {
     let supported = cfg!(any(target_os = "macos", target_os = "windows"));
     Window {
         title: "Grey-boxing".into(),

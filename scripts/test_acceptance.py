@@ -1,91 +1,24 @@
 """原生 BRP 驱动、截图证据、设置恢复和文档编号的无窗口回归。"""
 
 from contextlib import nullcontext
-from email.message import Message
 import importlib
-import io
 import json
 import math
 from pathlib import Path
-import struct
 import sys
 import tempfile
 import tomllib
 import unittest
 from unittest.mock import Mock, call, patch
-import zlib
 
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts/acceptance"))
 
-import brp
 import driver
+from bevy_acceptance import brp, driver as acceptance_driver
 from settings_file import SettingsBackup
 import view
-
-
-class Response(io.BytesIO):
-    status = 200
-    reason = "OK"
-
-    def __init__(self, data, pid=123, content_type="application/json"):
-        super().__init__(data)
-        self.headers = Message()
-        self.headers["X-Bevy-Pid"] = str(pid)
-        self.headers["Content-Type"] = content_type
-
-    def getheaders(self):
-        return self.headers.items()
-
-
-def response_data(request_id, result):
-    return json.dumps({"jsonrpc": "2.0", "id": request_id, "result": result}).encode()
-
-
-def fake_connection(*responses):
-    connection = Mock()
-    connection.getresponse.side_effect = responses
-    return connection
-
-
-class NativeClientTests(unittest.TestCase):
-    def setUp(self):
-        self.client = brp.BrpClient(Mock(pid=123, **{"poll.return_value": None}))
-        self.addCleanup(self.client.close)
-
-    def test_pid_probe_precedes_control_on_same_connection(self):
-        connection = fake_connection(Response(response_data(1, [])), Response(response_data(2, None)))
-        with patch.object(brp, "HTTPConnection", return_value=connection):
-            self.client.call("world.write_message", {"message": "Foo"})
-        self.assertEqual([json.loads(call.args[2])["method"] for call in connection.request.call_args_list],
-                         ["world.list_resources", "world.write_message"])
-        self.assertFalse(connection.auto_open)
-
-    def test_wrong_pid_receives_only_read_only_request(self):
-        connection = fake_connection(Response(response_data(1, []), pid=456))
-        with patch.object(brp, "HTTPConnection", return_value=connection):
-            with self.assertRaises(brp.ProcessMismatch):
-                self.client.call("world.write_message")
-        self.assertEqual(connection.request.call_count, 1)
-        connection.close.assert_called_once()
-
-    def test_unconfirmed_control_is_not_retried(self):
-        connection = fake_connection(Response(response_data(1, [])), ConnectionResetError())
-        with patch.object(brp, "HTTPConnection", return_value=connection) as make_connection:
-            with self.assertRaises(ConnectionResetError):
-                self.client.call("world.write_message")
-        make_connection.assert_called_once()
-        self.assertEqual(connection.request.call_count, 2)
-
-    def test_watch_matches_the_capture_entity(self):
-        event = [{"entity": 5, "image": "other"}, {"entity": 7, "image": "expected"}]
-        connection = fake_connection(Response(response_data(1, [])),
-                                     Response(b"data: " + response_data(2, event) + b"\n\n", content_type="text/event-stream"))
-        with patch.object(brp, "HTTPConnection", return_value=connection):
-            with self.client.screenshot_events() as read:
-                self.assertEqual(read(7, 1), "expected")
-        self.assertEqual(json.loads(connection.request.call_args.args[2])["params"], {"event": brp.CAPTURED})
 
 
 class HeadlessDriverTests(unittest.TestCase):
@@ -117,14 +50,14 @@ class HeadlessDriverTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as temp:
             root = Path(temp)
             (root / "tmp").mkdir()
-            exe = root / "demo.exe"
+            exe = root / "demo-acceptance.exe"
             exe.touch()
             path = root / "settings.toml"
             game = driver.Game("view", Mock(output=root, exe=exe), {"environment": {}, "sessions": []})
             with patch.object(driver, "shared_settings_path", return_value=path):
                 game.prepare_settings()
             game.process = Mock(**{"poll.return_value": 0})
-            with patch.object(driver.subprocess, "Popen") as spawn:
+            with patch.object(acceptance_driver.subprocess, "Popen") as spawn:
                 for content in (b"[game.audio]\nmaster_volume = 25\n",
                                 b"[game.audio]\nmaster_volume = false\n", b"broken TOML"):
                     with self.subTest(content=content):
@@ -138,19 +71,20 @@ class HeadlessDriverTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as temp:
             root = Path(temp)
             (root / "tmp").mkdir()
-            exe = root / "demo.exe"
+            exe = root / "demo-acceptance.exe"
             exe.touch()
             report = {"environment": {}, "sessions": []}
-            game = driver.Game("view", Mock(output=root, exe=exe, timeout=1), report)
+            with patch.object(driver, "ROOT", root):
+                game = driver.Game("view", Mock(output=root, exe=exe, timeout=1), report)
             game.resource = Mock(side_effect=[{"id": "test", "path": "logs/session.log"},
                                               {"audio": {"master_volume": 100}}])
             game.query = Mock(return_value=[{"entity": 4, "components": {
                 driver.TYPES["window"]: {"visible": False, "focused": True},
             }}])
             game.offscreen_target = Mock()
-            with patch.object(driver, "ROOT", root), patch.object(driver, "BrpClient"), \
+            with patch.object(driver, "ROOT", root), patch.object(acceptance_driver, "BrpClient"), \
                     patch.object(driver, "shared_settings_path", return_value=root / "settings.toml"), \
-                    patch.object(driver.subprocess, "Popen") as spawn:
+                    patch.object(acceptance_driver.subprocess, "Popen") as spawn:
                 game.prepare_settings()
                 with self.assertRaisesRegex(driver.EnvironmentBlocked, "loaded master volume 100, expected 0"):
                     game.start()
@@ -168,7 +102,7 @@ class HeadlessDriverTests(unittest.TestCase):
             capture = Mock()
             game.client = Mock()
             game.client.screenshot_events.return_value = nullcontext(capture)
-            with patch.object(driver, "screenshot_png", return_value=(b"pixels", [1920, 1080])):
+            with patch.object(acceptance_driver, "screenshot_png", return_value=(b"pixels", [1920, 1080])):
                 result = game.screenshot("headless.png")
 
             game.call.assert_called_once_with("world.spawn_entity", {"components": {brp.SCREENSHOT: target}})
@@ -177,34 +111,6 @@ class HeadlessDriverTests(unittest.TestCase):
 
 
 class GameplayTests(unittest.TestCase):
-    def test_held_key_is_released_when_action_raises(self):
-        game = driver.Game("view", Mock(output=ROOT / "tmp", timeout=1), {})
-        game._focused_window = Mock()
-        game._pressed = Mock(side_effect=[[], ["KeyW"], []])
-        game._keyboard = Mock()
-
-        with self.assertRaisesRegex(RuntimeError, "movement failed"):
-            with game.hold_key("KeyW"):
-                self.assertIn("KeyW", game.keys)
-                raise RuntimeError("movement failed")
-
-        self.assertEqual(game._keyboard.call_args_list, [call("KeyW", "Pressed"), call("KeyW", "Released")])
-        self.assertEqual(game.keys, set())
-
-    def test_press_confirmation_timeout_still_releases_owned_key(self):
-        game = driver.Game("view", Mock(output=ROOT / "tmp"), {})
-        game._focused_window = Mock()
-        game._pressed = Mock(return_value=[])
-        game._keyboard = Mock()
-        game.wait = Mock(side_effect=[TimeoutError("press confirmation"), True])
-
-        with self.assertRaisesRegex(TimeoutError, "press confirmation"):
-            with game.hold_key("KeyS"):
-                self.fail("The action ran without a confirmed press")
-
-        self.assertEqual(game._keyboard.call_args_list, [call("KeyS", "Pressed"), call("KeyS", "Released")])
-        self.assertEqual(game.keys, set())
-
     @staticmethod
     def poll(predicate, description, **_options):
         for _ in range(5):
@@ -280,30 +186,6 @@ class GameplayTests(unittest.TestCase):
 
 
 class ScreenshotTests(unittest.TestCase):
-    def image(self, pixel_format, data):
-        return {"texture_descriptor": {"size": {"width": 1, "height": 1}, "format": pixel_format}, "data": data}
-
-    def test_rgba_and_bgra_produce_the_same_png(self):
-        rgba = brp.screenshot_png(self.image("rgba8unorm", [12, 34, 56, 255]))
-        bgra = brp.screenshot_png(self.image("bgra8unorm-srgb", [56, 34, 12, 255]))
-        self.assertEqual(rgba, bgra)
-        self.assertEqual(rgba[1], [1, 1])
-        png = rgba[0]
-        self.assertEqual(png[:8], b"\x89PNG\r\n\x1a\n")
-        size = struct.unpack_from(">I", png, 33)[0]
-        self.assertEqual(png[37:41], b"IDAT")
-        self.assertEqual(zlib.decompress(png[41:41 + size]), b"\x00\x0c\x22\x38\xff")
-
-    def test_unsupported_format_and_bad_length_fail(self):
-        with self.assertRaisesRegex(ValueError, "Unsupported"):
-            brp.screenshot_png(self.image("rgba16float", [0, 0, 0, 0]))
-        with self.assertRaisesRegex(ValueError, "pixel length"):
-            brp.screenshot_png(self.image("rgba8unorm", [0, 0, 0]))
-
-    def test_render_readiness_can_reject_a_uniform_frame(self):
-        with self.assertRaises(brp.UniformScreenshot):
-            brp.screenshot_png(self.image("rgba8unorm", [42, 42, 42, 255]), require_content=True)
-
     def test_visual_observation_brackets_screenshot_with_state_reads(self):
         actions = Mock()
         before = {"position": [0, 0, 2]}

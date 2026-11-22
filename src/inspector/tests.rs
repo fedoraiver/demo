@@ -1,4 +1,4 @@
-//! 检查器启动参数与调度导出的无窗口回归。
+//! 检查器和调度导出的无窗口回归。
 
 #[cfg(feature = "inspector")]
 #[test]
@@ -14,48 +14,6 @@ fn inspector_context_follows_recreated_ui_cameras() {
     app.world_mut().despawn(old_camera);
     let new_camera = app.world_mut().spawn(IsDefaultUiCamera).id();
     assert!(app.world().get::<PrimaryEguiContext>(new_camera).is_some());
-}
-
-mod launch {
-    use crate::launch::{LaunchMode, parse_launch_mode};
-    use std::ffi::OsString;
-    #[cfg(feature = "debugdump")]
-    use std::path::PathBuf;
-
-    fn parse(args: &[&str]) -> Result<LaunchMode, String> {
-        parse_launch_mode(args.iter().map(OsString::from))
-    }
-
-    #[test]
-    fn accepts_game_and_help_without_initializing_app() {
-        assert_eq!(parse(&[]), Ok(LaunchMode::Game));
-        assert_eq!(parse(&["--help"]), Ok(LaunchMode::Help));
-        assert_eq!(parse(&["-h"]), Ok(LaunchMode::Help));
-        assert!(parse(&["--help", "extra"]).is_err());
-        assert!(parse(&["--unknown"]).is_err());
-    }
-
-    #[cfg(feature = "debugdump")]
-    #[test]
-    fn validates_export_directory_and_extra_arguments() {
-        assert_eq!(
-            parse(&["--dump-schedules", "tmp/graphs"]),
-            Ok(LaunchMode::DumpSchedules(PathBuf::from("tmp/graphs")))
-        );
-        assert!(parse(&["--dump-schedules"]).is_err());
-        assert!(parse(&["--dump-schedules", "--help"]).is_err());
-        assert!(parse(&["--dump-schedules", "tmp/graphs", "extra"]).is_err());
-    }
-
-    #[cfg(not(feature = "debugdump"))]
-    #[test]
-    fn disabled_export_feature_is_an_error_instead_of_game_launch() {
-        assert!(
-            parse(&["--dump-schedules", "tmp/graphs"])
-                .unwrap_err()
-                .contains("requires the 'debugdump' Cargo feature")
-        );
-    }
 }
 
 #[cfg(feature = "debugdump")]
@@ -86,7 +44,7 @@ mod schedule_dump {
 
     impl Fixture {
         fn new() -> Self {
-            let path = Path::new(env!("CARGO_MANIFEST_DIR"))
+            let path = Path::new(env!("DEMO_WORKSPACE_ROOT"))
                 .join("tmp/debugdump-tests")
                 .join(uuid::Uuid::new_v4().to_string());
             fs::create_dir_all(path.join("src/nested")).unwrap();
@@ -163,14 +121,7 @@ mod schedule_dump {
         assert_eq!(manifest["bevyVersion"], "0.20.1");
         assert_eq!(manifest["debugdumpVersion"], "0.17.0");
         assert_eq!(manifest["target"], env!("DEMO_BUILD_TARGET"));
-        let mut features = vec!["debugdump"];
-        if cfg!(feature = "acceptance-test") {
-            features.insert(0, "acceptance-test");
-        }
-        if cfg!(feature = "inspector") {
-            features.push("inspector");
-        }
-        assert_eq!(manifest["features"], serde_json::json!(features));
+        assert_eq!(manifest["features"], serde_json::json!(["debugdump"]));
         assert_eq!(manifest["sourceFingerprint"].as_str().unwrap().len(), 64);
         assert!(manifest["exportedAt"].as_u64().unwrap() > 0);
         let entries = manifest["schedules"].as_array().unwrap();
@@ -255,6 +206,22 @@ mod schedule_dump {
         )
         .unwrap();
         assert_ne!(source_fingerprint(&fixture.path).unwrap(), with_build);
+        let mut previous = source_fingerprint(&fixture.path).unwrap();
+        for path in [
+            "build_configuration.rs",
+            "apps/build.rs",
+            "apps/debugdump/Cargo.toml",
+            "apps/debugdump/src/main.rs",
+            "apps/game/Cargo.toml",
+            "apps/game/src/main.rs",
+        ] {
+            let input = fixture.path.join(path);
+            fs::create_dir_all(input.parent().unwrap()).unwrap();
+            fs::write(input, "fn main() {}\n").unwrap();
+            let current = source_fingerprint(&fixture.path).unwrap();
+            assert_ne!(previous, current, "{path}");
+            previous = current;
+        }
     }
 
     fn first() {}

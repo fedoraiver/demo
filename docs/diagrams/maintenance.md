@@ -6,7 +6,9 @@
 
 ## 调度导出边界
 
-`debugdump` 提供 `--dump-schedules`。导出的清单和调度快照记录本次构建启用的 feature。工作流为导出提供 Xvfb 虚拟显示及 Mesa Lavapipe 软件 Vulkan。导出可能访问 GPU、音频设备或资产，设备初始化结果见会话日志。导出停止在应用运行前，不执行 `Startup`、游戏循环或渲染线程。架构图使用与构建身份匹配的真实调度快照。
+架构提取执行 `demo-debugdump` 生成普通游戏的真实调度快照。单独导出时，在仓库根目录运行 `cargo run --locked -p demo-debugdump`，默认写入仓库根下的 `tmp/schedules`。可追加 `-- --output <directory>` 指定目录。清单和调度快照记录本次构建启用的 feature。工作流为导出提供 Xvfb 虚拟显示及 Mesa Lavapipe 软件 Vulkan。导出可能访问 GPU、音频设备或资产，设备初始化结果见会话日志。导出停止在应用运行前，不执行 `Startup`、游戏循环或渲染线程。架构图使用与构建身份匹配的真实调度快照。
+
+架构提取将 `demo-debugdump` 同一次编译的类型事实与调度快照配对。每个入口会独立编译玩法源码，运行时 `TypeId` 须与产生该快照的二进制一致。调度导出实现的无窗口回归用 `cargo test --locked -p demo-debugdump --bin demo-debugdump inspector::tests::schedule_dump` 显式运行。
 
 ## 工作流故障排查
 

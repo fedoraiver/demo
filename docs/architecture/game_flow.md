@@ -2,6 +2,12 @@
 
 源码入口见 [game_flow/mod.rs](../../src/game_flow/mod.rs)。
 
+## 应用装配
+
+[普通游戏](../../apps/game/src/main.rs)、[世界检查器](../../apps/inspector/src/main.rs)、[BRP 验收](../../apps/acceptance/src/main.rs)和[调度导出](../../apps/debugdump/src/main.rs)各自创建 Bevy `App`，选择引擎插件、运行方式和诊断工具。每个入口将同一份 `src/` 玩法模块编译进自己的二进制，并显式安装所需插件。调度导出按普通游戏的插件顺序装配，在应用循环开始前读取调度。[调度导出边界](../diagrams/maintenance.md#调度导出边界)
+
+Cargo workspace 默认选择普通游戏。检查器和验收在各自包中默认启用诊断 feature，注册各工具需要的玩法反射。检查器还启用游戏内的 Egui 输入转发。[验证入口](../testing/README.md)
+
 ## 菜单与会话生命周期
 
 场景在离开主菜单时装配；无应用状态的最小测试在 `Startup` 复用入口。控制者通过关系组件关联角色和一台第一人称相机；关联细节见[第一人称架构](first_person.md)，场景尺寸与可见边界见[灰盒场景](../player-guide.md#灰盒场景)。

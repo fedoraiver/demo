@@ -64,7 +64,6 @@ export function buildObserverPlacement(graph, registry, scheduleGroups) {
 export const SCHEDULE_GROUP_DISPLAY_LABELS = Object.freeze({
   FixedLast: 'FixedLast',
   FixedPostUpdate: 'FixedPostUpdate',
-  EguiPrimaryContextPass: 'EguiPrimaryContextPass',
   RenderApp: 'RenderApp',
   NativePlatformEvents: '原生平台回调',
   EventTriggered: 'Observer',

@@ -8,7 +8,7 @@ use analysis_contract::{
     ANALYSIS_SCHEMA_VERSION, PackageOrigin, PackageTargetOrigin, Request, Rule, UnitReport,
     entity_names, named_fields, normalized,
 };
-use anyhow::{Context, Result, ensure};
+use anyhow::{Context, Result, bail, ensure};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
@@ -21,6 +21,8 @@ use std::{
     process::Command,
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
+
+const SCHEDULE_EXPORTER: &str = "demo-debugdump";
 
 /// 所有检查共用同一配置入口；driver 仅供嵌入测试指定故障注入程序。
 #[derive(Clone)]
@@ -52,8 +54,45 @@ struct Package {
 }
 #[derive(Clone, Deserialize)]
 struct CargoTarget {
+    name: String,
     src_path: PathBuf,
     kind: Vec<String>,
+}
+
+fn select_package<'a>(
+    packages: &'a [Package],
+    metadata: &serde_json::Value,
+    current_manifest: &Path,
+    workspace_manifest: &Path,
+    exporter: Option<&'a Package>,
+) -> Result<&'a Package> {
+    let at_manifest = |manifest: &Path| {
+        packages
+            .iter()
+            .find(|package| package.manifest_path.canonicalize().ok().as_deref() == Some(manifest))
+    };
+    let workspace_package = at_manifest(workspace_manifest);
+    if let Some(exporter) = exporter.filter(|_| workspace_package.is_none()) {
+        // 每个入口独立编译玩法的虚拟工作区只采集导出二进制实际使用的类型身份。
+        return Ok(exporter);
+    }
+    if let Some(package) = at_manifest(current_manifest) {
+        return Ok(package);
+    }
+    ensure!(
+        current_manifest == workspace_manifest,
+        "The selected manifest must contain a Cargo package or be the workspace root"
+    );
+    let defaults = metadata["workspace_default_members"]
+        .as_array()
+        .context("Missing Cargo workspace default members")?;
+    let [id] = defaults.as_slice() else {
+        bail!("The virtual workspace must have one default member or specify a member directory");
+    };
+    packages
+        .iter()
+        .find(|package| id == &package.id)
+        .context("Cargo workspace default member is absent from package metadata")
 }
 
 fn package_origins(metadata: &serde_json::Value) -> Result<Vec<PackageOrigin>> {
@@ -215,7 +254,7 @@ fn report_owners(
 struct Compilation {
     reports: Vec<UnitReport>,
     packages: serde_json::Value,
-    executable: Option<PathBuf>,
+    export_executable: Option<PathBuf>,
     configuration: String,
     environment_path: OsString,
     summary: serde_json::Value,
@@ -243,6 +282,7 @@ struct FactBundle {
 
 struct Host {
     root: PathBuf,
+    workspace: PathBuf,
     cache: PathBuf,
     directory: PathBuf,
     target_dir: PathBuf,
@@ -340,13 +380,12 @@ impl Host {
             String::from_utf8_lossy(&location.stderr)
         );
         let workspace_manifest = PathBuf::from(String::from_utf8(location.stdout)?.trim());
-        let workspace = normalized(
-            workspace_manifest
-                .parent()
-                .context("Cargo workspace manifest has no parent")?,
-        )?;
+        let workspace = workspace_manifest
+            .parent()
+            .context("Cargo workspace manifest has no parent")?
+            .canonicalize()?;
         // 不同 workspace 的锁文件与稳定分析配置独立，避免共用 unit 的 token 相互替换。
-        let slot = digest(workspace.as_bytes());
+        let slot = digest(normalized(&workspace)?.as_bytes());
         let analysis = cache
             .join(format!(
                 "{}-v{}",
@@ -366,6 +405,7 @@ impl Host {
         }
         Ok(Self {
             root,
+            workspace,
             cache,
             directory,
             target_dir,
@@ -472,10 +512,37 @@ impl Host {
         let metadata = self.metadata(options, full_metadata)?;
         let packages: Vec<Package> = serde_json::from_value(metadata["packages"].clone())?;
         let manifest = self.root.join("Cargo.toml").canonicalize()?;
-        let package = packages
-            .iter()
-            .find(|package| package.manifest_path.canonicalize().ok().as_ref() == Some(&manifest))
-            .context("The selected root must contain a Cargo package")?;
+        let workspace_manifest = self.workspace.join("Cargo.toml").canonicalize()?;
+        let exporter = if rule == Rule::Architecture {
+            let members = metadata["workspace_members"]
+                .as_array()
+                .context("Missing Cargo workspace members")?;
+            Some(
+                packages
+                    .iter()
+                    .find(|candidate| {
+                        candidate.name == SCHEDULE_EXPORTER
+                            && members.iter().any(|member| member == &candidate.id)
+                            && candidate.targets.iter().any(|target| {
+                                target.name == SCHEDULE_EXPORTER
+                                    && target.kind.iter().any(|kind| kind == "bin")
+                            })
+                    })
+                    .context(
+                        "Architecture extraction requires the demo-debugdump workspace binary",
+                    )?,
+            )
+        } else {
+            None
+        };
+        let package = select_package(
+            &packages,
+            &metadata,
+            &manifest,
+            &workspace_manifest,
+            exporter,
+        )?;
+        let exporter_is_primary = exporter.is_some_and(|exporter| exporter.id == package.id);
         let all_targets = rule == Rule::NamedFields;
         let targets: Vec<_> = package
             .targets
@@ -557,16 +624,11 @@ impl Host {
             })
             .collect();
         let lock_digest = file_digest(&lock_root.join("Cargo.lock"))?;
-        // 命名规则可共享 workspace 单元；架构实体模板仍由选中的 primary 包决定。
-        let report_scope = if rule == Rule::Architecture {
-            &self.root
-        } else {
-            &lock_root
-        };
         let configuration = digest(serde_json::to_vec(&serde_json::json!({
             "schemaVersion": ANALYSIS_SCHEMA_VERSION, "incremental":true,
-            "workspace":normalized(report_scope)?,"target": options.target.as_deref().unwrap_or(&self.host),
+            "workspace":normalized(&lock_root)?,"target": options.target.as_deref().unwrap_or(&self.host),
             "features":options.features.iter().collect::<BTreeSet<_>>(),"allFeatures":options.all_features,"rule":rule,
+            "scheduleExporter": exporter.map(|_| SCHEDULE_EXPORTER),
             "compiler":env!("ANALYSIS_COMPILER"),"driver":file_digest(&self.driver)?,
             "lock":lock_digest,"cargo":native_configuration,"environment":relevant_environment
         }))?);
@@ -575,10 +637,15 @@ impl Host {
             run: self.run.clone(),
             configuration: configuration.clone(),
             compiler: env!("ANALYSIS_COMPILER").into(),
-            workspace: normalized(&self.root)?,
+            workspace: normalized(&lock_root)?,
             rule,
             sources,
-            manifest_dirs: BTreeSet::from([normalized(&self.root)?]),
+            manifest_dirs: BTreeSet::from([normalized(
+                package
+                    .manifest_path
+                    .parent()
+                    .context("The selected Cargo package has no manifest directory")?,
+            )?]),
             package_origins: package_origins(&metadata)?,
         };
         let request_path = self
@@ -614,7 +681,12 @@ impl Host {
                 "-p",
                 &package.id,
             ]);
-            if all_targets {
+            if let Some(exporter) = exporter.filter(|_| !exporter_is_primary) {
+                command.args(["-p", &exporter.id]);
+            }
+            if exporter_is_primary {
+                command.args(["--bin", SCHEDULE_EXPORTER]);
+            } else if all_targets {
                 command.arg("--all-targets");
             } else {
                 if targets
@@ -703,7 +775,7 @@ impl Host {
             let mut artifacts = Vec::new();
             let mut scripts = BTreeMap::<String, Vec<serde_json::Value>>::new();
             let mut seen = BTreeSet::new();
-            let mut executable = None;
+            let mut export_executable = None;
             for line in String::from_utf8(output.stdout)?.lines() {
                 let value: serde_json::Value =
                     serde_json::from_str(line).context("Invalid Cargo JSON output")?;
@@ -756,11 +828,19 @@ impl Host {
                 if !seen.insert((id.to_owned(), filenames.clone(), test)) {
                     continue;
                 }
-                if id == package.id
+                if exporter.is_some_and(|exporter| id == exporter.id)
                     && !test
+                    && value["target"]["name"] == SCHEDULE_EXPORTER
+                    && value["target"]["kind"]
+                        .as_array()
+                        .is_some_and(|kinds| kinds.iter().any(|kind| kind == "bin"))
                     && let Some(binary) = value["executable"].as_str()
                 {
-                    executable = Some(PathBuf::from(normalized(Path::new(binary))?));
+                    ensure!(
+                        export_executable.is_none(),
+                        "Cargo reported multiple executables for {SCHEDULE_EXPORTER}"
+                    );
+                    export_executable = Some(PathBuf::from(normalized(Path::new(binary))?));
                 }
                 let mode = if rule == Rule::Architecture
                     || filenames.iter().any(|filename| {
@@ -1243,7 +1323,7 @@ impl Host {
                             .map(|(_, report)| report),
                     )?,
                     packages: metadata["packages"].clone(),
-                    executable,
+                    export_executable,
                     configuration,
                     environment_path: self.path.clone(),
                     summary,
@@ -1560,19 +1640,15 @@ pub fn check_entity_names(options: &Options) -> Result<entity_names::Report> {
     Ok(report)
 }
 
-/// 构建带分析的真实应用，再只执行允许的 Schedule 专用导出入口。
+/// 构建普通游戏的编译器事实，并执行专用调度导出入口。
 pub fn extract(options: &Options, output: &Path) -> Result<()> {
-    let mut selected = options.clone();
-    if !selected
-        .features
-        .iter()
-        .any(|feature| feature == "debugdump")
-    {
-        selected.features.push("debugdump".into());
-    }
-    let host = Host::new(&selected, Rule::Architecture)?;
     ensure!(
-        selected
+        options.features.is_empty() && !options.all_features,
+        "Schedule extraction uses the ordinary game configuration without feature overrides"
+    );
+    let host = Host::new(options, Rule::Architecture)?;
+    ensure!(
+        options
             .target
             .as_deref()
             .is_none_or(|target| target == host.host),
@@ -1580,7 +1656,7 @@ pub fn extract(options: &Options, output: &Path) -> Result<()> {
     );
     let _lock = AnalysisLock::acquire(host.target_dir.parent().context("Missing cache parent")?)?;
     let source_origins = host.source_origins()?;
-    let result = host.compile(&selected, Rule::Architecture, true)?;
+    let result = host.compile(options, Rule::Architecture, true)?;
     publish_extraction(&host, source_origins, result, output)
 }
 
@@ -1597,13 +1673,13 @@ fn publish_extraction(
     fs::create_dir(&staging)?;
     let debugdump = staging.join("debugdump");
     let executable = result
-        .executable
-        .context("Architecture extraction requires a production binary target")?;
+        .export_executable
+        .context("Cargo did not build the demo-debugdump executable")?;
     let status = Command::new(&executable)
-        .current_dir(&host.root)
-        .env("BEVY_ASSET_ROOT", &host.root)
+        .current_dir(&host.workspace)
+        .env("BEVY_ASSET_ROOT", &host.workspace)
         .env("PATH", &result.environment_path)
-        .arg("--dump-schedules")
+        .arg("--output")
         .arg(&debugdump)
         .status()?;
     ensure!(status.success(), "Dedicated Schedule export failed");
@@ -1626,7 +1702,7 @@ fn publish_extraction(
         schema_version: analysis_contract::facts::FACT_SCHEMA_VERSION,
         compiler: env!("ANALYSIS_COMPILER"),
         configuration: result.configuration,
-        workspace: normalized(&host.root)?,
+        workspace: normalized(&host.workspace)?,
         packages: result.packages,
         source_origins,
         units,
@@ -1679,10 +1755,7 @@ fn read_schedule_snapshot(directory: &Path) -> Result<(serde_json::Value, Vec<u8
             && manifest["sourceFingerprint"] == runtime.source_fingerprint
             && manifest["target"] == runtime.target
             && manifest["features"] == serde_json::to_value(&runtime.features)?
-            && runtime
-                .features
-                .iter()
-                .any(|feature| feature == "debugdump"),
+            && runtime.features == ["debugdump"],
         "Invalid Schedule export provenance"
     );
     let schedules = manifest["schedules"]
@@ -1820,6 +1893,51 @@ mod tests {
         directory.canonicalize().unwrap()
     }
 
+    #[test]
+    fn selects_default_member_but_uses_exporter_for_virtual_workspace_architecture() {
+        let directory = extraction_test_directory("virtual-workspace-selection");
+        let workspace_manifest = directory.join("Cargo.toml");
+        fs::write(&workspace_manifest, "[workspace]\n").unwrap();
+        let workspace_manifest = workspace_manifest.canonicalize().unwrap();
+        let packages: Vec<_> = ["demo", SCHEDULE_EXPORTER]
+            .into_iter()
+            .map(|name| {
+                let member = directory.join(name);
+                fs::create_dir(&member).unwrap();
+                let manifest = member.join("Cargo.toml");
+                fs::write(&manifest, "").unwrap();
+                Package {
+                    id: format!("{name}-id"),
+                    name: name.into(),
+                    manifest_path: manifest.canonicalize().unwrap(),
+                    targets: vec![],
+                }
+            })
+            .collect();
+        let [game, exporter] = packages.as_slice() else {
+            unreachable!()
+        };
+        let metadata = serde_json::json!({"workspace_default_members": [&game.id]});
+        let check = |manifest, exporter| {
+            select_package(
+                &packages,
+                &metadata,
+                manifest,
+                &workspace_manifest,
+                exporter,
+            )
+            .unwrap()
+            .name
+            .as_str()
+        };
+        assert_eq!(check(&workspace_manifest, None), "demo");
+        assert_eq!(check(&exporter.manifest_path, None), SCHEDULE_EXPORTER);
+        assert_eq!(
+            check(&workspace_manifest, Some(exporter)),
+            SCHEDULE_EXPORTER
+        );
+    }
+
     fn snapshot_fixture(directory: &Path, exported_at: u64, dot: &[u8]) {
         fs::create_dir_all(directory).unwrap();
         let id = digest("main\0Update")[..16].to_owned();
@@ -1950,7 +2068,6 @@ mod tests {
             "runtime-whitespace",
             "manifest",
             "target",
-            "features",
             "sourceFingerprint",
             "old-root-runtime",
             "old-dot",
@@ -2005,10 +2122,9 @@ mod tests {
                     value["additionalEvidence"] = serde_json::json!({"new":true});
                     fs::write(filename, serde_json::to_vec_pretty(&value).unwrap()).unwrap();
                 }
-                "target" | "features" | "sourceFingerprint" => {
+                "target" | "sourceFingerprint" => {
                     let value = match change {
                         "target" => serde_json::json!("changed-target"),
-                        "features" => serde_json::json!(["debugdump", "extra"]),
                         _ => serde_json::json!(digest("changed source")),
                     };
                     for name in ["manifest.json", "runtime.json"] {
@@ -2050,6 +2166,26 @@ mod tests {
             assert!(read_schedule_snapshot(&staging).is_ok(), "{change}");
             fs::remove_dir_all(directory).unwrap();
         }
+    }
+
+    #[test]
+    fn extraction_snapshot_rejects_diagnostic_features() {
+        let directory = extraction_test_directory("diagnostic-features");
+        snapshot_fixture(&directory, 1, b"digraph {}");
+        for name in ["manifest.json", "runtime.json"] {
+            let filename = directory.join(name);
+            let mut snapshot: serde_json::Value =
+                serde_json::from_slice(&fs::read(&filename).unwrap()).unwrap();
+            snapshot["features"] = serde_json::json!(["debugdump", "inspector"]);
+            fs::write(filename, serde_json::to_vec_pretty(&snapshot).unwrap()).unwrap();
+        }
+        assert!(
+            read_schedule_snapshot(&directory)
+                .unwrap_err()
+                .to_string()
+                .contains("Invalid Schedule export provenance")
+        );
+        fs::remove_dir_all(directory).unwrap();
     }
 
     #[test]
@@ -2150,6 +2286,7 @@ mod tests {
         fs::create_dir(&run).unwrap();
         let host = Host {
             root: directory.clone(),
+            workspace: directory.clone(),
             cache: directory.clone(),
             directory: run,
             target_dir: directory.clone(),
@@ -2161,11 +2298,11 @@ mod tests {
             host: "test".into(),
             run: "test".into(),
         };
-        // Rust 测试程序不接受 --dump-schedules，真实子进程以非零状态退出。
+        // Rust 测试程序不接受 --output，真实子进程以非零状态退出。
         let result = Compilation {
             reports: vec![],
             packages: serde_json::json!([]),
-            executable: Some(env::current_exe().unwrap()),
+            export_executable: Some(env::current_exe().unwrap()),
             configuration: "test".into(),
             environment_path: host.path.clone(),
             summary: serde_json::json!({}),

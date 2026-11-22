@@ -5,8 +5,8 @@
 ## Repository layout
 
 ```text
-src/                   Feature directories, each owning one project Plugin
-  main.rs              Explicit plugin assembly and application entry point
+apps/                  Independent executable packages for game, acceptance, inspection, and schedule export
+src/                   Shared feature source compiled into the executable packages
   game_flow/           Application states, clocks, and cross-feature ordering
   first_person/        Player actions, pointer capture, facing, and camera
   character/           Character identity, movement, grounding, and jumping
@@ -19,7 +19,7 @@ src/                   Feature directories, each owning one project Plugin
   inspector/           World inspector integration
   session_log/         Session logging, background output, and exit flush
   window_policy/       Platform-specific window behavior
-  acceptance/          Native Bevy BRP for application acceptance
+scripts/               Python acceptance and asset tooling
 assets/                Runtime resources
   audio/               Sounds, machine-readable metadata, and license evidence
   ui/                  UI resources
@@ -38,7 +38,7 @@ assets/                Runtime resources
 
 ## Conventions
 
-- Each first-level directory under `src/` owns exactly one project `Plugin`. Keep implementation files flat within that feature and follow the [test organization rules](docs/development.md#测试代码组织); do not hide additional project plugins in the directory or add directories without their own plugin. Compose project plugins explicitly in `main.rs`; cross-feature scheduling uses the shared contracts in [Game Flow](docs/architecture/game_flow.md#调度与模拟边界).
+- Each feature directory under `src/` owns exactly one project `Plugin`. Keep implementation files flat within that feature and follow the [test organization rules](docs/development.md#测试代码组织); do not hide additional project plugins in the directory. Each entry point in `apps/` imports its source modules, constructs its Bevy App, and registers its gameplay plugins, backends, and diagnostics. Cross-feature scheduling uses the shared contracts in [Game Flow](docs/architecture/game_flow.md#调度与模拟边界).
 - All new or modified game logic must follow ECS and use this project's Bevy implementation. Keep entity identity, component data, shared resources, and system behavior in their respective roles.
 - Prefer BSN-style declarative code when assembling scenes, UI, and other entity hierarchies, clearly expressing component composition and child entity structure. Keep runtime behavior in ECS systems or Observers. See the [Scene and UI Assembly Standards](docs/development.md#场景与-ui-装配规范) for the full rules.
 - Keep all temporary repository files under the root `tmp/` directory and do not commit them. See the [Temporary File Rules](docs/development.md#临时文件管理) for details.

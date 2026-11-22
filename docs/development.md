@@ -4,7 +4,7 @@
 
 ## 技术栈与版本
 
-项目统一使用 [rust-toolchain.toml](../rust-toolchain.toml) 固定的 nightly；Rust edition、最低语言版本、依赖版本和构建参数以 [Cargo.toml](../Cargo.toml) 与 [Cargo.lock](../Cargo.lock) 为准。在仓库目录运行 rustup 管理的 Cargo 会选择该版本，工具链升级需同时验证[共享编译器分析工具](../tools/rustc-analysis/Cargo.toml)的架构事实提取。
+项目统一使用 [rust-toolchain.toml](../rust-toolchain.toml) 固定的 nightly。在仓库目录运行 rustup 管理的 Cargo 会选择该版本，工具链升级需同时验证[共享编译器分析工具](../tools/rustc-analysis/Cargo.toml)的架构事实提取。Rust edition 见各应用清单，workspace 成员、共享依赖和构建参数见 [Cargo.toml](../Cargo.toml)，实际依赖版本见 [Cargo.lock](../Cargo.lock)。
 
 固定工具链包含 `rustfmt`、`clippy`、`rust-src`、`rustc-dev` 和 `llvm-tools-preview`。
 
@@ -64,7 +64,7 @@ API 行为以对应版本的官方文档为准，示例必须匹配项目版本�
 ## 代码组织与性能
 
 - 按功能目录组织代码，遵守根 [AGENTS.md](../AGENTS.md) 的单一 Plugin 入口约定；在目录内按职责拆分平铺实现文件，不按组件、系统、资源类型建立横跨功能的杂项目录。
-- `main.rs` 显式装配项目 Plugin 和第三方输入基础设施。功能 Plugin 封装本功能所需的数据初始化和行为注册，不隐式安装其他项目 Plugin；跨功能顺序使用公开调度集合。模块边界见 [本项目模块](architecture/README.md#本项目模块)，共享调度契约见 [应用流程](architecture/game_flow.md#调度与模拟边界)。
+- 各应用入口按用途创建 Bevy `App`，安装玩法插件并选择引擎和工具配置。功能 Plugin 封装本功能所需的数据初始化和行为注册，跨功能顺序使用公开调度集合。[应用装配](architecture/game_flow.md#应用装配) · [共享调度契约](architecture/game_flow.md#调度与模拟边界)
 - 无需为小实现或测试预建目录；共用 fixture 保留为功能内的普通函数，不创建仅包装函数的额外 Plugin。
 - 项目 crate 在当前编译配置下实际产生的单字段结构体使用具名字段，避免通过 `.0` 访问含义不明确的数据；约束包括声明宏、过程宏、属性宏及派生宏生成的类型，也包括第三方宏在项目 crate 内生成的辅助类型，按宏展开后的最终字段形状判断。无字段标记结构体、多字段元组结构体、枚举变体及依赖 crate 内部类型不受此项限制，源码中的 lint 设置不能关闭此约束。
 - 优先批量查询处理实体，避免每帧全世界扫描、无必要的分配与克隆，以及频繁增删组件。
@@ -122,7 +122,7 @@ API 行为以对应版本的官方文档为准，示例必须匹配项目版本�
 cargo build --locked
 ```
 
-Windows 输出程序为 `target/debug/demo.exe`。开发构建保留调试信息，但优化可能使单步调试跳行或令部分变量不可查看。首次构建依赖耗时较长，后续构建可以复用缓存。
+工作区默认构建普通游戏。Windows 输出程序为 `target/debug/demo.exe`。开发构建保留调试信息，但优化可能使单步调试跳行或令部分变量不可查看。首次构建依赖耗时较长，后续构建可以复用缓存。[世界检查器](../README.md#运行) · [应用验收](testing/README.md#自动化启动准备) · [调度导出](diagrams/maintenance.md#调度导出边界)
 
 ### 发布构建
 
@@ -134,13 +134,13 @@ Windows 输出程序为 `target/release/demo.exe`。发布构建保留默认 pan
 
 `--locked` 确保使用提交的依赖锁定文件，需要变化时直接报错。构建参数以 Cargo 文件为准。发布包必须携带完整的 `assets/`。
 
-Windows MSVC 目标由根 [build.rs](../build.rs) 在链接时嵌入 `Microsoft.Windows.Common-Controls` v6 清单，覆盖开发、发布及测试程序。原生窗口策略按名称导入的 `GetWindowSubclass` 依赖该清单选择 v6 `comctl32.dll`；仅编译检查通过不能确认最终程序已携带清单，还需按 [验证指南](testing/window_policy.md#windows-msvc-链接产物) 检查链接产物。构建脚本按目标平台与 ABI 判断，只向 Windows MSVC 传递清单链接参数，Windows GNU 与其他目标不使用这些参数。
+四个入口共用[构建脚本](../apps/build.rs)。脚本为编译期嵌入资源、测试 fixture 和调度指纹提供仓库根路径，为 Windows MSVC 的开发、发布及测试程序嵌入 `Microsoft.Windows.Common-Controls` v6 清单。原生窗口策略按名称导入的 `GetWindowSubclass` 依赖该清单选择 v6 `comctl32.dll`，须按[验证指南](testing/window_policy.md#windows-msvc-链接产物)检查最终可执行文件。
 
-使用支持 `build.build-dir` 的 Cargo 时，多个 worktree 可以共享编译中间产物，并保留各自 `target/` 中的最终程序。在各 worktree 被 Git 本地排除的 `.cargo/config.toml` 中，将 `[build] build-dir` 指向同一专用缓存目录，例如主检出的 `tmp/shared-crates/`；不要共享 `target-dir`，也不要提交机器专属路径。
+使用支持 `build.build-dir` 的 Cargo 时，可在用户级 Cargo 配置中设置 `[build] build-dir`，或为各 worktree 的构建设置同一个 `CARGO_BUILD_BUILD_DIR`。将其指向专用缓存目录，例如主检出的 `tmp/shared-crates/`。最终程序仍保存在各 worktree 的 `target/` 中。机器专属路径留在本地配置。
 
 共享内容是依赖编译结果、构建脚本输出和增量编译数据，区别于 `CARGO_HOME` 的源码下载缓存。工具链、目标平台、构建模式、依赖特性和编译参数一致时可复用匹配产物；同时构建可能等待共享目录锁，清理该目录也会移除其他 worktree 可复用的缓存。
 
-构建和测试从对应 worktree 执行，用户启动游戏时也使用该工作目录，保证代码与资源一致。配置细节见 [Cargo 构建目录](https://doc.rust-lang.org/cargo/reference/config.html#buildbuild-dir)。
+构建和测试从对应 worktree 执行。Cargo 启动各应用包时，[工作区配置](../.cargo/config.toml)默认将 `BEVY_ASSET_ROOT` 指向仓库根目录，从同一 `assets/` 读取资源。需要指定其他资源根目录时，可在调用 Cargo 前设置 `BEVY_ASSET_ROOT`。配置细节见 [Cargo 构建目录](https://doc.rust-lang.org/cargo/reference/config.html#buildbuild-dir)。
 
 Agent 执行相关构建检查、无窗口测试和[应用验收脚本](testing/app-acceptance.md)，按[测试指南](testing/README.md#agent-验证边界)选择实机验证方式并记录覆盖缺口。普通游戏由用户按[运行方式](../README.md#运行)启动。
 

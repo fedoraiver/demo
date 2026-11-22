@@ -26,3 +26,23 @@ fn model_help_lists_only_fact_inputs() {
     assert!(help.contains("model --facts PATH --runtime PATH --out PATH"));
     assert!(!help.contains("--annotations"));
 }
+
+#[test]
+fn extract_rejects_feature_overrides() {
+    for (args, option) in [
+        (&["--features", "inspector"][..], "--features"),
+        (&["--all-features"][..], "--all-features"),
+    ] {
+        let output = Command::new(env!("CARGO_BIN_EXE_rustc-analysis"))
+            .arg("extract")
+            .args(args)
+            .output()
+            .unwrap();
+        assert_eq!(output.status.code(), Some(2));
+        assert!(
+            String::from_utf8(output.stderr)
+                .unwrap()
+                .contains(&format!("{option} is not supported by extract"))
+        );
+    }
+}

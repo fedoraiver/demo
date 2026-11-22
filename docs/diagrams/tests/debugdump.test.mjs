@@ -84,13 +84,23 @@ test('Schedule guide validation rejects opaque backgrounds, visible labels and n
   })), /background is not transparent/);
 });
 
-test('source fingerprints ignore CRLF differences but include source and lock changes', t => {
+test('source fingerprints ignore CRLF differences and track workspace exporter inputs', t => {
   const { repository } = fixture(t);
   const before = sourceFingerprint(repository);
   fs.writeFileSync(path.join(repository, 'src/main.rs'), 'fn main() {}\n');
   assert.equal(sourceFingerprint(repository), before);
   fs.appendFileSync(path.join(repository, 'Cargo.lock'), '# changed\n');
   assert.notEqual(sourceFingerprint(repository), before);
+  for (const filename of ['build_configuration.rs', 'apps/build.rs', 'apps/debugdump/Cargo.toml',
+    'apps/debugdump/src/main.rs', 'apps/game/Cargo.toml', 'apps/game/src/main.rs']) {
+    const prior = sourceFingerprint(repository);
+    fs.mkdirSync(path.dirname(path.join(repository, filename)), { recursive: true });
+    fs.writeFileSync(path.join(repository, filename), 'exporter input\r\n');
+    const added = sourceFingerprint(repository);
+    assert.notEqual(added, prior, filename);
+    fs.writeFileSync(path.join(repository, filename), 'exporter input\n');
+    assert.equal(sourceFingerprint(repository), added, filename);
+  }
 });
 
 test('real Graphviz renders DOT for identically named schedules in separate applications', async t => {

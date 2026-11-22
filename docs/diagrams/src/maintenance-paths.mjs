@@ -5,9 +5,11 @@ import { repositoryRoot } from './paths.mjs';
 
 export { repositoryRoot };
 export const maintenanceScripts = 'docs/diagrams/src';
+export const scheduleExporterInputs = ['build_configuration.rs', 'apps/build.rs', 'apps/debugdump', 'apps/game'];
 
 // 导出阶段跟踪执行模块的新路径；阶段缓存失效不改变真实导出的来源契约。
 export const exportProducerInputs = [
+  ...scheduleExporterInputs,
   ...['maintenance-runner.mjs', 'maintenance-inputs.mjs', 'maintenance-execution.mjs', 'maintenance-export-context.mjs',
     'maintenance-compiler-selection.mjs', 'maintenance-paths.mjs'].map(name => `${maintenanceScripts}/${name}`),
   'docs/diagrams/src/debugdump-input.mjs', 'docs/diagrams/src/paths.mjs',

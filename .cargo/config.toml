@@ -1,0 +1,3 @@
+[env]
+# Cargo run 为各入口传入所属包目录，Bevy 资源统一从工作区根读取。
+BEVY_ASSET_ROOT = { value = ".", relative = true }

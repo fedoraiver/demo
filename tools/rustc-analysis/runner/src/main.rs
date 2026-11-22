@@ -8,7 +8,7 @@ fn run() -> Result<ExitCode> {
     let command = arguments.next().unwrap_or_else(|| "help".into());
     if matches!(command.as_str(), "help" | "--help" | "-h") {
         println!(
-            "rustc-analysis check --rule named-fields|entity-names [--workspace PATH] [--target TARGET] [--features A,B] [--all-features]\nrustc-analysis extract --workspace PATH --out DIRECTORY [--target TARGET] [--features A,B] [--all-features]\nrustc-analysis model --facts PATH --runtime PATH --out PATH"
+            "rustc-analysis check --rule named-fields|entity-names [--workspace PATH] [--target TARGET] [--features A,B] [--all-features]\nrustc-analysis extract --workspace PATH --out DIRECTORY [--target TARGET]\nrustc-analysis model --facts PATH --runtime PATH --out PATH"
         );
         return Ok(ExitCode::SUCCESS);
     }
@@ -43,7 +43,7 @@ fn run() -> Result<ExitCode> {
     }
     let allowed: &[&str] = match command.as_str() {
         "check" => &["--rule", "--workspace", "--target", "--features"],
-        "extract" => &["--workspace", "--target", "--features", "--out"],
+        "extract" => &["--workspace", "--target", "--out"],
         "model" => &["--facts", "--runtime", "--out"],
         _ => bail!("Unknown command: {command}"),
     };
@@ -52,8 +52,8 @@ fn run() -> Result<ExitCode> {
             bail!("{key} is not supported by {command}");
         }
     }
-    if command == "model" && all_features {
-        bail!("--all-features is not supported by model");
+    if command != "check" && all_features {
+        bail!("--all-features is not supported by {command}");
     }
     let required = |name: &str| {
         values

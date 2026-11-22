@@ -23,7 +23,7 @@ struct OriginExtractor {
 impl Callbacks for OriginExtractor {
     fn after_analysis<'tcx>(&mut self, _: &interface::Compiler, tcx: TyCtxt<'tcx>) -> Compilation {
         self.facts =
-            Some(analysis_compiler::ecs::extract_with_origins(tcx, &self.origins).unwrap());
+            Some(analysis_compiler::ecs::extract_with_origins(tcx, &self.origins, None).unwrap());
         Compilation::Stop
     }
 }
@@ -353,6 +353,36 @@ fn extracts_real_bevy_protocols_and_bsn() {
         serde_json::to_vec_pretty(&facts).unwrap(),
     )
     .unwrap();
+    let group_definition = facts
+        .declarations
+        .iter()
+        .find(|declaration| declaration.full_name == "architecture_fixture::FixturePlugins")
+        .unwrap();
+    let group_type = facts
+        .types
+        .iter()
+        .find(|ty| ty.declaration.as_ref() == Some(&group_definition.id))
+        .unwrap();
+    assert!(group_type.roles.iter().any(|role| role == "PluginGroup"));
+    let group_build = facts
+        .callables
+        .iter()
+        .find(|callable| {
+            callable.display.ends_with("::build")
+                && callable
+                    .parameters
+                    .first()
+                    .is_some_and(|parameter| parameter.type_id == group_type.id)
+        })
+        .expect("missing plugin-group builder");
+    assert!(facts.registrations.iter().any(|registration| {
+        registration.owner == group_build.id
+            && registration.kind == "add_plugins"
+            && facts.types.iter().any(|ty| {
+                registration.type_id.as_ref() == Some(&ty.id)
+                    && ty.display.contains("ExternalGenericPlugin")
+            })
+    }));
     for function in [
         "architecture_external::external_generic_system",
         "architecture_external::external_zero",
@@ -960,6 +990,64 @@ fn extracts_real_bevy_protocols_and_bsn() {
             "Wrong required priority for {function}"
         );
     }
+
+    struct ScopedExtractor<'a> {
+        workspace: &'a str,
+        names: Option<analysis_contract::entity_names::Report>,
+        facts: Option<UnitFacts>,
+    }
+    impl Callbacks for ScopedExtractor<'_> {
+        fn after_analysis<'tcx>(
+            &mut self,
+            _: &interface::Compiler,
+            tcx: TyCtxt<'tcx>,
+        ) -> Compilation {
+            self.names =
+                Some(analysis_compiler::entity::analysis::check(tcx, self.workspace).unwrap());
+            self.facts = Some(
+                analysis_compiler::ecs::extract_with_origins(tcx, &[], Some(self.workspace))
+                    .unwrap(),
+            );
+            Compilation::Stop
+        }
+    }
+
+    // 成员目录外的工作区源码仍参与分析，显式引用的外部源码保持排除。
+    let workspace = output.join("scope");
+    let member = workspace.join("apps/member/src");
+    let shared = workspace.join("src/shared.rs");
+    fs::create_dir_all(&member).unwrap();
+    fs::create_dir_all(shared.parent().unwrap()).unwrap();
+    fs::write(
+        member.join("main.rs"),
+        "#![allow(dead_code)]\n#[path = \"../../../src/shared.rs\"] mod shared;\n#[path = \"../../../../outside.rs\"] mod outside;\n",
+    ).unwrap();
+    fs::write(
+        &shared,
+        "pub fn shared(mut commands: bevy_ecs::prelude::Commands) { commands.spawn(bevy_ecs::name::Name::new(\"Shared entity\")); }",
+    ).unwrap();
+    fs::write(
+        output.join("outside.rs"),
+        "pub fn outside(mut commands: bevy_ecs::prelude::Commands) { commands.spawn_empty(); }",
+    )
+    .unwrap();
+    arguments[1] = member.join("main.rs").to_string_lossy().into_owned();
+    arguments[2] = "--crate-name=scope_fixture".into();
+    let workspace = analysis_contract::normalized(&workspace).unwrap();
+    let mut scoped = ScopedExtractor {
+        workspace: &workspace,
+        names: None,
+        facts: None,
+    };
+    rustc_driver::compiler_entrypoint(&arguments, &mut scoped);
+    let names = scoped.names.unwrap();
+    let facts = scoped.facts.unwrap();
+    let shared = analysis_contract::normalized(&shared).unwrap();
+    assert!(names.diagnostics.is_empty(), "{:?}", names.diagnostics);
+    assert_eq!(names.entities.len(), 1);
+    assert_eq!(names.entities.first().unwrap().site.path, shared);
+    assert_eq!(facts.entities.len(), 1);
+    assert_eq!(facts.entities[0].source.as_ref().unwrap().path, shared);
 }
 
 #[test]

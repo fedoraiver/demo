@@ -1,46 +1,33 @@
-[package]
-name = "demo"
-version = "0.1.0"
-edition = "2024"
-rust-version = "1.97.1"
+[workspace]
+members = ["apps/game", "apps/inspector", "apps/acceptance", "apps/debugdump"]
+default-members = ["apps/game"]
+exclude = [
+    "tools/check-entity-names",
+    "tools/check-named-fields",
+    "tools/rustc-analysis",
+    "tools/rustc-analysis/contract",
+]
+resolver = "3"
 
-[features]
-acceptance-test = ["bevy/bevy_remote"]
-debugdump = ["dep:bevy_mod_debugdump", "dep:sha2", "dep:analysis-contract"]
-inspector = ["dep:bevy-inspector-egui"]
-
-[dependencies]
-analysis-contract = { path = "tools/rustc-analysis/contract", optional = true }
-avian3d = { version = "0.8.0", default-features = false, features = ["3d", "parry-f32"] }
+[workspace.dependencies]
 bevy = { version = "0.20.1", features = ["bevy_settings"] }
-bevy_framepace = { version = "0.23.0", default-features = false }
-bevy_mod_debugdump = { version = "=0.17.0", default-features = false, optional = true }
-bevy-inspector-egui = { version = "0.38.0", features = ["highlight_changes"], optional = true }
 bevy_enhanced_input = "0.27.0"
+bevy_framepace = { version = "0.23.0", default-features = false }
+avian3d = { version = "0.8.0", default-features = false, features = ["3d", "parry-f32"] }
 bevy_kira_audio = { version = "=0.27.1", default-features = false, features = ["ogg", "wav"] }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
-sha2 = { version = "0.10.9", optional = true }
 uuid = { version = "1.26.1", features = ["v4"] }
-
-# Build support for native window constraints only on macOS and Windows.
-[target.'cfg(any(target_os = "macos", target_os = "windows"))'.dependencies]
 raw-window-handle = "0.6.2"
-
-[target.'cfg(target_os = "macos")'.dependencies]
 objc2 = "0.6.4"
 objc2-app-kit = { version = "0.3.2", default-features = false, features = ["std", "NSResponder", "NSWindow", "NSView", "NSScreen"] }
 objc2-foundation = { version = "0.3.2", default-features = false, features = ["std", "NSGeometry"] }
-
-[target.'cfg(target_os = "windows")'.dependencies]
 windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_UI_Shell", "Win32_UI_WindowsAndMessaging", "Win32_UI_HiDpi", "Win32_Graphics_Gdi"] }
 
-# Keep project code quick to compile and easy to debug.
 [profile.dev]
 opt-level = 1
 debug = 2
 
-# Optimize Bevy and other dependencies for usable runtime performance.
 [profile.dev.package."*"]
 opt-level = 3
 

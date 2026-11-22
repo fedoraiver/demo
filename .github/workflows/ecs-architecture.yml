@@ -5,12 +5,16 @@ on:
     branches: [master]
     paths:
       - 'src/**'
+      - 'apps/build.rs'
+      - 'apps/*/Cargo.toml'
+      - 'apps/debugdump/**'
+      - 'apps/game/**'
       - 'tools/rustc-analysis/**'
       - '.github/scripts/**'
       - 'assets/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
-      - 'build.rs'
+      - 'build_configuration.rs'
       - 'rust-toolchain.toml'
       - '.cargo/**'
       - '.gitattributes'

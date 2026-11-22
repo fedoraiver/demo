@@ -4,13 +4,13 @@
 
 ## 运行
 
-安装 Rust 工具链后，在仓库根目录执行：
+安装 Rust 工具链后，在仓库根目录运行默认应用 `demo`。
 
 ```powershell
 cargo run --locked
 ```
 
-在窗口游戏中使用世界检查器时运行 `cargo run --locked --features inspector`。[检查器操作](docs/player-guide.md#世界检查器)
+在窗口游戏中使用世界检查器时运行 `cargo run --locked -p demo-inspector`。[检查器操作](docs/player-guide.md#世界检查器)
 
 运行资源随仓库保存在 [assets/](assets/)，请保留完整目录及路径结构。依赖版本以 [Cargo.toml](Cargo.toml) 与 [Cargo.lock](Cargo.lock) 为准。
 

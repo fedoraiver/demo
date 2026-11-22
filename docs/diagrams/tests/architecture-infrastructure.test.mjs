@@ -14,18 +14,27 @@ import { testDocument } from './test-dom.mjs';
 const captured = JSON.parse(fs.readFileSync(new URL('./fixtures/compiler-plugin-menu.json', import.meta.url), 'utf8'));
 const registryFor = () => Object.fromEntries(structuredClone(captured.objects).map(object => [object.id, object]));
 
-test('captured compiler declarations select five infrastructure entries and six real Plugin objects', () => {
-  const registry = registryFor(), before = structuredClone(registry), infrastructure = projectInfrastructureFeatures(registry, { requireComplete: true });
-  assert.deepEqual(infrastructure.map(entry => entry.id), ['infrastructure', 'avian', 'enhanced_input', 'kira', 'egui']);
+test('captured compiler declarations select the four ordinary game infrastructure entries', () => {
+  const registry = registryFor();
+  for (const [id, object] of Object.entries(registry)) {
+    if (['bevy_egui', 'bevy_inspector_egui'].includes(object.typeIdentity?.crateName)) delete registry[id];
+  }
+  const before = structuredClone(registry), infrastructure = projectInfrastructureFeatures(registry, { requireComplete: true });
+  assert.deepEqual(infrastructure.map(entry => entry.id), ['infrastructure', 'avian', 'enhanced_input', 'kira']);
   assert.deepEqual(infrastructure.map(entry => registry[entry.overviewNode].typeIdentity.defPath), [
     'bevy_internal::default_plugins::DefaultPlugins', 'avian3d::PhysicsPlugins', 'bevy_enhanced_input::EnhancedInputPlugin',
-    'bevy_kira_audio::AudioPlugin', 'bevy_egui::EguiPlugin',
+    'bevy_kira_audio::AudioPlugin',
   ]);
   const menu = projectPluginMenu(captured.features, registry, infrastructure);
-  assert.equal(menu.project.length, 14); assert.equal(menu.infrastructure.length, 6);
-  assert.deepEqual(menu.infrastructure.slice(-2).map(entry => registry[entry.overviewNode].typeIdentity.defPath), ['bevy_egui::EguiPlugin', 'bevy_inspector_egui::quick::WorldInspectorPlugin']);
+  assert.equal(menu.project.length, 14); assert.equal(menu.infrastructure.length, 4);
   assert.ok(menu.project.every(entry => registry[entry.overviewNode].typeIdentity.crateName === 'demo'));
   assert.deepEqual(registry, before);
+  for (const entry of menu.project) {
+    const identity = registry[entry.overviewNode].typeIdentity;
+    identity.crateName = 'demo_debugdump';
+    identity.defPath = identity.defPath.replace(/^demo::/, 'demo_debugdump::');
+  }
+  assert.deepEqual(projectPluginMenu(captured.features, registry, infrastructure), menu);
 });
 
 test('native selectors reject missing or ambiguous identities and never fall back to a display name', () => {
@@ -58,7 +67,7 @@ test('captured model produces the same valid runtime targets and HTML options wh
   const runtime = readArchitectureData(paths.repositoryRoot);
   assert.deepEqual(runtime.infrastructureFeatures, infrastructureFeatures);
   const document = testDocument(html), options = document.getElementById('view-select').querySelectorAll('option'), byView = new Map(data.views.map(view => [view.id, view]));
-  assert.equal(options.length, 20);
+  assert.equal(options.length, 18);
   assert.ok(options.every(option => ['Plugin', 'PluginGroup'].includes(runtime.registry[byView.get(option.value)?.objectId]?.kind)));
   for (const entry of runtime.infrastructureFeatures) for (const id of entry.objectIds) {
     assert.ok(runtime.registry[id]); assert.ok(options.some(option => byView.get(option.value).objectId === id));

@@ -182,11 +182,13 @@ test('unsupported HTML, external attributes, missing system names and overlappin
   assert.throws(() => filterScheduleGraph(source, { include: 'demo' }), /Overlapping/);
 });
 
-test('all 34 real schedules compile in memory with lossless model hashes and unchanged raw DOT provenance', async () => {
+test('all ordinary game schedules compile in memory with lossless model hashes and unchanged raw DOT provenance', async () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(directory, 'debugdump-manifest.json'), 'utf8'));
+  assert.deepEqual(manifest.features, ['debugdump']);
   const schedules = manifest.schedules.map(entry => ({ ...entry, dot: fs.readFileSync(path.join(directory, entry.filename), 'utf8') }));
-  assert.equal(schedules.length, 34);
+  assert.ok(schedules.length > 0);
   const result = await compileDebugdump({ manifest, schedules });
+  assert.deepEqual(result.views.map(view => view.id).sort(), schedules.map(entry => 'schedule-' + entry.id).sort());
   for (const view of result.views) {
     const entry = schedules.find(entry => view.id === 'schedule-' + entry.id);
     assert.equal(sha256(view.dot), entry.sha256);
@@ -194,7 +196,7 @@ test('all 34 real schedules compile in memory with lossless model hashes and unc
     assert.equal(scheduleSystemCount(view.scheduleGraph), entry.systemCount);
     assert.equal(sha256(JSON.stringify(view.scheduleGraph)), view.scheduleGraphSha256);
     const oldDotModel = scheduleGraphFromJson(JSON.parse((await renderer).renderString(entry.dot, { engine: 'dot', format: 'dot_json' })));
-    assert.equal(sha256(JSON.stringify(oldDotModel)), view.scheduleGraphSha256, 'nop must preserve all 34 previous model hashes');
+    assert.equal(sha256(JSON.stringify(oldDotModel)), view.scheduleGraphSha256, `nop must preserve the previous model hash for ${entry.label}`);
     const firstSystem = view.scheduleGraph.nodes.find(node => scheduleNodeKind(node) === 'system');
     if (firstSystem) {
       const exact = filterScheduleGraph(view.scheduleGraph, { includeNames: [firstSystem.attributes.tooltip] });

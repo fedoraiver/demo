@@ -51,7 +51,7 @@ test('plan is read-only without npm dependencies; validates real DOT content and
   assert.equal(plan.stages.find(stage => stage.id === 'extract').action, 'extract');
   assert.deepEqual(fileSnapshot(f.workspace, ['.']), before);
   assert.equal(fs.existsSync(path.join(f.workspace, 'tmp')), false);
-  f.put('src/main.rs', 'fn main() { let _changed = 1; }');
+  f.put('apps/game/Cargo.toml', '[package]\nname="demo"\n');
   const stale = await planMaintenance({ workspace: f.workspace, debugdumpDirectory: 'docs/diagrams/generated/dot' });
   assert.equal(stale.debugdump.valid, false);
   assert.match(stale.debugdump.reason, /fingerprint is stale/);
@@ -290,6 +290,7 @@ test('Maintenance helper content invalidates downstream reuse while installed de
     toolchainProvider: () => ({ cargo: process.execPath, rustc: process.execPath }) });
   assert.equal(context.schemaVersion, 2);
   assert.deepEqual(Object.keys(context.inputs), ['files', 'environment', 'invocation']);
+  assert.deepEqual(context.inputs.invocation.packages, ['demo-debugdump']);
   const originalSidecar = fs.readFileSync(path.join(directory, 'maintenance-export-context.json'));
   assert.equal((await planMaintenance({ workspace: f.workspace })).stages.find(stage => stage.id === 'extract').action, 'extract');
   const names = relevantInputNames(f.workspace), before = fileSnapshot(f.workspace, names);
