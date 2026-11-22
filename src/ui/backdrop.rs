@@ -1,7 +1,6 @@
 //! 主菜单使用纯色背景；暂停菜单沿用当前玩法相机。
 
 use bevy::prelude::*;
-use bevy_inspector_egui::bevy_egui::PrimaryEguiContext;
 
 use crate::game_flow::AppState;
 
@@ -23,23 +22,15 @@ fn spawn_backdrop(mut commands: Commands) {
             DespawnOnExit::<AppState>(AppState::MainMenu)
             Transform
             Children [
-                @menu_camera()
+                #MenuCamera
+                Camera3d
+                Camera {
+                    clear_color: {ClearColorConfig::Custom(MENU_BACKGROUND)},
+                }
+                IsDefaultUiCamera
             ]
         })
         .id();
     info!(target: "demo::ui::backdrop", ?backdrop, state = "main_menu",
         reason = "state_enter", "Menu backdrop spawned");
-}
-
-/// 菜单界面的独立相机用纯色清屏。
-pub(super) fn menu_camera() -> impl Scene {
-    bsn! {
-        #MenuCamera
-        Camera3d
-        Camera {
-            clear_color: {ClearColorConfig::Custom(MENU_BACKGROUND)},
-        }
-        IsDefaultUiCamera
-        PrimaryEguiContext
-    }
 }

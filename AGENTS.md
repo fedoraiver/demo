@@ -19,6 +19,7 @@ src/                   Feature directories, each owning one project Plugin
   inspector/           World inspector integration
   session_log/         Session logging, background output, and exit flush
   window_policy/       Platform-specific window behavior
+  acceptance/          Native Bevy BRP for application acceptance
 assets/                Runtime resources
   audio/               Sounds, machine-readable metadata, and license evidence
   ui/                  UI resources
@@ -49,8 +50,12 @@ assets/                Runtime resources
 
 Do not use computer-use to launch or operate the game.
 
+Agent-run application tests use a build with the `acceptance-test` feature. Default game startup and operation remain user-performed. Follow the execution boundaries in [Testing Guide](docs/testing/README.md#agent-验证边界).
+
+Automate acceptance checks wherever inputs and results can be driven and observed. Audio acceptance is explicitly outside the application automation scope and remains user-performed; preserve existing audio module tests as development tools. Otherwise reserve manual acceptance for subjective judgment or a specific path that cannot be automated reliably; missing tooling or hardware is an unverified coverage gap.
+
 ## Delivery Requirements
 
 Before finishing, follow the [Testing Guide](docs/testing/README.md) checklist to review ECS design, comments, system access and ordering, deferred commands, registration and lifecycle, and file logging. For ordinary documentation-only changes, checking content and links is sufficient. Architecture diagram changes follow that guide's validation scope; SVG visual validation runs only when explicitly requested by the user.
 
-Delivery notes must describe the specific changes, validation actually completed, and any unverified items. For behavior that depends on gameplay, include user-performed steps, expected results, and log locations. Record execution details in the corresponding issue or PR; keep reusable guidance in long-term documentation.
+Delivery notes must describe the specific changes, validation actually completed, and any unverified items. For gameplay behavior, report automated scenarios, expected results, artifacts, and log locations; include user-performed steps only for necessary manual checks. Record execution details in the corresponding issue or PR; keep reusable guidance in long-term documentation.

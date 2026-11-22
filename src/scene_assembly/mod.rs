@@ -2,7 +2,6 @@
 
 use avian3d::prelude::{Collider, RigidBody};
 use bevy::prelude::*;
-use bevy_inspector_egui::bevy_egui::PrimaryEguiContext;
 
 use crate::{
     character::{Character, CharacterIntent, CharacterMotion, character_body},
@@ -99,7 +98,6 @@ fn spawn_session(
             DespawnOnEnter::<AppState>(AppState::MainMenu)
             Camera3d
             IsDefaultUiCamera
-            PrimaryEguiContext
             camera_transform
         })
         .insert((

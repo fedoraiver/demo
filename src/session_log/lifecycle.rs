@@ -9,6 +9,8 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
+#[cfg(feature = "acceptance-test")]
+use bevy::prelude::ReflectResource;
 use bevy::{
     app::{App, AppExit},
     ecs::resource::Resource,
@@ -26,6 +28,15 @@ pub(crate) struct SessionLogGuard {
     pub(super) file_worker: LogWorker,
     pub(super) console_worker: LogWorker,
     pub(super) session_id: Uuid,
+}
+
+/// 已建立日志会话的身份与文件位置；只暴露元数据，不拥有写入器或刷新生命周期。
+#[cfg(feature = "acceptance-test")]
+#[derive(Resource, bevy::prelude::Reflect)]
+#[reflect(Resource)]
+pub(crate) struct SessionLogInfo {
+    pub(crate) id: String,
+    pub(crate) path: String,
 }
 
 /// 为 `LogPlugin::custom_layer` 提供文件输出，沿用 Bevy 的统一日志过滤。
