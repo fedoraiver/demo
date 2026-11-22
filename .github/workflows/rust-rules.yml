@@ -40,9 +40,9 @@ concurrency:
 
 jobs:
   rust:
-    uses: fedoraiver/bevy-cicd/.github/workflows/rust-checks.yml@08401c3e82659ab80b42ccb5f82ded757be20ea6
+    uses: fedoraiver/bevy-cicd/.github/workflows/rust-checks.yml@3faf2e5c7a7973470490ac290d638af61273216a
 
   rules:
-    uses: fedoraiver/bevy-cicd/.github/workflows/bevy-rules.yml@08401c3e82659ab80b42ccb5f82ded757be20ea6
+    uses: fedoraiver/bevy-cicd/.github/workflows/bevy-rules.yml@3faf2e5c7a7973470490ac290d638af61273216a
     with:
       package-path: apps/game
