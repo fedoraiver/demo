@@ -9,7 +9,7 @@
 ## 常用操作
 
 - 创建：`gh issue create --repo fedoraiver/demo --title "标题" --body-file <正文文件>`。
-- 读取：`gh issue view <编号> --repo fedoraiver/demo --comments`；需要结构化内容时使用 `--json number,title,body,labels,comments,state,url`。
+- 读取：`gh issue view <编号> --repo fedoraiver/demo --json number,title,body,labels,comments,state,url`；交互查看可使用 `gh issue view <编号> --repo fedoraiver/demo --comments`，其管道输出只包含评论。
 - 列表：`gh issue list --repo fedoraiver/demo --state open --json number,title,body,labels,url`；按需添加 `--label` 或调整 `--state`。
 - 评论：`gh issue comment <编号> --repo fedoraiver/demo --body-file <正文文件>`。
 - 添加或移除标签：`gh issue edit <编号> --repo fedoraiver/demo --add-label <标签>` 或 `--remove-label <标签>`。

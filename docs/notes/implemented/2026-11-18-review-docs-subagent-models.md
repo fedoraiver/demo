@@ -8,11 +8,11 @@ Status: implemented — 已同步派发规则、示例与记录校验。
 
 ## Decision
 
-按[派发规则](../../../../.agents/skills/review-docs/references/delegation.md)，事实与归属审查和独立终审用 `gpt-6.2-sol`，文案修订用 `gpt-6.1-terra`。各角色沿用原推理档位。
+按[派发规则](../../../.agents/skills/review-docs/references/delegation.md)，事实与归属审查和独立终审用 `gpt-6.2-sol`，文案修订用 `gpt-6.1-terra`。各角色沿用原推理档位。
 
 ## Changes
 
-同步更新[分工记录示例](../../../../.agents/skills/review-docs/references/tooling.md)、[默认校验模型](../../../../.agents/skills/review-docs/scripts/records.mjs)及相关测试数据。
+同步更新[分工记录示例](../../../.agents/skills/review-docs/references/tooling.md)、[默认校验模型](../../../.agents/skills/review-docs/scripts/records.mjs)及相关测试数据。
 
 ## Alternatives considered
 

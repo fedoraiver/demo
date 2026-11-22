@@ -29,6 +29,7 @@ assets/                Runtime resources
 ## Required Reading
 
 - Before changing code, read the [Development Standards](docs/development.md), [Bevy App and Project Modules](docs/architecture/README.md), the relevant module references, and the [Testing Guide](docs/testing/README.md). Project states, clocks, and cross-feature scheduling are maintained in [Game Flow](docs/architecture/game_flow.md).
+- When investigating a regression or changing a previously affected path, consult relevant [incident records](docs/postmortem/README.md) for failure conditions and regression checks.
 - For gameplay requirements, read the [Game Design](docs/game-design.md) and related issues. Distinguish confirmed decisions, design suggestions, and open questions. See the [Player Guide](docs/player-guide.md) for currently available capabilities, controls, and configuration; the source code is authoritative for actual implementation.
 - For documentation-only changes, read the affected documents and their applicable writing rules, then check content and links.
 - For asset maintenance, read the [asset documentation](docs/assets/README.md); authoring, import, event mappings, and source records belong there, while runtime module architecture has its own references.
@@ -50,12 +51,10 @@ assets/                Runtime resources
 
 Do not use computer-use to launch or operate the game.
 
-Agent-run application tests use a build with the `acceptance-test` feature. Default game startup and operation remain user-performed. Follow the execution boundaries in [Testing Guide](docs/testing/README.md#agent-验证边界).
-
-Automate acceptance checks wherever inputs and results can be driven and observed. Audio acceptance is explicitly outside the application automation scope and remains user-performed; preserve existing audio module tests as development tools. Otherwise reserve manual acceptance for subjective judgment or a specific path that cannot be automated reliably; missing tooling or hardware is an unverified coverage gap.
+Automate acceptance checks wherever inputs can be driven and results observed. Follow the [Agent execution boundaries](docs/testing/README.md#agent-验证边界) and [acceptance guidance](docs/testing/README.md#验收测试).
 
 ## Delivery Requirements
 
-Before finishing, follow the [Testing Guide](docs/testing/README.md) checklist to review ECS design, comments, system access and ordering, deferred commands, registration and lifecycle, and file logging. For ordinary documentation-only changes, checking content and links is sufficient. Architecture diagram changes follow that guide's validation scope; SVG visual validation runs only when explicitly requested by the user.
+Before finishing, follow the [Testing Guide](docs/testing/README.md) checklist to review ECS design, comments, system access and ordering, deferred commands, registration and lifecycle, and file logging. For ordinary documentation-only changes, checking content and links is sufficient.
 
-Delivery notes must describe the specific changes, validation actually completed, and any unverified items. For gameplay behavior, report automated scenarios, expected results, artifacts, and log locations; include user-performed steps only for necessary manual checks. Record execution details in the corresponding issue or PR; keep reusable guidance in long-term documentation.
+Delivery notes must describe the specific changes, validation actually completed, and any unverified items. For gameplay behavior, report the scenarios exercised, expected results, observations, artifacts, and log locations. Record execution details in the corresponding issue or PR; keep reusable guidance in long-term documentation.

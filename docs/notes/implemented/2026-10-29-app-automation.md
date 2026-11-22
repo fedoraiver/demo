@@ -12,9 +12,9 @@ Status: implemented — 已按菜单、设置、物理、镜头和日志分设�
 
 ## Changes
 
-[验收接入](../../../architecture/acceptance.md)注册脚本所需的原生类型。客户端匹配本次子进程的 PID，沿游戏输入与 Picking 消费路径驱动，按截图实体匹配像素事件并编码 PNG。
+[验收接入](../../architecture/acceptance.md)注册脚本所需的原生类型。客户端匹配本次子进程的 PID，沿游戏输入与 Picking 消费路径驱动，按截图实体匹配像素事件并编码 PNG。
 
-[应用验收](../../../testing/app-acceptance.md)为各类别的独立脚本定义验收编号。每个脚本记录已执行的子项和可追溯证据，设置脚本在本次进程退出后核对写出的真实 TOML，再恢复原文件状态。[检查器验证](../../../testing/inspector.md#世界检查器验收)维护检查器及 F3 专项。
+[应用验收](../../testing/app-acceptance.md)为各类别的独立脚本定义验收编号。每个脚本记录已执行的子项和可追溯证据，设置脚本在本次进程退出后核对写出的真实 TOML，再恢复原文件状态。[检查器验证](../../testing/inspector.md#世界检查器验收)维护检查器及 F3 专项。
 
 ## Alternatives considered
 
@@ -26,4 +26,4 @@ Status: implemented — 已按菜单、设置、物理、镜头和日志分设�
 
 ## Verification
 
-持续验证入口和测试范围见[测试指南](../../../testing/README.md#自动化启动准备)。五类场景各自的可执行条件、待实现条件和证据要求以[应用验收](../../../testing/app-acceptance.md)为准。运行环境和执行结果记录在各类别报告及本次交付记录。
+持续验证入口和测试范围见[测试指南](../../testing/README.md#自动化启动准备)。五类场景各自的可执行条件、待实现条件和证据要求以[应用验收](../../testing/app-acceptance.md)为准。运行环境和执行结果记录在各类别报告及本次交付记录。
