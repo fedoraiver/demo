@@ -1,11 +1,11 @@
-//! 在装配引擎前识别诊断命令，参数错误不能意外进入游戏。
+//! 在装配引擎前解析游戏与诊断入口，避免参数错误触发游戏初始化。
 
 use std::ffi::OsString;
 #[cfg(feature = "debugdump")]
 use std::path::PathBuf;
 
 /// 主入口选择的运行方式；帮助和参数错误不初始化引擎或会话日志。
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub enum LaunchMode {
     Game,
     Help,

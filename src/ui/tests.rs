@@ -354,7 +354,7 @@ mod backdrop_tests {
             .unwrap();
         let menu_camera = app.world().get::<Children>(root).unwrap()[0];
         assert!(app.world().get::<IsDefaultUiCamera>(menu_camera).is_some());
-        assert!(app.world().get::<PrimaryEguiContext>(menu_camera).is_some());
+        assert!(app.world().get::<PrimaryEguiContext>(menu_camera).is_none());
 
         app.world_mut()
             .resource_mut::<NextState<AppState>>()
