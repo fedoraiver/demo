@@ -1,10 +1,10 @@
 # inspector 测试
 
-[测试指南](README.md)说明分层与执行边界。世界检查器的窗口专项使用 `inspector` 构建。[启动命令](../../README.md#运行)
+[测试指南](README.md)说明分层与执行边界。世界检查器的窗口专项使用 `demo-inspector`。[启动命令](../../README.md#运行)
 
 ## 无窗口集成验证
 
-运行 `cargo test --locked --features inspector first_person::tests::pose_tests::capture_tests`，检查模式切换、Egui 输入转发、输入上下文与组件状态。[输入回归](../../src/first_person/tests.rs)
+运行 `cargo test --locked -p demo-inspector --bin demo-inspector first_person::tests::pose_tests::capture_tests`，检查模式切换、Egui 输入转发、输入上下文与组件状态。[输入回归](../../src/first_person/tests.rs)
 
 ## 世界检查器验收
 

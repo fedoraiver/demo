@@ -5,12 +5,13 @@ on:
     branches: [master]
     paths:
       - 'src/**'
+      - 'apps/**'
       - 'assets/**'
       - 'tools/**'
       - '.github/scripts/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
-      - 'build.rs'
+      - 'build_configuration.rs'
       - 'rust-toolchain.toml'
       - '.cargo/**'
       - '.gitattributes'
@@ -21,12 +22,13 @@ on:
     branches: [master]
     paths:
       - 'src/**'
+      - 'apps/**'
       - 'assets/**'
       - 'tools/**'
       - '.github/scripts/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
-      - 'build.rs'
+      - 'build_configuration.rs'
       - 'rust-toolchain.toml'
       - '.cargo/**'
       - '.gitattributes'
@@ -82,7 +84,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        configuration: [default, debugdump]
+        configuration: [default, workspace]
     env:
       CHECK_CONFIGURATION: ${{ matrix.configuration }}
       CARGO_TERM_COLOR: always
@@ -102,7 +104,7 @@ jobs:
         id: check
         run: |
           cargo_args=(check --locked --all-targets)
-          if [[ "$CHECK_CONFIGURATION" == debugdump ]]; then cargo_args+=(--features debugdump); fi
+          if [[ "$CHECK_CONFIGURATION" == workspace ]]; then cargo_args+=(--workspace); fi
           cargo "${cargo_args[@]}"
 
       - name: Run Clippy with pedantic warnings
@@ -110,7 +112,7 @@ jobs:
         if: ${{ !cancelled() && steps.check.outcome == 'success' }}
         run: |
           cargo_args=(clippy --locked --all-targets)
-          if [[ "$CHECK_CONFIGURATION" == debugdump ]]; then cargo_args+=(--features debugdump); fi
+          if [[ "$CHECK_CONFIGURATION" == workspace ]]; then cargo_args+=(--workspace); fi
           cargo_args+=(-- --no-deps -W clippy::pedantic)
           cargo "${cargo_args[@]}"
 
@@ -119,7 +121,7 @@ jobs:
         if: ${{ !cancelled() && steps.check.outcome == 'success' }}
         run: |
           cargo_args=(test --locked)
-          if [[ "$CHECK_CONFIGURATION" == debugdump ]]; then cargo_args+=(--features debugdump); fi
+          if [[ "$CHECK_CONFIGURATION" == workspace ]]; then cargo_args+=(--workspace); fi
           cargo_args+=(-- --test-threads=1)
           cargo "${cargo_args[@]}"
 
@@ -174,7 +176,7 @@ jobs:
         id: debugdump
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         run: |
-          bash .github/scripts/rustc-analysis.sh check --rule "$ANALYSIS_RULE" --workspace "$GITHUB_WORKSPACE" --features debugdump
+          bash .github/scripts/rustc-analysis.sh check --rule "$ANALYSIS_RULE" --workspace "$GITHUB_WORKSPACE/apps/debugdump"
 
       - name: Summarize checks and disk space
         if: ${{ always() }}

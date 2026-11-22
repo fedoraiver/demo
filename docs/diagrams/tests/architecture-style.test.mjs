@@ -213,8 +213,9 @@ test('message parameter labels express read and write permissions without claimi
   assert.equal(displayLabelOf({ from: 'movement', to: 'message', label: '写入消息' }, 'publish', records), '发布消息');
 });
 
-test('Mermaid Schedule links use the same fixed ordering and nested labels', () => {
+test('Mermaid Schedule links follow the main schedule ordering', () => {
   const links = scheduleLinksFor([{ id: 'Update', track: 'frame', order: 1 },
-    { id: 'PostUpdate', track: 'frame', order: 2 }, { id: 'EguiPrimaryContextPass', order: 3 }]);
-  assert.deepEqual(links.map(link => [link.edgeSemantic, link.displayLabel]), [['schedule', 'Schedule先后'], ['nested', '内部调度']]);
+    { id: 'PostUpdate', track: 'frame', order: 2 }, { id: 'Last', track: 'frame', order: 3 }]);
+  assert.deepEqual(links.map(link => [link.from, link.to, link.edgeSemantic, link.displayLabel]),
+    [['Update', 'PostUpdate', 'schedule', 'Schedule先后'], ['PostUpdate', 'Last', 'schedule', 'Schedule先后']]);
 });

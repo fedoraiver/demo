@@ -1,7 +1,6 @@
-//! 为 Windows 原生窗口策略声明 Common Controls v6，确保按名称导入的入口可用。
+//! 为应用入口及测试程序配置目标信息和 Windows 链接清单。
 
-fn main() {
-    println!("cargo::rerun-if-changed=build.rs");
+pub(crate) fn emit_build_configuration() {
     println!(
         "cargo::rustc-env=DEMO_BUILD_TARGET={}",
         std::env::var("TARGET").unwrap()

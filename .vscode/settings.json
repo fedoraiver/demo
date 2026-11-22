@@ -1,4 +1,5 @@
 {
+  "rust-analyzer.vfs.extraIncludes": ["${workspaceFolder}/src"],
   "rust-analyzer.files.exclude": ["tmp"],
   "files.watcherExclude": {
     "tmp/**": true,

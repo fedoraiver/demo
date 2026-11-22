@@ -20,12 +20,13 @@ use rustc_span::Span;
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque},
     hash::{Hash, Hasher},
-    path::Path,
+    path::{Path, PathBuf},
     rc::Rc,
 };
 
 pub struct Engine<'tcx> {
     pub tcx: TyCtxt<'tcx>,
+    pub(super) source_root: Option<PathBuf>,
     pub env: TypingEnv<'tcx>,
     pub report: Report,
     pub trace: Vec<String>,
@@ -88,12 +89,15 @@ struct Frame<'tcx> {
     live: Rc<crate::entity::liveness::LivePlaces>,
 }
 
-pub fn check(tcx: TyCtxt<'_>) -> Result<Report> {
-    analyze(tcx, false).map(|(report, _)| report)
+pub fn check(tcx: TyCtxt<'_>, workspace: &str) -> Result<Report> {
+    analyze(tcx, false, Some(workspace)).map(|(report, _)| report)
 }
 
-pub fn structures(tcx: TyCtxt<'_>) -> Result<Vec<StructuralCreation<'_>>> {
-    analyze(tcx, true).map(|(_, structures)| structures)
+pub fn structures<'tcx>(
+    tcx: TyCtxt<'tcx>,
+    workspace: Option<&str>,
+) -> Result<Vec<StructuralCreation<'tcx>>> {
+    analyze(tcx, true, workspace).map(|(_, structures)| structures)
 }
 
 /// 按需解析 Bundle 和场景协议的共享解释器，不预先扫描实体创建入口。
@@ -105,6 +109,7 @@ pub fn resolver(tcx: TyCtxt<'_>, collect_structure: bool) -> Engine<'_> {
         .collect();
     Engine {
         tcx,
+        source_root: None,
         env: TypingEnv::fully_monomorphized(),
         report: Report::default(),
         trace: vec![],
@@ -131,11 +136,21 @@ pub fn resolver(tcx: TyCtxt<'_>, collect_structure: bool) -> Engine<'_> {
     }
 }
 
-fn analyze(
-    tcx: TyCtxt<'_>,
+fn analyze<'tcx>(
+    tcx: TyCtxt<'tcx>,
     collect_structure: bool,
-) -> Result<(Report, Vec<StructuralCreation<'_>>)> {
+    workspace: Option<&str>,
+) -> Result<(Report, Vec<StructuralCreation<'tcx>>)> {
     let mut engine = resolver(tcx, collect_structure);
+    // 成员可以通过 #[path] 编译仓库内的共享源码，检查边界跟随请求中的工作区。
+    let source_root = workspace
+        .map(PathBuf::from)
+        .or_else(|| std::env::var_os("CARGO_MANIFEST_DIR").map(PathBuf::from));
+    engine.source_root = source_root
+        .as_deref()
+        .map(normalized)
+        .transpose()?
+        .map(PathBuf::from);
     engine.roots = crate::entity::call_graph::creation_roots(tcx);
     let owners: Vec<_> = tcx.hir_body_owners().collect();
     for owner in owners {

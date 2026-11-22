@@ -586,7 +586,7 @@ export async function startExternalArchitecture(options) {
   }
 }
 
-// 顺序与调用层级来自锁定版本的 Bevy、Avian 和 Egui；条件分支在选项提示中说明。
+// 顺序与调用层级来自锁定版本的 Bevy 和 Avian，条件分支在选项提示中说明。
 const scheduleCallOrder = new Map([
   ['main', [
     { label: 'Main' },
@@ -611,7 +611,6 @@ const scheduleCallOrder = new Map([
     { label: 'Update', parent: 'Main' },
     { label: 'SpawnScene', parent: 'Main' },
     { label: 'PostUpdate', parent: 'Main' },
-    { label: 'EguiPrimaryContextPass', parent: 'PostUpdate', title: '由 PostUpdate 内的 Egui 驱动，按上下文条件每帧可执行多轮。' },
     { label: 'Last', parent: 'Main' },
   ]],
   ['RenderApp', [

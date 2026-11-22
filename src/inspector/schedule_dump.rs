@@ -26,6 +26,9 @@ use sha2::{Digest, Sha256};
 
 type DumpResult<T> = Result<T, Box<dyn Error>>;
 
+/// 导出二进制独立编译普通游戏的装配，只启用调度导出特性。
+const BUILD_FEATURES: &[&str] = &["debugdump"];
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 struct Manifest {
@@ -58,7 +61,7 @@ pub fn dump_schedules(app: &mut App, output: &Path) -> DumpResult<usize> {
         std::thread::yield_now();
     }
     app.finish();
-    write_schedules(app, output, Path::new(env!("CARGO_MANIFEST_DIR")))
+    write_schedules(app, output, Path::new(env!("DEMO_WORKSPACE_ROOT")))
 }
 
 fn write_schedules(app: &mut App, output: &Path, source_root: &Path) -> DumpResult<usize> {
@@ -93,13 +96,7 @@ fn write_schedules(app: &mut App, output: &Path, source_root: &Path) -> DumpResu
         debugdump_version: "0.17.0",
         exported_at: SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs(),
         target: env!("DEMO_BUILD_TARGET"),
-        features: &[
-            #[cfg(feature = "acceptance-test")]
-            "acceptance-test",
-            "debugdump",
-            #[cfg(feature = "inspector")]
-            "inspector",
-        ],
+        features: BUILD_FEATURES,
         source_fingerprint,
         schedules: entries,
     };
@@ -333,10 +330,23 @@ pub(super) fn sha256(bytes: &[u8]) -> String {
 
 pub(super) fn source_fingerprint(root: &Path) -> DumpResult<String> {
     let mut paths = vec![PathBuf::from("Cargo.toml"), PathBuf::from("Cargo.lock")];
-    if root.join("build.rs").exists() {
-        paths.push(PathBuf::from("build.rs"));
+    for path in [
+        "build.rs",
+        "build_configuration.rs",
+        "apps/build.rs",
+        "apps/debugdump/Cargo.toml",
+        "apps/game/Cargo.toml",
+    ] {
+        if root.join(path).is_file() {
+            paths.push(PathBuf::from(path));
+        }
     }
     collect_rust_files(root, Path::new("src"), &mut paths)?;
+    for directory in ["apps/debugdump/src", "apps/game/src"].map(Path::new) {
+        if root.join(directory).is_dir() {
+            collect_rust_files(root, directory, &mut paths)?;
+        }
+    }
     let mut paths = paths
         .into_iter()
         .map(|path| {

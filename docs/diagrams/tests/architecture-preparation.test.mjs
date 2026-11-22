@@ -53,7 +53,8 @@ test('identical DOT cannot substitute a runtime snapshot from another target or 
     runtime[key] = manifest[key] = key === 'target' ? 'aarch64-unknown-linux-gnu' : ['debugdump', 'another-feature'];
     fs.writeFileSync(path.join(directory, 'runtime.json'), JSON.stringify(runtime));
     fs.writeFileSync(path.join(directory, 'manifest.json'), JSON.stringify(manifest));
-    await assert.rejects(prepareArchitecture({ workspace: f.workspace, debugdumpDirectory: directory }), /snapshot hash mismatch/);
+    const error = key === 'target' ? /snapshot hash mismatch/ : /feature provenance does not match the ordinary game/;
+    await assert.rejects(prepareArchitecture({ workspace: f.workspace, debugdumpDirectory: directory }), error);
   }
 });
 

@@ -15,7 +15,7 @@
 
 ## Agent 验证边界
 
-用户自行启动普通游戏查看效果，见[运行说明](../../README.md#运行)。Agent 运行[验收脚本](app-acceptance.md#当前驱动范围)执行固定场景，也可进行[探索性应用验收](#探索性应用验收)。两种方式均使用启用了 `acceptance-test` 的无窗游戏程序，通过 Bevy BRP 发送键鼠输入和获取离屏截图。禁止使用 computer-use 启动或操作游戏。
+用户自行启动普通游戏查看效果，见[运行说明](../../README.md#运行)。Agent 运行[验收脚本](app-acceptance.md#当前驱动范围)执行固定场景，也可进行[探索性应用验收](#探索性应用验收)。两种方式均使用无窗程序 `demo-acceptance`，通过 Bevy BRP 发送键鼠输入和获取离屏截图。禁止使用 computer-use 启动或操作游戏。
 
 原生窗口、屏幕呈现、检查器深层控件和声音输出按各自专项验证。原生窗口专项使用平台辅助程序时，操作前核对本次进程和前台窗口。用户提供的日志可直接分析。
 
@@ -31,9 +31,9 @@ Agent 可阅读代码、检查格式和编译，并执行最小 `App` / `World` 
 | 文档 Mermaid | 对照源码核对关系、条件与抽象层次，用锁定的 Mermaid 依赖验证语法和链接；不触发生成式 ECS 图导出或重建。 |
 | 生成式 ECS 架构图 | 由 [GitHub Actions 工作流](../../.github/workflows/ecs-architecture.yml)生成、校验和发布。 |
 | Rust 代码 | 阅读相关实现，运行 `cargo fmt --all -- --check` 和 `cargo check --locked`。 |
-| 行为 | 除 Rust 检查外，运行相关 `cargo test --locked` 无窗口测试及受影响的[应用验收脚本](app-acceptance.md#当前驱动范围)。未实现驱动和未执行环境记为覆盖缺口。 |
+| 行为 | 除 Rust 检查外，运行相应应用包的无窗口测试及受影响的[应用验收脚本](app-acceptance.md#当前驱动范围)。未实现驱动和未执行环境记为覆盖缺口。 |
 
-需要默认配置的全部无窗口 Rust 测试时运行 `cargo test --locked`；测试必须验证实际行为和边界，不得借测试启动游戏。
+普通游戏的全部无窗口 Rust 测试使用 `cargo test --locked --bin demo`。测试必须验证实际行为和边界，不得借测试启动游戏。
 
 | 范围 | 指南 |
 | --- | --- |
@@ -50,12 +50,13 @@ Agent 可阅读代码、检查格式和编译，并执行最小 `App` / `World` 
 
 ## 自动化启动准备
 
-启用 `acceptance-test` 后，默认游戏入口以无窗方式运行，主世界通过 Bevy Remote Protocol（BRP）监听 `127.0.0.1:15702`。离屏截图需要兼容的渲染适配器，可在无交互桌面的环境运行。逻辑窗口、渲染和静音方式见[验收接入](../architecture/acceptance.md)。
+`demo-acceptance` 以无窗方式运行，主世界通过 Bevy Remote Protocol（BRP）默认监听 `127.0.0.1:15702`。离屏截图需要兼容的渲染适配器，可在无交互桌面的环境运行。逻辑窗口、渲染和静音方式见[验收接入](../architecture/acceptance.md)。
 
-先关闭同一账号下此游戏的其他实例，再在本 worktree 根目录构建并运行对应脚本。脚本需要 Python 3.11 或更新版本。[验收类别](app-acceptance.md#当前驱动范围)
+先关闭同一账号下此游戏的其他实例，再在本 worktree 根目录构建并运行对应脚本。安装驱动需要 Git 和 Python 3.11 或更新版本。[验收类别](app-acceptance.md#当前驱动范围)
 
 ```powershell
-cargo build --locked --features acceptance-test
+cargo build --locked -p demo-acceptance
+python -m pip install -r scripts/acceptance/requirements.txt
 python -B scripts/acceptance/menu.py
 python -B scripts/acceptance/settings.py
 python -B scripts/acceptance/physics.py
@@ -63,7 +64,9 @@ python -B scripts/acceptance/view.py
 python -B scripts/acceptance/session_log.py
 ```
 
-脚本串行运行，各自启动并关闭子进程。默认程序是 `target/debug/demo.exe`（Windows）或 `target/debug/demo`，可用 `--exe <path>` 指定。条件等待上限默认 60 秒，由 `--timeout <seconds>` 调整。各类别报告、进程输出和 PNG 直接写入 `--output <directory>`，默认 `tmp/automation`。
+脚本串行运行，各自启动并关闭子进程。默认程序是 `target/debug/demo-acceptance.exe`（Windows）或 `target/debug/demo-acceptance`，可用 `--exe <path>` 指定。可用 `--port <number>` 指定本次子进程与驱动使用的 BRP 端口。条件等待上限默认 60 秒，由 `--timeout <seconds>` 调整。各类别报告、进程输出和 PNG 直接写入 `--output <directory>`，默认 `tmp/automation`。
+
+更新验收工具时，运行 `cargo update -p bevy-acceptance-test` 刷新锁文件，再运行 `python -m pip install --force-reinstall -r scripts/acceptance/requirements.txt` 更新同一分支的 Python 驱动。用本节脚本验证两部分能配合运行。
 
 ### 共用设置与恢复
 
@@ -86,8 +89,8 @@ python -B scripts/acceptance/session_log.py
 Rust 无窗口验证覆盖消息输入、截图反射传输和朝向状态。Python 回归覆盖 BRP 请求、证据解析、PNG 编码、配置恢复和验收编号映射：
 
 ```powershell
-cargo test --locked --features acceptance-test acceptance::
-cargo test --locked --features acceptance-test brp_reads_and_writes_pending_yaw_before_facing_consumes_it
+cargo test --locked -p demo-acceptance --bin demo-acceptance remote_contract
+cargo test --locked -p demo-acceptance --bin demo-acceptance brp_reads_and_writes_pending_yaw_before_facing_consumes_it
 python -B -m unittest discover -s scripts -p 'test_acceptance*.py'
 ```
 
@@ -96,7 +99,7 @@ python -B -m unittest discover -s scripts -p 'test_acceptance*.py'
 需要观察画面或排查交互时，可在本 worktree 根目录直接启动验收构建。直接启动遵循当前玩家设置及音量。需要脚本准备静音配置和退出后恢复时，使用对应的验收脚本。[共用设置与恢复](#共用设置与恢复)
 
 ```powershell
-cargo run --locked --features acceptance-test
+cargo run --locked -p demo-acceptance
 ```
 
 用 HTTP 响应头 `X-Bevy-Pid` 核对实际游戏进程后再发送键鼠输入。重连时重新核对 PID。通过 BRP 获取离屏截图，根据画面决定下一步键鼠操作，再截图确认结果。结束时释放自己持有的键鼠，再正常关闭本次进程。[验收消息与截图接口](../architecture/acceptance.md)

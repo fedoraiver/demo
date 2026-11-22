@@ -8,7 +8,7 @@ const mainLabels = [
   'StateTransition', 'OnExit(MainMenu)', 'OnTransition { exited: MainMenu, entered: Running }', 'OnEnter(Running)',
   'RunFixedMainLoop', 'FixedMain', 'FixedFirst', 'FixedPreUpdate', 'FixedUpdate',
   'FixedPostUpdate', 'PhysicsSchedule', 'SubstepSchedule', 'FixedLast',
-  'Update', 'SpawnScene', 'PostUpdate', 'EguiPrimaryContextPass', 'Last',
+  'Update', 'SpawnScene', 'PostUpdate', 'Last',
 ];
 const renderLabels = ['RenderStartup', 'ExtractSchedule', 'RenderRecovery', 'First', 'Render', 'RenderGraph', 'Core2d', 'Core3d'];
 
@@ -71,7 +71,7 @@ test('schedule ordering preserves the input array, view contents and original ob
 });
 
 test('rendered schedule options show the main and render call depths exactly once per view', () => {
-  const mainDepths = [0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 2, 3, 3, 3, 3, 4, 5, 3, 1, 1, 1, 2, 1];
+  const mainDepths = [0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 2, 3, 3, 3, 3, 4, 5, 3, 1, 1, 1, 1];
   const renderDepths = [0, 0, 0, 1, 1, 2, 3, 3];
   const mainViews = scheduleViews(mainLabels);
   const renderViews = scheduleViews(renderLabels, 'RenderApp');
@@ -84,7 +84,7 @@ test('rendered schedule options show the main and render call depths exactly onc
 });
 
 test('rendered schedule depths count only ancestors present in the same application', () => {
-  const mainViews = scheduleViews(['Main', 'SubstepSchedule', 'EguiPrimaryContextPass', 'OnEnter(Running)']);
+  const mainViews = scheduleViews(['Main', 'SubstepSchedule', 'PostUpdate', 'OnEnter(Running)']);
   const renderViews = scheduleViews(['Core3d', 'RenderRecovery', 'RenderGraph'], 'RenderApp');
   const otherViews = scheduleViews(['PostUpdate', 'StateTransition', 'PhysicsSchedule'], 'OtherApp');
   const options = pickerOptions([...mainViews, ...renderViews, ...otherViews]);

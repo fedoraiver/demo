@@ -1235,12 +1235,9 @@ test('plugin picker navigation preserves object selection history and workspace 
 test('top view picker selects native exports and object return retains the selected Schedule',()=>{
   const page=viewer(''),picker=page.get('view-select'),groups=picker.querySelectorAll('optgroup');
   assert.ok(!groups.some(group=>group.getAttribute('label')==='其他插件'));
-  const infrastructure=groups.find(group=>group.getAttribute('label')==='基础设施插件').querySelectorAll('option'),egui=infrastructure.findIndex(option=>option.value==='object:plugin-inspector-0');
-  assert.ok(egui>=0);assert.equal(infrastructure[egui+1].value,'object:plugin-inspector-1');
-  assert.ok(infrastructure[egui].textContent.includes('EguiPlugin'));assert.ok(infrastructure[egui+1].textContent.includes('WorldInspectorPlugin'));
   const options=new Set(picker.querySelectorAll('option').map(option=>option.value));
-  for(const id of ['plugin-ItemPlugin','plugin-CharacterPlugin','plugin-DefaultPlugins','plugin-physics-0','plugin-inspector-0','plugin-inspector-1'])assert.ok(options.has('object:'+id),id);
-  for(const id of ['plugin-physics-1','plugin-ButtonPlugin']){
+  for(const id of ['plugin-ItemPlugin','plugin-CharacterPlugin','plugin-DefaultPlugins','plugin-physics-0'])assert.ok(options.has('object:'+id),id);
+  for(const id of ['plugin-physics-1','plugin-ButtonPlugin','plugin-inspector-0','plugin-inspector-1']){
     assert.equal(options.has('object:'+id),false);page.app.openObject(id);page.flush();assert.equal(page.app.view.objectId,id);
     assert.equal(page.get('current-object-option').querySelector('option').value,'object:'+id);
   }
@@ -1253,19 +1250,19 @@ test('top view picker selects native exports and object return retains the selec
 test('nested Schedule picker entries navigate by view ID and restore selection history',()=>{
   const page=viewer('?workspace=D:/demo&schedule=nested-SubstepSchedule',{edit:data=>{
     const template=data.views.find(view=>view.id==='schedule-update');
-    const labels=['Main','StateTransition','OnEnter(Running)','RunFixedMainLoop','FixedMain','FixedPostUpdate','PhysicsSchedule','SubstepSchedule','PostUpdate','EguiPrimaryContextPass'];
+    const labels=['Main','StateTransition','OnEnter(Running)','RunFixedMainLoop','FixedMain','FixedPostUpdate','PhysicsSchedule','SubstepSchedule','PostUpdate'];
     data.views.push(...labels.map(scheduleLabel=>({...template,id:'nested-'+scheduleLabel,scheduleLabel,label:'main · '+scheduleLabel})));
     data.views.reverse();
   }});
   const picker=page.get('view-select'),main=picker.querySelectorAll('optgroup').find(group=>group.getAttribute('label')==='main Schedule');
   const options=main.querySelectorAll('option');
-  assert.deepEqual(options.map(option=>option.value),['nested-Main','schedule-startup','nested-StateTransition','nested-OnEnter(Running)','nested-RunFixedMainLoop','nested-FixedMain','nested-FixedPostUpdate','nested-PhysicsSchedule','nested-SubstepSchedule','schedule-update','nested-PostUpdate','nested-EguiPrimaryContextPass']);
+  assert.deepEqual(options.map(option=>option.value),['nested-Main','schedule-startup','nested-StateTransition','nested-OnEnter(Running)','nested-RunFixedMainLoop','nested-FixedMain','nested-FixedPostUpdate','nested-PhysicsSchedule','nested-SubstepSchedule','schedule-update','nested-PostUpdate']);
   assert.equal(new Set(options.map(option=>option.value)).size,options.length);
   const substep=options.find(option=>option.value==='nested-SubstepSchedule');
   assert.equal(substep.textContent,'\u00a0\u00a0'.repeat(5)+'↳ SubstepSchedule · 2 systems');
   assert.equal(page.app.view.id,substep.value);assert.equal(picker.value,substep.value);
-  page.choose('nested-EguiPrimaryContextPass');
-  assert.equal(page.app.view.scheduleLabel,'EguiPrimaryContextPass');assert.equal(picker.value,'nested-EguiPrimaryContextPass');
+  page.choose('nested-PhysicsSchedule');
+  assert.equal(page.app.view.scheduleLabel,'PhysicsSchedule');assert.equal(picker.value,'nested-PhysicsSchedule');
   page.back();assert.equal(page.app.view.id,substep.value);assert.equal(picker.value,substep.value);
   page.choose('schedule-render');assert.equal(page.app.view.application,'RenderApp');
   page.back();assert.equal(page.app.view.id,substep.value);assert.equal(picker.value,substep.value);

@@ -26,7 +26,7 @@ export function exportContextInputs(workspace, environment = process.env) {
   for (const name of ['config', 'config.toml']) names.push(path.join(environment.CARGO_HOME || path.join(os.homedir(), '.cargo'), name));
   names.push(path.join(environment.RUSTUP_HOME || path.join(os.homedir(), '.rustup'), 'settings.toml'));
   return { files: fileSnapshot(workspace, names), environment: Object.fromEntries(Object.keys(environment).filter(selectedEnvironment).sort().map(name => [name, digest(environment[name])])),
-    invocation: { cwd: path.resolve(workspace), locked: true, features: ['debugdump'], cargoCommand: executablePath('cargo', environment) } };
+    invocation: { cwd: path.resolve(workspace), locked: true, packages: ['demo-debugdump'], cargoCommand: executablePath('cargo', environment) } };
 }
 
 const identity = filename => {

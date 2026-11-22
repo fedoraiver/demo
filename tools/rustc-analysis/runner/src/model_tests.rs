@@ -1327,8 +1327,9 @@ fn feature_representatives_are_existing_plugins_and_stable_across_native_order()
     let mut facts = fixture.read("facts.json");
     let mut unit: UnitFacts = serde_json::from_value(facts["units"][0].clone()).unwrap();
     unit.declarations[0].name = "main".into();
-    unit.declarations[0].full_name = "demo::main".into();
-    unit.callables[0].display = "demo::main".into();
+    unit.declarations[0].full_name = "demo_debugdump::main".into();
+    unit.declarations[0].crate_name = "demo_debugdump".into();
+    unit.callables[0].display = "demo_debugdump::main".into();
     let source = unit.declarations[0].source.clone();
     for (id, crate_name, path, name) in [
         (
@@ -1345,8 +1346,8 @@ fn feature_representatives_are_existing_plugins_and_stable_across_native_order()
         ),
         (
             "only-plugin",
-            "demo",
-            "demo::only_feature::OnlyPlugin",
+            "demo_debugdump",
+            "demo_debugdump::only_feature::OnlyPlugin",
             "OnlyPlugin",
         ),
     ] {

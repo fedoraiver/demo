@@ -8,9 +8,9 @@
 
 ### Windows MSVC 链接产物
 
-Windows MSVC 的启动依赖还需检查最终链接产物：[build.rs](../../build.rs) 应为游戏和测试程序嵌入 Common Controls v6 清单。
+Windows MSVC 的启动依赖还需在最终链接产物中核对 Common Controls v6 清单。[链接配置](../development.md#发布构建)
 
-执行 `cargo build --locked` 与 `cargo test --locked --no-run window_policy::` 后，使用 PE 资源检查工具读取游戏 EXE 和 Cargo 输出中指定的测试 EXE，确认存在 `RT_MANIFEST`（资源类型 24、ID 1），且依赖包含 `Microsoft.Windows.Common-Controls`、版本 `6.0.0.0`。
+执行 `cargo build --locked` 与 `cargo test --locked --bin demo --no-run window_policy::`，并按需构建受影响的专用入口。使用 PE 资源检查工具读取各应用 EXE 和 Cargo 输出中指定的测试 EXE，确认存在 `RT_MANIFEST`（资源类型 24、ID 1），且依赖包含 `Microsoft.Windows.Common-Controls`、版本 `6.0.0.0`。
 
 启用共享 `build-dir` 时，测试程序位置以 Cargo 输出为准。只有 `cargo check` 通过或看到静态导入名称不能代替清单检查；此检查不执行游戏，测试仍须遵守无窗口边界。Windows GNU 不适用本构建脚本的 MSVC 清单参数。
 

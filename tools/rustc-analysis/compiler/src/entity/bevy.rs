@@ -12,6 +12,7 @@ use rustc_middle::{
 };
 use rustc_span::Span;
 use rustc_trait_selection::infer::InferCtxtExt;
+use std::path::Path;
 
 impl<'tcx> Engine<'tcx> {
     pub fn name_expression_span(&self, mut span: Span) -> Option<Span> {
@@ -492,8 +493,11 @@ impl<'tcx> Engine<'tcx> {
                 .is_some_and(|owner| owner.is_local())
             {
                 let site = self.site(span);
-                let root = std::env::var("CARGO_MANIFEST_DIR")?.replace('\\', "/");
-                if site.path.starts_with(&format!("{root}/")) {
+                if self
+                    .source_root
+                    .as_ref()
+                    .is_some_and(|root| Path::new(&site.path).starts_with(root))
+                {
                     let offset = usize::from(
                         self.tcx.def_kind(id) == rustc_hir::def::DefKind::AssocFn
                             && self.tcx.associated_item(id).is_method(),
