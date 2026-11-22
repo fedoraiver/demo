@@ -4,18 +4,30 @@ use avian3d::prelude::RigidBody;
 use bevy::prelude::*;
 
 /// 通用测试物身份；拾取能力由 Pickable 单独表达。
-#[derive(Component, Reflect, Clone, Copy, Default, Debug, PartialEq, Eq)]
-#[reflect(Component)]
+#[derive(Component, Clone, Copy, Default, Debug, PartialEq, Eq)]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Component)
+)]
 pub struct Item;
 
 /// 允许被拾取的能力标签。
-#[derive(Component, Reflect, Default, Clone)]
-#[reflect(Component)]
+#[derive(Component, Default, Clone)]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Component)
+)]
 pub struct Pickable;
 
 /// 物品相对持有者的局部握点；未指定时使用原型配置。
-#[derive(Component, Reflect, Default, Clone, Copy)]
-#[reflect(Component)]
+#[derive(Component, Default, Clone, Copy)]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Component)
+)]
 pub(crate) struct CarryGrip {
     pub offset: Vec3,
 }
@@ -35,8 +47,12 @@ pub struct HoldingItems {
 }
 
 /// 手前的目标姿态；对齐期间与真实局部挂接姿态分离，完成后由共享刚体保持相对位置。
-#[derive(Component, Reflect)]
-#[reflect(Component)]
+#[derive(Component)]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Component)
+)]
 pub(crate) struct HeldTarget {
     pub translation: Vec3,
     pub rotation: Quat,

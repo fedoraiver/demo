@@ -32,8 +32,8 @@
 
 ## 鼠标捕获与输入归属
 
-`sync_mouse_capture` 直接读取 F3、Esc 与 `WindowFocused`，结合应用状态和控制关联更新 `MouseLookState` 与光标。F3 管理窗口捕获生命周期，必须独立于检查器模式下停用的 `GameplayContext`，并在 Egui 输入转发及 Enhanced Input Prepare 前确定本帧归属；底层 Esc 只用于及时释放，业务暂停仍由菜单动作执行。
+`sync_mouse_capture` 直接读取 F3、Esc 与 `WindowFocused`，结合应用状态和控制关联更新 `MouseLookState` 与光标。F3 独立于 `GameplayContext`，在 Enhanced Input Prepare 前确定本帧输入归属。启用 `inspector` 时也排在 Egui 输入转发前。底层 Esc 及时释放光标，业务暂停由菜单动作执行。
 
-输入归属只由捕获模式决定，点击面板内外均不切换模式。窗口失焦释放捕获，回焦后由 F3 恢复；暂停、主菜单或控制关联失效时保持释放。恢复捕获时跳过自由光标阶段累积位移。
+F3 手动释放或重新捕获鼠标，点击不改变捕获模式。窗口失焦释放捕获，回焦后由 F3 恢复。暂停、主菜单或控制关联失效时保持释放。恢复捕获时跳过自由光标阶段累积位移。
 
-检查器模式通过 `ContextActivity<GameplayContext>` 统一停用玩法输入，而不清空全局底层键盘资源；延迟命令在动作准备前应用。停用触发动作完成或取消，已有移动意图归零，单次动作继续遵循 `require_reset` 的松键要求。主菜单和暂停同样停用玩法输入。退出暂停后，下次 `PreUpdate` 会在窗口有焦点、控制关联有效时重新捕获鼠标。
+释放捕获时通过 `ContextActivity<GameplayContext>` 停用玩法输入，保留底层键盘状态。延迟命令在动作准备前应用。停用触发动作完成或取消，已有移动意图归零，单次动作继续遵循 `require_reset` 的松键要求。主菜单和暂停同样停用玩法输入。退出暂停后，下次 `PreUpdate` 会在窗口有焦点、控制关联有效时重新捕获鼠标。[Egui 输入转发](inspector.md#输入与反射)

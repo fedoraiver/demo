@@ -22,7 +22,7 @@ use super::{config::FpsLimit, *};
 
 fn settings_types() -> TypeRegistry {
     let mut types = TypeRegistry::new();
-    types.register::<GameSettings>();
+    types.register_derived_types();
     types
 }
 
@@ -36,7 +36,6 @@ fn bevy_settings_load_and_save_game_configuration() {
     let new_app = || {
         let mut app = App::new();
         app.add_plugins(MinimalPlugins)
-            .register_type::<GameSettings>()
             .add_plugins(SettingsPlugin::new(directory.to_str().unwrap()));
         app
     };

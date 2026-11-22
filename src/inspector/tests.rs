@@ -1,9 +1,9 @@
 //! 检查器启动参数与调度导出的无窗口回归。
 
-use bevy::prelude::*;
-
+#[cfg(feature = "inspector")]
 #[test]
 fn inspector_context_follows_recreated_ui_cameras() {
+    use bevy::prelude::*;
     use bevy_inspector_egui::bevy_egui::PrimaryEguiContext;
 
     let mut app = App::new();
@@ -163,7 +163,14 @@ mod schedule_dump {
         assert_eq!(manifest["bevyVersion"], "0.20.1");
         assert_eq!(manifest["debugdumpVersion"], "0.17.0");
         assert_eq!(manifest["target"], env!("DEMO_BUILD_TARGET"));
-        assert_eq!(manifest["features"], serde_json::json!(["debugdump"]));
+        let mut features = vec!["debugdump"];
+        if cfg!(feature = "acceptance-test") {
+            features.insert(0, "acceptance-test");
+        }
+        if cfg!(feature = "inspector") {
+            features.push("inspector");
+        }
+        assert_eq!(manifest["features"], serde_json::json!(features));
         assert_eq!(manifest["sourceFingerprint"].as_str().unwrap().len(), 64);
         assert!(manifest["exportedAt"].as_u64().unwrap() > 0);
         let entries = manifest["schedules"].as_array().unwrap();

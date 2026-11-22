@@ -2,6 +2,28 @@
 
 use super::*;
 
+#[test]
+fn diagnostic_components_register_only_with_a_tool_feature() {
+    use std::any::TypeId;
+
+    use bevy::ecs::reflect::{AppTypeRegistry, ReflectComponent};
+
+    let app = App::new();
+    let registry = app.world().resource::<AppTypeRegistry>().read();
+    let expected = cfg!(any(feature = "inspector", feature = "acceptance-test"));
+    for component in [
+        TypeId::of::<FirstPersonCamera>(),
+        TypeId::of::<MouseLookState>(),
+    ] {
+        assert_eq!(
+            registry
+                .get_type_data::<ReflectComponent>(component)
+                .is_some(),
+            expected
+        );
+    }
+}
+
 mod relationship_tests {
     use super::*;
     use bevy::ecs::relationship::RelationshipTarget;
@@ -540,6 +562,8 @@ mod pose_tests {
     use avian3d::prelude::{LinearVelocity, Position, RigidBody};
     use std::time::Duration;
 
+    #[cfg(feature = "inspector")]
+    use bevy::window::CursorMoved;
     use bevy::{
         camera::visibility::VisibilityPlugin,
         ecs::relationship::RelationshipTarget,
@@ -552,9 +576,10 @@ mod pose_tests {
         scene::ScenePlugin,
         time::TimeUpdateStrategy,
         transform::TransformPlugin,
-        window::{CursorMoved, WindowEvent},
+        window::WindowEvent,
     };
     use bevy_enhanced_input::prelude::TriggerState;
+    #[cfg(feature = "inspector")]
     use bevy_inspector_egui::bevy_egui::{
         EguiClipboard, EguiContext, EguiGlobalSettings, EguiInput, egui,
         input::{
@@ -823,6 +848,7 @@ mod pose_tests {
         }
     }
 
+    #[cfg(feature = "inspector")]
     #[derive(Resource, Default)]
     struct TestInspectorUi {
         text: String,
@@ -830,6 +856,7 @@ mod pose_tests {
     }
 
     /// 复用真实 egui 输入转换并只生成内存布局，不安装渲染、窗口后端或检查器插件。
+    #[cfg(feature = "inspector")]
     fn add_test_inspector(app: &mut App) -> Entity {
         app.init_resource::<TestInspectorUi>()
             .init_resource::<EguiGlobalSettings>()
@@ -900,6 +927,7 @@ mod pose_tests {
         context
     }
 
+    #[cfg(feature = "inspector")]
     fn begin_test_inspector_pass(
         mut contexts: Query<(&mut EguiContext, &mut EguiInput), With<PrimaryEguiContext>>,
     ) {
@@ -907,6 +935,7 @@ mod pose_tests {
         context.get_mut().begin_pass(input.0.take());
     }
 
+    #[cfg(feature = "inspector")]
     fn draw_test_inspector(
         mut contexts: Query<&mut EguiContext, With<PrimaryEguiContext>>,
         mut ui_state: ResMut<TestInspectorUi>,
@@ -921,12 +950,14 @@ mod pose_tests {
             });
     }
 
+    #[cfg(feature = "inspector")]
     fn end_test_inspector_pass(mut contexts: Query<&mut EguiContext, With<PrimaryEguiContext>>) {
         let mut output = contexts.single_mut().unwrap().get_mut().end_pass();
         // 无窗口 fixture 只验证输入与内存布局，不上传纹理；egui 要求显式清空未应用的更新。
         output.textures_delta.clear();
     }
 
+    #[cfg(feature = "inspector")]
     fn set_cursor(app: &mut App, window: Entity, position: egui::Pos2) {
         app.world_mut()
             .get_mut::<Window>(window)
@@ -1054,6 +1085,7 @@ mod pose_tests {
             );
         }
 
+        #[cfg(feature = "inspector")]
         #[test]
         fn captured_input_does_not_edit_inspector() {
             let (mut app, window, character, camera, controller) = test_app();
@@ -1110,6 +1142,7 @@ mod pose_tests {
             );
         }
 
+        #[cfg(feature = "inspector")]
         #[test]
         fn inspector_mode_blocks_gameplay_inside_and_outside_panel() {
             let (mut app, window, character, camera, controller) = test_app();

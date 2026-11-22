@@ -11,6 +11,7 @@ use bevy::{
 use bevy_enhanced_input::prelude::{
     ContextActivity, EnhancedInputSystems, Fire, InputContextAppExt,
 };
+#[cfg(feature = "inspector")]
 use bevy_inspector_egui::bevy_egui::{
     EguiContextSettings, EguiInput, EguiPreUpdateSet, PrimaryEguiContext,
 };
@@ -40,8 +41,12 @@ const EYE_HEIGHT_M: f32 = 1.65;
 const PITCH_LIMIT_DEGREES: f32 = 85.0;
 
 /// 独立于本次运行实体标识的玩家身份。
-#[derive(Component, Reflect, Clone, Copy, Debug, PartialEq, Eq, Hash)]
-#[reflect(Component)]
+#[derive(Component, Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Component)
+)]
 pub(crate) struct PlayerId {
     pub id: u64,
 }
@@ -89,13 +94,21 @@ pub(crate) struct CharacterCameras {
 }
 
 /// 相机仅隐藏受控角色的视觉子树。
-#[derive(Component, Reflect, Default, Clone)]
-#[reflect(Component)]
+#[derive(Component, Default, Clone)]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Component)
+)]
 pub(crate) struct CharacterVisual;
 
 /// 观察角度的唯一来源；有向转角保留到下一次安全朝向同步。
-#[derive(Component, Reflect)]
-#[reflect(Component)]
+#[derive(Component)]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Component)
+)]
 pub(crate) struct FirstPersonCamera {
     yaw: f32,
     pending_yaw_delta: f32,
@@ -132,7 +145,11 @@ impl FirstPersonCamera {
 
 /// 每个相机的捕获状态；恢复捕获的第一帧跳过自由光标位移。
 #[derive(Component, Default)]
-#[cfg_attr(feature = "acceptance-test", derive(Reflect), reflect(Component))]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect),
+    reflect(Component)
+)]
 pub(crate) struct MouseLookState {
     active: bool,
     initialized: bool,
@@ -146,20 +163,17 @@ pub(crate) struct FirstPersonPlugin;
 impl Plugin for FirstPersonPlugin {
     fn build(&self, app: &mut App) {
         register_input_actions(app);
+        let capture = sync_mouse_capture
+            .after(InputSystems)
+            .before(EnhancedInputSystems::Prepare);
+        #[cfg(feature = "inspector")]
+        let capture = capture
+            .after(EguiPreUpdateSet::InitContexts)
+            .before(EguiPreUpdateSet::ProcessInput);
         app.init_resource::<GameSettings>()
-            .register_type::<PlayerId>()
-            .register_type::<CharacterVisual>()
-            .register_type::<FirstPersonCamera>()
             .add_message::<WindowFocused>()
             .add_observer(on_camera_look)
-            .add_systems(
-                PreUpdate,
-                sync_mouse_capture
-                    .after(InputSystems)
-                    .after(EguiPreUpdateSet::InitContexts)
-                    .before(EguiPreUpdateSet::ProcessInput)
-                    .before(EnhancedInputSystems::Prepare),
-            )
+            .add_systems(PreUpdate, capture)
             .add_systems(
                 FixedUpdate,
                 sync_character_facing

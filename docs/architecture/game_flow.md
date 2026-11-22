@@ -25,7 +25,7 @@ stateDiagram-v2
 
 ## 调度与模拟边界
 
-`GameFlowPlugin` 注册状态与时钟行为。`configure_feature_order` 配置三个跨功能公开链的顺序，各功能插件分别注册系统。图中标出各公开链在正常帧的位置。完整固定循环和首次状态转换顺序见[主调度生命周期](README.md#主调度生命周期)。
+`GameFlowPlugin` 注册状态与时钟行为。`configure_feature_order` 配置三个跨功能公开链的顺序，各功能插件分别注册系统。图中标出各公开链在正常帧的位置，Egui 随检查器装配。[主调度生命周期](README.md#主调度生命周期) · [检查器装配](inspector.md)
 
 ```mermaid
 flowchart TD

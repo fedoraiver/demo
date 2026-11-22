@@ -19,7 +19,7 @@ Schedule 始终保留右侧说明栏，未选择对象时显示当前调度的�
 
 每张调度图保存同名 `.dot`，每张对象图保存同名 `.mmd`；正式调度清单与 DOT 保存在 `generated/dot/`。文件清单以 `generated/data/manifest.json` 及视图索引为准，构建清理已退出清单的产物，不生成旧功能总览、插件或基础设施系统图。对象 Mermaid 的 YAML frontmatter 使用合法 JSON 对象保存完整主题、布局及配置；锁定渲染依赖后可以从 DOT／Mermaid 重建独立 SVG。
 
-插件入口打开相应 Plugin／PluginGroup 的对象图。顶栏保留项目与基础设施入口，`WorldInspectorPlugin` 紧跟 `EguiPlugin`，两者使用 `Egui / Inspector` 标签；其余插件可通过搜索或有效对象链接进入，并在“当前对象”中显示，不另列“其他插件”组。菜单入口不改变真实插件装配或调度来源筛选目录。基础设施菜单入口由 [共享目录](src/architecture-infrastructure.mjs) 维护，浏览分组不改变实际定义来源与类型身份。`main / App` 是项目应用上下文，原生窗口回调仍归项目窗口策略。
+插件入口打开相应 Plugin／PluginGroup 的对象图。顶栏保留项目与基础设施入口。导出包含检查器时，`WorldInspectorPlugin` 紧跟 `EguiPlugin`，两者使用 `Egui / Inspector` 标签。其余插件可通过搜索或有效对象链接进入，并在“当前对象”中显示，不另列“其他插件”组。菜单入口不改变真实插件装配或调度来源筛选目录。基础设施菜单入口由 [共享目录](src/architecture-infrastructure.mjs) 维护，浏览分组不改变实际定义来源与类型身份。`main / App` 是项目应用上下文，原生窗口回调仍归项目窗口策略。
 
 对象 ID 由编译器声明、类型实例、实体创建模板和真实注册身份生成，不保留旧清单 ID 的迁移映射。未知或失效的对象链接不按短名猜测目标；浏览器的返回、历史和工作区参数继续按当前对象身份保存。
 

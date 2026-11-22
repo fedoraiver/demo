@@ -7,6 +7,7 @@ rust-version = "1.97.1"
 [features]
 acceptance-test = ["bevy/bevy_remote"]
 debugdump = ["dep:bevy_mod_debugdump", "dep:sha2", "dep:analysis-contract"]
+inspector = ["dep:bevy-inspector-egui"]
 
 [dependencies]
 analysis-contract = { path = "tools/rustc-analysis/contract", optional = true }
@@ -14,7 +15,7 @@ avian3d = { version = "0.8.0", default-features = false, features = ["3d", "parr
 bevy = { version = "0.20.1", features = ["bevy_settings"] }
 bevy_framepace = { version = "0.23.0", default-features = false }
 bevy_mod_debugdump = { version = "=0.17.0", default-features = false, optional = true }
-bevy-inspector-egui = { version = "0.38.0", features = ["highlight_changes"] }
+bevy-inspector-egui = { version = "0.38.0", features = ["highlight_changes"], optional = true }
 bevy_enhanced_input = "0.27.0"
 bevy_kira_audio = { version = "=0.27.1", default-features = false, features = ["ogg", "wav"] }
 serde = { version = "1.0.229", features = ["derive"] }

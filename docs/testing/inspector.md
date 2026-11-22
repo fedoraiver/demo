@@ -1,16 +1,16 @@
 # inspector 测试
 
-[测试指南](README.md)说明分层与执行边界。世界检查器的窗口专项在普通游戏中验证。
+[测试指南](README.md)说明分层与执行边界。世界检查器的窗口专项使用 `inspector` 构建。[启动命令](../../README.md#运行)
 
 ## 无窗口集成验证
 
-运行 `cargo test --locked first_person::tests::pose_tests::capture_tests`，检查模式切换、Egui 输入转发、输入上下文与组件状态；测试位于 [first_person/tests.rs](../../src/first_person/tests.rs)。
+运行 `cargo test --locked --features inspector first_person::tests::pose_tests::capture_tests`，检查模式切换、Egui 输入转发、输入上下文与组件状态。[输入回归](../../src/first_person/tests.rs)
 
 ## 世界检查器验收
 
 按[玩家指南](../player-guide.md#世界检查器)结束正在进行的输入手势，再操作检查器。
 
-1. **INSPECT-01** 选择 `Start Game` 并运行时应显示 `World Inspector`；主菜单、暂停及从暂停打开的设置／帮助均隐藏检查器。展开 `Entities`、`Resources`、`Assets`，确认能找到人物、方块和相机，以及 `PrototypeConfig`、网格和材质。展开人物组件应能查看移动意图和运动状态。
+1. **INSPECT-01** 选择 `Start Game` 并运行时应显示 `World Inspector`；主菜单、暂停及从暂停打开的设置／帮助均隐藏检查器。展开 `Entities`、`Resources`、`Assets`，确认能找到人物、方块和相机，以及 `PrototypeConfig`、网格和材质。人物组件应可查看移动意图和运动状态，相机组件应可展开 `MouseLookState`。
 2. **INSPECT-02** 按 F3 后将光标移到面板并点击、拖动或滚动，应保持光标自由，镜头不转动。把面板拖到窗口中央，松开鼠标后点击面板外，仍应保持检查器模式。结束交互并按 F3 恢复游戏控制后，持续移动并点击左键，人物不应因隐藏光标重叠面板而停下，面板字段也不应改变。再次按 F3 后应能正常点击和编辑；每次切换前按 [世界检查器](../player-guide.md#世界检查器) 结束输入手势，不用 Esc 代替 F3。
 3. **INSPECT-03** 检查器模式下，分别在字段内和面板外按 W、E 或空格，人物均不应移动、跳跃或拿放。完成编辑并点击空白处移除字段焦点、关闭菜单，松开其他键鼠后按 F3，游戏控制应恢复且镜头不跳转；随后重新按 W、E 或空格应正常响应。
 4. **INSPECT-04** 检查本次会话日志，启动时应包含来自 `demo::inspector` 的 `World inspector enabled`，字段为 `plugin="WorldInspectorPlugin"` 与 `reason="initialization"`。这表示检查器插件注册，即使启动主菜单未显示面板也应输出；开始、暂停、恢复及重新进入游戏不重复输出该初始化记录。上下文停用与恢复应记录输入状态变化，正常退出后历史会话文件保留。

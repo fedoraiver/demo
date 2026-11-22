@@ -4,7 +4,7 @@
 
 ## 设置草稿与持久化
 
-`GameSettingsPlugin` 注册 `GameSettings` 的反射类型，再安装 Bevy 原生 `SettingsPlugin`。Bevy 在构建阶段加载 `game` 设置组。范围校验由字段的 Serde 转换负责，越界值回退到对应默认值并记录警告。
+`GameSettings` 及其字段类型始终派生反射，供 Bevy 原生 `SettingsPlugin` 加载和保存。Bevy 自动注册反射类型，设置插件在构建阶段加载 `game` 设置组。范围校验由字段的 Serde 转换负责，越界值回退到对应默认值并记录警告。
 
 `Apply` 校验草稿后更新运行中的 `GameSettings`，再提交 `SaveSettingsSync::Always`。Bevy 同步保存并记录写入错误。音量的 `SetVolume` 只更新草稿，`FinishVolumeEdit` 在释放且数值改变时汇总反馈。配置路径、默认值和菜单步进见[设置](../player-guide.md#设置)。
 

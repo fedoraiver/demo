@@ -13,7 +13,10 @@ pub(crate) const FIXED_SIMULATION_HZ: f64 = 60.0;
 
 /// 应用的唯一运行状态；暂停保留当前会话，返回主菜单才清理实体。
 #[derive(States, Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "acceptance-test", derive(Reflect))]
+#[cfg_attr(
+    any(feature = "inspector", feature = "acceptance-test"),
+    derive(Reflect)
+)]
 pub(crate) enum AppState {
     #[default]
     MainMenu,
@@ -47,6 +50,9 @@ pub(crate) struct GameFlowPlugin;
 impl Plugin for GameFlowPlugin {
     fn build(&self, app: &mut App) {
         configure_feature_order(app);
+        // Bevy 自动注册非泛型派生类型。State<AppState> 由游戏流程显式注册。
+        #[cfg(any(feature = "inspector", feature = "acceptance-test"))]
+        app.register_type::<State<AppState>>();
         app.init_state::<AppState>()
             .add_systems(OnEnter(AppState::MainMenu), enter_main_menu)
             .add_systems(OnEnter(AppState::Paused), pause_simulation)

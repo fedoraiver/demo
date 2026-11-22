@@ -1,6 +1,7 @@
-//! F3 切换游戏与检查器输入归属，并维护窗口捕获生命周期。
+//! F3 切换鼠标捕获状态，并在检查器启用时同步输入归属。
 
 use super::*;
+#[cfg(feature = "inspector")]
 use bevy_inspector_egui::bevy_egui::egui;
 
 /// 在输入转发前确定归属；切换前约定其他按键已松开，检查器没有进行中的交互。
@@ -23,7 +24,10 @@ pub(super) fn sync_mouse_capture(
         (Entity, Option<&CameraTarget>, &mut MouseLookState),
         With<FirstPersonCamera>,
     >,
-    mut egui_contexts: Query<(&mut EguiContextSettings, &mut EguiInput), With<PrimaryEguiContext>>,
+    #[cfg(feature = "inspector")] mut egui_contexts: Query<
+        (&mut EguiContextSettings, &mut EguiInput),
+        With<PrimaryEguiContext>,
+    >,
     app_state: Option<Res<State<AppState>>>,
 ) {
     let running = app_state
@@ -88,9 +92,9 @@ pub(super) fn sync_mouse_capture(
             state.active = false;
             "escape_pressed"
         } else if keys.just_pressed(KeyCode::F3) {
-            // F3 属于窗口捕获控制，须早于 Egui 转发与玩法动作准备，且不随 GameplayContext 停用。
+            // F3 须在玩法动作准备前处理，即使玩法输入已停用也能恢复捕获。
             state.active = !state.active;
-            "inspector_toggle"
+            "capture_toggle"
         } else if !state.initialized {
             state.active = true;
             "initialization"
@@ -107,6 +111,7 @@ pub(super) fn sync_mouse_capture(
         state.initialized = true;
         any_active |= state.active;
     }
+    #[cfg(feature = "inspector")]
     let capture_started = any_active && cursor.visible;
     cursor.visible = !any_active;
     // Bevy 的窗口后端会在 Locked 不受支持时尝试 Confined，并将失败写入统一日志。
@@ -115,6 +120,7 @@ pub(super) fn sync_mouse_capture(
     } else {
         CursorGrabMode::None
     };
+    #[cfg(feature = "inspector")]
     for (mut settings, mut input) in &mut egui_contexts {
         let enabled = !any_active;
         let systems = &mut settings.input_system_settings;
