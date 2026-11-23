@@ -1,8 +1,21 @@
 //! 使用独立 BRP 工具运行无窗游戏验收。
 
-use bevy::{log::LogPlugin, prelude::*};
+use std::{
+    fs::{self, File, OpenOptions},
+    io,
+    path::Path,
+    sync::Mutex,
+    time::{SystemTime, UNIX_EPOCH},
+};
+
+use bevy::{
+    log::{LogPlugin, tracing_subscriber},
+    prelude::*,
+};
 use bevy_acceptance_test::{AcceptanceCamera, AcceptancePlugin};
 use bevy_enhanced_input::EnhancedInputPlugin;
+use tracing_subscriber::prelude::*;
+use uuid::Uuid;
 
 #[path = "../../../src/audio/mod.rs"]
 mod audio;
@@ -14,14 +27,14 @@ mod first_person;
 mod game_flow;
 #[path = "../../../src/item_interaction/mod.rs"]
 mod item_interaction;
-#[path = "../../log_file/mod.rs"]
-mod log_file;
 #[path = "../../../src/physics/mod.rs"]
 mod physics;
 #[path = "../../../src/scene_assembly/mod.rs"]
 mod scene_assembly;
 #[path = "../../../src/settings/mod.rs"]
 mod settings;
+#[cfg(test)]
+mod tests;
 #[path = "../../../src/ui/mod.rs"]
 mod ui;
 
@@ -37,20 +50,15 @@ fn main() -> AppExit {
     let runner = acceptance.runner_plugin();
 
     let mut app = App::new();
-    let logging = match log_file::prepare(&mut app) {
-        Ok(logging) => logging,
-        Err(error) => {
-            eprintln!("Failed to initialize log file: {error}");
-            return AppExit::error();
-        }
-    };
-    app.add_plugins(
+    if let Err(error) = add_logging(&mut app) {
+        eprintln!("Failed to initialize log file: {error}");
+        return AppExit::error();
+    }
+    // 远程插件先于渲染子应用，只向主世界开放 BRP。
+    app.add_plugins((acceptance, runner)).add_plugins(
         DefaultPlugins
             .build()
-            .set(logging)
-            // 远程插件先于渲染子应用，只向主世界开放 BRP。
-            .add_after::<LogPlugin>(acceptance)
-            .add_after::<AcceptancePlugin>(runner)
+            .disable::<LogPlugin>()
             .disable::<bevy::audio::AudioPlugin>()
             .disable::<bevy::winit::WinitPlugin>()
             .disable::<bevy::gilrs::GilrsPlugin>()
@@ -74,4 +82,61 @@ fn main() -> AppExit {
         audio::GameAudioPlugin,
     ));
     app.run()
+}
+
+fn add_logging(app: &mut App) -> io::Result<()> {
+    #[derive(Resource)]
+    struct PendingLogFile {
+        file: File,
+    }
+
+    let directory = Path::new("logs");
+    fs::create_dir_all(directory).map_err(|error| {
+        io::Error::new(
+            error.kind(),
+            format!(
+                "Failed to create log directory {}: {error}",
+                directory.display()
+            ),
+        )
+    })?;
+    let timestamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_err(io::Error::other)?;
+    let id = Uuid::new_v4();
+    let path = directory.join(format!(
+        "unix-{}-{:09}_{id}.log",
+        timestamp.as_secs(),
+        timestamp.subsec_nanos(),
+    ));
+    let file = OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(&path)
+        .map_err(|error| {
+            io::Error::new(
+                error.kind(),
+                format!("Failed to create log file {}: {error}", path.display()),
+            )
+        })?;
+
+    app.insert_resource(PendingLogFile { file });
+    app.add_plugins(LogPlugin {
+        custom_layer: |app| {
+            // 构建时把文件交给格式层，整条日志持锁写入。
+            let pending = app
+                .world_mut()
+                .remove_resource::<PendingLogFile>()
+                .expect("Log file must be prepared before adding LogPlugin");
+            Some(
+                tracing_subscriber::fmt::layer()
+                    .with_ansi(false)
+                    .with_writer(Mutex::new(pending.file))
+                    .log_internal_errors(true)
+                    .boxed(),
+            )
+        },
+        ..default()
+    });
+    Ok(())
 }

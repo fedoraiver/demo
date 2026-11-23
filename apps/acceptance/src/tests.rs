@@ -6,9 +6,13 @@ use std::{
     process::{Command, Output},
 };
 
-use bevy::log::{debug, info};
+use bevy::{
+    log::{LogPlugin, debug, info},
+    prelude::App,
+};
+use uuid::Uuid;
 
-use super::*;
+use super::add_logging;
 
 const CHILD_ENV: &str = "DEMO_LOG_FILE_TEST_CHILD";
 
@@ -16,9 +20,8 @@ const CHILD_ENV: &str = "DEMO_LOG_FILE_TEST_CHILD";
 fn native_log_plugin_writes_separate_files_with_shared_filter() {
     if std::env::var_os(CHILD_ENV).is_some() {
         let mut app = App::new();
-        let logging = prepare(&mut app).unwrap();
-        app.add_plugins(logging);
-        assert!(!app.world().contains_resource::<LogFile>());
+        add_logging(&mut app).unwrap();
+        assert!(app.is_plugin_added::<LogPlugin>());
         info!(target: "demo::file_test", entity_id = 42, reason = "pickup", "Test event recorded");
         info!(target: "demo::quiet", "Other info event");
         debug!(target: "demo::file_test", "Optional debug event");
@@ -69,7 +72,7 @@ fn run_child(directory: &Path, filter: Option<&str>) -> Output {
     command
         .args([
             "--exact",
-            "log_file::tests::native_log_plugin_writes_separate_files_with_shared_filter",
+            "tests::native_log_plugin_writes_separate_files_with_shared_filter",
             "--nocapture",
         ])
         .env(CHILD_ENV, "1")

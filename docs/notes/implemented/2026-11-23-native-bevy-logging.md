@@ -8,15 +8,19 @@ Status: implemented
 
 ## Decision
 
-使用 `DefaultPlugins` 中的 Bevy `LogPlugin`。通过 `custom_layer` 接入同步文件输出，目录、文件命名和结构化格式沿用现有约定。
+使用 Bevy 原生 `LogPlugin`。各入口直接通过 `custom_layer` 接入同步文件输出，日志配置与应用装配在同一处。目录、文件命名和结构化格式沿用现有约定。
 
 ## Changes
 
-[共享文件层](../../../apps/log_file/mod.rs)为三个入口准备独立日志文件。原有项目日志插件、后台队列、会话反射资源、启动及退出专用记录和自定义 panic hook 已删除。[无窗日志验收](../../testing/app-acceptance.md#会话日志)从驱动记录的子进程输出核对业务事件，正常关闭使用进程退出码。
+三个入口各自准备本次启动的文件并注册 Bevy 日志。共享日志装配模块、原有项目日志插件、后台队列、会话反射资源、启动及退出专用记录和自定义 panic hook 已删除。[应用装配](../../architecture/game_flow.md#应用装配)
+
+无窗日志验收从驱动记录的子进程输出核对业务事件，正常关闭使用进程退出码。[会话日志验收](../../testing/app-acceptance.md#会话日志)
 
 ## Alternatives considered
 
 使用 Bevy 默认日志输出并由调用者重定向终端，可进一步精简程序，但每次启动的独立日志依赖启动方式。保留后台写入则继续承担队列、线程关闭和异常刷新逻辑。
+
+文件层曾集中在共享模块。把配置放回三个独立入口后，可以直接从各自的应用装配看到 `LogPlugin` 的注册与文件输出。
 
 ## Consequences
 

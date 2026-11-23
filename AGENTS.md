@@ -6,7 +6,6 @@
 
 ```text
 apps/                  Independent executable packages for game, acceptance, and inspection
-  log_file/            Shared file layer for Bevy logging
 src/                   Shared feature source compiled into the executable packages
   game_flow/           Application states, clocks, and cross-feature ordering
   first_person/        Player actions, pointer capture, facing, and camera
