@@ -29,12 +29,12 @@ concurrency:
 jobs:
   build:
     if: ${{ github.ref == 'refs/heads/master' }}
-    uses: fedoraiver/bevy-cicd/.github/workflows/architecture-build.yml@1f760e6cbad20fa9c0749201b513f0c0cdfdf954
+    uses: fedoraiver/bevy-cicd/.github/workflows/architecture-build.yml@main
 
   deploy:
     if: ${{ github.ref == 'refs/heads/master' }}
     needs: build
-    uses: fedoraiver/bevy-cicd/.github/workflows/architecture-pages.yml@1f760e6cbad20fa9c0749201b513f0c0cdfdf954
+    uses: fedoraiver/bevy-cicd/.github/workflows/architecture-pages.yml@main
     permissions:
       contents: read
       actions: read
