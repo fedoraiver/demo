@@ -4,22 +4,17 @@
   "files.watcherExclude": {
     "tmp/**": true,
     "target/**": true,
-    "logs/**": true,
-    "docs/diagrams/node_modules/**": true,
-    "docs/diagrams/generated/**": true
+    "logs/**": true
   },
   "search.exclude": {
     "tmp/**": true,
     "target/**": true,
-    "logs/**": true,
-    "docs/diagrams/node_modules/**": true,
-    "docs/diagrams/generated/**": true
+    "logs/**": true
   },
   "liveServer.settings.ignoreFiles": [
     ".vscode/**",
     "target/**",
     "tmp/**",
-    "logs/**",
-    "docs/diagrams/node_modules/**"
+    "logs/**"
   ]
 }

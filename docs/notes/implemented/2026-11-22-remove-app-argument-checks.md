@@ -12,7 +12,7 @@ Status: implemented
 
 ## Changes
 
-移除四个应用入口的参数拒绝分支。[调度导出](../../diagrams/maintenance.md#调度导出边界)默认写入仓库根下的 `tmp/schedules`，供人工启动和未指定目录时使用。
+移除四个应用入口的参数拒绝分支。[调度导出](https://github.com/fedoraiver/demo/blob/054f6fdf596d2f6b4c9c0ce9ce6999250e28da4f/docs/diagrams/maintenance.md#调度导出边界)默认写入仓库根下的 `tmp/schedules`，供人工启动和未指定目录时使用。
 
 ## Alternatives considered
 

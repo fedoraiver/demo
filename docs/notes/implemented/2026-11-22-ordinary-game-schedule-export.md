@@ -12,7 +12,7 @@ Status: implemented
 
 ## Changes
 
-各入口删除帮助参数分支，参数错误在装配 Bevy 前返回。[架构提取](../../../tools/rustc-analysis/runner/src/host.rs)与[快照校验](../../diagrams/src/debugdump-input.mjs)使用相同的普通游戏配置。后续装配归属见[应用入口装配与外部验收工具](2026-11-22-app-assembly-and-acceptance.md)。
+各入口删除帮助参数分支，参数错误在装配 Bevy 前返回。[架构提取](https://github.com/fedoraiver/demo/blob/054f6fdf596d2f6b4c9c0ce9ce6999250e28da4f/tools/rustc-analysis/runner/src/host.rs)与[快照校验](https://github.com/fedoraiver/demo/blob/054f6fdf596d2f6b4c9c0ce9ce6999250e28da4f/docs/diagrams/src/debugdump-input.mjs)使用相同的普通游戏配置。后续装配归属见[应用入口装配与外部验收工具](2026-11-22-app-assembly-and-acceptance.md)。
 
 ## Alternatives considered
 
@@ -20,7 +20,7 @@ Status: implemented
 
 ## Consequences
 
-当时同一 Cargo 构建同时选择多个包会合并共享库的 feature，导出器在初始化前拒绝混入诊断的配置。后续的独立编译见[四个应用独立装配](2026-11-22-independent-apps.md)，导出命令见[调度导出边界](../../diagrams/maintenance.md#调度导出边界)。
+当时同一 Cargo 构建同时选择多个包会合并共享库的 feature，导出器在初始化前拒绝混入诊断的配置。后续的独立编译见[四个应用独立装配](2026-11-22-independent-apps.md)，导出命令见[调度导出边界](https://github.com/fedoraiver/demo/blob/054f6fdf596d2f6b4c9c0ce9ce6999250e28da4f/docs/diagrams/maintenance.md#调度导出边界)。
 
 后续的启动参数约定见[移除应用入口的参数检查](2026-11-22-remove-app-argument-checks.md)。
 

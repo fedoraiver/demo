@@ -5,7 +5,7 @@
 ## Repository layout
 
 ```text
-apps/                  Independent executable packages for game, acceptance, inspection, and schedule export
+apps/                  Independent executable packages for game, acceptance, and inspection
 src/                   Shared feature source compiled into the executable packages
   game_flow/           Application states, clocks, and cross-feature ordering
   first_person/        Player actions, pointer capture, facing, and camera

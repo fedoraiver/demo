@@ -34,4 +34,4 @@ Python 验收、音频维护脚本和回归测试移到仓库根目录的 [scrip
 
 ## Verification
 
-按[测试指南](../../testing/README.md)检查二进制目标、Rust 与 Python 回归、五套无窗验收、截图和设置恢复。按[调度导出边界](../../diagrams/maintenance.md#调度导出边界)核对 Windows 原生导出、来源指纹及类型绑定。[Windows 链接产物检查](../../testing/window_policy.md#windows-msvc-链接产物)覆盖 Common Controls v6 清单，实际窗口交互由用户验收。
+按[测试指南](../../testing/README.md)检查二进制目标、Rust 与 Python 回归、五套无窗验收、截图和设置恢复。按[调度导出边界](https://github.com/fedoraiver/demo/blob/054f6fdf596d2f6b4c9c0ce9ce6999250e28da4f/docs/diagrams/maintenance.md#调度导出边界)核对 Windows 原生导出、来源指纹及类型绑定。[Windows 链接产物检查](../../testing/window_policy.md#windows-msvc-链接产物)覆盖 Common Controls v6 清单，实际窗口交互由用户验收。

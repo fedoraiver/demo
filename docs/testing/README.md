@@ -28,12 +28,11 @@ Agent 可阅读代码、检查格式和编译，并执行最小 `App` / `World` 
 | 变更 | 检查 |
 | --- | --- |
 | 普通文档 | 检查内容、职责、相对链接与引用；无需运行游戏或 Rust 检查。 |
-| 文档 Mermaid | 对照源码核对关系、条件与抽象层次，用锁定的 Mermaid 依赖验证语法和链接；不触发生成式 ECS 图导出或重建。 |
-| 生成式 ECS 架构图 | 由 [GitHub Actions 工作流](../../.github/workflows/ecs-architecture.yml)生成、校验和发布。 |
+| 文档 Mermaid | 对照源码核对关系、条件与抽象层次，用锁定的 Mermaid 依赖验证语法和链接。 |
 | Rust 代码 | 阅读相关实现，运行 `cargo fmt --all -- --check` 和 `cargo check --locked`。 |
 | 行为 | 除 Rust 检查外，运行相应应用包的无窗口测试及受影响的[应用验收脚本](app-acceptance.md#当前驱动范围)。未实现驱动和未执行环境记为覆盖缺口。 |
 
-普通游戏的全部无窗口 Rust 测试使用 `cargo test --locked --bin demo`。测试必须验证实际行为和边界，不得借测试启动游戏。
+普通游戏的全部无窗口 Rust 测试使用 `cargo test --locked --lib`。测试必须验证实际行为和边界，不得借测试启动游戏。
 
 | 范围 | 指南 |
 | --- | --- |

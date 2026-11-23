@@ -1,6 +1,6 @@
-//! 导出普通窗口游戏实际装配的 Bevy 调度。
+//! 普通窗口游戏与架构导出共用的应用装配。
 
-use std::path::{Path, PathBuf};
+use std::io;
 
 use bevy::{log::LogPlugin, prelude::*, render::RenderApp, winit::WinitSettings};
 use bevy_enhanced_input::EnhancedInputPlugin;
@@ -14,8 +14,6 @@ mod character;
 mod first_person;
 #[path = "../../../src/game_flow/mod.rs"]
 mod game_flow;
-#[path = "../../../src/inspector/mod.rs"]
-mod inspector;
 #[path = "../../../src/item_interaction/mod.rs"]
 mod item_interaction;
 #[path = "../../../src/physics/mod.rs"]
@@ -31,24 +29,39 @@ mod ui;
 #[path = "../../../src/window_policy/mod.rs"]
 mod window_policy;
 
-fn main() -> AppExit {
-    let directory = std::env::args_os()
-        .skip(1)
-        .skip_while(|argument| argument != "--output")
-        .nth(1)
-        .filter(|directory| !directory.is_empty())
-        .map_or_else(
-            || Path::new(env!("DEMO_WORKSPACE_ROOT")).join("tmp/schedules"),
-            PathBuf::from,
-        );
+/// 构建普通游戏的应用供架构导出器读取，应用持有日志守卫至导出结束。
+///
+/// # Panics
+///
+/// 无法初始化会话日志时 panic。
+#[must_use]
+pub fn build_app() -> App {
+    let (mut app, session) = prepare_app().expect("Failed to initialize session logging");
+    app.world_mut().insert_non_send(session);
+    app
+}
 
-    let (logging, session) = match session_log::SessionLogPlugin::prepare() {
-        Ok(session) => session,
+/// 运行普通游戏并在退出时刷新会话日志。
+#[must_use]
+pub fn run() -> AppExit {
+    let (mut app, session) = match prepare_app() {
+        Ok(prepared) => prepared,
         Err(error) => {
             eprintln!("Failed to initialize session logging: {error}");
             return AppExit::error();
         }
     };
+    let exit = app.run();
+    drop(app);
+    if let Err(error) = session.record_exit(&exit) {
+        eprintln!("Failed to flush session log on exit: {error}");
+        return AppExit::error();
+    }
+    exit
+}
+
+fn prepare_app() -> io::Result<(App, session_log::SessionLogGuard)> {
+    let (logging, session) = session_log::SessionLogPlugin::prepare()?;
     let mut app = App::new();
     // 日志先于引擎插件安装，记录插件构建阶段的事件。
     app.add_plugins(logging);
@@ -81,18 +94,5 @@ fn main() -> AppExit {
         ui::GameUiPlugin,
         audio::GameAudioPlugin,
     ));
-    let exit = match inspector::dump_schedules(&mut app, &directory) {
-        Ok(_) => AppExit::Success,
-        Err(error) => {
-            error!(target: "demo::debugdump", directory = %directory.display(), %error,
-                "Schedule export failed");
-            AppExit::error()
-        }
-    };
-    drop(app);
-    if let Err(error) = session.record_exit(&exit) {
-        eprintln!("Failed to flush session log on exit: {error}");
-        return AppExit::error();
-    }
-    exit
+    Ok((app, session))
 }
