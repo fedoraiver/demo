@@ -86,6 +86,7 @@ flowchart TD
 | settings | `GameSettingsPlugin` | [设置、草稿、原型参数与限帧](settings.md)。 |
 | audio | `GameAudioPlugin` | [声音请求、混音与设备输出](audio.md)。 |
 | inspector | `InspectorPlugin` | [世界检查器](inspector.md)。 |
+| session_log | `SessionLogPlugin` | [会话日志](session_log.md)。 |
 | window_policy | `WindowPolicyPlugin` | [原生窗口策略](window_policy.md)。 |
 
 [应用验收接入](acceptance.md)由独立入口安装外部 Bevy 验收插件。

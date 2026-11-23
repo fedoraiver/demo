@@ -150,7 +150,7 @@ pub enum UiSystems {
     Style,
 }
 
-/// 注册游戏菜单及其背景。
+/// 组装菜单功能，不安装窗口或重复初始化会话日志。
 pub struct GameUiPlugin;
 
 impl Plugin for GameUiPlugin {

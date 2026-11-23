@@ -1,23 +1,10 @@
 //! 普通窗口游戏与架构导出共用的应用装配。
 
-use std::{
-    fs::{self, File, OpenOptions},
-    io,
-    path::Path,
-    sync::Mutex,
-    time::{SystemTime, UNIX_EPOCH},
-};
+use std::io;
 
-use bevy::{
-    log::{LogPlugin, tracing_subscriber},
-    prelude::*,
-    render::RenderApp,
-    winit::WinitSettings,
-};
+use bevy::{log::LogPlugin, prelude::*, render::RenderApp, winit::WinitSettings};
 use bevy_enhanced_input::EnhancedInputPlugin;
 use bevy_framepace::FramepacePlugin;
-use tracing_subscriber::prelude::*;
-use uuid::Uuid;
 
 #[path = "../../../src/audio/mod.rs"]
 mod audio;
@@ -33,6 +20,8 @@ mod item_interaction;
 mod physics;
 #[path = "../../../src/scene_assembly/mod.rs"]
 mod scene_assembly;
+#[path = "../../../src/session_log/mod.rs"]
+mod session_log;
 #[path = "../../../src/settings/mod.rs"]
 mod settings;
 #[path = "../../../src/ui/mod.rs"]
@@ -40,32 +29,42 @@ mod ui;
 #[path = "../../../src/window_policy/mod.rs"]
 mod window_policy;
 
-/// 构建普通游戏的应用供架构导出器读取。
+/// 构建普通游戏的应用供架构导出器读取，应用持有日志守卫至导出结束。
 ///
 /// # Panics
 ///
-/// 无法初始化日志文件时 panic。
+/// 无法初始化会话日志时 panic。
 #[must_use]
 pub fn build_app() -> App {
-    prepare_app().expect("Failed to initialize log file")
+    let (mut app, session) = prepare_app().expect("Failed to initialize session logging");
+    app.world_mut().insert_non_send(session);
+    app
 }
 
-/// 运行普通游戏并返回 Bevy 的退出状态。
+/// 运行普通游戏并在退出时刷新会话日志。
 #[must_use]
 pub fn run() -> AppExit {
-    let mut app = match prepare_app() {
+    let (mut app, session) = match prepare_app() {
         Ok(prepared) => prepared,
         Err(error) => {
-            eprintln!("Failed to initialize log file: {error}");
+            eprintln!("Failed to initialize session logging: {error}");
             return AppExit::error();
         }
     };
-    app.run()
+    let exit = app.run();
+    drop(app);
+    if let Err(error) = session.record_exit(&exit) {
+        eprintln!("Failed to flush session log on exit: {error}");
+        return AppExit::error();
+    }
+    exit
 }
 
-fn prepare_app() -> io::Result<App> {
+fn prepare_app() -> io::Result<(App, session_log::SessionLogGuard)> {
+    let (logging, session) = session_log::SessionLogPlugin::prepare()?;
     let mut app = App::new();
-    add_logging(&mut app)?;
+    // 日志先于引擎插件安装，记录插件构建阶段的事件。
+    app.add_plugins(logging);
     app.add_plugins(
         DefaultPlugins
             .build()
@@ -95,62 +94,5 @@ fn prepare_app() -> io::Result<App> {
         ui::GameUiPlugin,
         audio::GameAudioPlugin,
     ));
-    Ok(app)
-}
-
-fn add_logging(app: &mut App) -> io::Result<()> {
-    #[derive(Resource)]
-    struct PendingLogFile {
-        file: File,
-    }
-
-    let directory = Path::new("logs");
-    fs::create_dir_all(directory).map_err(|error| {
-        io::Error::new(
-            error.kind(),
-            format!(
-                "Failed to create log directory {}: {error}",
-                directory.display()
-            ),
-        )
-    })?;
-    let timestamp = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map_err(io::Error::other)?;
-    let id = Uuid::new_v4();
-    let path = directory.join(format!(
-        "unix-{}-{:09}_{id}.log",
-        timestamp.as_secs(),
-        timestamp.subsec_nanos()
-    ));
-    let file = OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .open(&path)
-        .map_err(|error| {
-            io::Error::new(
-                error.kind(),
-                format!("Failed to create log file {}: {error}", path.display()),
-            )
-        })?;
-
-    app.insert_resource(PendingLogFile { file });
-    app.add_plugins(LogPlugin {
-        custom_layer: |app| {
-            // 构建时把文件交给格式层，整条日志持锁写入。
-            let pending = app
-                .world_mut()
-                .remove_resource::<PendingLogFile>()
-                .expect("Log file must be prepared before adding LogPlugin");
-            Some(
-                tracing_subscriber::fmt::layer()
-                    .with_ansi(false)
-                    .with_writer(Mutex::new(pending.file))
-                    .log_internal_errors(true)
-                    .boxed(),
-            )
-        },
-        ..default()
-    });
-    Ok(())
+    Ok((app, session))
 }

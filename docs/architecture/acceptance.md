@@ -2,7 +2,7 @@
 
 [验收入口](../../apps/acceptance/src/main.rs)安装 `bevy-acceptance-test` 的 `AcceptancePlugin`。插件在 `RenderApp` 创建前安装 Bevy 自带的 `RemotePlugin` 和 `RemoteHttpPlugin`，通过本机回环地址暴露主世界的 BRP。HTTP 响应提供 `X-Bevy-Pid`，供客户端核对所启动的进程。
 
-Rust 插件和 Python 驱动来自验收工具仓库的 `master` 分支。项目脚本维护游戏用例、进程日志核对和用户设置事务。[验收工具](https://github.com/fedoraiver/bevy-acceptance-test/tree/master) · [自动化启动准备](../testing/README.md#自动化启动准备)
+Rust 插件和 Python 驱动来自验收工具仓库的 `master` 分支。项目脚本维护游戏用例、会话日志核对和用户设置事务。[验收工具](https://github.com/fedoraiver/bevy-acceptance-test/tree/master) · [自动化启动准备](../testing/README.md#自动化启动准备)
 
 验收入口由 `ScheduleRunnerPlugin` 以约 `60 Hz` 驱动，保留一个 `1920×1080`、缩放因子为 `1` 的逻辑主窗口。逻辑窗口给输入路由、鼠标捕获状态与正常退出提供实体身份。入口通过 Bevy 的必需组件把 `IsDefaultUiCamera` 映射到工具的 `AcceptanceCamera`。菜单与玩法相机重建时会获得同一标记，由工具切换到同尺寸的离屏图像渲染目标。[验收入口](../../apps/acceptance/src/main.rs)
 

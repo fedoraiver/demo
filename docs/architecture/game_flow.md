@@ -8,8 +8,6 @@
 
 Cargo workspace 默认选择普通游戏。检查器和验收在各自包中默认启用诊断 feature，注册各工具需要的玩法反射。检查器还启用游戏内的 Egui 输入转发。[验证入口](../testing/README.md)
 
-三个入口在安装 `DefaultPlugins` 前直接注册 Bevy 的 `LogPlugin`，通过 `custom_layer` 添加文件输出。默认插件组中的 `LogPlugin` 禁用以避免重复注册。日志同步写入文件和 stderr，两路共用 Bevy 的过滤规则。文件层串行写入完整日志行，磁盘 I/O 可能延迟调用方。目录或文件创建失败时中止启动，运行中的写入错误报告到 stderr。[会话日志位置](../player-guide.md#会话日志) · [日志过滤](../development.md#日志排查)
-
 ## 菜单与会话生命周期
 
 场景在离开主菜单时装配；无应用状态的最小测试在 `Startup` 复用入口。控制者通过关系组件关联角色和一台第一人称相机；关联细节见[第一人称架构](first_person.md)，场景尺寸与可见边界见[灰盒场景](../player-guide.md#灰盒场景)。

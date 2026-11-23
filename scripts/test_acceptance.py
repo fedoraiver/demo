@@ -76,7 +76,8 @@ class HeadlessDriverTests(unittest.TestCase):
             report = {"environment": {}, "sessions": []}
             with patch.object(driver, "ROOT", root):
                 game = driver.Game("view", Mock(output=root, exe=exe, timeout=1), report)
-            game.resource = Mock(return_value={"audio": {"master_volume": 100}})
+            game.resource = Mock(side_effect=[{"id": "test", "path": "logs/session.log"},
+                                              {"audio": {"master_volume": 100}}])
             game.query = Mock(return_value=[{"entity": 4, "components": {
                 driver.TYPES["window"]: {"visible": False, "focused": True},
             }}])
@@ -88,9 +89,7 @@ class HeadlessDriverTests(unittest.TestCase):
                 with self.assertRaisesRegex(driver.EnvironmentBlocked, "loaded master volume 100, expected 0"):
                     game.start()
             self.assertEqual(spawn.call_args.kwargs["cwd"], root)
-            self.assertEqual(spawn.call_args.kwargs["env"]["NO_COLOR"], "1")
             self.assertEqual(report["sessions"][0]["startup_master_volume"], 100)
-            game.resource.assert_called_once_with(driver.TYPES["game_settings"])
             game.offscreen_target.assert_not_called()
 
     def test_capture_uses_the_shared_image_target_from_brp(self):

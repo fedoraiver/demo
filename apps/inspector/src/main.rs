@@ -1,23 +1,8 @@
 //! 构建普通窗口游戏并接入世界检查器。
 
-use std::{
-    fs::{self, File, OpenOptions},
-    io,
-    path::Path,
-    sync::Mutex,
-    time::{SystemTime, UNIX_EPOCH},
-};
-
-use bevy::{
-    log::{LogPlugin, tracing_subscriber},
-    prelude::*,
-    render::RenderApp,
-    winit::WinitSettings,
-};
+use bevy::{log::LogPlugin, prelude::*, render::RenderApp, winit::WinitSettings};
 use bevy_enhanced_input::EnhancedInputPlugin;
 use bevy_framepace::FramepacePlugin;
-use tracing_subscriber::prelude::*;
-use uuid::Uuid;
 
 #[path = "../../../src/audio/mod.rs"]
 mod audio;
@@ -35,6 +20,8 @@ mod item_interaction;
 mod physics;
 #[path = "../../../src/scene_assembly/mod.rs"]
 mod scene_assembly;
+#[path = "../../../src/session_log/mod.rs"]
+mod session_log;
 #[path = "../../../src/settings/mod.rs"]
 mod settings;
 #[path = "../../../src/ui/mod.rs"]
@@ -43,11 +30,16 @@ mod ui;
 mod window_policy;
 
 fn main() -> AppExit {
+    let (logging, session) = match session_log::SessionLogPlugin::prepare() {
+        Ok(session) => session,
+        Err(error) => {
+            eprintln!("Failed to initialize session logging: {error}");
+            return AppExit::error();
+        }
+    };
     let mut app = App::new();
-    if let Err(error) = add_logging(&mut app) {
-        eprintln!("Failed to initialize log file: {error}");
-        return AppExit::error();
-    }
+    // 日志先于引擎插件安装，记录插件构建阶段的事件。
+    app.add_plugins(logging);
     app.add_plugins(
         DefaultPlugins
             .build()
@@ -80,62 +72,11 @@ fn main() -> AppExit {
         ui::GameUiPlugin,
         audio::GameAudioPlugin,
     ));
-    app.run()
-}
-
-fn add_logging(app: &mut App) -> io::Result<()> {
-    #[derive(Resource)]
-    struct PendingLogFile {
-        file: File,
+    let exit = app.run();
+    drop(app);
+    if let Err(error) = session.record_exit(&exit) {
+        eprintln!("Failed to flush session log on exit: {error}");
+        return AppExit::error();
     }
-
-    let directory = Path::new("logs");
-    fs::create_dir_all(directory).map_err(|error| {
-        io::Error::new(
-            error.kind(),
-            format!(
-                "Failed to create log directory {}: {error}",
-                directory.display()
-            ),
-        )
-    })?;
-    let timestamp = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map_err(io::Error::other)?;
-    let id = Uuid::new_v4();
-    let path = directory.join(format!(
-        "unix-{}-{:09}_{id}.log",
-        timestamp.as_secs(),
-        timestamp.subsec_nanos(),
-    ));
-    let file = OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .open(&path)
-        .map_err(|error| {
-            io::Error::new(
-                error.kind(),
-                format!("Failed to create log file {}: {error}", path.display()),
-            )
-        })?;
-
-    app.insert_resource(PendingLogFile { file });
-    app.add_plugins(LogPlugin {
-        custom_layer: |app| {
-            // 构建时把文件交给格式层，整条日志持锁写入。
-            let pending = app
-                .world_mut()
-                .remove_resource::<PendingLogFile>()
-                .expect("Log file must be prepared before adding LogPlugin");
-            Some(
-                tracing_subscriber::fmt::layer()
-                    .with_ansi(false)
-                    .with_writer(Mutex::new(pending.file))
-                    .log_internal_errors(true)
-                    .boxed(),
-            )
-        },
-        ..default()
-    });
-    Ok(())
+    exit
 }

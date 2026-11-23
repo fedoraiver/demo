@@ -12,7 +12,7 @@ Status: implemented
 
 ## Changes
 
-[验收接入](../../architecture/acceptance.md)将合成窗口的鼠标指针映射到离屏目标，保留键鼠动作、Picking、正常退出和截图事件的原生 Bevy 路径。这次迁移继续使用当时的五个脚本及其 25 个既有编号。原生窗口机制归[窗口策略](../../testing/window_policy.md)。“配置帧率上限”由设置和日志用例核对，游戏画面由离屏 PNG 记录。[应用验收](../../testing/app-acceptance.md)
+[验收接入](../../architecture/acceptance.md)将合成窗口的鼠标指针映射到离屏目标，保留键鼠动作、Picking、正常退出和截图事件的原生 Bevy 路径。[应用验收](../../testing/app-acceptance.md)继续使用五个脚本及其 25 个既有编号，原生窗口机制归[窗口策略](../../testing/window_policy.md)。“配置帧率上限”由设置和会话日志用例核对，游戏画面由离屏 PNG 记录。
 
 各脚本使用独立设置目录，保留 Bevy TOML 读写及验收恢复流程。Kira 的 `UiTrack` 在验收时使用零输出增益，沿用音效加载、排队、播放和混音逻辑。设置隔离和截图接口见[验收接入](../../architecture/acceptance.md)。
 
@@ -28,4 +28,4 @@ Status: implemented
 
 ## Verification
 
-[测试指南](../../testing/README.md#自动化启动准备)维护构建与运行入口。检查范围包含离屏目标、BRP 反射传输、设置隔离和目前的脚本化子项。每次执行的实际结果随验收报告和进程输出记录。[应用验收](../../testing/app-acceptance.md#当前驱动范围)
+[测试指南](../../testing/README.md#自动化启动准备)维护构建与运行入口。检查范围包含离屏目标、BRP 反射传输、设置隔离和全部 25 个脚本化子项。每次执行的实际结果随验收报告和会话日志记录。
