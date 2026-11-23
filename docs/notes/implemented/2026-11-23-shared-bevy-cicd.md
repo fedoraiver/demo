@@ -16,6 +16,8 @@ Status: implemented
 
 [Rust 工作流](../../../.github/workflows/rust-rules.yml)调用共享检查与编译器规则。[架构工作流](../../../.github/workflows/ecs-architecture.yml)调用共享构建与 Pages 发布。架构图文档与生成器由共享仓库维护，项目保留在线图入口。
 
+上游改写提交后，四处工作流引用改用 `main` 历史中内容相同的提交。新旧提交的 Git 树完全一致。[上游固定提交](https://github.com/fedoraiver/bevy-cicd/commit/56512df2da540c804cc3d85e60170ee6be55a55a)
+
 [普通游戏库](../../../apps/game/src/lib.rs)提供应用构造函数，导出复用普通游戏的插件装配。[独立调度导出程序](2026-11-22-independent-apps.md)及其依赖已移除。[临时测试工作区隔离](2026-11-23-isolate-rule-test-workspaces.md)随规则测试移交共享仓库。
 
 ## Alternatives considered
