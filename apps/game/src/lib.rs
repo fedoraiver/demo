@@ -2,7 +2,7 @@
 
 use std::io;
 
-use bevy::{log::LogPlugin, prelude::*, render::RenderApp, winit::WinitSettings};
+use bevy::{prelude::*, render::RenderApp, winit::WinitSettings};
 use bevy_enhanced_input::EnhancedInputPlugin;
 use bevy_framepace::FramepacePlugin;
 
@@ -16,12 +16,12 @@ mod first_person;
 mod game_flow;
 #[path = "../../../src/item_interaction/mod.rs"]
 mod item_interaction;
+#[path = "../../log_file/mod.rs"]
+mod log_file;
 #[path = "../../../src/physics/mod.rs"]
 mod physics;
 #[path = "../../../src/scene_assembly/mod.rs"]
 mod scene_assembly;
-#[path = "../../../src/session_log/mod.rs"]
-mod session_log;
 #[path = "../../../src/settings/mod.rs"]
 mod settings;
 #[path = "../../../src/ui/mod.rs"]
@@ -29,46 +29,36 @@ mod ui;
 #[path = "../../../src/window_policy/mod.rs"]
 mod window_policy;
 
-/// 构建普通游戏的应用供架构导出器读取，应用持有日志守卫至导出结束。
+/// 构建普通游戏的应用供架构导出器读取。
 ///
 /// # Panics
 ///
-/// 无法初始化会话日志时 panic。
+/// 无法初始化日志文件时 panic。
 #[must_use]
 pub fn build_app() -> App {
-    let (mut app, session) = prepare_app().expect("Failed to initialize session logging");
-    app.world_mut().insert_non_send(session);
-    app
+    prepare_app().expect("Failed to initialize log file")
 }
 
-/// 运行普通游戏并在退出时刷新会话日志。
+/// 运行普通游戏并返回 Bevy 的退出状态。
 #[must_use]
 pub fn run() -> AppExit {
-    let (mut app, session) = match prepare_app() {
+    let mut app = match prepare_app() {
         Ok(prepared) => prepared,
         Err(error) => {
-            eprintln!("Failed to initialize session logging: {error}");
+            eprintln!("Failed to initialize log file: {error}");
             return AppExit::error();
         }
     };
-    let exit = app.run();
-    drop(app);
-    if let Err(error) = session.record_exit(&exit) {
-        eprintln!("Failed to flush session log on exit: {error}");
-        return AppExit::error();
-    }
-    exit
+    app.run()
 }
 
-fn prepare_app() -> io::Result<(App, session_log::SessionLogGuard)> {
-    let (logging, session) = session_log::SessionLogPlugin::prepare()?;
+fn prepare_app() -> io::Result<App> {
     let mut app = App::new();
-    // 日志先于引擎插件安装，记录插件构建阶段的事件。
-    app.add_plugins(logging);
+    let logging = log_file::prepare(&mut app)?;
     app.add_plugins(
         DefaultPlugins
             .build()
-            .disable::<LogPlugin>()
+            .set(logging)
             .disable::<bevy::audio::AudioPlugin>()
             .set(WindowPlugin {
                 primary_window: Some(window_policy::primary_window()),
@@ -94,5 +84,5 @@ fn prepare_app() -> io::Result<(App, session_log::SessionLogGuard)> {
         ui::GameUiPlugin,
         audio::GameAudioPlugin,
     ));
-    Ok((app, session))
+    Ok(app)
 }

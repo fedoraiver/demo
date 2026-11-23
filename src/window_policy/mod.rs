@@ -23,7 +23,7 @@ pub(crate) const MIN_LOGICAL_SIZE: Vec2 = Vec2::new(960.0, 540.0);
 /// 主窗口与原生约束共用初始 16:9 尺寸。
 const INITIAL_SIZE: UVec2 = UVec2::new(1280, 720);
 
-/// 在现有会话日志和原生窗口创建之后安装比例策略。
+/// 在原生主窗口创建后安装比例策略。
 pub struct WindowPolicyPlugin;
 
 impl Plugin for WindowPolicyPlugin {

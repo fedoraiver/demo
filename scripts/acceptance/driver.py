@@ -34,7 +34,6 @@ TYPES = {
     "menu_button": "demo_acceptance::ui::MenuButton",
     "settings_draft": "demo_acceptance::settings::draft::SettingsDraft",
     "game_settings": "demo_acceptance::settings::config::GameSettings",
-    "session_log": "demo_acceptance::session_log::lifecycle::SessionLogInfo",
     "character": "demo_acceptance::character::components::Character",
     "character_intent": "demo_acceptance::character::components::CharacterIntent",
     "character_motion": "demo_acceptance::character::components::CharacterMotion",
@@ -88,10 +87,9 @@ def worktree_lock(path):
 class Game(HeadlessGame):
     def __init__(self, category, args, report, *, port=PORT):
         super().__init__(category, args, report, cwd=ROOT,
-                         env={"BEVY_ASSET_ROOT": str(ROOT), "RUST_LOG": "info"}, port=port)
+                         env={"BEVY_ASSET_ROOT": str(ROOT), "RUST_LOG": "info", "NO_COLOR": "1"},
+                         port=port)
         self.settings = None
-        self.session_id = None
-        self.log_path = None
 
     def prepare_settings(self):
         try:
@@ -106,7 +104,6 @@ class Game(HeadlessGame):
             raise EnvironmentBlocked(f"Could not prepare shared settings: {error}") from error
 
     def before_spawn(self):
-        self.session_id = self.log_path = None
         try:
             prepared = self.settings.verify_prepared()
             master_volume = tomllib.loads(prepared.data.decode("utf-8"))["game"]["audio"]["master_volume"]
@@ -117,12 +114,6 @@ class Game(HeadlessGame):
         self.startup_master_volume = master_volume
 
     def check_startup(self):
-        session_log = self.resource(TYPES["session_log"])
-        self.session_id = session_log["id"]
-        self.log_path = (ROOT / session_log["path"]).resolve()
-        assert_that(self.log_path.is_relative_to(ROOT / "logs"), "Session log is outside this worktree")
-        self.session.update(session_id=self.session_id, session_log=str(self.log_path))
-
         live_master_volume = self.resource(TYPES["game_settings"])["audio"]["master_volume"]
         self.session["startup_master_volume"] = live_master_volume
         if type(live_master_volume) is not int or live_master_volume != self.startup_master_volume:
@@ -177,7 +168,7 @@ def run(category, cases, exercise):
         raise RuntimeError(f"Script and document disagree in {category}: {set(cases) ^ runnable}")
     report = {
         "category": category, "passed": False, "sessions": [],
-        "environment": {"RUST_LOG": "info", "mode": "headless"},
+        "environment": {"RUST_LOG": "info", "NO_COLOR": "1", "mode": "headless"},
         "checks": {name: {"status": "not_run", "expected": expected, "evidence": {}}
                    for name, expected in cases.items()},
     }

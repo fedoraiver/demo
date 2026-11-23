@@ -112,7 +112,6 @@ mod remote_contract {
     use crate::{
         character::{Character, CharacterMotion},
         game_flow::AppState,
-        session_log::SessionLogInfo,
         settings::{GameSettings, SettingKey, SettingsDraft},
         ui::{MenuButton, UiAction},
     };
@@ -141,11 +140,7 @@ mod remote_contract {
         app.insert_resource(State::new(AppState::MainMenu))
             .register_type::<State<AppState>>()
             .init_resource::<GameSettings>()
-            .init_resource::<SettingsDraft>()
-            .insert_resource(SessionLogInfo {
-                id: "test-id".to_string(),
-                path: "logs/test.log".to_string(),
-            });
+            .init_resource::<SettingsDraft>();
         let button = app
             .world_mut()
             .spawn(MenuButton {
@@ -169,10 +164,6 @@ mod remote_contract {
         let settings = read_resource(GameSettings::type_path());
         let draft = read_resource(SettingsDraft::type_path());
         assert_eq!(settings["max_fps"], draft["max_fps"]);
-        assert_eq!(
-            read_resource(SessionLogInfo::type_path()),
-            json!({"id": "test-id", "path": "logs/test.log"})
-        );
         let component = MenuButton::type_path();
         let button = request(
             &mut app,

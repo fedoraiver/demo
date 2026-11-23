@@ -14,12 +14,12 @@ mod first_person;
 mod game_flow;
 #[path = "../../../src/item_interaction/mod.rs"]
 mod item_interaction;
+#[path = "../../log_file/mod.rs"]
+mod log_file;
 #[path = "../../../src/physics/mod.rs"]
 mod physics;
 #[path = "../../../src/scene_assembly/mod.rs"]
 mod scene_assembly;
-#[path = "../../../src/session_log/mod.rs"]
-mod session_log;
 #[path = "../../../src/settings/mod.rs"]
 mod settings;
 #[path = "../../../src/ui/mod.rs"]
@@ -36,21 +36,21 @@ fn main() -> AppExit {
     let input_window = acceptance.input_window_plugin();
     let runner = acceptance.runner_plugin();
 
-    let (logging, session) = match session_log::SessionLogPlugin::prepare() {
-        Ok(session) => session,
+    let mut app = App::new();
+    let logging = match log_file::prepare(&mut app) {
+        Ok(logging) => logging,
         Err(error) => {
-            eprintln!("Failed to initialize session logging: {error}");
+            eprintln!("Failed to initialize log file: {error}");
             return AppExit::error();
         }
     };
-    let mut app = App::new();
-    // 日志先于引擎插件安装，记录插件构建阶段的事件。
-    app.add_plugins(logging);
-    // 远程插件先于渲染子应用，只向主世界开放 BRP。
-    app.add_plugins((acceptance, runner)).add_plugins(
+    app.add_plugins(
         DefaultPlugins
             .build()
-            .disable::<LogPlugin>()
+            .set(logging)
+            // 远程插件先于渲染子应用，只向主世界开放 BRP。
+            .add_after::<LogPlugin>(acceptance)
+            .add_after::<AcceptancePlugin>(runner)
             .disable::<bevy::audio::AudioPlugin>()
             .disable::<bevy::winit::WinitPlugin>()
             .disable::<bevy::gilrs::GilrsPlugin>()
@@ -73,11 +73,5 @@ fn main() -> AppExit {
         ui::GameUiPlugin,
         audio::GameAudioPlugin,
     ));
-    let exit = app.run();
-    drop(app);
-    if let Err(error) = session.record_exit(&exit) {
-        eprintln!("Failed to flush session log on exit: {error}");
-        return AppExit::error();
-    }
-    exit
+    app.run()
 }

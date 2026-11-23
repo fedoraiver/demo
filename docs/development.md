@@ -146,7 +146,7 @@ Agent 执行相关构建检查、无窗口测试和[应用验收脚本](testing/
 
 ### 日志排查
 
-排查问题时保留原始日志。[玩家指南](player-guide.md#会话日志)说明如何找到日志文件，[会话日志架构](architecture/session_log.md)说明何时刷新写入。
+排查问题时保留原始日志。设置 `RUST_LOG` 可同时调整终端和会话文件的日志过滤。[会话日志位置](player-guide.md#会话日志) · [日志装配](architecture/game_flow.md#应用装配)
 
 需要记录视角角度和移动速度时，在启动游戏前设置 `RUST_LOG`。
 

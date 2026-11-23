@@ -1,6 +1,6 @@
 //! 构建普通窗口游戏并接入世界检查器。
 
-use bevy::{log::LogPlugin, prelude::*, render::RenderApp, winit::WinitSettings};
+use bevy::{prelude::*, render::RenderApp, winit::WinitSettings};
 use bevy_enhanced_input::EnhancedInputPlugin;
 use bevy_framepace::FramepacePlugin;
 
@@ -16,12 +16,12 @@ mod game_flow;
 mod inspector;
 #[path = "../../../src/item_interaction/mod.rs"]
 mod item_interaction;
+#[path = "../../log_file/mod.rs"]
+mod log_file;
 #[path = "../../../src/physics/mod.rs"]
 mod physics;
 #[path = "../../../src/scene_assembly/mod.rs"]
 mod scene_assembly;
-#[path = "../../../src/session_log/mod.rs"]
-mod session_log;
 #[path = "../../../src/settings/mod.rs"]
 mod settings;
 #[path = "../../../src/ui/mod.rs"]
@@ -30,20 +30,18 @@ mod ui;
 mod window_policy;
 
 fn main() -> AppExit {
-    let (logging, session) = match session_log::SessionLogPlugin::prepare() {
-        Ok(session) => session,
+    let mut app = App::new();
+    let logging = match log_file::prepare(&mut app) {
+        Ok(logging) => logging,
         Err(error) => {
-            eprintln!("Failed to initialize session logging: {error}");
+            eprintln!("Failed to initialize log file: {error}");
             return AppExit::error();
         }
     };
-    let mut app = App::new();
-    // 日志先于引擎插件安装，记录插件构建阶段的事件。
-    app.add_plugins(logging);
     app.add_plugins(
         DefaultPlugins
             .build()
-            .disable::<LogPlugin>()
+            .set(logging)
             .disable::<bevy::audio::AudioPlugin>()
             .set(WindowPlugin {
                 primary_window: Some(window_policy::primary_window()),
@@ -72,11 +70,5 @@ fn main() -> AppExit {
         ui::GameUiPlugin,
         audio::GameAudioPlugin,
     ));
-    let exit = app.run();
-    drop(app);
-    if let Err(error) = session.record_exit(&exit) {
-        eprintln!("Failed to flush session log on exit: {error}");
-        return AppExit::error();
-    }
-    exit
+    app.run()
 }

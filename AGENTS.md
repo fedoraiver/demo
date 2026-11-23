@@ -6,6 +6,7 @@
 
 ```text
 apps/                  Independent executable packages for game, acceptance, and inspection
+  log_file/            Shared file layer for Bevy logging
 src/                   Shared feature source compiled into the executable packages
   game_flow/           Application states, clocks, and cross-feature ordering
   first_person/        Player actions, pointer capture, facing, and camera
@@ -17,7 +18,6 @@ src/                   Shared feature source compiled into the executable packag
   audio/               Sound contracts, mixing, playback, and device output
   settings/            Settings, drafts, shared prototype parameters, pacing
   inspector/           World inspector integration
-  session_log/         Session logging, background output, and exit flush
   window_policy/       Platform-specific window behavior
 scripts/               Python acceptance and asset tooling
 assets/                Runtime resources
