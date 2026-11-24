@@ -41,6 +41,54 @@ Agent 可阅读代码、检查格式和编译，并执行最小 `App` / `World` 
 | 界面与设置 | [ui](ui.md)、[settings](settings.md)、[window_policy](window_policy.md) |
 | 音频、检查器与日志 | [audio](audio.md)、[inspector](inspector.md)、[session_log](session_log.md) |
 
+## 本地 Rust 源码覆盖率
+
+使用插桩报告定位普通游戏的无窗口 Rust 测试执行到的代码。覆盖率对应当前平台的 `demo` 库测试配置。Windows 下从仓库根目录打开一个临时 PowerShell 会话。若缺少 LLVM 工具，先执行 `rustup component add llvm-tools`，使用 [仓库固定工具链](../../rust-toolchain.toml) 中的版本。[Rust 插桩覆盖率](https://doc.rust-lang.org/rustc/instrument-coverage.html)
+
+```powershell
+$coverageRoot = (Get-Location).Path
+$coverageRun = (New-Item -ItemType Directory -Force -Path ('tmp/coverage/run-' + [guid]::NewGuid().ToString('N'))).FullName
+$env:CARGO_TARGET_DIR = Join-Path $coverageRoot 'tmp/coverage/target'
+$env:LLVM_PROFILE_FILE = Join-Path $coverageRun 'demo-%p.profraw'
+$env:BEVY_ASSET_ROOT = $coverageRoot
+
+$coverageMessages = cargo rustc --locked -p demo --lib --profile test -j 2 --message-format=json -- -C instrument-coverage
+if ($LASTEXITCODE -ne 0) { throw 'Failed to build the instrumented library tests.' }
+$coverageTest = $coverageMessages | ConvertFrom-Json |
+    Where-Object { $_.reason -eq 'compiler-artifact' -and $_.profile.test -and $_.target.name -eq 'demo' -and $_.executable } |
+    Select-Object -ExpandProperty executable
+if (@($coverageTest).Count -ne 1) { throw 'Expected one demo library test executable.' }
+
+Push-Location apps/game
+try {
+    & $coverageTest --test-threads=1
+    if ($LASTEXITCODE -ne 0) { throw 'The library tests failed.' }
+} finally {
+    Pop-Location
+}
+
+$coverageHost = ((rustc -vV | Select-String '^host: ').Line -replace '^host: ')
+$coverageTools = Join-Path (rustc --print sysroot) "lib/rustlib/$coverageHost/bin"
+$coverageRaw = @(Get-ChildItem -LiteralPath $coverageRun -Filter 'demo-*.profraw' -File | Select-Object -ExpandProperty FullName)
+$coverageData = Join-Path $coverageRun 'demo.profdata'
+& (Join-Path $coverageTools 'llvm-profdata.exe') merge -sparse $coverageRaw -o $coverageData
+if ($LASTEXITCODE -ne 0) { throw 'Failed to merge the coverage profiles.' }
+
+$coverageRootPattern = [regex]::Escape($coverageRoot).Replace('\\', '[/\\]').Replace('\ ', ' ')
+$coverageFilters = @(
+    "-include-filename-regex=^$coverageRootPattern[/\\](src|apps[/\\]game[/\\]src)[/\\]"
+    '-ignore-filename-regex=[/\\]tests[.]rs$'
+)
+$llvmCov = Join-Path $coverageTools 'llvm-cov.exe'
+& $llvmCov report $coverageTest "-instr-profile=$coverageData" @coverageFilters | Set-Content (Join-Path $coverageRun 'summary.txt')
+if ($LASTEXITCODE -ne 0) { throw 'Failed to generate the coverage summary.' }
+& $llvmCov show $coverageTest "-instr-profile=$coverageData" @coverageFilters -format=html "-output-dir=$coverageRun/html" -show-line-counts-or-regions
+if ($LASTEXITCODE -ne 0) { throw 'Failed to generate the HTML coverage report.' }
+Join-Path $coverageRun 'html/index.html'
+```
+
+每次生成的 `summary.txt` 和 `html/index.html` 位于对应的 `tmp/coverage/run-*` 目录。绝对路径和 `%p` 使测试子进程切换目录后仍把计数写到同一轮目录，并各自使用独立文件。报告统计 `src/` 和 `apps/game/src/` 下具有覆盖率映射的项目源码，排除 `tests.rs`。随测试配置编译进其他文件的辅助代码仍按该文件计入。统计范围随编译目标和平台变化。[LLVM 覆盖率报告命令](https://llvm.org/docs/CommandGuide/llvm-cov.html)
+
 ## 验收测试
 
 能用脚本驱动和判定的客观条件按[应用自动化验收](app-acceptance.md)执行。修改共享控件、输入、物理或调度时，检查受影响的使用场景。缺少脚本、工具或硬件的条件记为未验证的覆盖缺口。实际结果和未完成范围记录在对应 Issue 或 PR。
