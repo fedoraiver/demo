@@ -20,7 +20,7 @@ Bevy 已将帧节奏插件合入主线，项目锁定的发布版是 0.20.1。�
 
 ## Consequences
 
-升级到包含 `bevy::render::framepace` 且与项目插件兼容的 Bevy 发布版时，用 Bevy 内置模块替换当前插件依赖。
+升级到包含 `bevy::render::framepace` 且与项目插件兼容的 Bevy 稳定版时，用内置模块替换当前插件依赖。上游实现将插件留给窗口入口显式装配，仍在主应用 `Update` 同步设置，在 `RenderSystems::Cleanup` 限帧。项目迁移时沿用 `Limiter::Manual` 的整数纳秒换算、Winit 前后台连续更新及现有呈现策略，继续由验收 runner 驱动无窗入口。[上游插件源码](https://github.com/bevyengine/bevy/blob/1c4460b102a6a4380319455051c0e4c6051708a6/crates/bevy_render/src/framepace/mod.rs#L46-L82) · [上游示例](https://github.com/bevyengine/bevy/blob/1c4460b102a6a4380319455051c0e4c6051708a6/examples/window/framepace.rs#L13-L26)
 
 ## Verification
 
