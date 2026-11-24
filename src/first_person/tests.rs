@@ -1272,6 +1272,26 @@ mod pose_tests {
         }
 
         #[test]
+        fn escape_blocks_f3_recapture_in_the_same_frame() {
+            let (mut app, window, _, camera, controller) = test_app();
+            toggle_capture(&mut app, window);
+            assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
+
+            escape(&mut app, window, ButtonState::Pressed);
+            f3(&mut app, window, ButtonState::Pressed);
+            app.update();
+
+            assert!(!app.world().get::<MouseLookState>(camera).unwrap().active);
+            assert!(app.world().get::<CursorOptions>(window).unwrap().visible);
+            assert!(
+                !**app
+                    .world()
+                    .get::<ContextActivity<GameplayContext>>(controller)
+                    .unwrap()
+            );
+        }
+
+        #[test]
         fn pause_releases_capture_and_resume_skips_free_cursor_motion() {
             let (mut app, window, _, camera, controller) = test_app_with_states(true);
             assert!(app.world().get::<MouseLookState>(camera).unwrap().active);

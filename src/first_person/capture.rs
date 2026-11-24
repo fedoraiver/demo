@@ -57,11 +57,12 @@ pub(super) fn sync_mouse_capture(
     for event in focus_events.read() {
         lost_focus |= event.window == window_entity && !event.focused;
     }
+    let window_focused = window.focused && !lost_focus;
 
     let mut any_active = false;
     for (camera, target, mut state) in &mut cameras {
         let character = target.map(|target| target.character);
-        let available = character.is_some_and(|character| {
+        let target_available = character.is_some_and(|character| {
             characters.contains(character)
                 && controllers
                     .iter()
@@ -72,44 +73,26 @@ pub(super) fn sync_mouse_capture(
                                 .is_some_and(|controlled| controlled.camera == camera)
                     })
         });
-        if !available && (!state.initialized || state.target_available) {
+        if !target_available && (!state.initialized || state.target_available) {
             warn!(target: "demo::camera", ?camera, ?character,
                 before = "available", after = "unavailable", reason = "camera_binding_unavailable",
                 "Camera target or controller unavailable");
         }
-        state.target_available = available;
+        state.target_available = target_available;
         let before = state.active;
-        let reason = if !running {
-            state.active = false;
-            "menu_open"
-        } else if !available {
-            state.active = false;
-            "camera_binding_unavailable"
-        } else if lost_focus || !window.focused {
-            state.active = false;
-            "window_focus_lost"
-        } else if keys.just_pressed(KeyCode::Escape) {
-            state.active = false;
-            "escape_pressed"
-        } else if keys.just_pressed(KeyCode::F3) {
-            // F3 须在玩法动作准备前处理，即使玩法输入已停用也能恢复捕获。
-            state.active = !state.active;
-            "capture_toggle"
-        } else if !state.initialized {
-            state.active = true;
-            "initialization"
-        } else {
-            "unchanged"
-        };
-        state.skip_motion = !state.initialized || before != state.active;
-        if !state.initialized || before != state.active {
+        let (active, reason) =
+            capture_decision(&state, &keys, running, target_available, window_focused);
+        let capture_transition = !state.initialized || before != active;
+        state.active = active;
+        state.skip_motion = capture_transition;
+        if capture_transition {
             info!(target: "demo::camera", ?camera, ?character,
                 ?window_entity, before = if before { "captured" } else { "released" },
-                after = if state.active { "captured" } else { "released" }, reason,
+                after = if active { "captured" } else { "released" }, reason,
                 "Mouse look capture changed");
         }
         state.initialized = true;
-        any_active |= state.active;
+        any_active |= active;
     }
     #[cfg(feature = "inspector")]
     let capture_started = any_active && cursor.visible;
@@ -150,11 +133,43 @@ pub(super) fn sync_mouse_capture(
             commands
                 .entity(controller)
                 .insert(ContextActivity::<GameplayContext>::new(after));
+            let reason = if after {
+                "gameplay_input_resumed"
+            } else if !window_focused {
+                "window_focus_lost"
+            } else if !running {
+                "menu_open"
+            } else {
+                "capture_inactive"
+            };
             info!(target: "demo::input", ?controller, character = ?character.map(|controlled| controlled.character),
-                before = **activity, after, reason = if after { "gameplay_input_resumed" }
-                    else if !window.focused || lost_focus { "window_focus_lost" }
-                    else if !running { "menu_open" }
-                    else { "capture_inactive" }, "Gameplay input context activity changed");
+                before = **activity, after, reason, "Gameplay input context activity changed");
         }
+    }
+}
+
+/// 先处理强制释放，再处理手动切换与首次捕获。
+fn capture_decision(
+    state: &MouseLookState,
+    keys: &ButtonInput<KeyCode>,
+    running: bool,
+    target_available: bool,
+    window_focused: bool,
+) -> (bool, &'static str) {
+    if !running {
+        (false, "menu_open")
+    } else if !target_available {
+        (false, "camera_binding_unavailable")
+    } else if !window_focused {
+        (false, "window_focus_lost")
+    } else if keys.just_pressed(KeyCode::Escape) {
+        (false, "escape_pressed")
+    } else if keys.just_pressed(KeyCode::F3) {
+        // F3 独立于玩法输入，即使玩法上下文已停用也能恢复捕获。
+        (!state.active, "capture_toggle")
+    } else if !state.initialized {
+        (true, "initialization")
+    } else {
+        (state.active, "unchanged")
     }
 }
