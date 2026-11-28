@@ -1,6 +1,16 @@
 {
-  "rust-analyzer.vfs.extraIncludes": ["${workspaceFolder}"],
-  "rust-analyzer.files.exclude": ["tmp"],
+  "rust-analyzer.check.extraArgs": [
+    "--jobs",
+    "2"
+  ],
+  "rust-analyzer.vfs.extraIncludes": [
+    "${workspaceFolder}"
+  ],
+  "rust-analyzer.files.exclude": [
+    "tmp",
+    "target",
+    "logs"
+  ],
   "files.watcherExclude": {
     "tmp/**": true,
     "target/**": true,
