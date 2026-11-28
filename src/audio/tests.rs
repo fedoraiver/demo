@@ -13,9 +13,7 @@ use bevy_kira_audio::{
 fn shipped_manifest_maps_all_cues_once() {
     let manifest = Manifest::parse(MANIFEST).unwrap();
     for asset in manifest.assets {
-        let path = std::path::Path::new(env!("DEMO_WORKSPACE_ROOT"))
-            .join("assets")
-            .join(asset.path);
+        let path = audio_asset_path(&asset.path);
         assert!(path.is_file(), "Missing audio asset: {}", path.display());
     }
 }
@@ -202,9 +200,7 @@ fn queued_test_app() -> App {
             .iter()
             .find(|asset| asset.event_ids.iter().any(|id| id == cue.id()))
             .unwrap();
-        let path = std::path::Path::new(env!("DEMO_WORKSPACE_ROOT"))
-            .join("assets")
-            .join(&asset.path);
+        let path = audio_asset_path(&asset.path);
         let sound = bevy_kira_audio::prelude::StaticSoundData::from_file(path).unwrap();
         let handle = app
             .world_mut()
@@ -297,10 +293,14 @@ fn unloaded_menu_cue_is_discarded_instead_of_replayed_after_loading() {
 fn kira_decodes_every_shipped_file_without_opening_device() {
     let manifest = Manifest::parse(MANIFEST).unwrap();
     for asset in manifest.assets {
-        let path = std::path::Path::new(env!("DEMO_WORKSPACE_ROOT"))
-            .join("assets")
-            .join(asset.path);
+        let path = audio_asset_path(&asset.path);
         bevy_kira_audio::prelude::StaticSoundData::from_file(&path)
             .unwrap_or_else(|error| panic!("Failed to decode {}: {error}", path.display()));
     }
+}
+
+fn audio_asset_path(path: &str) -> std::path::PathBuf {
+    std::path::PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap())
+        .join("../../assets")
+        .join(path)
 }

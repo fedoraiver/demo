@@ -185,18 +185,10 @@ mod test_support {
         let mut fonts = app.world_mut().resource_mut::<Assets<Font>>();
         UiTheme {
             heading: fonts.add(Font::from_bytes(
-                include_bytes!(concat!(
-                    env!("DEMO_WORKSPACE_ROOT"),
-                    "/assets/ui/fonts/heading.ttf"
-                ))
-                .to_vec(),
+                include_bytes!("../../assets/ui/fonts/heading.ttf").to_vec(),
             )),
             body: fonts.add(Font::from_bytes(
-                include_bytes!(concat!(
-                    env!("DEMO_WORKSPACE_ROOT"),
-                    "/assets/ui/fonts/body.ttf"
-                ))
-                .to_vec(),
+                include_bytes!("../../assets/ui/fonts/body.ttf").to_vec(),
             )),
             scale: 1.0,
         }

@@ -12,7 +12,7 @@ Status: implemented
 
 ## Changes
 
-[应用装配](../../architecture/game_flow.md#应用装配)记录入口与源模块的边界。[验收驱动](../../../scripts/acceptance/driver.py)使用 `demo_acceptance::` 下的反射类型，从脚本位置定位仓库根与资源。构建脚本统一提供编译期仓库路径和 Windows 链接清单。
+[应用装配](../../architecture/game_flow.md#应用装配)记录入口与源模块的边界。[验收驱动](../../../scripts/acceptance/driver.py)使用 `demo_acceptance::` 下的反射类型，从脚本位置定位仓库根与资源。
 
 编译器规则在虚拟 workspace 根目录选择默认成员。传入成员目录时检查该成员。实体命名与模板提取按照请求的工作区根识别本地创建位置，涵盖包目录外通过 `#[path]` 引入的共享源码。架构提取配对 `demo-debugdump` 同一次编译的类型事实与快照，源码指纹跟踪普通游戏和导出的独立清单及入口。
 
@@ -22,7 +22,7 @@ Python 验收、音频维护脚本和回归测试移到仓库根目录的 [scrip
 
 [VS Code 工作区设置](../../../.vscode/settings.json)通过 `rust-analyzer.vfs.extraIncludes` 将共享 `src/` 纳入模块索引。VS Code 扩展把 `${workspaceFolder}` 展开为当前工作区根路径，所以各 worktree 可使用同一份设置。
 
-共享构建脚本为 Cargo 登记共享源码用到的条件编译值。各入口在自己的 Cargo 清单中决定启用哪些 feature。
+共享构建脚本为 Cargo 登记共享源码用到的条件编译值和 Windows 链接清单。各入口在自己的 Cargo 清单中决定启用哪些 feature。跨 worktree 的构建输出约束见[构建与调试](../../development.md#构建与调试)。
 
 ## Alternatives considered
 

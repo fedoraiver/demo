@@ -13,10 +13,7 @@ pub(crate) use messages::{SoundCue, SoundRequest};
 use mix::{AudioMix, sync_audio_mix, sync_voice_volumes};
 use playback::{SoundBank, log_load_failures, play_requests, preload_sounds, stop_on_exit};
 
-const MANIFEST: &str = include_str!(concat!(
-    env!("DEMO_WORKSPACE_ROOT"),
-    "/assets/audio/audio_manifest.json"
-));
+const MANIFEST: &str = include_str!("../../assets/audio/audio_manifest.json");
 // 音量百分比在素材基准响度上做衰减，默认 100% 保留混音余量。
 const MASTER_GAIN: f64 = 0.25;
 const MAX_VOICES: usize = 4;

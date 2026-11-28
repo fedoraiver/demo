@@ -134,11 +134,13 @@ Windows 输出程序为 `target/release/demo.exe`。发布构建保留默认 pan
 
 `--locked` 确保使用提交的依赖锁定文件，需要变化时直接报错。构建参数以 Cargo 文件为准。发布包必须携带完整的 `assets/`。
 
-各应用共用[构建脚本](../apps/build.rs)。脚本为编译期嵌入资源和测试 fixture 提供仓库根路径，为 Windows MSVC 的开发、发布及测试程序嵌入 `Microsoft.Windows.Common-Controls` v6 清单。原生窗口策略按名称导入的 `GetWindowSubclass` 依赖该清单选择 v6 `comctl32.dll`，须按[验证指南](testing/window_policy.md#windows-msvc-链接产物)检查最终可执行文件。
+各应用共用[构建脚本](../apps/build.rs)，为 Windows MSVC 的开发、发布及测试程序嵌入 `Microsoft.Windows.Common-Controls` v6 清单。原生窗口策略按名称导入的 `GetWindowSubclass` 依赖该清单选择 v6 `comctl32.dll`，须按[验证指南](testing/window_policy.md#windows-msvc-链接产物)检查最终可执行文件。
 
 使用支持 `build.build-dir` 的 Cargo 时，可在用户级 Cargo 配置中设置 `[build] build-dir`，或为各 worktree 的构建设置同一个 `CARGO_BUILD_BUILD_DIR`。将其指向专用缓存目录，例如主检出的 `tmp/shared-crates/`。最终程序仍保存在各 worktree 的 `target/` 中。机器专属路径留在本地配置。
 
 共享内容是依赖编译结果、构建脚本输出和增量编译数据，区别于 `CARGO_HOME` 的源码下载缓存。工具链、目标平台、构建模式、依赖特性和编译参数一致时可复用匹配产物；同时构建可能等待共享目录锁，清理该目录也会移除其他 worktree 可复用的缓存。
+
+共享缓存可能复用先前 worktree 的构建脚本输出和测试二进制。编译期嵌入的资源从源码文件位置解析，依赖当前工作副本的测试 fixture 从 Cargo 启动测试时提供的 `CARGO_MANIFEST_DIR` 解析，避免读取已移除的 worktree。
 
 构建和测试从对应 worktree 执行。Cargo 启动各应用包时，[工作区配置](../.cargo/config.toml)默认将 `BEVY_ASSET_ROOT` 指向仓库根目录，从同一 `assets/` 读取资源。需要指定其他资源根目录时，可在调用 Cargo 前设置 `BEVY_ASSET_ROOT`。配置细节见 [Cargo 构建目录](https://doc.rust-lang.org/cargo/reference/config.html#buildbuild-dir)。
 

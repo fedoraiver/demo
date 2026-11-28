@@ -663,7 +663,7 @@ mod test_support {
     use std::{
         fs,
         io::{self, Write},
-        path::{Path, PathBuf},
+        path::PathBuf,
         thread,
         time::Duration,
     };
@@ -710,8 +710,8 @@ mod test_support {
     }
 
     pub(super) fn test_directory() -> PathBuf {
-        let directory = Path::new(env!("DEMO_WORKSPACE_ROOT"))
-            .join("tmp")
+        let directory = PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap())
+            .join("../../tmp")
             .join(format!("session-log-test-{}", Uuid::new_v4()));
         fs::create_dir_all(&directory).unwrap();
         directory

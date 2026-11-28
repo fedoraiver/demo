@@ -28,8 +28,8 @@ fn settings_types() -> TypeRegistry {
 
 #[test]
 fn bevy_settings_load_and_save_game_configuration() {
-    let directory = PathBuf::from(env!("DEMO_WORKSPACE_ROOT"))
-        .join("tmp")
+    let directory = PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap())
+        .join("../../tmp")
         .join(format!("settings-test-{}", uuid::Uuid::new_v4()));
     let file = directory.join("settings.toml");
     // 文件回归使用原生存储的独立测试目录，避免改写实际玩家设置。

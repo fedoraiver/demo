@@ -336,8 +336,8 @@ mod initialization_tests {
 
     /// 不直接调用日志函数：注册真实插件并执行多次完整 update，检查不会提前或重复输出。
     fn capture_initialization_logs(omitted: Option<Feature>) -> String {
-        let directory =
-            std::path::Path::new(env!("DEMO_WORKSPACE_ROOT")).join("tmp/initialization-log-tests");
+        let directory = std::path::PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap())
+            .join("../../tmp/initialization-log-tests");
         fs::create_dir_all(&directory).unwrap();
         let path = directory.join(format!("{}.log", Uuid::new_v4()));
         let subscriber = tracing_subscriber::fmt()
